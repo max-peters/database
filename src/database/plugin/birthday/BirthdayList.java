@@ -6,15 +6,23 @@ import database.main.Instance;
 import database.main.InstanceList;
 
 public class BirthdayList extends InstanceList {
-	public BirthdayList() {
-	}
-
 	public ArrayList<Birthday> getList() {
 		ArrayList<Birthday> birthdays = new ArrayList<Birthday>();
 		for (Instance instance : list) {
 			birthdays.add((Birthday) instance);
 		}
 		return birthdays;
+	}
+
+	public void add(String[] parameter) {
+		list.add(new Birthday(parameter, this));
+	}
+
+	public void change(String[] parameter) {
+	}
+
+	public String output(String[] tags) {
+		return null;
 	}
 
 	public String initialOutput() {
@@ -29,13 +37,5 @@ public class BirthdayList extends InstanceList {
 			output = "birthdays:" + "\r\n" + output;
 		}
 		return output;
-	}
-
-	public String output(String[] tags) {
-		return null;
-	}
-
-	public void add(String[] parameter) {
-		list.add(new Birthday(parameter, this));
 	}
 }

@@ -20,6 +20,10 @@ public class Refilling extends Instance {
 		createExpense();
 	}
 
+	public String toString() {
+		return "refilling" + " : " + refuelAmount + " / " + distance + " / " + date.toString() + " / " + value;
+	}
+
 	private void createExpense() {
 		String[] parameter = { "Tankstelle", "Auto", String.valueOf(value), date.toString() };
 		list.add(parameter);
@@ -34,9 +38,5 @@ public class Refilling extends Instance {
 				+ String.format("%" + String.valueOf(((RefillingList) list).getHighestDistance()).length() + "s", distance) + " km] refuelAmount: ["
 				+ String.format("%" + String.valueOf(String.format("%.1f", ((RefillingList) list).getHighestRefuelAmount())).length() + "s", String.format("%.1f", refuelAmount)).replace(",", ".")
 				+ " l] averageConsumption: [" + String.format("%" + String.valueOf(((RefillingList) list).getHighestAverageConsumption()).length() + "s", calcAverageConsumption()) + " l/km]";
-	}
-
-	public String toString() {
-		return "refilling" + " : " + refuelAmount + " / " + distance + " / " + date.toString() + " / " + value;
 	}
 }

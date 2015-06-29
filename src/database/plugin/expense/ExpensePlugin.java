@@ -1,5 +1,6 @@
 package database.plugin.expense;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.Plugin;
@@ -22,10 +23,7 @@ public class ExpensePlugin extends Plugin {
 		return showInformation;
 	}
 
-	protected String[][] getChangeInformation() {
-		return null;
-	}
-
-	protected void change(String[] parameter) {
+	protected String[][] getChangeInformation() throws NotImplementedException {
+		throw new NotImplementedException();
 	}
 }

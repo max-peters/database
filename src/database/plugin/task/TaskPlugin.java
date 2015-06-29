@@ -1,5 +1,6 @@
 package database.plugin.task;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.Plugin;
@@ -17,18 +18,11 @@ public class TaskPlugin extends Plugin {
 		return createInformation;
 	}
 
-	protected String[][] getShowInformation() {
-		return null;
+	protected String[][] getShowInformation() throws NotImplementedException {
+		throw new NotImplementedException();
 	}
 
-	protected String[][] getChangeInformation() {
-		return null;
-	}
-
-	protected String show(String[] parameter) {
-		return null;
-	}
-
-	protected void change(String[] parameter) {
+	protected String[][] getChangeInformation() throws NotImplementedException {
+		throw new NotImplementedException();
 	}
 }

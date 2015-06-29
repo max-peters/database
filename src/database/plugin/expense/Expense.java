@@ -21,7 +21,7 @@ public class Expense extends Instance {
 		return "expense" + " : " + name + " / " + category + " / " + value + " / " + date.toString();
 	}
 
-	public boolean checkValidity(int month, int year) {
+	protected boolean checkValidity(int month, int year) {
 		boolean returnValue = false;
 		if ((date.month.counter == month && date.year.counter == year) || (month < 0 && year < 0)) {
 			returnValue = true;

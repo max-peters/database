@@ -40,9 +40,6 @@ public class GraphicalUserInterface {
 	private int				pressedKey;
 	private String			inputText;
 
-	public GraphicalUserInterface() {
-	}
-
 	public void initialise() {
 		ActionListener inputListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -111,7 +108,7 @@ public class GraphicalUserInterface {
 		output.add(input, BorderLayout.AFTER_LAST_LINE);
 		outputChangeable.setBorder(null);
 		outputChangeable.setFont(font);
-		outputChangeable.setCaretColor(Color.WHITE);
+		outputChangeable.setCaretColor(Color.BLACK);
 		outputChangeable.setBackground(Color.BLACK);
 		outputChangeable.setForeground(Color.WHITE);
 		outputChangeable.setEditable(false);
@@ -167,7 +164,6 @@ public class GraphicalUserInterface {
 		}
 		int current = 0;
 		input.setVisible(false);
-		outputChangeable.setCaretColor(Color.BLACK);
 		outputChangeable.setBounds(0, 18 * requestsToWrite.size(), 670, 20 * strings.size());
 		outputChangeable.setVisible(true);
 		outputChangeable.grabFocus();

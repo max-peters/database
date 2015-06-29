@@ -9,15 +9,19 @@ import database.main.Instance;
 import database.main.InstanceList;
 
 public class ExpenseList extends InstanceList {
-	public ExpenseList() {
-	}
-
 	public ArrayList<Expense> getList() {
 		ArrayList<Expense> expenses = new ArrayList<Expense>();
 		for (Instance instance : list) {
 			expenses.add((Expense) instance);
 		}
 		return expenses;
+	}
+
+	public void add(String[] parameter) {
+		list.add(new Expense(parameter, this));
+	}
+
+	public void change(String[] parameter) {
 	}
 
 	public String output(String[] tags) {
@@ -46,10 +50,6 @@ public class ExpenseList extends InstanceList {
 				break;
 		}
 		return print;
-	}
-
-	public void add(String[] parameter) {
-		list.add(new Expense(parameter, this));
 	}
 
 	public String initialOutput() {

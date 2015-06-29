@@ -28,4 +28,6 @@ public abstract class InstanceList {
 	public abstract String output(String[] tags);
 
 	public abstract void add(String[] parameter);
+
+	public abstract void change(String[] parameter);
 }

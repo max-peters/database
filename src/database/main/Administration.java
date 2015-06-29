@@ -3,8 +3,7 @@ package database.main;
 import java.io.IOException;
 import java.util.concurrent.CancellationException;
 
-import javax.naming.directory.InvalidAttributesException;
-
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.date.Date;
 
 // new class: task auswahl remove, instances as plugin, birthday extends event termine exteds event, stundenplan, birthday pattern anpassen
@@ -92,7 +91,7 @@ public class Administration {
 							break;
 					}
 				}
-				catch (InvalidAttributesException e) {
+				catch (NotImplementedException e) {
 					errorMessage();
 				}
 			}

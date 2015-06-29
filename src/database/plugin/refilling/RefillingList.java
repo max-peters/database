@@ -6,9 +6,6 @@ import database.main.Instance;
 import database.main.InstanceList;
 
 public class RefillingList extends InstanceList {
-	public RefillingList() {
-	}
-
 	public ArrayList<Refilling> getList() {
 		ArrayList<Refilling> refillings = new ArrayList<Refilling>();
 		for (Instance instance : list) {
@@ -17,16 +14,11 @@ public class RefillingList extends InstanceList {
 		return refillings;
 	}
 
-	public String initialOutput() {
-		String output = "";
-		if (!getList().isEmpty()) {
-			output = "[" + getList().size() + "] " + "distance: " + "[" + getDistanceTotal() + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal() + " l" + "] " + "averageConsumption: "
-					+ "[" + getAverageConsumptionTotal() + " l/km" + "]";
-		}
-		if (!output.isEmpty()) {
-			output = "refillings:" + "\r\n" + output;
-		}
-		return output;
+	public void add(String[] parameter) {
+		list.add(new Refilling(parameter, this));
+	}
+
+	public void change(String[] parameter) {
 	}
 
 	public String output(String[] tags) {
@@ -42,8 +34,16 @@ public class RefillingList extends InstanceList {
 		return print;
 	}
 
-	public void add(String[] parameter) {
-		list.add(new Refilling(parameter, this));
+	public String initialOutput() {
+		String output = "";
+		if (!getList().isEmpty()) {
+			output = "[" + getList().size() + "] " + "distance: " + "[" + getDistanceTotal() + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal() + " l" + "] " + "averageConsumption: "
+					+ "[" + getAverageConsumptionTotal() + " l/km" + "]";
+		}
+		if (!output.isEmpty()) {
+			output = "refillings:" + "\r\n" + output;
+		}
+		return output;
 	}
 
 	private double getDistanceTotal() {

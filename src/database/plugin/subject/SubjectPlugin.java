@@ -13,7 +13,7 @@ public class SubjectPlugin extends Plugin {
 	}
 
 	protected String[][] getCreateInformation() {
-		String[][] createInformation = { { "name", "[A-ZÖÄÜ].*" }, { "tag", "[a-zöäü].*" } };
+		String[][] createInformation = { { "name", "[A-ZÖÄÜ].*" }, { "tag", "[a-zöäüß]*" } };
 		return createInformation;
 	}
 
@@ -25,10 +25,5 @@ public class SubjectPlugin extends Plugin {
 	protected String[][] getChangeInformation() {
 		String[][] changeInformation = { { "subject", ((SubjectList) instanceList).getTagsAsRegex() }, { "grade", "[0-9]{1,13}(\\.[0-9]*)?" }, { "maxgrade", "[0-9]{1,13}(\\.[0-9]*)?" } };
 		return changeInformation;
-	}
-
-	protected void change(String[] parameter) {
-		Subject toChange = ((SubjectList) instanceList).getSubject(parameter[0]);
-		toChange.calcGrade(Double.parseDouble(parameter[1]), Double.parseDouble(parameter[2]));
 	}
 }

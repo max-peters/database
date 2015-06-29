@@ -13,7 +13,7 @@ public class Subject extends Instance {
 	public String	name;
 
 	public Subject(String[] parameter, SubjectList list) {
-		super(parameter[0],list);
+		super(parameter[0], list);
 		this.name = parameter[0];
 		this.tag = parameter[1];
 		if (parameter.length == 5) {
@@ -32,17 +32,17 @@ public class Subject extends Instance {
 		return "subject" + " : " + name + " / " + tag + " / " + allGrades + " / " + allGradesTotal + " / " + counter;
 	}
 
-	public double calcPercent() {
+	protected double calcPercent() {
 		return (allGrades / allGradesTotal) * 100;
 	}
 
-	public void calcGrade(double newGrade, double newGradeTotal) {
+	protected void setGrade(double newGrade, double newGradeTotal) {
 		counter++;
 		allGradesTotal = newGradeTotal + allGradesTotal;
 		allGrades = newGrade + allGrades;
 	}
 
-	public String output(ArrayList<Subject> subjects) {
+	protected String output(ArrayList<Subject> subjects) {
 		DecimalFormat oneDecimalPlace = new DecimalFormat("#0.0");
 		DecimalFormat twoDecimalPlace = new DecimalFormat("#0.00");
 		String toPrint;

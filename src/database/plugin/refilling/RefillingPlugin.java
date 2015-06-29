@@ -1,5 +1,8 @@
 package database.plugin.refilling;
 
+import java.awt.print.PrinterAbortException;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.Plugin;
@@ -17,15 +20,11 @@ public class RefillingPlugin extends Plugin {
 		return createInformation;
 	}
 
-	protected String[][] getShowInformation() {
-		String[][] showInformation = { { null } };
-		return showInformation;
+	protected String[][] getShowInformation() throws PrinterAbortException {
+		throw new PrinterAbortException();
 	}
 
-	protected String[][] getChangeInformation() {
-		return null;
-	}
-
-	protected void change(String[] parameter) {
+	protected String[][] getChangeInformation() throws NotImplementedException {
+		throw new NotImplementedException();
 	}
 }

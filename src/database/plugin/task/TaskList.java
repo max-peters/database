@@ -9,10 +9,6 @@ public class TaskList extends InstanceList {
 	public TaskList() {
 	}
 
-	public String initialOutput() {
-		return null;
-	}
-
 	public ArrayList<Task> getList() {
 		ArrayList<Task> tasks = new ArrayList<Task>();
 		for (Instance instance : list) {
@@ -21,11 +17,18 @@ public class TaskList extends InstanceList {
 		return tasks;
 	}
 
+	public void add(String[] parameter) {
+		list.add(new Task(parameter, this));
+	}
+
+	public void change(String[] parameter) {
+	}
+
 	public String output(String[] tags) {
 		return null;
 	}
 
-	public void add(String[] parameter) {
-		list.add(new Task(parameter, this));
+	public String initialOutput() {
+		return null;
 	}
 }
