@@ -1,7 +1,7 @@
 package database.plugin.birthday;
 
-import database.date.Date;
 import database.main.Instance;
+import database.main.date.Date;
 
 public class Birthday extends Instance {
 	public Date		date;

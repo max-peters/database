@@ -19,8 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import database.date.Date;
-import database.date.Time;
+import database.main.date.Date;
+import database.main.date.Time;
 
 public class GraphicalUserInterface {
 	public JFrame			frame						= new JFrame("Database");

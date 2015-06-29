@@ -3,10 +3,10 @@ package database.plugin.expense;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import database.date.Date;
-import database.date.Month;
 import database.main.Instance;
 import database.main.InstanceList;
+import database.main.date.Date;
+import database.main.date.Month;
 
 public class ExpenseList extends InstanceList {
 	public ArrayList<Expense> getList() {

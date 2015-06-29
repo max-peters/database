@@ -14,7 +14,7 @@ public class TaskPlugin extends Plugin {
 	}
 
 	protected String[][] getCreateInformation() {
-		String[][] createInformation = { { "task", ".*" } };
+		String[][] createInformation = { { "task", ".+" } };
 		return createInformation;
 	}
 

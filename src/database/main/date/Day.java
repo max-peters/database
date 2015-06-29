@@ -1,4 +1,4 @@
-package database.date;
+package database.main.date;
 
 public class Day {
 	public int	counter;
