@@ -1,4 +1,4 @@
-package database.plugin.birthday;
+package database.plugin.event.birthday;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.Administration;

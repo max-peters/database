@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
-import database.plugin.birthday.BirthdayPlugin;
+import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.expense.ExpensePlugin;
 import database.plugin.refilling.RefillingPlugin;
 import database.plugin.subject.SubjectPlugin;

@@ -1,11 +1,12 @@
-package database.plugin.birthday;
+package database.plugin.event.birthday;
 
 import java.util.ArrayList;
 
 import database.main.Instance;
-import database.main.InstanceList;
+import database.plugin.event.Event;
+import database.plugin.event.EventList;
 
-public class BirthdayList extends InstanceList {
+public class BirthdayList extends EventList {
 	public ArrayList<Birthday> getList() {
 		ArrayList<Birthday> birthdays = new ArrayList<Birthday>();
 		for (Instance instance : list) {
@@ -27,11 +28,9 @@ public class BirthdayList extends InstanceList {
 
 	public String initialOutput() {
 		String output = "";
-		for (Birthday birthday : getList()) {
-			if (!output.isEmpty()) {
-				output = output + "\r\n";
-			}
-			output = output + birthday.singleOutput();
+		for (Event event : getNearEvents()) {
+			Birthday birthday = (Birthday) event;
+			output = output + birthday.output() + "\r\n";
 		}
 		if (!output.isEmpty()) {
 			output = "birthdays:" + "\r\n" + output;

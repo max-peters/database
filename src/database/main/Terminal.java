@@ -12,7 +12,7 @@ public class Terminal {
 	}
 
 	public void out(String output) {
-		if (!(output.length() == 0)) {
+		if (output != null && output.length() != 0) {
 			String splitResult[] = output.split("\r\n");
 			for (int i = 0; i < splitResult.length; i++) {
 				graphicalUserInterface.printLine(splitResult[i]);
@@ -21,7 +21,7 @@ public class Terminal {
 	}
 
 	public void requestOut(String output) {
-		if (!(output.length() == 0)) {
+		if (output != null && output.length() != 0) {
 			String splitResult[] = output.split("\r\n");
 			for (int i = 0; i < splitResult.length; i++) {
 				graphicalUserInterface.printRequest(splitResult[i]);
@@ -30,7 +30,7 @@ public class Terminal {
 	}
 
 	public void solutionOut(String output) {
-		if (!(output.length() == 0)) {
+		if (output != null && output.length() != 0) {
 			String splitResult[] = output.split("\r\n");
 			for (int i = 0; i < splitResult.length; i++) {
 				graphicalUserInterface.printSolution(splitResult[i]);
