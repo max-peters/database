@@ -10,13 +10,21 @@ public abstract class EventList extends InstanceList {
 		Date currentDate = Date.getDate();
 		Date localDate;
 		ArrayList<Event> nearEvents = new ArrayList<Event>();
-		for (Object object : getList()) {
+		for (Object object : list) {
 			Event event = (Event) object;
 			localDate = event.updateYear();
-			if ((currentDate.calculateDifference(localDate) < 3) && (currentDate.calculateDifference(localDate) >= 0)) {
+			if ((localDate.compareTo(currentDate) < 3) && (localDate.compareTo(currentDate) >= 0)) {
 				nearEvents.add(event);
 			}
 		}
 		return nearEvents;
+	}
+
+	public String initialOutput() {
+		String output = "";
+		for (Event event : getNearEvents()) {
+			output = output + event.output() + "\r\n";
+		}
+		return output;
 	}
 }

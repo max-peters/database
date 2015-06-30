@@ -6,7 +6,7 @@ import java.util.concurrent.CancellationException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.date.Date;
 
-// new class: task auswahl remove, instances as plugin, birthday extends event termine exteds event, stundenplan, birthday pattern anpassen
+// TODO: birthday extends event termine exteds event, stundenplan
 public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
 	private Store					store;

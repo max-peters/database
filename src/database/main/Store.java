@@ -1,6 +1,7 @@
 package database.main;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Store {
 	private ArrayList<Plugin>	plugins;
@@ -14,7 +15,11 @@ public class Store {
 	}
 
 	public void addPlugin(Plugin plugin) {
-		plugins.add(plugin);
+		this.plugins.add(plugin);
+	}
+
+	public void addPlugin(List<Plugin> plugins) {
+		this.plugins.addAll(plugins);
 	}
 
 	public ArrayList<Plugin> getPlugins() {
@@ -24,7 +29,7 @@ public class Store {
 	public ArrayList<String> getListToWrite() {
 		ArrayList<String> listToWrite = new ArrayList<String>();
 		for (Plugin plugin : plugins) {
-			for (Object object : plugin.instanceList.getList()) {
+			for (Object object : plugin.instanceList.list) {
 				listToWrite.add(object.toString());
 			}
 		}

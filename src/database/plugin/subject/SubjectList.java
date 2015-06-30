@@ -1,19 +1,9 @@
 package database.plugin.subject;
 
-import java.util.ArrayList;
-
 import database.main.Instance;
 import database.main.InstanceList;
 
 public class SubjectList extends InstanceList {
-	public ArrayList<Subject> getList() {
-		ArrayList<Subject> subjects = new ArrayList<Subject>();
-		for (Instance instance : list) {
-			subjects.add((Subject) instance);
-		}
-		return subjects;
-	}
-
 	public void add(String[] parameter) {
 		list.add(new Subject(parameter, this));
 	}
@@ -29,22 +19,18 @@ public class SubjectList extends InstanceList {
 		}
 		else {
 			Subject subject = getSubject(tags[0]);
-			ArrayList<Subject> list = new ArrayList<Subject>();
-			list.add(subject);
 			return subject.output(list);
 		}
 	}
 
 	public String initialOutput() {
 		String output = "";
-		for (Subject subject : getList()) {
-			if (getList().indexOf(subject) != 0) {
+		for (Instance instance : list) {
+			Subject subject = (Subject) instance;
+			if (list.indexOf(subject) != 0) {
 				output = output + "\r\n";
 			}
-			output = output + subject.output(getList());
-		}
-		if (!output.isEmpty()) {
-			output = "subjects:" + "\r\n" + output;
+			output = output + subject.output(list);
 		}
 		return output;
 	}
@@ -53,7 +39,8 @@ public class SubjectList extends InstanceList {
 		double sumPercentages = 0;
 		double averagePercentage;
 		int currentCounter = 0;
-		for (Subject subject : getList()) {
+		for (Instance instance : list) {
+			Subject subject = (Subject) instance;
 			sumPercentages += subject.calcPercent();
 			currentCounter++;
 		}
@@ -64,7 +51,8 @@ public class SubjectList extends InstanceList {
 
 	protected Subject getSubject(String tag) {
 		Subject wanted = null;
-		for (Subject subject : getList()) {
+		for (Instance instance : list) {
+			Subject subject = (Subject) instance;
 			if (subject.tag.equals(tag)) {
 				wanted = subject;
 			}
@@ -74,9 +62,10 @@ public class SubjectList extends InstanceList {
 
 	protected String getTagsAsRegex() {
 		String regex = "(";
-		for (Subject subject : getList()) {
+		for (Instance instance : list) {
+			Subject subject = (Subject) instance;
 			regex = regex + subject.tag;
-			if (!(getList().indexOf(subject) == getList().size() - 1)) {
+			if (!(list.indexOf(subject) == list.size() - 1)) {
 				regex = regex + "|";
 			}
 		}

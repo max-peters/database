@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
-public class Date {
+public class Date implements Comparable<Date> {
 	public Day		day;
 	public Month	month;
 	public Year		year;
@@ -40,7 +40,11 @@ public class Date {
 		return String.format("%2s", day.counter).replace(' ', '0') + "." + String.format("%2s", month.counter).replace(' ', '0') + "." + String.format("%4s", year.counter).replace(' ', '0');
 	}
 
-	public int calculateDifference(Date date) {
+	public int compareTo(Date date) {
+		return calculateDifference(date);
+	}
+
+	private int calculateDifference(Date date) {
 		int difference;
 		int sum = 0;
 		for (int i = 0; i < date.month.counter - 1; i++) {
@@ -68,7 +72,7 @@ public class Date {
 			Year currentYear = new Year(i);
 			sum2 = currentYear.dayCount + sum2;
 		}
-		difference = sum - sum2;
+		difference = sum2 - sum;
 		return difference;
 	}
 

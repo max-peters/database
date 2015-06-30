@@ -3,7 +3,7 @@ package database.plugin.event;
 import database.main.Instance;
 import database.main.date.Date;
 
-public abstract class Event extends Instance {
+public abstract class Event extends Instance implements Comparable<Event> {
 	protected Date		date;
 	protected String	name;
 	protected boolean	eachYear;
@@ -13,6 +13,10 @@ public abstract class Event extends Instance {
 		this.name = parameter[0];
 		this.date = new Date(parameter[1]);
 		this.eachYear = Boolean.valueOf(parameter[2]);
+	}
+
+	public int compareTo(Event event) {
+		return date.compareTo(event.date);
 	}
 
 	protected Date updateYear() {

@@ -1,19 +1,9 @@
 package database.plugin.refilling;
 
-import java.util.ArrayList;
-
 import database.main.Instance;
 import database.main.InstanceList;
 
 public class RefillingList extends InstanceList {
-	public ArrayList<Refilling> getList() {
-		ArrayList<Refilling> refillings = new ArrayList<Refilling>();
-		for (Instance instance : list) {
-			refillings.add((Refilling) instance);
-		}
-		return refillings;
-	}
-
 	public void add(String[] parameter) {
 		list.add(new Refilling(parameter, this));
 	}
@@ -23,11 +13,12 @@ public class RefillingList extends InstanceList {
 
 	public String output(String[] tags) {
 		String print = "";
-		if (getList().isEmpty()) {
+		if (list.isEmpty()) {
 			print = "no entries";
 		}
 		else {
-			for (Refilling refilling : getList()) {
+			for (Instance instance : list) {
+				Refilling refilling = (Refilling) instance;
 				print = print + refilling.output() + "\r\n";
 			}
 		}
@@ -36,19 +27,17 @@ public class RefillingList extends InstanceList {
 
 	public String initialOutput() {
 		String output = "";
-		if (!getList().isEmpty()) {
-			output = "[" + getList().size() + "] " + "distance: " + "[" + getDistanceTotal() + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal() + " l" + "] " + "averageConsumption: "
-					+ "[" + getAverageConsumptionTotal() + " l/km" + "]";
-		}
-		if (!output.isEmpty()) {
-			output = "refillings:" + "\r\n" + output;
+		if (!list.isEmpty()) {
+			output = "[" + list.size() + "] " + "distance: " + "[" + getDistanceTotal() + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal() + " l" + "] " + "averageConsumption: " + "["
+					+ getAverageConsumptionTotal() + " l/km" + "]";
 		}
 		return output;
 	}
 
 	private double getDistanceTotal() {
 		double distanceTotal = 0;
-		for (Refilling refilling : getList()) {
+		for (Instance instance : list) {
+			Refilling refilling = (Refilling) instance;
 			distanceTotal = distanceTotal + refilling.distance;
 		}
 		return Math.round(10.0 * distanceTotal) / 10.0;
@@ -56,7 +45,8 @@ public class RefillingList extends InstanceList {
 
 	private double getRefuelAmountTotal() {
 		double refuelAmountTotal = 0;
-		for (Refilling refilling : getList()) {
+		for (Instance instance : list) {
+			Refilling refilling = (Refilling) instance;
 			refuelAmountTotal = refuelAmountTotal + refilling.refuelAmount;
 		}
 		return Math.round(10.0 * refuelAmountTotal) / 10.0;
@@ -68,7 +58,8 @@ public class RefillingList extends InstanceList {
 
 	protected double getHighestDistance() {
 		double highestDistance = 0;
-		for (Refilling refilling : getList()) {
+		for (Instance instance : list) {
+			Refilling refilling = (Refilling) instance;
 			if (refilling.distance > highestDistance) {
 				highestDistance = refilling.distance;
 			}
@@ -78,7 +69,8 @@ public class RefillingList extends InstanceList {
 
 	protected double getHighestRefuelAmount() {
 		double highestRefuelAmount = 0;
-		for (Refilling refilling : getList()) {
+		for (Instance instance : list) {
+			Refilling refilling = (Refilling) instance;
 			if (refilling.refuelAmount > highestRefuelAmount) {
 				highestRefuelAmount = refilling.refuelAmount;
 			}
@@ -89,7 +81,8 @@ public class RefillingList extends InstanceList {
 	protected double getHighestAverageConsumption() {
 		double highestConsumption = 0;
 		double currentConsumption;
-		for (Refilling refilling : getList()) {
+		for (Instance instance : list) {
+			Refilling refilling = (Refilling) instance;
 			currentConsumption = Math.round((refilling.refuelAmount / refilling.distance) * 1000.0) / 10.0;
 			if (currentConsumption > highestConsumption) {
 				highestConsumption = currentConsumption;

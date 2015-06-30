@@ -6,13 +6,13 @@ import java.util.concurrent.CancellationException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public abstract class Plugin {
-	private Terminal				terminal;
-	private GraphicalUserInterface	graphicalUserInterface;
-	private Administration			administration;
-	private boolean					display;
-	protected InstanceList			instanceList;
-	protected String				identity;
-	protected Store					store;
+	protected Terminal					terminal;
+	protected GraphicalUserInterface	graphicalUserInterface;
+	protected Administration			administration;
+	protected boolean					display;
+	protected InstanceList				instanceList;
+	protected String					identity;
+	protected Store						store;
 
 	public Plugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity) {
 		this.store = store;
@@ -77,17 +77,17 @@ public abstract class Plugin {
 	public Instance check() throws InterruptedException {
 		int position = graphicalUserInterface.check(instanceList.getEntriesAsStrings());
 		if (position != -1) {
-			return (Instance) instanceList.getList().get(position);
+			return instanceList.list.get(position);
 		}
 		return null;
 	}
 
 	public void store() {
-		for (Object object : instanceList.getList()) {
+		for (Object object : instanceList.list) {
 			Instance instance = (Instance) object;
 			store.addToStorage(instance.toString());
 		}
-		instanceList.getList().clear();
+		instanceList.list.clear();
 		administration.update();
 	}
 
@@ -108,6 +108,9 @@ public abstract class Plugin {
 		if (display) {
 			initialOutput = instanceList.initialOutput();
 		}
+		if (!initialOutput.isEmpty()) {
+			initialOutput = identity + ":\r\n" + initialOutput;
+		}
 		terminal.out(initialOutput);
 	}
 
@@ -119,11 +122,15 @@ public abstract class Plugin {
 		return display;
 	}
 
+	public InstanceList getInstanceList() {
+		return instanceList;
+	}
+
 	private String show(String[] parameter) {
 		return instanceList.output(parameter);
 	}
 
-	abstract protected String[][] getCreateInformation();
+	abstract protected String[][] getCreateInformation() throws NotImplementedException;
 
 	abstract protected String[][] getShowInformation() throws PrinterAbortException, NotImplementedException;
 

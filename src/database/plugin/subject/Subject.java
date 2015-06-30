@@ -42,7 +42,11 @@ public class Subject extends Instance {
 		allGrades = newGrade + allGrades;
 	}
 
-	protected String output(ArrayList<Subject> subjects) {
+	protected String output(ArrayList<Instance> instances) {
+		ArrayList<Subject> subjects = new ArrayList<Subject>();
+		for (Instance instance : instances) {
+			subjects.add((Subject) instance);
+		}
 		DecimalFormat oneDecimalPlace = new DecimalFormat("#0.0");
 		DecimalFormat twoDecimalPlace = new DecimalFormat("#0.00");
 		String toPrint;

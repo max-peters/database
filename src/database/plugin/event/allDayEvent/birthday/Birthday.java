@@ -1,10 +1,11 @@
-package database.plugin.event.birthday;
+package database.plugin.event.allDayEvent.birthday;
 
 import database.main.date.Date;
 import database.plugin.event.Event;
 import database.plugin.event.EventList;
+import database.plugin.event.allDayEvent.AllDayEvent;
 
-public class Birthday extends Event {
+public class Birthday extends AllDayEvent {
 	public Birthday(String[] parameter, BirthdayList list) {
 		super(new String[] { parameter[0], parameter[1], "true" }, list);
 	}
