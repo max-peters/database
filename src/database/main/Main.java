@@ -23,13 +23,11 @@ public class Main {
 		TaskPlugin task = new TaskPlugin(store, terminal, graphicalUserInterface, administration);
 		ExpensePlugin expense = new ExpensePlugin(store, terminal, graphicalUserInterface, administration);
 		EventPlugin event = new EventPlugin(store, terminal, graphicalUserInterface, administration);
-		event.fetchPlugins();
 		store.addPlugin(subject);
 		store.addPlugin(refilling);
 		store.addPlugin(expense);
 		store.addPlugin(task);
 		store.addPlugin(event);
-		store.addPlugin(event.getPluginList());
 		try {
 			administration.main();
 		}

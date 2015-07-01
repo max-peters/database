@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import database.main.InstanceList;
 import database.main.date.Date;
 
-public abstract class EventList extends InstanceList {
+public class EventList extends InstanceList {
 	public ArrayList<Event> getNearEvents() {
 		Date currentDate = Date.getDate();
 		Date localDate;
@@ -20,11 +20,17 @@ public abstract class EventList extends InstanceList {
 		return nearEvents;
 	}
 
+	public void change(String[] parameter) {
+	}
+
+	public String output(String[] tags) {
+		return null;
+	}
+
 	public String initialOutput() {
-		String output = "";
-		for (Event event : getNearEvents()) {
-			output = output + event.output() + "\r\n";
-		}
-		return output;
+		return null;
+	}
+
+	public void add(String[] parameter) {
 	}
 }

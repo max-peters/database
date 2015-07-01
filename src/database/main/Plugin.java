@@ -1,6 +1,7 @@
 package database.main;
 
 import java.awt.print.PrinterAbortException;
+import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -22,7 +23,7 @@ public abstract class Plugin {
 		this.identity = identity;
 	}
 
-	private String[] request(String[][] information) throws CancellationException, InterruptedException {
+	protected String[] request(String[][] information) throws CancellationException, InterruptedException {
 		String[] parameter = new String[information.length];
 		for (int i = 0; i < information.length; i++) {
 			parameter[i] = administration.request(information[i][0], information[i][1]);
@@ -83,7 +84,7 @@ public abstract class Plugin {
 	}
 
 	public void store() {
-		for (Object object : instanceList.list) {
+		for (Object object : getInstanceList().getList()) {
 			Instance instance = (Instance) object;
 			store.addToStorage(instance.toString());
 		}
@@ -126,13 +127,29 @@ public abstract class Plugin {
 		return instanceList;
 	}
 
+	public ArrayList<String> getStringList() {
+		ArrayList<String> strings = new ArrayList<String>();
+		for (Instance instance : getInstanceList().getList()) {
+			strings.add(instance.toString());
+		}
+		return strings;
+	}
+
+	public String getDisplayAsString() {
+		return "boolean : " + identity + " / " + display;
+	}
+
+	public String getIdentity() {
+		return identity;
+	}
+
 	private String show(String[] parameter) {
 		return instanceList.output(parameter);
 	}
 
-	abstract protected String[][] getCreateInformation() throws NotImplementedException;
+	public abstract String[][] getCreateInformation() throws NotImplementedException;
 
-	abstract protected String[][] getShowInformation() throws PrinterAbortException, NotImplementedException;
+	public abstract String[][] getShowInformation() throws PrinterAbortException, NotImplementedException;
 
-	abstract protected String[][] getChangeInformation() throws NotImplementedException;
+	public abstract String[][] getChangeInformation() throws NotImplementedException;
 }

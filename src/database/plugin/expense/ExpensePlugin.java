@@ -13,17 +13,17 @@ public class ExpensePlugin extends Plugin {
 		this.instanceList = new ExpenseList();
 	}
 
-	protected String[][] getCreateInformation() {
+	public String[][] getCreateInformation() {
 		String[][] createInformation = { { "name", "[A-ZÖÄÜa-zöäüß\\- ]*" }, { "category", "[A-ZÖÄÜa-zöäüß\\- ]*" }, { "value", "[0-9]{1,13}(\\.[0-9]*)?" }, { "date", null } };
 		return createInformation;
 	}
 
-	protected String[][] getShowInformation() {
+	public String[][] getShowInformation() {
 		String[][] showInformation = { { "expense", "(all|current|average|month|day)" } };
 		return showInformation;
 	}
 
-	protected String[][] getChangeInformation() throws NotImplementedException {
+	public String[][] getChangeInformation() throws NotImplementedException {
 		throw new NotImplementedException();
 	}
 }

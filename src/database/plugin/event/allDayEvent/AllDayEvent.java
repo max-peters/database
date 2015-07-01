@@ -8,7 +8,7 @@ public class AllDayEvent extends Event {
 	}
 
 	public String toString() {
-		return "allDayEvent : " + name + " / " + date.toString();
+		return "event : all day event / " + name + " / " + date.toString();
 	}
 
 	protected String output() {

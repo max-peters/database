@@ -11,7 +11,7 @@ public class Birthday extends AllDayEvent {
 	}
 
 	public String toString() {
-		return "birthday : " + name + " / " + date.toString();
+		return "event : birthday / " + name + " / " + date.toString();
 	}
 
 	protected String output() {

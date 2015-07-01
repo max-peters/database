@@ -12,17 +12,17 @@ public class SubjectPlugin extends Plugin {
 		this.instanceList = new SubjectList();
 	}
 
-	protected String[][] getCreateInformation() {
+	public String[][] getCreateInformation() {
 		String[][] createInformation = { { "name", "[A-ZÖÄÜ].*" }, { "tag", "[a-zöäüß]*" } };
 		return createInformation;
 	}
 
-	protected String[][] getShowInformation() {
+	public String[][] getShowInformation() {
 		String[][] showInformation = { { "subject", "(average|" + ((SubjectList) instanceList).getTagsAsRegex() + ")" } };
 		return showInformation;
 	}
 
-	protected String[][] getChangeInformation() {
+	public String[][] getChangeInformation() {
 		String[][] changeInformation = { { "subject", ((SubjectList) instanceList).getTagsAsRegex() }, { "grade", "[0-9]{1,13}(\\.[0-9]*)?" }, { "maxgrade", "[0-9]{1,13}(\\.[0-9]*)?" } };
 		return changeInformation;
 	}

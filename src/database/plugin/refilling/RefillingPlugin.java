@@ -15,16 +15,16 @@ public class RefillingPlugin extends Plugin {
 		this.instanceList = new RefillingList();
 	}
 
-	protected String[][] getCreateInformation() {
+	public String[][] getCreateInformation() {
 		String[][] createInformation = { { "refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?" }, { "value", "[0-9]{1,13}(\\.[0-9]*)?" }, { "distance", "[0-9]{1,13}(\\.[0-9]*)?" }, { "date", null } };
 		return createInformation;
 	}
 
-	protected String[][] getShowInformation() throws PrinterAbortException {
+	public String[][] getShowInformation() throws PrinterAbortException {
 		throw new PrinterAbortException();
 	}
 
-	protected String[][] getChangeInformation() throws NotImplementedException {
+	public String[][] getChangeInformation() throws NotImplementedException {
 		throw new NotImplementedException();
 	}
 }

@@ -13,16 +13,16 @@ public class TaskPlugin extends Plugin {
 		this.instanceList = new TaskList();
 	}
 
-	protected String[][] getCreateInformation() {
+	public String[][] getCreateInformation() {
 		String[][] createInformation = { { "task", ".+" } };
 		return createInformation;
 	}
 
-	protected String[][] getShowInformation() throws NotImplementedException {
+	public String[][] getShowInformation() throws NotImplementedException {
 		throw new NotImplementedException();
 	}
 
-	protected String[][] getChangeInformation() throws NotImplementedException {
+	public String[][] getChangeInformation() throws NotImplementedException {
 		throw new NotImplementedException();
 	}
 }
