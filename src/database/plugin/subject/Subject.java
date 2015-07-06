@@ -3,7 +3,7 @@ package database.plugin.subject;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import database.main.Instance;
+import database.plugin.Instance;
 
 public class Subject extends Instance {
 	private double	allGrades;

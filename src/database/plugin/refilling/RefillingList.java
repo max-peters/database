@@ -1,7 +1,7 @@
 package database.plugin.refilling;
 
-import database.main.Instance;
-import database.main.InstanceList;
+import database.plugin.Instance;
+import database.plugin.InstanceList;
 
 public class RefillingList extends InstanceList {
 	public void add(String[] parameter) {

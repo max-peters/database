@@ -1,6 +1,6 @@
 package database.plugin.task;
 
-import database.main.Instance;
+import database.plugin.Instance;
 
 public class Task extends Instance {
 	String	task;

@@ -2,6 +2,8 @@ package database.main;
 
 import java.util.ArrayList;
 
+import database.plugin.Plugin;
+
 public class Store {
 	private ArrayList<Plugin>	plugins;
 	private ArrayList<String>	storage;
@@ -50,7 +52,7 @@ public class Store {
 
 	public Plugin getPlugin(String identity) {
 		for (Plugin plugin : plugins) {
-			if (plugin.identity.equals(identity)) {
+			if (plugin.getIdentity().equals(identity)) {
 				return plugin;
 			}
 		}
@@ -60,7 +62,7 @@ public class Store {
 	public String getTagsAsRegex() {
 		String regex = "(";
 		for (Plugin plugin : plugins) {
-			regex = regex + plugin.identity;
+			regex = regex + plugin.getIdentity();
 			if (!(plugins.indexOf(plugin) == plugins.size() - 1)) {
 				regex = regex + "|";
 			}

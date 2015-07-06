@@ -5,8 +5,9 @@ import java.util.concurrent.CancellationException;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.date.Date;
+import database.plugin.Plugin;
 
-// TODO: birthday extends event termine exteds event, stundenplan
+// TODO: stundenplan
 public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
 	private Store					store;
@@ -62,57 +63,62 @@ public class Administration {
 
 	private void inputRequestAdministration() throws InterruptedException, IOException {
 		while (true) {
-			String command;
-			command = request("command", "(add|new|store|history|save|display|check|exit|push|pull)");
-			if (command.matches("(add|new|history|store|display)")) {
-				Plugin plugin;
-				try {
-					plugin = store.getPlugin(request(command, store.getTagsAsRegex()));
+			String command = null;
+			try {
+				command = request("command", "(add|new|store|history|save|display|check|exit|push|pull)");
+				if (command.matches("(add|new|history|store|display)")) {
+					Plugin plugin;
+					try {
+						plugin = store.getPlugin(request(command, store.getTagsAsRegex()));
+					}
+					catch (CancellationException e) {
+						return;
+					}
+					try {
+						switch (command) {
+							case "add":
+								plugin.change();
+								break;
+							case "new":
+								plugin.create();
+								break;
+							case "history":
+								plugin.show();
+								break;
+							case "store":
+								plugin.store();
+								break;
+							case "display":
+								plugin.display();
+								break;
+						}
+					}
+					catch (NotImplementedException e) {
+						errorMessage();
+					}
 				}
-				catch (CancellationException e) {
-					return;
-				}
-				try {
+				else if (command.matches("(check|exit|save|push|pull)")) {
 					switch (command) {
-						case "add":
-							plugin.change();
+						case "check":
+							store.getPlugin("task").remove(store.getPlugin("task").check());
 							break;
-						case "new":
-							plugin.create();
+						case "save":
+							save();
 							break;
-						case "history":
-							plugin.show();
+						case "pull":
+							launcher.pull();
 							break;
-						case "store":
-							plugin.store();
+						case "push":
+							launcher.push();
 							break;
-						case "display":
-							plugin.display();
+						case "exit":
+							exit();
 							break;
 					}
 				}
-				catch (NotImplementedException e) {
-					errorMessage();
-				}
 			}
-			else if (command.matches("(check|exit|save|push|pull)")) {
-				switch (command) {
-					case "check":
-						store.getPlugin("task").remove(store.getPlugin("task").check());
-						break;
-					case "save":
-						save();
-						break;
-					case "pull":
-						launcher.pull();
-						break;
-					case "push":
-						launcher.push();
-						break;
-					case "exit":
-						exit();
-						break;
-				}
+			catch (NotImplementedException e) {
+				errorMessage();
 			}
 		}
 	}
@@ -136,6 +142,8 @@ public class Administration {
 				case "n":
 					break;
 				case "s":
+					graphicalUserInterface.blockInput();
+					terminal.requestOut("saving");
 					writerReader.write();
 					System.exit(0);
 					break;

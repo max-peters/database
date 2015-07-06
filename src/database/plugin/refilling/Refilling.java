@@ -1,7 +1,7 @@
 package database.plugin.refilling;
 
-import database.main.Instance;
 import database.main.date.Date;
+import database.plugin.Instance;
 
 public class Refilling extends Instance {
 	public double	refuelAmount;

@@ -5,9 +5,9 @@ import java.awt.print.PrinterAbortException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
-import database.main.Plugin;
 import database.main.Store;
 import database.main.Terminal;
+import database.plugin.Plugin;
 
 public class RefillingPlugin extends Plugin {
 	public RefillingPlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {

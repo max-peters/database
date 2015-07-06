@@ -1,7 +1,7 @@
 package database.plugin.subject;
 
-import database.main.Instance;
-import database.main.InstanceList;
+import database.plugin.Instance;
+import database.plugin.InstanceList;
 
 public class SubjectList extends InstanceList {
 	public void add(String[] parameter) {

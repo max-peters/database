@@ -3,9 +3,9 @@ package database.plugin.event.allDayEvent;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
-import database.main.Plugin;
 import database.main.Store;
 import database.main.Terminal;
+import database.plugin.Plugin;
 
 public class AllDayEventPlugin extends Plugin {
 	public AllDayEventPlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {

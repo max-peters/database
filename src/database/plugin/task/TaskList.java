@@ -1,6 +1,6 @@
 package database.plugin.task;
 
-import database.main.InstanceList;
+import database.plugin.InstanceList;
 
 public class TaskList extends InstanceList {
 	public TaskList() {

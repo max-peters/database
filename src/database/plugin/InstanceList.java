@@ -1,4 +1,4 @@
-package database.main;
+package database.plugin;
 
 import java.util.ArrayList;
 

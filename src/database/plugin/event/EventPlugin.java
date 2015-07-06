@@ -8,11 +8,11 @@ import java.util.concurrent.CancellationException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
-import database.main.Instance;
-import database.main.InstanceList;
-import database.main.Plugin;
 import database.main.Store;
 import database.main.Terminal;
+import database.plugin.Instance;
+import database.plugin.InstanceList;
+import database.plugin.Plugin;
 import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.allDayEvent.birthday.BirthdayPlugin;
 

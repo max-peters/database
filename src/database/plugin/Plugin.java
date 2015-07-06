@@ -1,10 +1,14 @@
-package database.main;
+package database.plugin;
 
 import java.awt.print.PrinterAbortException;
 import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import database.main.Administration;
+import database.main.GraphicalUserInterface;
+import database.main.Store;
+import database.main.Terminal;
 
 public abstract class Plugin {
 	protected Terminal					terminal;
@@ -29,6 +33,9 @@ public abstract class Plugin {
 			parameter[i] = administration.request(information[i][0], information[i][1]);
 		}
 		return parameter;
+	}
+
+	public void commandRequest() {
 	}
 
 	public void create() throws InterruptedException {
@@ -78,7 +85,7 @@ public abstract class Plugin {
 	public Instance check() throws InterruptedException {
 		int position = graphicalUserInterface.check(instanceList.getEntriesAsStrings());
 		if (position != -1) {
-			return instanceList.list.get(position);
+			return instanceList.getList().get(position);
 		}
 		return null;
 	}
@@ -88,7 +95,7 @@ public abstract class Plugin {
 			Instance instance = (Instance) object;
 			store.addToStorage(instance.toString());
 		}
-		instanceList.list.clear();
+		instanceList.getList().clear();
 		administration.update();
 	}
 

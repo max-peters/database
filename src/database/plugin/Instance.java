@@ -1,4 +1,5 @@
-package database.main;
+package database.plugin;
+
 
 public abstract class Instance {
 	public String			identity;

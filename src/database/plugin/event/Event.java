@@ -1,7 +1,7 @@
 package database.plugin.event;
 
-import database.main.Instance;
 import database.main.date.Date;
+import database.plugin.Instance;
 
 public abstract class Event extends Instance implements Comparable<Event> {
 	protected Date		date;

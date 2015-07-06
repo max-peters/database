@@ -1,7 +1,7 @@
 package database.plugin.expense;
 
-import database.main.Instance;
 import database.main.date.Date;
+import database.plugin.Instance;
 
 public class Expense extends Instance {
 	public double	value;
