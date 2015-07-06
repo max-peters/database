@@ -50,48 +50,16 @@ public class Administration {
 		}
 	}
 
-	public void update() {
-		graphicalUserInterface.clear();
-		initialOutput();
-		store.setChanges(true);
-	}
-
-	private void errorMessage() throws InterruptedException {
-		terminal.requestOut("invalid input");
-		graphicalUserInterface.waitForInput();
-	}
-
 	private void inputRequestAdministration() throws InterruptedException, IOException {
 		while (true) {
 			String command = null;
 			try {
-				command = request("command", "(add|new|store|history|save|display|check|exit|push|pull)");
-				if (command.matches("(add|new|history|store|display)")) {
-					Plugin plugin;
+				command = request("command", store.getNameTagsAsRegex().replace(")", "|") + "check|exit|save|push|pull)");
+				if (command.matches(store.getNameTagsAsRegex())) {
+					Plugin plugin = store.getPlugin(command);
 					try {
-						plugin = store.getPlugin(request(command, store.getTagsAsRegex()));
-					}
-					catch (CancellationException e) {
-						return;
-					}
-					try {
-						switch (command) {
-							case "add":
-								plugin.change();
-								break;
-							case "new":
-								plugin.create();
-								break;
-							case "history":
-								plugin.show();
-								break;
-							case "store":
-								plugin.store();
-								break;
-							case "display":
-								plugin.display();
-								break;
-						}
+						command = request(command, plugin.getCommandTags());
+						plugin.conduct(command);
 					}
 					catch (NotImplementedException e) {
 						errorMessage();
@@ -117,8 +85,8 @@ public class Administration {
 					}
 				}
 			}
-			catch (NotImplementedException e) {
-				errorMessage();
+			catch (CancellationException e) {
+				return;
 			}
 		}
 	}
@@ -162,7 +130,6 @@ public class Administration {
 			terminal.requestOut(printOut + ":");
 			input = terminal.in();
 			if (input.compareTo("back") == 0) {
-				request = false;
 				throw new CancellationException();
 			}
 			else if ((regex != null) && (input.matches(regex))) {
@@ -174,10 +141,20 @@ public class Administration {
 				request = false;
 			}
 			else {
-				terminal.requestOut("invalid input");
-				graphicalUserInterface.waitForInput();
+				errorMessage();
 			}
 		}
 		return result;
+	}
+
+	public void errorMessage() throws InterruptedException {
+		terminal.requestOut("invalid input");
+		graphicalUserInterface.waitForInput();
+	}
+
+	public void update() {
+		graphicalUserInterface.clear();
+		initialOutput();
+		store.setChanges(true);
 	}
 }

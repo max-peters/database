@@ -17,7 +17,8 @@ public class Main {
 		GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
 		Terminal terminal = new Terminal(graphicalUserInterface);
 		WriterReader writerReader = new WriterReader(store);
-		Administration administration = new Administration(graphicalUserInterface, store, terminal, writerReader, launcher);
+		Administration administration = new Administration(graphicalUserInterface, store, terminal, writerReader,
+				launcher);
 		SubjectPlugin subject = new SubjectPlugin(store, terminal, graphicalUserInterface, administration);
 		RefillingPlugin refilling = new RefillingPlugin(store, terminal, graphicalUserInterface, administration);
 		TaskPlugin task = new TaskPlugin(store, terminal, graphicalUserInterface, administration);
@@ -30,9 +31,9 @@ public class Main {
 		store.addPlugin(event);
 		try {
 			administration.main();
-		}
-		catch (IOException | InterruptedException e) {
-			JOptionPane.showMessageDialog(graphicalUserInterface.frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		} catch (IOException | InterruptedException e) {
+			JOptionPane.showMessageDialog(graphicalUserInterface.frame, e.getMessage(), "Error",
+					JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 	}

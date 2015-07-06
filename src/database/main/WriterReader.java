@@ -43,7 +43,7 @@ public class WriterReader {
 			String line = scanner.nextLine();
 			String splitResult[] = line.split(" : ");
 			String parameters[] = splitResult[1].split(" / ");
-			if (splitResult[0].matches(store.getTagsAsRegex())) {
+			if (splitResult[0].matches(store.getNameTagsAsRegex())) {
 				store.getPlugin(splitResult[0]).create(parameters);
 			}
 			else if (splitResult[0].equals("boolean")) {

@@ -59,7 +59,7 @@ public class Store {
 		return null;
 	}
 
-	public String getTagsAsRegex() {
+	public String getNameTagsAsRegex() {
 		String regex = "(";
 		for (Plugin plugin : plugins) {
 			regex = regex + plugin.getIdentity();

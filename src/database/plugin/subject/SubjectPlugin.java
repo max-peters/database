@@ -18,12 +18,13 @@ public class SubjectPlugin extends Plugin {
 	}
 
 	public String[][] getShowInformation() {
-		String[][] showInformation = { { "subject", "(average|" + ((SubjectList) instanceList).getTagsAsRegex() + ")" } };
+		String[][] showInformation = { { "show", "(average|" + ((SubjectList) instanceList).getTagsAsRegex() + ")" } };
 		return showInformation;
 	}
 
 	public String[][] getChangeInformation() {
-		String[][] changeInformation = { { "subject", ((SubjectList) instanceList).getTagsAsRegex() }, { "grade", "[0-9]{1,13}(\\.[0-9]*)?" }, { "maxgrade", "[0-9]{1,13}(\\.[0-9]*)?" } };
+		String[][] changeInformation = { { "add", ((SubjectList) instanceList).getTagsAsRegex() }, { "grade", "[0-9]{1,13}(\\.[0-9]*)?" },
+				{ "maxgrade", "[0-9]{1,13}(\\.[0-9]*)?" } };
 		return changeInformation;
 	}
 }

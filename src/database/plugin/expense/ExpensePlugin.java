@@ -14,12 +14,13 @@ public class ExpensePlugin extends Plugin {
 	}
 
 	public String[][] getCreateInformation() {
-		String[][] createInformation = { { "name", "[A-ZÖÄÜa-zöäüß\\- ]*" }, { "category", "[A-ZÖÄÜa-zöäüß\\- ]*" }, { "value", "[0-9]{1,13}(\\.[0-9]*)?" }, { "date", null } };
+		String[][] createInformation = { { "name", "[A-ZÖÄÜa-zöäüß\\- ]*" }, { "category", "[A-ZÖÄÜa-zöäüß\\- ]*" },
+				{ "value", "[0-9]{1,13}(\\.[0-9]*)?" }, { "date", null } };
 		return createInformation;
 	}
 
 	public String[][] getShowInformation() {
-		String[][] showInformation = { { "expense", "(all|current|average|month|day)" } };
+		String[][] showInformation = { { "show", "(all|current|average|month|day)" } };
 		return showInformation;
 	}
 

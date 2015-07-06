@@ -16,7 +16,8 @@ public class RefillingPlugin extends Plugin {
 	}
 
 	public String[][] getCreateInformation() {
-		String[][] createInformation = { { "refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?" }, { "value", "[0-9]{1,13}(\\.[0-9]*)?" }, { "distance", "[0-9]{1,13}(\\.[0-9]*)?" }, { "date", null } };
+		String[][] createInformation = { { "refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?" }, { "value", "[0-9]{1,13}(\\.[0-9]*)?" },
+				{ "distance", "[0-9]{1,13}(\\.[0-9]*)?" }, { "date", null } };
 		return createInformation;
 	}
 

@@ -1,6 +1,7 @@
 package database.plugin;
 
 import java.awt.print.PrinterAbortException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
 
@@ -35,10 +36,51 @@ public abstract class Plugin {
 		return parameter;
 	}
 
-	public void commandRequest() {
+	public String getCommandTags() {
+		String regex = "(";
+		ArrayList<String> strings = new ArrayList<String>();
+		for (Method method : this.getClass().getMethods()) {
+			if (method.isAnnotationPresent(Command.class)) {
+				strings.add(method.getAnnotation(Command.class).tag());
+			}
+		}
+		for (String string : strings) {
+			regex = regex + string;
+			if (!(strings.indexOf(string) == strings.size() - 1)) {
+				regex = regex + "|";
+			}
+		}
+		System.out.println(regex);
+		return regex + ")";
 	}
 
-	public void create() throws InterruptedException {
+	public void conduct(String command) throws InterruptedException {
+		try {
+			switch (command) {
+				case "add":
+					change();
+					break;
+				case "new":
+					create();
+					break;
+				case "show":
+					show();
+					break;
+				case "store":
+					store();
+					break;
+				case "display":
+					display();
+					break;
+			}
+		}
+		catch (NotImplementedException e) {
+			terminal.requestOut("invalid input");
+			graphicalUserInterface.waitForInput();
+		}
+	}
+
+	@Command(tag = "new") public void create() throws InterruptedException {
 		try {
 			create(request(getCreateInformation()));
 			administration.update();
@@ -48,7 +90,7 @@ public abstract class Plugin {
 		}
 	}
 
-	public void show() throws InterruptedException, NotImplementedException {
+	@Command(tag = "show") public void show() throws InterruptedException, NotImplementedException {
 		try {
 			terminal.solutionOut(show(request(getShowInformation())));
 			graphicalUserInterface.waitForInput();
@@ -58,10 +100,11 @@ public abstract class Plugin {
 		}
 		catch (PrinterAbortException e) {
 			terminal.solutionOut(show(null));
+			graphicalUserInterface.waitForInput();
 		}
 	}
 
-	public void change() throws InterruptedException, NotImplementedException {
+	@Command(tag = "add") public void change() throws InterruptedException, NotImplementedException {
 		try {
 			change(request(getChangeInformation()));
 			administration.update();
@@ -71,7 +114,7 @@ public abstract class Plugin {
 		}
 	}
 
-	public void display() throws InterruptedException {
+	@Command(tag = "display") public void display() throws InterruptedException {
 		String[][] displayInformation = { { identity, "(true|false)" } };
 		try {
 			display = Boolean.valueOf(request(displayInformation)[0]);
@@ -82,21 +125,21 @@ public abstract class Plugin {
 		}
 	}
 
-	public Instance check() throws InterruptedException {
-		int position = graphicalUserInterface.check(instanceList.getEntriesAsStrings());
-		if (position != -1) {
-			return instanceList.getList().get(position);
-		}
-		return null;
-	}
-
-	public void store() {
+	@Command(tag = "store") public void store() {
 		for (Object object : getInstanceList().getList()) {
 			Instance instance = (Instance) object;
 			store.addToStorage(instance.toString());
 		}
 		instanceList.getList().clear();
 		administration.update();
+	}
+
+	public Instance check() throws InterruptedException {
+		int position = graphicalUserInterface.check(instanceList.getEntriesAsStrings());
+		if (position != -1) {
+			return instanceList.getList().get(position);
+		}
+		return null;
 	}
 
 	public void create(String[] parameter) {
