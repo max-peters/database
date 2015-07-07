@@ -5,31 +5,29 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.Store;
 import database.main.Terminal;
+import database.plugin.Command;
 import database.plugin.Instance;
-import database.plugin.InstanceList;
 import database.plugin.Plugin;
 import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.allDayEvent.birthday.BirthdayPlugin;
 
 public class EventPlugin extends Plugin {
-	private ArrayList<Plugin>	pluginList	= new ArrayList<Plugin>();
+	private ArrayList<EventExtention>	extentionList	= new ArrayList<EventExtention>();
 
 	public EventPlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(store, terminal, graphicalUserInterface, administration, "event");
-		this.instanceList = new EventList();
+		super(store, terminal, graphicalUserInterface, administration, "event", null);
 		initialise();
 	}
 
-	public void create() throws InterruptedException {
+	@Command(tag = "new") public void create() throws InterruptedException {
 		try {
-			Plugin plugin = chooseType();
-			if (plugin != null) {
-				plugin.create(request(plugin.getCreateInformation()));
+			EventExtention extention = chooseType();
+			if (extention != null) {
+				extention.create();
 				administration.update();
 			}
 		}
@@ -38,31 +36,58 @@ public class EventPlugin extends Plugin {
 		}
 	}
 
-	public void create(String[] parameter) {
-		for (Plugin plugin : pluginList) {
-			if (parameter[0].equals(plugin.getIdentity())) {
-				plugin.create(new String[] { parameter[1], parameter[2] });
+	@Override @Command(tag = "display") public void display() throws InterruptedException {
+		chooseType().display();
+	}
+
+	@Override @Command(tag = "store") public void store() {
+		for (EventExtention extention : extentionList) {
+			for (Object object : extention.getInstanceList().getList()) {
+				Instance instance = (Instance) object;
+				store.addToStorage(instance.toString());
+			}
+			extention.getInstanceList().getList().clear();
+		}
+		administration.update();
+	}
+
+	@Override public void conduct(String command) throws InterruptedException {
+		switch (command) {
+			case "new":
+				create();
+				break;
+			case "store":
+				store();
+				break;
+			case "display":
+				display();
+				break;
+		}
+	}
+
+	@Override public void create(String[] parameter) {
+		for (EventExtention extention : extentionList) {
+			if (parameter[0].equals(extention.getIdentity())) {
+				extention.create(new String[] { parameter[1], parameter[2] });
 			}
 		}
 	}
 
-	public InstanceList getInstanceList() {
-		EventList events = new EventList();
-		for (Plugin plugin : pluginList) {
-			for (Instance instance : plugin.getInstanceList().getList()) {
-				events.getList().add(instance);
+	@Override public void remove(Instance toRemove) {
+		for (EventExtention extention : extentionList) {
+			if (extention.getInstanceList().getList().contains(toRemove)) {
+				extention.getInstanceList().getList().remove(toRemove);
 			}
 		}
-		return events;
 	}
 
-	public void initialOutput() {
+	@Override public void initialOutput() {
 		String initialOutput = "";
 		List<Event> eventList = new ArrayList<Event>();
 		if (display) {
-			for (Plugin plugin : pluginList) {
-				if (plugin.getDisplay()) {
-					EventList currentEventList = (EventList) plugin.getInstanceList();
+			for (EventExtention extention : extentionList) {
+				if (extention.getDisplay()) {
+					EventList currentEventList = (EventList) extention.getInstanceList();
 					for (Event event : currentEventList.getNearEvents()) {
 						eventList.add(event);
 					}
@@ -79,35 +104,51 @@ public class EventPlugin extends Plugin {
 		}
 	}
 
-	public void display() throws InterruptedException {
-		chooseType().display();
-	}
-
-	public void store() {
-		for (Plugin plugin : pluginList) {
-			for (Object object : plugin.getInstanceList().getList()) {
-				Instance instance = (Instance) object;
-				store.addToStorage(instance.toString());
-			}
-			instanceList.getList().clear();
-		}
-		administration.update();
-	}
-
-	private Plugin chooseType() throws InterruptedException {
+	@Override public Instance check() throws InterruptedException {
+		int position;
 		ArrayList<String> strings = new ArrayList<String>();
-		Plugin toReturn = null;
+		ArrayList<Event> events = new ArrayList<Event>();
+		for (EventExtention extention : extentionList) {
+			for (Instance instance : extention.getInstanceList().getList()) {
+				Event event = (Event) instance;
+				events.add(event);
+			}
+		}
+		Collections.sort(events);
+		for (Event event : events) {
+			strings.add(event.identity);
+		}
+		position = graphicalUserInterface.check(strings);
+		if (position != -1) {
+			return events.get(position);
+		}
+		return null;
+	}
+
+	@Override public ArrayList<String> getStringList() {
+		ArrayList<String> strings = new ArrayList<String>();
+		for (EventExtention extention : extentionList) {
+			for (Instance instance : extention.getInstanceList().getList()) {
+				strings.add(instance.toString());
+			}
+		}
+		return strings;
+	}
+
+	private EventExtention chooseType() throws InterruptedException {
+		ArrayList<String> strings = new ArrayList<String>();
+		EventExtention toReturn = null;
 		String pluginIdentity;
 		int position;
-		for (Plugin plugin : pluginList) {
-			strings.add(plugin.getIdentity());
+		for (EventExtention extention : extentionList) {
+			strings.add(extention.getIdentity());
 		}
 		position = graphicalUserInterface.check(strings);
 		if (position != -1) {
 			pluginIdentity = strings.get(position);
-			for (Plugin plugin : pluginList) {
-				if (pluginIdentity.equals(plugin.getIdentity())) {
-					toReturn = plugin;
+			for (EventExtention extention : extentionList) {
+				if (pluginIdentity.equals(extention.getIdentity())) {
+					toReturn = extention;
 				}
 			}
 		}
@@ -115,20 +156,7 @@ public class EventPlugin extends Plugin {
 	}
 
 	private void initialise() {
-		pluginList.add(new AllDayEventPlugin(store, terminal, graphicalUserInterface, administration));
-		pluginList.add(new BirthdayPlugin(store, terminal, graphicalUserInterface, administration));
-	}
-
-	public String[][] getCreateInformation() throws NotImplementedException {
-		String[][] createInformation = { { "name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)" }, { "date", null } };
-		return createInformation;
-	}
-
-	public String[][] getShowInformation() throws NotImplementedException {
-		throw new NotImplementedException();
-	}
-
-	public String[][] getChangeInformation() throws NotImplementedException {
-		throw new NotImplementedException();
+		extentionList.add(new AllDayEventPlugin(store, terminal, graphicalUserInterface, administration));
+		extentionList.add(new BirthdayPlugin(store, terminal, graphicalUserInterface, administration));
 	}
 }

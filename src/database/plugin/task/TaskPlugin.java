@@ -1,28 +1,40 @@
 package database.plugin.task;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import java.util.concurrent.CancellationException;
+
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.Store;
 import database.main.Terminal;
+import database.plugin.Command;
 import database.plugin.Plugin;
 
 public class TaskPlugin extends Plugin {
 	public TaskPlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(store, terminal, graphicalUserInterface, administration, "task");
-		this.instanceList = new TaskList();
+		super(store, terminal, graphicalUserInterface, administration, "task", new TaskList());
 	}
 
-	public String[][] getCreateInformation() {
-		String[][] createInformation = { { "task", ".+" } };
-		return createInformation;
+	@Command(tag = "new") public void create() throws InterruptedException {
+		try {
+			create(request(new String[][] { { "task", ".+" } }));
+			administration.update();
+		}
+		catch (CancellationException e) {
+			return;
+		}
 	}
 
-	public String[][] getShowInformation() throws NotImplementedException {
-		throw new NotImplementedException();
-	}
-
-	public String[][] getChangeInformation() throws NotImplementedException {
-		throw new NotImplementedException();
+	@Override public void conduct(String command) throws InterruptedException {
+		switch (command) {
+			case "new":
+				create();
+				break;
+			case "store":
+				store();
+				break;
+			case "display":
+				display();
+				break;
+		}
 	}
 }

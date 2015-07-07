@@ -3,7 +3,7 @@ package database.plugin;
 import java.util.ArrayList;
 
 public abstract class InstanceList {
-	protected ArrayList<Instance>	list;
+	private ArrayList<Instance>	list;
 
 	public InstanceList() {
 		this.list = new ArrayList<Instance>();
@@ -13,27 +13,17 @@ public abstract class InstanceList {
 		list.remove(toRemove);
 	}
 
-	public int getSize() {
-		return list.size();
-	}
-
 	public ArrayList<Instance> getList() {
 		return list;
 	}
 
-	public ArrayList<String> getEntriesAsStrings() {
-		ArrayList<String> strings = new ArrayList<String>();
-		for (Instance instance : list) {
-			strings.add(instance.identity);
-		}
-		return strings;
+	public String initialOutput() {
+		return null;
 	}
 
-	public abstract String initialOutput();
-
-	public abstract String output(String[] tags);
+	public String output(String[] tags) {
+		return null;
+	}
 
 	public abstract void add(String[] parameter);
-
-	public abstract void change(String[] parameter);
 }

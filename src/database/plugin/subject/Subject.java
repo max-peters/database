@@ -28,7 +28,7 @@ public class Subject extends Instance {
 		}
 	}
 
-	public String toString() {
+	@Override public String toString() {
 		return "subject" + " : " + name + " / " + tag + " / " + allGrades + " / " + allGradesTotal + " / " + counter;
 	}
 

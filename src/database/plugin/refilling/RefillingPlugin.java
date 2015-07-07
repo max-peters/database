@@ -1,31 +1,49 @@
 package database.plugin.refilling;
 
-import java.awt.print.PrinterAbortException;
+import java.util.concurrent.CancellationException;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.Store;
 import database.main.Terminal;
+import database.plugin.Command;
 import database.plugin.Plugin;
 
 public class RefillingPlugin extends Plugin {
 	public RefillingPlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(store, terminal, graphicalUserInterface, administration, "refilling");
-		this.instanceList = new RefillingList();
+		super(store, terminal, graphicalUserInterface, administration, "refilling", new RefillingList());
 	}
 
-	public String[][] getCreateInformation() {
-		String[][] createInformation = { { "refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?" }, { "value", "[0-9]{1,13}(\\.[0-9]*)?" },
-				{ "distance", "[0-9]{1,13}(\\.[0-9]*)?" }, { "date", null } };
-		return createInformation;
+	@Command(tag = "new") public void create() throws InterruptedException {
+		try {
+			create(request(new String[][] { { "refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?" }, { "value", "[0-9]{1,13}(\\.[0-9]*)?" }, { "distance", "[0-9]{1,13}(\\.[0-9]*)?" }, { "date", null } }));
+			administration.update();
+		}
+		catch (CancellationException e) {
+			return;
+		}
 	}
 
-	public String[][] getShowInformation() throws PrinterAbortException {
-		throw new PrinterAbortException();
+	@Command(tag = "show") public void show() throws InterruptedException, NotImplementedException {
+		terminal.solutionOut(instanceList.output(null));
+		graphicalUserInterface.waitForInput();
 	}
 
-	public String[][] getChangeInformation() throws NotImplementedException {
-		throw new NotImplementedException();
+	@Override public void conduct(String command) throws InterruptedException {
+		switch (command) {
+			case "new":
+				create();
+				break;
+			case "show":
+				show();
+				break;
+			case "store":
+				store();
+				break;
+			case "display":
+				display();
+				break;
+		}
 	}
 }

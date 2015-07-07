@@ -10,11 +10,11 @@ public class Birthday extends AllDayEvent {
 		super(new String[] { parameter[0], parameter[1], "true" }, list);
 	}
 
-	public String toString() {
+	@Override public String toString() {
 		return "event : birthday / " + name + " / " + date.toString();
 	}
 
-	protected String output() {
+	@Override protected String output() {
 		int nameLength = 0;
 		int ageLength = 0;
 		String newName = name;

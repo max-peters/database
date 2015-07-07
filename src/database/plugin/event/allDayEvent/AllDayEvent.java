@@ -7,11 +7,11 @@ public class AllDayEvent extends Event {
 		super(new String[] { parameter[0], parameter[1], "true" }, list);
 	}
 
-	public String toString() {
+	@Override public String toString() {
 		return "event : all day event / " + name + " / " + date.toString();
 	}
 
-	protected String output() {
+	@Override protected String output() {
 		return updateYear().toString() + " - " + name;
 	}
 }

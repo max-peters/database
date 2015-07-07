@@ -1,6 +1,5 @@
 package database.plugin;
 
-
 public abstract class Instance {
 	public String			identity;
 	protected InstanceList	list;
@@ -10,5 +9,5 @@ public abstract class Instance {
 		this.list = list;
 	}
 
-	public abstract String toString();
+	@Override public abstract String toString();
 }

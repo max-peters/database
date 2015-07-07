@@ -10,7 +10,7 @@ public class Task extends Instance {
 		this.task = parameter[0];
 	}
 
-	public String toString() {
+	@Override public String toString() {
 		return "task" + " : " + task;
 	}
 }

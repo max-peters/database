@@ -9,14 +9,11 @@ import database.plugin.Instance;
 import database.plugin.InstanceList;
 
 public class ExpenseList extends InstanceList {
-	public void add(String[] parameter) {
-		list.add(new Expense(parameter, this));
+	@Override public void add(String[] parameter) {
+		getList().add(new Expense(parameter, this));
 	}
 
-	public void change(String[] parameter) {
-	}
-
-	public String output(String[] tags) {
+	@Override public String output(String[] tags) {
 		String print = null;
 		switch (tags[0]) {
 			case "all":
@@ -44,10 +41,6 @@ public class ExpenseList extends InstanceList {
 		return print;
 	}
 
-	public String initialOutput() {
-		return null;
-	}
-
 	private String outputIntervall(int month, int year) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		int nameLength = 0;
@@ -58,7 +51,7 @@ public class ExpenseList extends InstanceList {
 		String toReturn = "";
 		ArrayList<String> categorys = new ArrayList<String>();
 		ArrayList<String> names;
-		for (Instance instance : list) {
+		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
 			if (!(categorys.contains(expense.category))) {
 				categorys.add(expense.category);
@@ -71,9 +64,9 @@ public class ExpenseList extends InstanceList {
 			}
 		}
 		for (String current : categorys) {
-			toReturn = toReturn + current + ":" + "\r\n";
+			toReturn = toReturn + current + ":\r\n";
 			names = new ArrayList<String>();
-			for (Instance instance : list) {
+			for (Instance instance : getList()) {
 				Expense expense = (Expense) instance;
 				if (expense.checkValidity(month, year) && (expense.category.equals(current)) && !(names.contains(expense.name))) {
 					names.add(expense.name);
@@ -83,7 +76,7 @@ public class ExpenseList extends InstanceList {
 				value = 0;
 				blanks = "";
 				toReturn = toReturn + "-" + name;
-				for (Instance instance : list) {
+				for (Instance instance : getList()) {
 					Expense expense = (Expense) instance;
 					if (expense.checkValidity(month, year) && (expense.name.equals(name))) {
 						value = value + expense.value;
@@ -130,7 +123,7 @@ public class ExpenseList extends InstanceList {
 
 	private double value(int month, int year) {
 		double value = 0;
-		for (Instance instance : list) {
+		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
 			if (expense.checkValidity(month, year)) {
 				value = value + expense.value;
@@ -141,7 +134,7 @@ public class ExpenseList extends InstanceList {
 
 	private ArrayList<Month> getMonths() {
 		ArrayList<Month> months = new ArrayList<Month>();
-		for (Instance instance : list) {
+		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
 			if (!months.contains(expense.date.month)) {
 				months.add(expense.date.month);

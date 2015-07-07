@@ -17,7 +17,7 @@ public class Expense extends Instance {
 		this.date = new Date(parameter[3]);
 	}
 
-	public String toString() {
+	@Override public String toString() {
 		return "expense" + " : " + name + " / " + category + " / " + value + " / " + date.toString();
 	}
 

@@ -16,11 +16,11 @@ public class Refilling extends Instance {
 		this.value = Double.parseDouble(parameter[1]);
 		this.distance = Double.parseDouble(parameter[2]);
 		this.date = new Date(parameter[3]);
-		this.count = list.getSize() + 1;
+		this.count = list.getList().size() + 1;
 		createExpense();
 	}
 
-	public String toString() {
+	@Override public String toString() {
 		return "refilling" + " : " + refuelAmount + " / " + distance + " / " + date.toString() + " / " + value;
 	}
 
@@ -34,7 +34,7 @@ public class Refilling extends Instance {
 	}
 
 	protected String output() {
-		return "[" + String.format("%" + String.valueOf(list.getSize()).length() + "s", count).replace(' ', '0') + "] distance: ["
+		return "[" + String.format("%" + String.valueOf(list.getList().size()).length() + "s", count).replace(' ', '0') + "] distance: ["
 				+ String.format("%" + String.valueOf(((RefillingList) list).getHighestDistance()).length() + "s", distance) + " km] refuelAmount: ["
 				+ String.format("%" + String.valueOf(String.format("%.1f", ((RefillingList) list).getHighestRefuelAmount())).length() + "s", String.format("%.1f", refuelAmount)).replace(",", ".")
 				+ " l] averageConsumption: [" + String.format("%" + String.valueOf(((RefillingList) list).getHighestAverageConsumption()).length() + "s", calcAverageConsumption()) + " l/km]";

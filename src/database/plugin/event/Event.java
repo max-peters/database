@@ -15,7 +15,7 @@ public abstract class Event extends Instance implements Comparable<Event> {
 		this.eachYear = Boolean.valueOf(parameter[2]);
 	}
 
-	public int compareTo(Event event) {
+	@Override public int compareTo(Event event) {
 		return date.compareTo(event.date);
 	}
 

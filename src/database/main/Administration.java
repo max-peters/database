@@ -3,7 +3,6 @@ package database.main;
 import java.io.IOException;
 import java.util.concurrent.CancellationException;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.date.Date;
 import database.plugin.Plugin;
 
@@ -46,48 +45,42 @@ public class Administration {
 
 	private void connect() throws IOException, InterruptedException {
 		if (!writerReader.checkDirectory()) {
-			launcher.connect();
+			Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
+			connection.waitFor();
 		}
 	}
 
 	private void inputRequestAdministration() throws InterruptedException, IOException {
-		while (true) {
-			String command = null;
-			try {
-				command = request("command", store.getNameTagsAsRegex().replace(")", "|") + "check|exit|save|push|pull)");
-				if (command.matches(store.getNameTagsAsRegex())) {
-					Plugin plugin = store.getPlugin(command);
-					try {
-						command = request(command, plugin.getCommandTags());
-						plugin.conduct(command);
-					}
-					catch (NotImplementedException e) {
-						errorMessage();
-					}
-				}
-				else if (command.matches("(check|exit|save|push|pull)")) {
-					switch (command) {
-						case "check":
-							store.getPlugin("task").remove(store.getPlugin("task").check());
-							break;
-						case "save":
-							save();
-							break;
-						case "pull":
-							launcher.pull();
-							break;
-						case "push":
-							launcher.push();
-							break;
-						case "exit":
-							exit();
-							break;
-					}
+		String command = null;
+		try {
+			command = request("command", store.getNameTagsAsRegex().replace(")", "|") + "check|exit|save|push|pull)");
+			if (command.matches(store.getNameTagsAsRegex())) {
+				Plugin plugin = store.getPlugin(command);
+				command = request(command, plugin.getCommandTags());
+				plugin.conduct(command);
+			}
+			else if (command.matches("(check|exit|save|push|pull)")) {
+				switch (command) {
+					case "check":
+						store.getPlugin("task").remove(store.getPlugin("task").check());
+						break;
+					case "save":
+						save();
+						break;
+					case "pull":
+						launcher.pull();
+						break;
+					case "push":
+						launcher.push();
+						break;
+					case "exit":
+						exit();
+						break;
 				}
 			}
-			catch (CancellationException e) {
-				return;
-			}
+		}
+		catch (CancellationException e) {
+			return;
 		}
 	}
 
