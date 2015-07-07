@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.concurrent.CancellationException;
 
 import database.main.date.Date;
+import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
 // TODO: stundenplan
@@ -11,15 +12,13 @@ public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
 	private Store					store;
 	private Terminal				terminal;
-	private Launcher				launcher;
 	private WriterReader			writerReader;
 
-	public Administration(GraphicalUserInterface graphicalUserInterface, Store store, Terminal terminal, WriterReader writerReader, Launcher launcher) {
+	public Administration(GraphicalUserInterface graphicalUserInterface, Store store, Terminal terminal, WriterReader writerReader) {
 		this.graphicalUserInterface = graphicalUserInterface;
 		this.store = store;
 		this.terminal = terminal;
 		this.writerReader = writerReader;
-		this.launcher = launcher;
 	}
 
 	public void main() throws IOException, InterruptedException {
@@ -38,7 +37,7 @@ public class Administration {
 	}
 
 	private void initialOutput() {
-		for (Plugin plugin : store.getPlugins()) {
+		for (InstancePlugin plugin : store.getPlugins()) {
 			plugin.initialOutput();
 		}
 	}
@@ -53,8 +52,8 @@ public class Administration {
 	private void inputRequestAdministration() throws InterruptedException, IOException {
 		String command = null;
 		try {
-			command = request("command", store.getNameTagsAsRegex().replace(")", "|") + "check|exit|save|push|pull)");
-			if (command.matches(store.getNameTagsAsRegex())) {
+			command = request("command", store.getPluginNameTagsAsRegesx().replace(")", "|") + "check|exit|save)");
+			if (command.matches(store.getPluginNameTagsAsRegesx())) {
 				Plugin plugin = store.getPlugin(command);
 				command = request(command, plugin.getCommandTags());
 				plugin.conduct(command);
@@ -62,16 +61,10 @@ public class Administration {
 			else if (command.matches("(check|exit|save|push|pull)")) {
 				switch (command) {
 					case "check":
-						store.getPlugin("task").remove(store.getPlugin("task").check());
+						store.getInstancePlugin("task").remove((store.getInstancePlugin("task")).check());
 						break;
 					case "save":
 						save();
-						break;
-					case "pull":
-						launcher.pull();
-						break;
-					case "push":
-						launcher.push();
 						break;
 					case "exit":
 						exit();

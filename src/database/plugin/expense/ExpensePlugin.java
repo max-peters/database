@@ -8,9 +8,9 @@ import database.main.GraphicalUserInterface;
 import database.main.Store;
 import database.main.Terminal;
 import database.plugin.Command;
-import database.plugin.Plugin;
+import database.plugin.InstancePlugin;
 
-public class ExpensePlugin extends Plugin {
+public class ExpensePlugin extends InstancePlugin {
 	public ExpensePlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
 		super(store, terminal, graphicalUserInterface, administration, "expense", new ExpenseList());
 	}

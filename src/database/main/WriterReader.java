@@ -43,11 +43,15 @@ public class WriterReader {
 			String line = scanner.nextLine();
 			String splitResult[] = line.split(" : ");
 			String parameters[] = splitResult[1].split(" / ");
-			if (splitResult[0].matches(store.getNameTagsAsRegex())) {
-				store.getPlugin(splitResult[0]).create(parameters);
+			if (splitResult[0].matches(store.getInstancePluginNameTagsAsRegesx())) {
+				store.getInstancePlugin(splitResult[0]).create(parameters);
 			}
 			else if (splitResult[0].equals("boolean")) {
-				store.getPlugin(parameters[0]).setDisplay(Boolean.valueOf(parameters[1]));
+				store.getInstancePlugin(parameters[0]).setDisplay(Boolean.valueOf(parameters[1]));
+			}
+			else {
+				scanner.close();
+				throw new IOException("invalid line: '" + line + "'");
 			}
 		}
 		scanner.close();

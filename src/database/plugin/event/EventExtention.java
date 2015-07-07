@@ -9,9 +9,9 @@ import database.main.Store;
 import database.main.Terminal;
 import database.plugin.Command;
 import database.plugin.InstanceList;
-import database.plugin.Plugin;
+import database.plugin.InstancePlugin;
 
-public abstract class EventExtention extends Plugin {
+public abstract class EventExtention extends InstancePlugin {
 	public EventExtention(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
 		super(store, terminal, graphicalUserInterface, administration, identity, instanceList);
 	}

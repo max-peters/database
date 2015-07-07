@@ -11,11 +11,11 @@ import database.main.Store;
 import database.main.Terminal;
 import database.plugin.Command;
 import database.plugin.Instance;
-import database.plugin.Plugin;
+import database.plugin.InstancePlugin;
 import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.allDayEvent.birthday.BirthdayPlugin;
 
-public class EventPlugin extends Plugin {
+public class EventPlugin extends InstancePlugin {
 	private ArrayList<EventExtention>	extentionList	= new ArrayList<EventExtention>();
 
 	public EventPlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {

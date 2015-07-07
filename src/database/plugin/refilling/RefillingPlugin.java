@@ -8,9 +8,9 @@ import database.main.GraphicalUserInterface;
 import database.main.Store;
 import database.main.Terminal;
 import database.plugin.Command;
-import database.plugin.Plugin;
+import database.plugin.InstancePlugin;
 
-public class RefillingPlugin extends Plugin {
+public class RefillingPlugin extends InstancePlugin {
 	public RefillingPlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
 		super(store, terminal, graphicalUserInterface, administration, "refilling", new RefillingList());
 	}

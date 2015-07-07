@@ -8,9 +8,9 @@ import database.main.GraphicalUserInterface;
 import database.main.Store;
 import database.main.Terminal;
 import database.plugin.Command;
-import database.plugin.Plugin;
+import database.plugin.InstancePlugin;
 
-public class SubjectPlugin extends Plugin {
+public class SubjectPlugin extends InstancePlugin {
 	public SubjectPlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
 		super(store, terminal, graphicalUserInterface, administration, "subject", new SubjectList());
 	}
