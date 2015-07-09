@@ -6,12 +6,7 @@ import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,6 +40,9 @@ public class XMLReader {
 		database.appendChild(plugin);
 		for (Plugin currentPlugin : store.getPlugins()) {
 			if (currentPlugin instanceof InstancePlugin) {
+				if (currentPlugin.getIdentity().equals("event")) {
+					System.out.println(((InstancePlugin) currentPlugin).getList());
+				}
 				for (Instance instance : ((InstancePlugin) currentPlugin).getList()) {
 					Element currentElement;
 					if (document.getElementsByTagName(currentPlugin.getIdentity()).getLength() == 1) {
@@ -57,19 +55,19 @@ public class XMLReader {
 					Element parameter = document.createElement("entry");
 					currentElement.appendChild(parameter);
 					for (int i = 0; i < instance.getParameter().length; i++) {
-						parameter.setAttribute(instance.getParameter()[i][0], instance.getParameter()[i][1]);
+						// parameter.setAttribute(instance.getParameter()[i][0], instance.getParameter()[i][1]);
 					}
 				}
 			}
 		}
-		DOMSource domSource = new DOMSource(document);
-		File fileOutput = new File("storage.xml");
-		StreamResult streamResult = new StreamResult(fileOutput);
-		TransformerFactory tf = TransformerFactory.newInstance();
-		Transformer serializer = tf.newTransformer();
-		serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-		serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-		serializer.transform(domSource, streamResult);
+		// DOMSource domSource = new DOMSource(document);
+		// File fileOutput = new File("storage.xml");
+		// StreamResult streamResult = new StreamResult(fileOutput);
+		// TransformerFactory tf = TransformerFactory.newInstance();
+		// Transformer serializer = tf.newTransformer();
+		// serializer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		// serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+		// serializer.transform(domSource, streamResult);
 	}
 
 	public void read() throws SAXException, IOException, ParserConfigurationException {
@@ -82,12 +80,12 @@ public class XMLReader {
 		for (int i = 0; i < nList.getLength(); i++) {
 			Plugin plugin = store.getPlugin(nList.item(i).getParentNode().getNodeName());
 			if (plugin != null && plugin instanceof InstancePlugin) {
+				String[][] parameter = new String[nList.item(i).getAttributes().getLength()][2];
 				for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
-					String[][] parameter = new String[nList.item(i).getAttributes().getLength()][2];
 					parameter[j][0] = nList.item(i).getAttributes().item(j).getNodeName();
 					parameter[j][1] = nList.item(i).getAttributes().item(j).getNodeValue();
-					((InstancePlugin) plugin).create(parameter);
 				}
+				((InstancePlugin) plugin).create(parameter);
 			}
 		}
 	}

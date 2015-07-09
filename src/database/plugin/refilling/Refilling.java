@@ -4,7 +4,7 @@ import database.plugin.Instance;
 
 public class Refilling extends Instance {
 	public Refilling(String[][] parameter, RefillingList list) {
-		super(parameter, parameter[3][1], list);
+		super(parameter, parameter[2][1], list);
 		setParameter("count", String.valueOf(list.getList().size() + 1));
 		createExpense();
 	}

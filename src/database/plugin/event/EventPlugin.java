@@ -42,11 +42,11 @@ public class EventPlugin extends InstancePlugin {
 
 	@Override @Command(tag = "store") public void store() {
 		for (EventExtention extention : extentionList) {
-			for (Object object : extention.getInstanceList().getList()) {
+			for (Object object : extention.getList()) {
 				Instance instance = (Instance) object;
 				store.addToStorage(instance.toString());
 			}
-			extention.getInstanceList().getList().clear();
+			extention.getList().clear();
 		}
 		administration.update();
 	}
@@ -67,16 +67,20 @@ public class EventPlugin extends InstancePlugin {
 
 	@Override public void create(String[][] parameter) {
 		for (EventExtention extention : extentionList) {
-			if (parameter[0].equals(extention.getIdentity())) {
-				extention.create(new String[][] { parameter[1], parameter[2] });
+			for (int i = 0; i < parameter.length; i++) {
+				if (parameter[i][0].equals("type")) {
+					if (parameter[i][1].equals(extention.getIdentity())) {
+						extention.create(new String[][] { parameter[1], parameter[2] });
+					}
+				}
 			}
 		}
 	}
 
 	@Override public void remove(Instance toRemove) {
 		for (EventExtention extention : extentionList) {
-			if (extention.getInstanceList().getList().contains(toRemove)) {
-				extention.getInstanceList().getList().remove(toRemove);
+			if (extention.getList().contains(toRemove)) {
+				extention.getList().remove(toRemove);
 			}
 		}
 	}
@@ -109,7 +113,7 @@ public class EventPlugin extends InstancePlugin {
 		ArrayList<String> strings = new ArrayList<String>();
 		ArrayList<Event> events = new ArrayList<Event>();
 		for (EventExtention extention : extentionList) {
-			for (Instance instance : extention.getInstanceList().getList()) {
+			for (Instance instance : extention.getList()) {
 				Event event = (Event) instance;
 				events.add(event);
 			}
@@ -128,7 +132,7 @@ public class EventPlugin extends InstancePlugin {
 	@Override public ArrayList<Instance> getList() {
 		ArrayList<Instance> instances = new ArrayList<Instance>();
 		for (EventExtention extention : extentionList) {
-			for (Instance instance : extention.getInstanceList().getList()) {
+			for (Instance instance : extention.getList()) {
 				instances.add(instance);
 			}
 		}

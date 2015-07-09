@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+<plugin>
+<subject>
+<entry name="Rechnerorganisation" tag="ro" score="234.0" maxPoints="296.0" counter="11"/>
+<entry name="Algorithmen I" tag="al" score="98.0" maxPoints="132.0" counter="8"/>
+<entry name="Softwaretechnik I" tag="swt" score="114.0" maxPoints="123.0" counter="6"/>
+</subject>
+<expense>
+<entry name="Miete" category="Wohnung" value="350.0" date="01.05.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="5.83" date="04.05.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="8.45" date="06.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.5" date="06.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="3.5" date="07.05.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="3.99" date="07.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.5" date="08.05.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="6.84" date="08.05.2015"/>
+<entry name="Wäsche" category="Wohnung" value="4.7" date="10.05.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="7.34" date="11.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.5" date="11.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.5" date="12.05.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="11.44" date="13.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.5" date="13.05.2015"/>
+<entry name="Strom" category="Wohnung" value="22.0" date="13.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.5" date="15.05.2015"/>
+<entry name="Bahnticket" category="Transport" value="6.9" date="15.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.5" date="18.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="3.5" date="19.05.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="4.22" date="19.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.5" date="20.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="3.5" date="21.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.5" date="22.05.2015"/>
+<entry name="Bahnticket" category="Transport" value="6.9" date="22.05.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="7.84" date="26.05.2015"/>
+<entry name="Miete" category="Wohnung" value="350.0" date="01.06.2015"/>
+<entry name="Internet" category="Wohnung" value="19.99" date="29.05.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.6" date="01.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="6.37" date="01.06.2015"/>
+<entry name="Wäsche" category="Wohnung" value="4.7" date="01.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="0.52" date="02.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.45" date="05.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="14.41" date="05.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="4.45" date="06.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.6" date="08.06.2015"/>
+<entry name="Übungsklausuren" category="Studium" value="4.4" date="08.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.95" date="09.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="7.41" date="10.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="3.5" date="11.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.6" date="12.06.2015"/>
+<entry name="Bahnticket" category="Transport" value="6.9" date="12.06.2015"/>
+<entry name="SSD Festplatte" category="Computerzubehör" value="20.0" date="12.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.6" date="15.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="3.0" date="15.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.45" date="16.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.6" date="17.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="2.18" date="17.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.6" date="19.06.2015"/>
+<entry name="Bahnticket" category="Transport" value="6.9" date="19.06.2015"/>
+<entry name="Strom" category="Wohnung" value="22.0" date="12.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="3.45" date="22.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="2.76" date="22.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.35" date="23.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="4.42" date="23.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="8.12" date="23.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.6" date="24.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.85" date="25.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="2.38" date="25.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="3.0" date="26.06.2015"/>
+<entry name="Bahnticket" category="Transport" value="6.9" date="26.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="6.0" date="27.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.6" date="29.06.2015"/>
+<entry name="Internet" category="Wohnung" value="19.99" date="30.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.95" date="30.06.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="4.29" date="30.06.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.6" date="01.07.2015"/>
+<entry name="Einkauf" category="Studium" value="1.29" date="03.07.2015"/>
+<entry name="Essen" category="Lebensmittel" value="3.45" date="03.07.2015"/>
+<entry name="Essen" category="Lebensmittel" value="1.95" date="03.07.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="3.89" date="03.07.2015"/>
+<entry name="Miete" category="Wohnung" value="350.0" date="01.07.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.6" date="06.07.2015"/>
+<entry name="Einkauf" category="Lebensmittel" value="2.84" date="06.07.2015"/>
+<entry name="Wäsche" category="Wohnung" value="4.7" date="06.07.2015"/>
+<entry name="Essen" category="Lebensmittel" value="2.6" date="08.07.2015"/>
+</expense>
+<task>
+<entry name="Database: xml-store file"/>
+</task>
+<event>
+<entry type="all day event" name="Reinhold Schaible Todestag" date="17.09.2009"/>
+<entry type="birthday" name="Jasmin Wossmann" date="11.12.1995"/>
+<entry type="birthday" name="Robin Beutter" date="09.03.1996"/>
+<entry type="birthday" name="Anika Schneider" date="07.03.1996"/>
+<entry type="birthday" name="Tobias Keppler" date="19.03.1994"/>
+<entry type="birthday" name="Corinna Peters" date="20.03.1965"/>
+<entry type="birthday" name="Philip Peters" date="10.04.1997"/>
+<entry type="birthday" name="Stephan Peters" date="25.03.1962"/>
+<entry type="birthday" name="Jonathan Pfrommer" date="07.05.1995"/>
+<entry type="birthday" name="Raphael Pfrommer" date="30.12.1998"/>
+<entry type="birthday" name="Andreas Pfrommer" date="29.05.1964"/>
+<entry type="birthday" name="Petra Pfrommer" date="07.10.1964"/>
+<entry type="birthday" name="Erika Kübler" date="20.01.1942"/>
+<entry type="birthday" name="Tanja Bugla" date="07.09.1988"/>
+<entry type="birthday" name="Bärbel Peters" date="24.10.1937"/>
+<entry type="birthday" name="Helga Bugla" date="11.06.1960"/>
+<entry type="birthday" name="Reinhold Schaible" date="04.12.1942"/>
+<entry type="birthday" name="Karin Marmulla-Knoblauch" date="26.03.1965"/>
+<entry type="birthday" name="Harald Rola" date="01.02.1962"/>
+<entry type="birthday" name="Dorothee Schneider" date="25.03.1968"/>
+<entry type="birthday" name="Max Berkemer" date="20.08.1994"/>
+<entry type="birthday" name="Johannes Wolf" date="28.11.1994"/>
+<entry type="birthday" name="Jonas Wirth" date="02.12.1993"/>
+<entry type="birthday" name="Marcel Lauterwasser" date="07.02.1997"/>
+<entry type="birthday" name="Moritz Pross" date="13.08.1994"/>
+<entry type="birthday" name="Simon Pfrommer" date="04.09.1996"/>
+</event>
+</plugin>
+</database>

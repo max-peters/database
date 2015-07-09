@@ -59,8 +59,8 @@ public class ExpenseList extends InstanceList {
 			if (expense.getParameter("name").length() > nameLength) {
 				nameLength = expense.getParameter("name").length();
 			}
-			if (format.format(expense.getParameter("value")).length() > valueLength) {
-				valueLength = format.format(expense.getParameter("value")).length();
+			if (format.format(Double.valueOf(expense.getParameter("value"))).length() > valueLength) {
+				valueLength = format.format(Double.valueOf(expense.getParameter("value"))).length();
 			}
 		}
 		for (String current : categorys) {

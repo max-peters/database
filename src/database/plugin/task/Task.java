@@ -8,6 +8,6 @@ public class Task extends Instance {
 	}
 
 	@Override public String[][] getParameter() {
-		return new String[][] { { "task", getParameter("task") } };
+		return new String[][] { { "name", getParameter("name") } };
 	}
 }

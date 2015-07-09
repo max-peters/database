@@ -6,6 +6,8 @@ import java.util.concurrent.CancellationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.xml.sax.SAXException;
+
 import database.main.date.Date;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
@@ -15,6 +17,7 @@ public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
 	private Store					store;
 	private Terminal				terminal;
+	XMLReader						rr;
 	private WriterReader			writerReader;
 
 	public Administration(GraphicalUserInterface graphicalUserInterface, Store store, Terminal terminal, WriterReader writerReader) {
@@ -22,6 +25,7 @@ public class Administration {
 		this.store = store;
 		this.terminal = terminal;
 		this.writerReader = writerReader;
+		rr = new XMLReader(store);
 	}
 
 	public void main() throws IOException, InterruptedException {
@@ -32,16 +36,24 @@ public class Administration {
 	}
 
 	private void initiation() throws IOException, InterruptedException {
-		XMLReader rr = new XMLReader(store);
 		connect();
 		graphicalUserInterface.initialise();
-		writerReader.read();
+		// writerReader.read();
 		try {
 			rr.initialise();
-			// rr.read();
-			rr.write();
+			rr.read();
+			// for (Plugin currentPlugin : store.getPlugins()) {
+			// if (currentPlugin instanceof InstancePlugin) {
+			// for (Instance instance : ((InstancePlugin) currentPlugin).getList()) {
+			// for (int i = 0; i < instance.getParameter().length; i++) {
+			// System.out.println(instance.getParameter()[i][0]);
+			// System.out.println(instance.getParameter()[i][1]);
+			// }
+			// }
+			// }
+			// }
 		}
-		catch (ParserConfigurationException | TransformerException e) {
+		catch (ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}
 		initialOutput();
@@ -78,7 +90,16 @@ public class Administration {
 						((InstancePlugin) store.getPlugin("task")).remove(((InstancePlugin) store.getPlugin("task")).check());
 						break;
 					case "save":
-						save();
+						try {
+							rr.write();
+						}
+						catch (ParserConfigurationException e) {
+							e.printStackTrace();
+						}
+						catch (TransformerException e) {
+							e.printStackTrace();
+						}
+						// save();
 						break;
 					case "exit":
 						exit();

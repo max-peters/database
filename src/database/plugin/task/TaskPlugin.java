@@ -16,7 +16,7 @@ public class TaskPlugin extends InstancePlugin {
 
 	@Command(tag = "new") public void create() throws InterruptedException {
 		try {
-			create(request(new String[][] { { "task", ".+" } }));
+			create(request(new String[][] { { "name", ".+" } }));
 			administration.update();
 		}
 		catch (CancellationException e) {

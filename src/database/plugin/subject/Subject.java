@@ -7,7 +7,7 @@ import database.plugin.Instance;
 
 public class Subject extends Instance {
 	public Subject(String[][] parameter, SubjectList list) {
-		super(parameter, parameter[0][1], list);
+		super(parameter, parameter[2][1], list);
 	}
 
 	@Override public String[][] getParameter() {
@@ -35,18 +35,18 @@ public class Subject extends Instance {
 		String toPrint;
 		String newName;
 		int currentLength;
-		int allGradesLength = oneDecimalPlace.format(subjects.get(0).getParameter("score")).length();
-		int allGradesTotalLength = oneDecimalPlace.format(subjects.get(0).getParameter("maxPoints")).length();
+		int allGradesLength = oneDecimalPlace.format(Double.valueOf(subjects.get(0).getParameter("score"))).length();
+		int allGradesTotalLength = oneDecimalPlace.format(Double.valueOf(subjects.get(0).getParameter("maxPoints"))).length();
 		int percentLength = twoDecimalPlace.format(subjects.get(0).calcPercent()).length();
 		int counterLength = String.valueOf(subjects.get(0).getParameter("counter")).length();
 		int nameLength = subjects.get(0).getParameter("name").length();
 		for (Subject current : subjects) {
-			currentLength = oneDecimalPlace.format(current.getParameter("score")).length();
+			currentLength = oneDecimalPlace.format(Double.valueOf(current.getParameter("score"))).length();
 			if (allGradesLength < currentLength)
 				allGradesLength = currentLength;
 		}
 		for (Subject current : subjects) {
-			currentLength = oneDecimalPlace.format(current.getParameter("maxPoints")).length();
+			currentLength = oneDecimalPlace.format(Double.valueOf(current.getParameter("maxPoints"))).length();
 			if (allGradesTotalLength < currentLength)
 				allGradesTotalLength = currentLength;
 		}
@@ -70,8 +70,8 @@ public class Subject extends Instance {
 		}
 		toPrint = newName;
 		if (Integer.valueOf(getParameter("counter")) > 0) {
-			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(getParameter("score"))) + "/"
-					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(getParameter("maxPoints"))) + " - "
+			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(Double.valueOf(getParameter("score")))) + "/"
+					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(Double.valueOf(getParameter("maxPoints")))) + " - "
 					+ String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent())) + "%" + "]" + " in ["
 					+ String.format("%" + counterLength + "s", getParameter("counter")).replace(' ', '0');
 			if (Integer.valueOf(getParameter("counter")) == 1) {

@@ -5,11 +5,11 @@ import database.plugin.Instance;
 
 public class Expense extends Instance {
 	public Expense(String[][] parameter, ExpenseList list) {
-		super(parameter, parameter[0][1], list);
+		super(parameter, parameter[2][1], list);
 	}
 
 	@Override public String[][] getParameter() {
-		return new String[][] { { "name", getParameter("name") }, { "category", getParameter(" category") }, { "value", getParameter("value") }, { "date", getParameter("date") } };
+		return new String[][] { { "name", getParameter("name") }, { "category", getParameter("category") }, { "value", getParameter("value") }, { "date", getParameter("date") } };
 	}
 
 	protected boolean checkValidity(int month, int year) {
