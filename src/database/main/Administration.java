@@ -7,7 +7,7 @@ import database.main.date.Date;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
-// TODO: stundenplan
+// TODO: instanceplugin list ersetzen mit instance of operator, stundenplan
 public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
 	private Store					store;
@@ -37,8 +37,10 @@ public class Administration {
 	}
 
 	private void initialOutput() {
-		for (InstancePlugin plugin : store.getPlugins()) {
-			plugin.initialOutput();
+		for (Plugin plugin : store.getPlugins()) {
+			if (plugin instanceof InstancePlugin) {
+				((InstancePlugin) plugin).initialOutput();
+			}
 		}
 	}
 
@@ -61,7 +63,7 @@ public class Administration {
 			else if (command.matches("(check|exit|save|push|pull)")) {
 				switch (command) {
 					case "check":
-						store.getInstancePlugin("task").remove((store.getInstancePlugin("task")).check());
+						((InstancePlugin) store.getPlugin("task")).remove(((InstancePlugin) store.getPlugin("task")).check());
 						break;
 					case "save":
 						save();

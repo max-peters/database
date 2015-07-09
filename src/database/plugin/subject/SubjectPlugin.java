@@ -37,7 +37,7 @@ public class SubjectPlugin extends InstancePlugin {
 
 	@Command(tag = "add") public void change() throws InterruptedException, NotImplementedException {
 		try {
-			change(request(new String[][] { { "add", ((SubjectList) instanceList).getTagsAsRegex() }, { "grade", "[0-9]{1,13}(\\.[0-9]*)?" } }));
+			change(request(new String[][] { { "add", ((SubjectList) instanceList).getTagsAsRegex() }, { "score", "[0-9]{1,13}(\\.[0-9]*)?" }, { "maximum points", "[0-9]{1,13}(\\.[0-9]*)?" } }));
 			administration.update();
 		}
 		catch (CancellationException e) {
@@ -68,5 +68,6 @@ public class SubjectPlugin extends InstancePlugin {
 	private void change(String[] parameter) {
 		Subject toChange = ((SubjectList) instanceList).getSubject(parameter[0]);
 		toChange.setGrade(Double.parseDouble(parameter[1]), Double.parseDouble(parameter[2]));
+		toChange.calcPercent();
 	}
 }

@@ -6,6 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
+import database.plugin.InstancePlugin;
+import database.plugin.Plugin;
+
 public class WriterReader {
 	private String	storageDirectory;
 	private String	oldDirectory;
@@ -43,11 +46,15 @@ public class WriterReader {
 			String line = scanner.nextLine();
 			String splitResult[] = line.split(" : ");
 			String parameters[] = splitResult[1].split(" / ");
-			if (splitResult[0].matches(store.getInstancePluginNameTagsAsRegesx())) {
-				store.getInstancePlugin(splitResult[0]).create(parameters);
+			Plugin plugin = store.getPlugin(splitResult[0]);
+			if (plugin != null && plugin instanceof InstancePlugin) {
+				((InstancePlugin) plugin).create(parameters);
 			}
 			else if (splitResult[0].equals("boolean")) {
-				store.getInstancePlugin(parameters[0]).setDisplay(Boolean.valueOf(parameters[1]));
+				plugin = store.getPlugin(parameters[0]);
+				if (plugin != null && plugin instanceof InstancePlugin) {
+					((InstancePlugin) plugin).setDisplay(Boolean.valueOf(parameters[1]));
+				}
 			}
 			else {
 				scanner.close();

@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import database.plugin.Instance;
 
 public class Subject extends Instance {
-	private double	allGrades;
-	private double	allGradesTotal;
+	private double	score;
+	private double	maxPoints;
 	private int		counter;
 	public String	tag;
 	public String	name;
@@ -17,29 +17,29 @@ public class Subject extends Instance {
 		this.name = parameter[0];
 		this.tag = parameter[1];
 		if (parameter.length == 5) {
-			this.allGrades = Double.parseDouble(parameter[2]);
-			this.allGradesTotal = Double.parseDouble(parameter[3]);
+			this.score = Double.parseDouble(parameter[2]);
+			this.maxPoints = Double.parseDouble(parameter[3]);
 			this.counter = Integer.parseInt(parameter[4]);
 		}
 		else {
-			this.allGrades = 0;
-			this.allGradesTotal = 0;
+			this.score = 0;
+			this.maxPoints = 0;
 			this.counter = 0;
 		}
 	}
 
 	@Override public String toString() {
-		return "subject" + " : " + name + " / " + tag + " / " + allGrades + " / " + allGradesTotal + " / " + counter;
+		return "subject" + " : " + name + " / " + tag + " / " + score + " / " + maxPoints + " / " + counter;
 	}
 
 	protected double calcPercent() {
-		return (allGrades / allGradesTotal) * 100;
+		return (score / maxPoints) * 100;
 	}
 
-	protected void setGrade(double newGrade, double newGradeTotal) {
+	protected void setGrade(double newScore, double newMaxPoint) {
 		counter++;
-		allGradesTotal = newGradeTotal + allGradesTotal;
-		allGrades = newGrade + allGrades;
+		maxPoints = newMaxPoint + maxPoints;
+		score = newScore + score;
 	}
 
 	protected String output(ArrayList<Instance> instances) {
@@ -52,18 +52,18 @@ public class Subject extends Instance {
 		String toPrint;
 		String newName;
 		int currentLength;
-		int allGradesLength = oneDecimalPlace.format(subjects.get(0).allGrades).length();
-		int allGradesTotalLength = oneDecimalPlace.format(subjects.get(0).allGradesTotal).length();
+		int allGradesLength = oneDecimalPlace.format(subjects.get(0).score).length();
+		int allGradesTotalLength = oneDecimalPlace.format(subjects.get(0).maxPoints).length();
 		int percentLength = twoDecimalPlace.format(subjects.get(0).calcPercent()).length();
 		int counterLength = String.valueOf(subjects.get(0).counter).length();
 		int nameLength = subjects.get(0).name.length();
 		for (Subject current : subjects) {
-			currentLength = oneDecimalPlace.format(current.allGrades).length();
+			currentLength = oneDecimalPlace.format(current.score).length();
 			if (allGradesLength < currentLength)
 				allGradesLength = currentLength;
 		}
 		for (Subject current : subjects) {
-			currentLength = oneDecimalPlace.format(current.allGradesTotal).length();
+			currentLength = oneDecimalPlace.format(current.maxPoints).length();
 			if (allGradesTotalLength < currentLength)
 				allGradesTotalLength = currentLength;
 		}
@@ -87,8 +87,8 @@ public class Subject extends Instance {
 		}
 		toPrint = newName;
 		if (counter > 0) {
-			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(allGrades)) + "/"
-					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(allGradesTotal)) + " - " + String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent()))
+			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(score)) + "/"
+					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(maxPoints)) + " - " + String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent()))
 					+ "%" + "]" + " in [" + String.format("%" + counterLength + "s", counter).replace(' ', '0');
 			if (counter == 1) {
 				toPrint = toPrint + "] Blatt";
