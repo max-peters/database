@@ -4,11 +4,11 @@ import database.plugin.Instance;
 import database.plugin.InstanceList;
 
 public class RefillingList extends InstanceList {
-	@Override public void add(String[] parameter) {
+	@Override public void add(String[][] parameter) {
 		getList().add(new Refilling(parameter, this));
 	}
 
-	@Override public String output(String[] tags) {
+	@Override public String output(String[][] tags) {
 		String print = "";
 		if (getList().isEmpty()) {
 			print = "no entries";
@@ -35,7 +35,7 @@ public class RefillingList extends InstanceList {
 		double distanceTotal = 0;
 		for (Instance instance : getList()) {
 			Refilling refilling = (Refilling) instance;
-			distanceTotal = distanceTotal + refilling.distance;
+			distanceTotal = distanceTotal + Double.valueOf(refilling.getParameter("distance"));
 		}
 		return Math.round(10.0 * distanceTotal) / 10.0;
 	}
@@ -44,7 +44,7 @@ public class RefillingList extends InstanceList {
 		double refuelAmountTotal = 0;
 		for (Instance instance : getList()) {
 			Refilling refilling = (Refilling) instance;
-			refuelAmountTotal = refuelAmountTotal + refilling.refuelAmount;
+			refuelAmountTotal = refuelAmountTotal + Double.valueOf(refilling.getParameter("refuelAmount"));
 		}
 		return Math.round(10.0 * refuelAmountTotal) / 10.0;
 	}
@@ -57,8 +57,8 @@ public class RefillingList extends InstanceList {
 		double highestDistance = 0;
 		for (Instance instance : getList()) {
 			Refilling refilling = (Refilling) instance;
-			if (refilling.distance > highestDistance) {
-				highestDistance = refilling.distance;
+			if (Double.valueOf(refilling.getParameter("distance")) > highestDistance) {
+				highestDistance = Double.valueOf(refilling.getParameter("distance"));
 			}
 		}
 		return Math.round(10.0 * highestDistance) / 10.0;
@@ -68,8 +68,8 @@ public class RefillingList extends InstanceList {
 		double highestRefuelAmount = 0;
 		for (Instance instance : getList()) {
 			Refilling refilling = (Refilling) instance;
-			if (refilling.refuelAmount > highestRefuelAmount) {
-				highestRefuelAmount = refilling.refuelAmount;
+			if (Double.valueOf(refilling.getParameter("refuelAmount")) > highestRefuelAmount) {
+				highestRefuelAmount = Double.valueOf(refilling.getParameter("refuelAmount"));
 			}
 		}
 		return Math.round(10.0 * highestRefuelAmount) / 10.0;
@@ -80,7 +80,7 @@ public class RefillingList extends InstanceList {
 		double currentConsumption;
 		for (Instance instance : getList()) {
 			Refilling refilling = (Refilling) instance;
-			currentConsumption = Math.round((refilling.refuelAmount / refilling.distance) * 1000.0) / 10.0;
+			currentConsumption = Math.round((Double.valueOf(refilling.getParameter("refuelAmount")) / Double.valueOf(refilling.getParameter("distance"))) * 1000.0) / 10.0;
 			if (currentConsumption > highestConsumption) {
 				highestConsumption = currentConsumption;
 			}

@@ -17,7 +17,8 @@ public class SubjectPlugin extends InstancePlugin {
 
 	@Command(tag = "new") public void create() throws InterruptedException {
 		try {
-			create(request(new String[][] { { "name", "[A-ZÖÄÜ].*" }, { "tag", "[a-zöäüß]*" } }));
+			String[][] parameter = request(new String[][] { { "name", "[A-ZÖÄÜ].*" }, { "tag", "[a-zöäüß]*" } });
+			create(new String[][] { { parameter[0][0], parameter[0][1] }, { parameter[1][0], parameter[1][1] }, { "score", "0" }, { "maxPoints", "0" }, { "counter", "0" } });
 			administration.update();
 		}
 		catch (CancellationException e) {
@@ -65,9 +66,9 @@ public class SubjectPlugin extends InstancePlugin {
 		}
 	}
 
-	private void change(String[] parameter) {
-		Subject toChange = ((SubjectList) instanceList).getSubject(parameter[0]);
-		toChange.setGrade(Double.parseDouble(parameter[1]), Double.parseDouble(parameter[2]));
+	private void change(String[][] parameter) {
+		Subject toChange = ((SubjectList) instanceList).getSubject(parameter[0][1]);
+		toChange.setGrade(Double.parseDouble(parameter[1][1]), Double.parseDouble(parameter[2][1]));
 		toChange.calcPercent();
 	}
 }

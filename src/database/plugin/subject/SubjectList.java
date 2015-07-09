@@ -4,16 +4,16 @@ import database.plugin.Instance;
 import database.plugin.InstanceList;
 
 public class SubjectList extends InstanceList {
-	@Override public void add(String[] parameter) {
+	@Override public void add(String[][] parameter) {
 		getList().add(new Subject(parameter, this));
 	}
 
-	@Override public String output(String[] tags) {
-		if (tags[0].equals("average")) {
+	@Override public String output(String[][] tags) {
+		if (tags[0][1].equals("average")) {
 			return getAverage();
 		}
 		else {
-			Subject subject = getSubject(tags[0]);
+			Subject subject = getSubject(tags[0][1]);
 			return subject.output(getList());
 		}
 	}
@@ -48,7 +48,7 @@ public class SubjectList extends InstanceList {
 		Subject wanted = null;
 		for (Instance instance : getList()) {
 			Subject subject = (Subject) instance;
-			if (subject.tag.equals(tag)) {
+			if (subject.getParameter("tag").equals(tag)) {
 				wanted = subject;
 			}
 		}
@@ -59,7 +59,7 @@ public class SubjectList extends InstanceList {
 		String regex = "(";
 		for (Instance instance : getList()) {
 			Subject subject = (Subject) instance;
-			regex = regex + subject.tag;
+			regex = regex + subject.getParameter("tag");
 			if (!(getList().indexOf(subject) == getList().size() - 1)) {
 				regex = regex + "|";
 			}

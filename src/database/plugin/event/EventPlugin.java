@@ -65,10 +65,10 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	@Override public void create(String[] parameter) {
+	@Override public void create(String[][] parameter) {
 		for (EventExtention extention : extentionList) {
 			if (parameter[0].equals(extention.getIdentity())) {
-				extention.create(new String[] { parameter[1], parameter[2] });
+				extention.create(new String[][] { parameter[1], parameter[2] });
 			}
 		}
 	}
@@ -125,14 +125,14 @@ public class EventPlugin extends InstancePlugin {
 		return null;
 	}
 
-	@Override public ArrayList<String> getStringList() {
-		ArrayList<String> strings = new ArrayList<String>();
+	@Override public ArrayList<Instance> getList() {
+		ArrayList<Instance> instances = new ArrayList<Instance>();
 		for (EventExtention extention : extentionList) {
 			for (Instance instance : extention.getInstanceList().getList()) {
-				strings.add(instance.toString());
+				instances.add(instance);
 			}
 		}
-		return strings;
+		return instances;
 	}
 
 	private EventExtention chooseType() throws InterruptedException {

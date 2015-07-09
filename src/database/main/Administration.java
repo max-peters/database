@@ -3,11 +3,14 @@ package database.main;
 import java.io.IOException;
 import java.util.concurrent.CancellationException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+
 import database.main.date.Date;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
-// TODO: instanceplugin list ersetzen mit instance of operator, stundenplan
+// TODO: stundenplan
 public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
 	private Store					store;
@@ -29,9 +32,18 @@ public class Administration {
 	}
 
 	private void initiation() throws IOException, InterruptedException {
+		XMLReader rr = new XMLReader(store);
 		connect();
 		graphicalUserInterface.initialise();
 		writerReader.read();
+		try {
+			rr.initialise();
+			// rr.read();
+			rr.write();
+		}
+		catch (ParserConfigurationException | TransformerException e) {
+			e.printStackTrace();
+		}
 		initialOutput();
 		graphicalUserInterface.show();
 	}

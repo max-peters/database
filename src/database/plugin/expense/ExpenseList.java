@@ -9,13 +9,13 @@ import database.plugin.Instance;
 import database.plugin.InstanceList;
 
 public class ExpenseList extends InstanceList {
-	@Override public void add(String[] parameter) {
+	@Override public void add(String[][] parameter) {
 		getList().add(new Expense(parameter, this));
 	}
 
-	@Override public String output(String[] tags) {
+	@Override public String output(String[][] tags) {
 		String print = null;
-		switch (tags[0]) {
+		switch (tags[0][1]) {
 			case "all":
 				print = outputIntervall(-1, -1);
 				if (print.length() == 0) {
@@ -53,14 +53,14 @@ public class ExpenseList extends InstanceList {
 		ArrayList<String> names;
 		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
-			if (!(categorys.contains(expense.category))) {
-				categorys.add(expense.category);
+			if (!(categorys.contains(expense.getParameter("category")))) {
+				categorys.add(expense.getParameter("category"));
 			}
-			if (expense.name.length() > nameLength) {
-				nameLength = expense.name.length();
+			if (expense.getParameter("name").length() > nameLength) {
+				nameLength = expense.getParameter("name").length();
 			}
-			if (format.format(expense.value).length() > valueLength) {
-				valueLength = format.format(expense.value).length();
+			if (format.format(expense.getParameter("value")).length() > valueLength) {
+				valueLength = format.format(expense.getParameter("value")).length();
 			}
 		}
 		for (String current : categorys) {
@@ -68,8 +68,8 @@ public class ExpenseList extends InstanceList {
 			names = new ArrayList<String>();
 			for (Instance instance : getList()) {
 				Expense expense = (Expense) instance;
-				if (expense.checkValidity(month, year) && (expense.category.equals(current)) && !(names.contains(expense.name))) {
-					names.add(expense.name);
+				if (expense.checkValidity(month, year) && (expense.getParameter("category").equals(current)) && !(names.contains(expense.getParameter("name")))) {
+					names.add(expense.getParameter("name"));
 				}
 			}
 			for (String name : names) {
@@ -78,8 +78,8 @@ public class ExpenseList extends InstanceList {
 				toReturn = toReturn + "-" + name;
 				for (Instance instance : getList()) {
 					Expense expense = (Expense) instance;
-					if (expense.checkValidity(month, year) && (expense.name.equals(name))) {
-						value = value + expense.value;
+					if (expense.checkValidity(month, year) && (expense.getParameter("name").equals(name))) {
+						value = value + Double.valueOf(expense.getParameter("value"));
 					}
 				}
 				blankCounter = (nameLength - name.length() + 1) + valueLength - format.format(value).length();
@@ -126,7 +126,7 @@ public class ExpenseList extends InstanceList {
 		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
 			if (expense.checkValidity(month, year)) {
-				value = value + expense.value;
+				value = value + Double.valueOf(expense.getParameter("value"));
 			}
 		}
 		return value;
@@ -136,8 +136,8 @@ public class ExpenseList extends InstanceList {
 		ArrayList<Month> months = new ArrayList<Month>();
 		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
-			if (!months.contains(expense.date.month)) {
-				months.add(expense.date.month);
+			if (!months.contains(new Date(expense.getParameter("date")).month)) {
+				months.add(new Date(expense.getParameter("date")).month);
 			}
 		}
 		return months;

@@ -2,7 +2,8 @@ package database.main;
 
 import java.util.ArrayList;
 
-import database.plugin.InstancePlugin;
+import jdk.nashorn.internal.objects.annotations.Getter;
+import jdk.nashorn.internal.objects.annotations.Setter;
 import database.plugin.Plugin;
 
 public class Store {
@@ -20,11 +21,19 @@ public class Store {
 		plugins.add(plugin);
 	}
 
-	public ArrayList<Plugin> getPlugins() {
+	public void addToStorage(String toAdd) {
+		storage.add(toAdd);
+	}
+
+	@Setter public void setChanges(boolean changes) {
+		this.changes = changes;
+	}
+
+	@Getter public ArrayList<Plugin> getPlugins() {
 		return plugins;
 	}
 
-	public Plugin getPlugin(String identity) {
+	@Getter public Plugin getPlugin(String identity) {
 		for (Plugin plugin : plugins) {
 			if (plugin.getIdentity().equals(identity)) {
 				return plugin;
@@ -33,38 +42,15 @@ public class Store {
 		return null;
 	}
 
-	public ArrayList<String> getListToWrite() {
-		ArrayList<String> listToWrite = new ArrayList<String>();
-		for (Plugin plugin : plugins) {
-			if (plugin instanceof InstancePlugin) {
-				listToWrite.addAll(((InstancePlugin) plugin).getStringList());
-			}
-		}
-		for (Plugin plugin : plugins) {
-			if (plugin instanceof InstancePlugin) {
-				listToWrite.add(((InstancePlugin) plugin).getDisplayAsString());
-			}
-		}
-		return listToWrite;
-	}
-
-	public void addToStorage(String toAdd) {
-		storage.add(toAdd);
-	}
-
-	public ArrayList<String> getStorage() {
+	@Getter public ArrayList<String> getStorage() {
 		return storage;
 	}
 
-	public void setChanges(boolean changes) {
-		this.changes = changes;
-	}
-
-	public boolean getChanges() {
+	@Getter public boolean getChanges() {
 		return changes;
 	}
 
-	public String getPluginNameTagsAsRegesx() {
+	@Getter public String getPluginNameTagsAsRegesx() {
 		String regex = "(";
 		for (Plugin plugin : plugins) {
 			regex = regex + plugin.getIdentity();

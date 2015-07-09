@@ -6,22 +6,22 @@ import database.plugin.event.EventList;
 import database.plugin.event.allDayEvent.AllDayEvent;
 
 public class Birthday extends AllDayEvent {
-	public Birthday(String[] parameter, BirthdayList list) {
-		super(new String[] { parameter[0], parameter[1], "true" }, list);
+	public Birthday(String[][] parameter, BirthdayList list) {
+		super(new String[][] { parameter[0], parameter[1] }, list);
 	}
 
-	@Override public String toString() {
-		return "event : birthday / " + name + " / " + date.toString();
+	@Override public String[][] getParameter() {
+		return new String[][] { { "type", "birthday" }, { "name", getParameter("name") }, { "date", getParameter("date") } };
 	}
 
 	@Override protected String output() {
 		int nameLength = 0;
 		int ageLength = 0;
-		String newName = name;
+		String newName = getParameter("name");
 		for (Event event : ((EventList) list).getNearEvents()) {
 			Birthday birthday = (Birthday) event;
-			if (birthday.name.length() > nameLength) {
-				nameLength = birthday.name.length();
+			if (birthday.getParameter("name").length() > nameLength) {
+				nameLength = birthday.getParameter("name").length();
 			}
 			if (String.valueOf(birthday.getAge()).length() > ageLength) {
 				ageLength = String.valueOf(birthday.getAge()).length();
@@ -34,6 +34,6 @@ public class Birthday extends AllDayEvent {
 	}
 
 	private int getAge() {
-		return Date.getDate().year.counter - date.year.counter;
+		return Date.getDate().year.counter - new Date(getParameter("date")).year.counter;
 	}
 }

@@ -21,9 +21,9 @@ public abstract class InstanceList {
 		return null;
 	}
 
-	public String output(String[] tags) {
+	public String output(String[][] tags) {
 		return null;
 	}
 
-	public abstract void add(String[] parameter);
+	public abstract void add(String[][] parameter);
 }

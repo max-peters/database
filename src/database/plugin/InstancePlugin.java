@@ -30,7 +30,7 @@ public abstract class InstancePlugin extends Plugin {
 	@Command(tag = "display") public void display() throws InterruptedException {
 		String[][] displayInformation = { { identity, "(true|false)" } };
 		try {
-			display = Boolean.valueOf(request(displayInformation)[0]);
+			display = Boolean.valueOf(request(displayInformation)[0][1]);
 			administration.update();
 		}
 		catch (CancellationException e) {
@@ -47,10 +47,11 @@ public abstract class InstancePlugin extends Plugin {
 		administration.update();
 	}
 
-	protected String[] request(String[][] information) throws CancellationException, InterruptedException {
-		String[] parameter = new String[information.length];
+	protected String[][] request(String[][] information) throws CancellationException, InterruptedException {
+		String[][] parameter = new String[information.length][2];
 		for (int i = 0; i < information.length; i++) {
-			parameter[i] = administration.request(information[i][0], information[i][1]);
+			parameter[i][0] = information[i][0];
+			parameter[i][1] = administration.request(information[i][0], information[i][1]);
 		}
 		return parameter;
 	}
@@ -68,7 +69,7 @@ public abstract class InstancePlugin extends Plugin {
 		return null;
 	}
 
-	public void create(String[] parameter) {
+	public void create(String[][] parameter) {
 		instanceList.add(parameter);
 	}
 
@@ -95,12 +96,8 @@ public abstract class InstancePlugin extends Plugin {
 		return display;
 	}
 
-	@Getter public ArrayList<String> getStringList() {
-		ArrayList<String> strings = new ArrayList<String>();
-		for (Instance instance : instanceList.getList()) {
-			strings.add(instance.toString());
-		}
-		return strings;
+	@Getter public ArrayList<Instance> getList() {
+		return instanceList.getList();
 	}
 
 	@Getter public String getDisplayAsString() {

@@ -6,40 +6,23 @@ import java.util.ArrayList;
 import database.plugin.Instance;
 
 public class Subject extends Instance {
-	private double	score;
-	private double	maxPoints;
-	private int		counter;
-	public String	tag;
-	public String	name;
-
-	public Subject(String[] parameter, SubjectList list) {
-		super(parameter[0], list);
-		this.name = parameter[0];
-		this.tag = parameter[1];
-		if (parameter.length == 5) {
-			this.score = Double.parseDouble(parameter[2]);
-			this.maxPoints = Double.parseDouble(parameter[3]);
-			this.counter = Integer.parseInt(parameter[4]);
-		}
-		else {
-			this.score = 0;
-			this.maxPoints = 0;
-			this.counter = 0;
-		}
+	public Subject(String[][] parameter, SubjectList list) {
+		super(parameter, parameter[0][1], list);
 	}
 
-	@Override public String toString() {
-		return "subject" + " : " + name + " / " + tag + " / " + score + " / " + maxPoints + " / " + counter;
+	@Override public String[][] getParameter() {
+		return new String[][] { { "name", getParameter("name") }, { "tag", getParameter("tag") }, { "score", getParameter("score") }, { "maxPoints", getParameter("maxPoints") },
+				{ "counter", getParameter("counter") } };
 	}
 
 	protected double calcPercent() {
-		return (score / maxPoints) * 100;
+		return (Double.valueOf(getParameter("score")) / Double.valueOf(getParameter("maxPoints"))) * 100;
 	}
 
 	protected void setGrade(double newScore, double newMaxPoint) {
-		counter++;
-		maxPoints = newMaxPoint + maxPoints;
-		score = newScore + score;
+		setParameter("counter", String.valueOf(Integer.valueOf(getParameter("counter")) + 1));
+		setParameter("maxPoints", String.valueOf(Double.valueOf(getParameter("maxPoints")) + newMaxPoint));
+		setParameter("score", String.valueOf(Double.valueOf(getParameter("score")) + newScore));
 	}
 
 	protected String output(ArrayList<Instance> instances) {
@@ -52,18 +35,18 @@ public class Subject extends Instance {
 		String toPrint;
 		String newName;
 		int currentLength;
-		int allGradesLength = oneDecimalPlace.format(subjects.get(0).score).length();
-		int allGradesTotalLength = oneDecimalPlace.format(subjects.get(0).maxPoints).length();
+		int allGradesLength = oneDecimalPlace.format(subjects.get(0).getParameter("score")).length();
+		int allGradesTotalLength = oneDecimalPlace.format(subjects.get(0).getParameter("maxPoints")).length();
 		int percentLength = twoDecimalPlace.format(subjects.get(0).calcPercent()).length();
-		int counterLength = String.valueOf(subjects.get(0).counter).length();
-		int nameLength = subjects.get(0).name.length();
+		int counterLength = String.valueOf(subjects.get(0).getParameter("counter")).length();
+		int nameLength = subjects.get(0).getParameter("name").length();
 		for (Subject current : subjects) {
-			currentLength = oneDecimalPlace.format(current.score).length();
+			currentLength = oneDecimalPlace.format(current.getParameter("score")).length();
 			if (allGradesLength < currentLength)
 				allGradesLength = currentLength;
 		}
 		for (Subject current : subjects) {
-			currentLength = oneDecimalPlace.format(current.maxPoints).length();
+			currentLength = oneDecimalPlace.format(current.getParameter("maxPoints")).length();
 			if (allGradesTotalLength < currentLength)
 				allGradesTotalLength = currentLength;
 		}
@@ -73,24 +56,25 @@ public class Subject extends Instance {
 				percentLength = currentLength;
 		}
 		for (Subject current : subjects) {
-			if (counterLength < String.valueOf(current.counter).length())
-				counterLength = String.valueOf(current.counter).length();
+			if (counterLength < String.valueOf(current.getParameter("counter")).length())
+				counterLength = String.valueOf(current.getParameter("counter")).length();
 		}
 		for (Subject current : subjects) {
-			if (nameLength < current.name.length())
-				nameLength = current.name.length();
+			if (nameLength < current.getParameter("name").length())
+				nameLength = current.getParameter("name").length();
 		}
 		nameLength = nameLength + 4;
-		newName = name;
+		newName = getParameter("name");
 		for (newName.length(); newName.length() < nameLength;) {
 			newName = newName + " ";
 		}
 		toPrint = newName;
-		if (counter > 0) {
-			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(score)) + "/"
-					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(maxPoints)) + " - " + String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent()))
-					+ "%" + "]" + " in [" + String.format("%" + counterLength + "s", counter).replace(' ', '0');
-			if (counter == 1) {
+		if (Integer.valueOf(getParameter("counter")) > 0) {
+			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(getParameter("score"))) + "/"
+					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(getParameter("maxPoints"))) + " - "
+					+ String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent())) + "%" + "]" + " in ["
+					+ String.format("%" + counterLength + "s", getParameter("counter")).replace(' ', '0');
+			if (Integer.valueOf(getParameter("counter")) == 1) {
 				toPrint = toPrint + "] Blatt";
 			}
 			else {
