@@ -8,7 +8,7 @@ public class AllDayEvent extends Event {
 	}
 
 	@Override public String[][] getParameter() {
-		return new String[][] { { "type", "all day event" }, { "name", getParameter("name") }, { "date", getParameter("date") } };
+		return new String[][] { { "name", getParameter("name") }, { "date", getParameter("date") } };
 	}
 
 	@Override protected String output() {

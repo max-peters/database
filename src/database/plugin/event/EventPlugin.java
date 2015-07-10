@@ -13,7 +13,7 @@ import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.event.allDayEvent.AllDayEventPlugin;
-import database.plugin.event.allDayEvent.birthday.BirthdayPlugin;
+import database.plugin.event.birthday.BirthdayPlugin;
 
 public class EventPlugin extends InstancePlugin {
 	private ArrayList<EventExtention>	extentionList	= new ArrayList<EventExtention>();
@@ -70,7 +70,8 @@ public class EventPlugin extends InstancePlugin {
 			for (int i = 0; i < parameter.length; i++) {
 				if (parameter[i][0].equals("type")) {
 					if (parameter[i][1].equals(extention.getIdentity())) {
-						extention.create(new String[][] { parameter[1], parameter[2] });
+						int k = (i + 1) % 3;
+						extention.create(new String[][] { parameter[k], parameter[(k + 1) % 3] });
 					}
 				}
 			}

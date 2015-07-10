@@ -1,17 +1,16 @@
-package database.plugin.event.allDayEvent.birthday;
+package database.plugin.event.birthday;
 
 import database.main.date.Date;
 import database.plugin.event.Event;
 import database.plugin.event.EventList;
-import database.plugin.event.allDayEvent.AllDayEvent;
 
-public class Birthday extends AllDayEvent {
+public class Birthday extends Event {
 	public Birthday(String[][] parameter, BirthdayList list) {
 		super(new String[][] { parameter[0], parameter[1] }, list);
 	}
 
 	@Override public String[][] getParameter() {
-		return new String[][] { { "type", "birthday" }, { "name", getParameter("name") }, { "date", getParameter("date") } };
+		return new String[][] { { "name", getParameter("name") }, { "date", getParameter("date") } };
 	}
 
 	@Override protected String output() {

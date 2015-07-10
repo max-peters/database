@@ -17,7 +17,6 @@ public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
 	private Store					store;
 	private Terminal				terminal;
-	XMLReader						rr;
 	private WriterReader			writerReader;
 
 	public Administration(GraphicalUserInterface graphicalUserInterface, Store store, Terminal terminal, WriterReader writerReader) {
@@ -25,37 +24,20 @@ public class Administration {
 		this.store = store;
 		this.terminal = terminal;
 		this.writerReader = writerReader;
-		rr = new XMLReader(store);
 	}
 
-	public void main() throws IOException, InterruptedException {
+	public void main() throws IOException, InterruptedException, SAXException, ParserConfigurationException, TransformerException {
 		initiation();
 		while (true) {
 			inputRequestAdministration();
 		}
 	}
 
-	private void initiation() throws IOException, InterruptedException {
+	private void initiation() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
 		connect();
 		graphicalUserInterface.initialise();
-		// writerReader.read();
-		try {
-			rr.initialise();
-			rr.read();
-			// for (Plugin currentPlugin : store.getPlugins()) {
-			// if (currentPlugin instanceof InstancePlugin) {
-			// for (Instance instance : ((InstancePlugin) currentPlugin).getList()) {
-			// for (int i = 0; i < instance.getParameter().length; i++) {
-			// System.out.println(instance.getParameter()[i][0]);
-			// System.out.println(instance.getParameter()[i][1]);
-			// }
-			// }
-			// }
-			// }
-		}
-		catch (ParserConfigurationException | SAXException e) {
-			e.printStackTrace();
-		}
+		writerReader.initialise();
+		writerReader.read();
 		initialOutput();
 		graphicalUserInterface.show();
 	}
@@ -71,11 +53,13 @@ public class Administration {
 	private void connect() throws IOException, InterruptedException {
 		if (!writerReader.checkDirectory()) {
 			Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
-			connection.waitFor();
+			if (connection.waitFor() != 0) {
+				throw new IOException("Error: server unavailable");
+			}
 		}
 	}
 
-	private void inputRequestAdministration() throws InterruptedException, IOException {
+	private void inputRequestAdministration() throws InterruptedException, IOException, ParserConfigurationException, TransformerException {
 		String command = null;
 		try {
 			command = request("command", store.getPluginNameTagsAsRegesx().replace(")", "|") + "check|exit|save)");
@@ -90,16 +74,7 @@ public class Administration {
 						((InstancePlugin) store.getPlugin("task")).remove(((InstancePlugin) store.getPlugin("task")).check());
 						break;
 					case "save":
-						try {
-							rr.write();
-						}
-						catch (ParserConfigurationException e) {
-							e.printStackTrace();
-						}
-						catch (TransformerException e) {
-							e.printStackTrace();
-						}
-						// save();
+						save();
 						break;
 					case "exit":
 						exit();
@@ -112,7 +87,7 @@ public class Administration {
 		}
 	}
 
-	private void save() throws IOException, InterruptedException {
+	private void save() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
 		graphicalUserInterface.blockInput();
 		writerReader.write();
 		store.setChanges(false);
@@ -120,7 +95,7 @@ public class Administration {
 		graphicalUserInterface.waitForInput();
 	}
 
-	private void exit() throws IOException, InterruptedException {
+	private void exit() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
 		if (store.getChanges()) {
 			String command;
 			command = request("there are unsaved changes - exit", "(y|n|s)");
