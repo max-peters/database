@@ -10,14 +10,13 @@ import database.main.GraphicalUserInterface;
 import database.main.Store;
 import database.main.Terminal;
 import database.plugin.Command;
+import database.plugin.Extendable;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 
-public class EventPlugin extends InstancePlugin {
-	private ArrayList<EventExtention>	extentionList	= new ArrayList<EventExtention>();
-
+public class EventPlugin extends InstancePlugin implements Extendable {
 	public EventPlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
 		super(store, terminal, graphicalUserInterface, administration, "event", null);
 		initialise();
@@ -140,6 +139,11 @@ public class EventPlugin extends InstancePlugin {
 		return instances;
 	}
 
+	@Override public void initialise() {
+		extentionList.add(new AllDayEventPlugin(store, terminal, graphicalUserInterface, administration));
+		extentionList.add(new BirthdayPlugin(store, terminal, graphicalUserInterface, administration));
+	}
+
 	private EventExtention chooseType() throws InterruptedException {
 		ArrayList<String> strings = new ArrayList<String>();
 		EventExtention toReturn = null;
@@ -158,10 +162,5 @@ public class EventPlugin extends InstancePlugin {
 			}
 		}
 		return toReturn;
-	}
-
-	private void initialise() {
-		extentionList.add(new AllDayEventPlugin(store, terminal, graphicalUserInterface, administration));
-		extentionList.add(new BirthdayPlugin(store, terminal, graphicalUserInterface, administration));
 	}
 }

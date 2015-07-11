@@ -12,7 +12,7 @@ import database.main.date.Date;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
-// TODO: stundenplan
+// TODO: stundenplan, extendable plugin, store (pugin?)
 public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
 	private Store					store;
@@ -36,7 +36,6 @@ public class Administration {
 	private void initiation() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
 		connect();
 		graphicalUserInterface.initialise();
-		writerReader.initialise();
 		writerReader.read();
 		initialOutput();
 		graphicalUserInterface.show();

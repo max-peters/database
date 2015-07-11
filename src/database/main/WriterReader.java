@@ -18,17 +18,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import database.plugin.Extendable;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
-import database.plugin.event.allDayEvent.AllDayEvent;
-import database.plugin.event.birthday.Birthday;
+import database.plugin.event.EventExtention;
 
 public class WriterReader {
-	private String		storageDirectory;
-	private Store		store;
-	private File		file;
-	private Document	document;
+	private String	storageDirectory;
+	private Store	store;
+	private File	file;
 
 	public WriterReader(Store store) {
 		this.store = store;
@@ -40,15 +39,12 @@ public class WriterReader {
 		return file.exists();
 	}
 
-	public void initialise() throws ParserConfigurationException {
+	public void write() throws ParserConfigurationException, TransformerException, IOException {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-		document = documentBuilder.newDocument();
+		Document document = documentBuilder.newDocument();
 		document.setXmlStandalone(true);
 		document.setXmlVersion("1.0");
-	}
-
-	public void write() throws ParserConfigurationException, TransformerException, IOException {
 		Element database = document.createElement("database");
 		document.appendChild(database);
 		Element plugin = document.createElement("plugin");
@@ -66,12 +62,12 @@ public class WriterReader {
 				}
 				for (Instance instance : instancePlugin.getList()) {
 					Element parameter = null;
-					if (instancePlugin.getIdentity().equals("event")) {
-						if (instance instanceof AllDayEvent) {
-							parameter = document.createElement("allDayEvent");
-						}
-						else if (instance instanceof Birthday) {
-							parameter = document.createElement("birthday");
+					if (instancePlugin instanceof Extendable) {
+						Extendable extendable = (Extendable) instancePlugin;
+						for (EventExtention extention : extendable.getExtentions()) {
+							if (extention.getInstanceList().getList().contains(instance)) {
+								parameter = document.createElement(extention.getIdentity());
+							}
 						}
 					}
 					else {
@@ -134,45 +130,3 @@ public class WriterReader {
 		}
 	}
 }
-// public void write() throws IOException {
-// FileWriter writer;
-// writer = new FileWriter(storageDirectory);
-// for (Object current : store.getListToWrite()) {
-// writer.write(current.toString() + "\r\n");
-// }
-// writer.close();
-// writer = new FileWriter(oldDirectory);
-// for (Object current : store.getStorage()) {
-// writer.write(current.toString() + "\r\n");
-// }
-// writer.close();
-// }
-// public void read() throws IOException {
-// Scanner scanner = new Scanner(new FileInputStream(inputFile), "UTF-8");
-// while (scanner.hasNextLine()) {
-// String line = scanner.nextLine();
-// String splitResult[] = line.split(" : ");
-// String parameters[] = splitResult[1].split(" / ");
-// Plugin plugin = store.getPlugin(splitResult[0]);
-// if (plugin != null && plugin instanceof InstancePlugin) {
-// ((InstancePlugin) plugin).create(parameters);
-// }
-// else if (splitResult[0].equals("boolean")) {
-// plugin = store.getPlugin(parameters[0]);
-// if (plugin != null && plugin instanceof InstancePlugin) {
-// ((InstancePlugin) plugin).setDisplay(Boolean.valueOf(parameters[1]));
-// }
-// }
-// else {
-// scanner.close();
-// throw new IOException("invalid line: '" + line + "'");
-// }
-// }
-// scanner.close();
-// scanner = new Scanner(new FileInputStream(new File(oldDirectory)), "UTF-8");
-// while (scanner.hasNextLine()) {
-// String line = scanner.nextLine();
-// store.addToStorage(line);
-// }
-// scanner.close();
-// }

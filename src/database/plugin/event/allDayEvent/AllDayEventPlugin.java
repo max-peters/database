@@ -8,7 +8,7 @@ import database.plugin.event.EventExtention;
 
 public class AllDayEventPlugin extends EventExtention {
 	public AllDayEventPlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(store, terminal, graphicalUserInterface, administration, "all day event", new AllDayEventList());
+		super(store, terminal, graphicalUserInterface, administration, "day", new AllDayEventList());
 		this.display = true;
 	}
 }
