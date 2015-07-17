@@ -25,10 +25,9 @@ public class Expense extends Instance {
 	}
 
 	protected boolean checkValidity(int month, int year) {
-		boolean returnValue = false;
 		if ((getDate().month.counter == month && getDate().year.counter == year) || (month < 0 && year < 0)) {
-			returnValue = true;
+			return true;
 		}
-		return returnValue;
+		return false;
 	}
 }

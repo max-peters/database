@@ -53,13 +53,13 @@ public class ExpenseList extends InstanceList {
 		ArrayList<String> names;
 		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
-			if (!(categorys.contains(expense.getCategory()))) {
+			if (expense.checkValidity(month, year) && !(categorys.contains(expense.getCategory()))) {
 				categorys.add(expense.getCategory());
 			}
-			if (expense.getName().length() > nameLength) {
+			if (expense.checkValidity(month, year) && expense.getName().length() > nameLength) {
 				nameLength = expense.getName().length();
 			}
-			if (format.format(expense.getValue()).length() > valueLength) {
+			if (expense.checkValidity(month, year) && format.format(expense.getValue()).length() > valueLength) {
 				valueLength = format.format(expense.getValue()).length();
 			}
 		}
@@ -68,7 +68,7 @@ public class ExpenseList extends InstanceList {
 			names = new ArrayList<String>();
 			for (Instance instance : getList()) {
 				Expense expense = (Expense) instance;
-				if (expense.checkValidity(month, year) && (expense.getCategory().equals(current)) && !(names.contains(expense.getName()))) {
+				if (expense.checkValidity(month, year) && expense.getCategory().equals(current) && !(names.contains(expense.getName()))) {
 					names.add(expense.getName());
 				}
 			}
@@ -78,7 +78,7 @@ public class ExpenseList extends InstanceList {
 				toReturn = toReturn + "-" + name;
 				for (Instance instance : getList()) {
 					Expense expense = (Expense) instance;
-					if (expense.checkValidity(month, year) && (expense.getName().equals(name))) {
+					if (expense.checkValidity(month, year) && expense.getCategory().equals(current) && expense.getName().equals(name)) {
 						value = value + expense.getValue();
 					}
 				}
