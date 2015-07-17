@@ -9,20 +9,28 @@ public abstract class Event extends Instance implements Comparable<Event> {
 	}
 
 	@Override public int compareTo(Event event) {
-		return new Date(getParameter("date")).compareTo(new Date(event.getParameter("date")));
+		return getDate().compareTo(event.getDate());
 	}
 
 	protected Date updateYear() {
 		Date localDate = null;
 		Date currentDate = Date.getDate();
-		if (currentDate.month.counter > new Date(getParameter("date")).month.counter) {
+		if (currentDate.month.counter > getDate().month.counter) {
 			int nextYear = currentDate.year.counter + 1;
-			localDate = new Date(new Date(getParameter("date")).day.counter + "." + new Date(getParameter("date")).month.counter + "." + nextYear);
+			localDate = new Date(getDate().day.counter + "." + getDate().month.counter + "." + nextYear);
 		}
 		else {
-			localDate = new Date(new Date(getParameter("date")).day.counter + "." + new Date(getParameter("date")).month.counter + "." + currentDate.year.counter);
+			localDate = new Date(getDate().day.counter + "." + getDate().month.counter + "." + currentDate.year.counter);
 		}
 		return localDate;
+	}
+
+	protected Date getDate() {
+		return new Date(getParameter("date"));
+	}
+
+	protected String getName() {
+		return getParameter("name");
 	}
 
 	protected abstract String output();

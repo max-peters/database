@@ -1,5 +1,6 @@
 package database.plugin.refilling;
 
+import database.main.date.Date;
 import database.plugin.Instance;
 
 public class Refilling extends Instance {
@@ -9,9 +10,24 @@ public class Refilling extends Instance {
 		createExpense();
 	}
 
-	@Override public String[][] getParameter() {
-		return new String[][] { { "refuelAmount", getParameter("refuelAmount") }, { "value", getParameter("value") }, { "distance", getParameter("distance") }, { "date", getParameter("date") },
-				{ "count", getParameter("count") } };
+	Double getValue() {
+		return Double.valueOf(getParameter("value"));
+	}
+
+	Double getDistance() {
+		return Double.valueOf(getParameter("distance"));
+	}
+
+	Double getRefuelAmount() {
+		return Double.valueOf(getParameter("refuelAmount"));
+	}
+
+	Date getDate() {
+		return new Date(getParameter("date"));
+	}
+
+	int getCount() {
+		return Integer.valueOf(getParameter("count"));
 	}
 
 	private void createExpense() {
@@ -20,17 +36,17 @@ public class Refilling extends Instance {
 	}
 
 	private double calcAverageConsumption() {
-		return Math.round(Double.valueOf(getParameter("refuelAmount")) / Double.valueOf(getParameter("distance")) * 1000) / 10.0;
+		return Math.round(getRefuelAmount() / getDistance() * 1000) / 10.0;
 	}
 
 	protected String output() {
 		return "["
-				+ String.format("%" + String.valueOf(list.getList().size()).length() + "s", Integer.valueOf(getParameter("count"))).replace(' ', '0')
+				+ String.format("%" + String.valueOf(list.getList().size()).length() + "s", getCount()).replace(' ', '0')
 				+ "] distance: ["
-				+ String.format("%" + String.valueOf(((RefillingList) list).getHighestDistance()).length() + "s", Double.valueOf(getParameter("distance")))
+				+ String.format("%" + String.valueOf(((RefillingList) list).getHighestDistance()).length() + "s", getDistance())
 				+ " km] refuelAmount: ["
-				+ String.format("%" + String.valueOf(String.format("%.1f", ((RefillingList) list).getHighestRefuelAmount())).length() + "s",
-						String.format("%.1f", Double.valueOf(getParameter("refuelAmount")))).replace(",", ".") + " l] averageConsumption: ["
+				+ String.format("%" + String.valueOf(String.format("%.1f", ((RefillingList) list).getHighestRefuelAmount())).length() + "s", String.format("%.1f", getRefuelAmount()))
+						.replace(",", ".") + " l] averageConsumption: ["
 				+ String.format("%" + String.valueOf(((RefillingList) list).getHighestAverageConsumption()).length() + "s", calcAverageConsumption()) + " l/km]";
 	}
 }

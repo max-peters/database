@@ -7,7 +7,7 @@ public class Task extends Instance {
 		super(parameter, parameter[0][1], list);
 	}
 
-	@Override public String[][] getParameter() {
-		return new String[][] { { "name", getParameter("name") } };
+	String getTask() {
+		return getParameter("name");
 	}
 }

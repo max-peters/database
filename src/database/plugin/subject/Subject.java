@@ -3,6 +3,7 @@ package database.plugin.subject;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import database.main.date.Date;
 import database.plugin.Instance;
 
 public class Subject extends Instance {
@@ -10,19 +11,50 @@ public class Subject extends Instance {
 		super(parameter, parameter[2][1], list);
 	}
 
-	@Override public String[][] getParameter() {
-		return new String[][] { { "name", getParameter("name") }, { "tag", getParameter("tag") }, { "score", getParameter("score") }, { "maxPoints", getParameter("maxPoints") },
-				{ "counter", getParameter("counter") } };
+	Integer getCounter() {
+		return Integer.valueOf(getParameter("counter"));
+	}
+
+	Double getMaxPoints() {
+		return Double.valueOf(getParameter("maxPoints"));
+	}
+
+	Double getScore() {
+		return Double.valueOf(getParameter("score"));
+	}
+
+	String getName() {
+		return getParameter("name");
+	}
+
+	String getTag() {
+		return getParameter("tag");
+	}
+
+	void setCounter(int counter) {
+		setParameter("counter", String.valueOf(counter));
+	}
+
+	void setMaxPoints(double maxPoints) {
+		setParameter("maxPoints", String.valueOf(maxPoints));
+	}
+
+	void setScore(double score) {
+		setParameter("score", String.valueOf(score));
+	}
+
+	Date getDate() {
+		return new Date(getParameter("date"));
 	}
 
 	protected double calcPercent() {
-		return (Double.valueOf(getParameter("score")) / Double.valueOf(getParameter("maxPoints"))) * 100;
+		return (getScore() / getMaxPoints()) * 100;
 	}
 
 	protected void setGrade(double newScore, double newMaxPoint) {
-		setParameter("counter", String.valueOf(Integer.valueOf(getParameter("counter")) + 1));
-		setParameter("maxPoints", String.valueOf(Double.valueOf(getParameter("maxPoints")) + newMaxPoint));
-		setParameter("score", String.valueOf(Double.valueOf(getParameter("score")) + newScore));
+		setCounter(getCounter() + 1);
+		setMaxPoints(getMaxPoints() + newMaxPoint);
+		setScore(getScore() + newScore);
 	}
 
 	protected String output(ArrayList<Instance> instances) {
@@ -35,18 +67,18 @@ public class Subject extends Instance {
 		String toPrint;
 		String newName;
 		int currentLength;
-		int allGradesLength = oneDecimalPlace.format(Double.valueOf(subjects.get(0).getParameter("score"))).length();
-		int allGradesTotalLength = oneDecimalPlace.format(Double.valueOf(subjects.get(0).getParameter("maxPoints"))).length();
+		int allGradesLength = oneDecimalPlace.format(subjects.get(0).getScore()).length();
+		int allGradesTotalLength = oneDecimalPlace.format(subjects.get(0).getMaxPoints()).length();
 		int percentLength = twoDecimalPlace.format(subjects.get(0).calcPercent()).length();
-		int counterLength = String.valueOf(subjects.get(0).getParameter("counter")).length();
-		int nameLength = subjects.get(0).getParameter("name").length();
+		int counterLength = subjects.get(0).getParameter("counter").length();
+		int nameLength = subjects.get(0).getName().length();
 		for (Subject current : subjects) {
-			currentLength = oneDecimalPlace.format(Double.valueOf(current.getParameter("score"))).length();
+			currentLength = oneDecimalPlace.format(current.getScore()).length();
 			if (allGradesLength < currentLength)
 				allGradesLength = currentLength;
 		}
 		for (Subject current : subjects) {
-			currentLength = oneDecimalPlace.format(Double.valueOf(current.getParameter("maxPoints"))).length();
+			currentLength = oneDecimalPlace.format(current.getMaxPoints()).length();
 			if (allGradesTotalLength < currentLength)
 				allGradesTotalLength = currentLength;
 		}
@@ -56,25 +88,24 @@ public class Subject extends Instance {
 				percentLength = currentLength;
 		}
 		for (Subject current : subjects) {
-			if (counterLength < String.valueOf(current.getParameter("counter")).length())
-				counterLength = String.valueOf(current.getParameter("counter")).length();
+			if (counterLength < current.getParameter("counter").length())
+				counterLength = current.getParameter("counter").length();
 		}
 		for (Subject current : subjects) {
-			if (nameLength < current.getParameter("name").length())
-				nameLength = current.getParameter("name").length();
+			if (nameLength < current.getName().length())
+				nameLength = current.getName().length();
 		}
 		nameLength = nameLength + 4;
-		newName = getParameter("name");
+		newName = getName();
 		for (newName.length(); newName.length() < nameLength;) {
 			newName = newName + " ";
 		}
 		toPrint = newName;
-		if (Integer.valueOf(getParameter("counter")) > 0) {
-			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(Double.valueOf(getParameter("score")))) + "/"
-					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(Double.valueOf(getParameter("maxPoints")))) + " - "
-					+ String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent())) + "%" + "]" + " in ["
-					+ String.format("%" + counterLength + "s", getParameter("counter")).replace(' ', '0');
-			if (Integer.valueOf(getParameter("counter")) == 1) {
+		if (getCounter() > 0) {
+			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(getScore())) + "/"
+					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(getMaxPoints())) + " - " + String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent()))
+					+ "%" + "]" + " in [" + String.format("%" + counterLength + "s", getCounter()).replace(' ', '0');
+			if (getCounter() == 1) {
 				toPrint = toPrint + "] Blatt";
 			}
 			else {

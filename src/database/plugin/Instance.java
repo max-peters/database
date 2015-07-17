@@ -28,5 +28,7 @@ public abstract class Instance {
 		}
 	}
 
-	public abstract String[][] getParameter();
+	public String[][] getParameter() {
+		return parameter;
+	}
 }

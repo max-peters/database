@@ -1,12 +1,6 @@
 package database.main;
 
-import java.io.IOException;
-
 import javax.swing.JOptionPane;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-
-import org.xml.sax.SAXException;
 
 import database.plugin.event.EventPlugin;
 import database.plugin.expense.ExpensePlugin;
@@ -37,7 +31,7 @@ public class Main {
 		try {
 			administration.main();
 		}
-		catch (IOException | InterruptedException | SAXException | ParserConfigurationException | TransformerException e) {
+		catch (Throwable e) {
 			JOptionPane.showMessageDialog(graphicalUserInterface.frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}

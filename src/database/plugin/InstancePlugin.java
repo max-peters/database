@@ -9,6 +9,7 @@ import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.Store;
 import database.main.Terminal;
+import database.main.date.Date;
 
 public abstract class InstancePlugin extends Plugin {
 	protected Store						store;
@@ -50,8 +51,14 @@ public abstract class InstancePlugin extends Plugin {
 	protected String[][] request(String[][] information) throws CancellationException, InterruptedException {
 		String[][] parameter = new String[information.length][2];
 		for (int i = 0; i < information.length; i++) {
+			String parameterInformation = administration.request(information[i][0], information[i][1]);
 			parameter[i][0] = information[i][0];
-			parameter[i][1] = administration.request(information[i][0], information[i][1]);
+			if (information[i][0].equals("date")) {
+				parameter[i][1] = new Date(parameterInformation).toString();
+			}
+			else {
+				parameter[i][1] = parameterInformation;
+			}
 		}
 		return parameter;
 	}

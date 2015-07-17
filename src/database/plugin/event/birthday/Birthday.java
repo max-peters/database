@@ -9,18 +9,14 @@ public class Birthday extends Event {
 		super(new String[][] { parameter[0], parameter[1] }, list);
 	}
 
-	@Override public String[][] getParameter() {
-		return new String[][] { { "name", getParameter("name") }, { "date", getParameter("date") } };
-	}
-
 	@Override protected String output() {
 		int nameLength = 0;
 		int ageLength = 0;
-		String newName = getParameter("name");
+		String newName = getName();
 		for (Event event : ((EventList) list).getNearEvents()) {
 			Birthday birthday = (Birthday) event;
-			if (birthday.getParameter("name").length() > nameLength) {
-				nameLength = birthday.getParameter("name").length();
+			if (birthday.getName().length() > nameLength) {
+				nameLength = birthday.getName().length();
 			}
 			if (String.valueOf(birthday.getAge()).length() > ageLength) {
 				ageLength = String.valueOf(birthday.getAge()).length();
@@ -33,6 +29,6 @@ public class Birthday extends Event {
 	}
 
 	private int getAge() {
-		return Date.getDate().year.counter - new Date(getParameter("date")).year.counter;
+		return Date.getDate().year.counter - getDate().year.counter;
 	}
 }

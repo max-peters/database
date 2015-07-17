@@ -1,6 +1,5 @@
 package database.main.date;
 
-
 public class Year {
 	public boolean	leapYear;
 	public int		counter;
@@ -32,5 +31,9 @@ public class Year {
 			dayCount = months[i].dayCount + dayCount;
 		}
 		return dayCount;
+	}
+
+	public String toString() {
+		return String.valueOf(counter);
 	}
 }

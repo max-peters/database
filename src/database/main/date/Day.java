@@ -6,4 +6,8 @@ public class Day {
 	public Day(int counter) {
 		this.counter = counter;
 	}
+
+	public String toString() {
+		return String.valueOf(counter);
+	}
 }

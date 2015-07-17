@@ -53,14 +53,14 @@ public class ExpenseList extends InstanceList {
 		ArrayList<String> names;
 		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
-			if (!(categorys.contains(expense.getParameter("category")))) {
-				categorys.add(expense.getParameter("category"));
+			if (!(categorys.contains(expense.getCategory()))) {
+				categorys.add(expense.getCategory());
 			}
-			if (expense.getParameter("name").length() > nameLength) {
-				nameLength = expense.getParameter("name").length();
+			if (expense.getName().length() > nameLength) {
+				nameLength = expense.getName().length();
 			}
-			if (format.format(Double.valueOf(expense.getParameter("value"))).length() > valueLength) {
-				valueLength = format.format(Double.valueOf(expense.getParameter("value"))).length();
+			if (format.format(expense.getValue()).length() > valueLength) {
+				valueLength = format.format(expense.getValue()).length();
 			}
 		}
 		for (String current : categorys) {
@@ -68,8 +68,8 @@ public class ExpenseList extends InstanceList {
 			names = new ArrayList<String>();
 			for (Instance instance : getList()) {
 				Expense expense = (Expense) instance;
-				if (expense.checkValidity(month, year) && (expense.getParameter("category").equals(current)) && !(names.contains(expense.getParameter("name")))) {
-					names.add(expense.getParameter("name"));
+				if (expense.checkValidity(month, year) && (expense.getCategory().equals(current)) && !(names.contains(expense.getName()))) {
+					names.add(expense.getName());
 				}
 			}
 			for (String name : names) {
@@ -78,8 +78,8 @@ public class ExpenseList extends InstanceList {
 				toReturn = toReturn + "-" + name;
 				for (Instance instance : getList()) {
 					Expense expense = (Expense) instance;
-					if (expense.checkValidity(month, year) && (expense.getParameter("name").equals(name))) {
-						value = value + Double.valueOf(expense.getParameter("value"));
+					if (expense.checkValidity(month, year) && (expense.getName().equals(name))) {
+						value = value + expense.getValue();
 					}
 				}
 				blankCounter = (nameLength - name.length() + 1) + valueLength - format.format(value).length();
@@ -126,7 +126,7 @@ public class ExpenseList extends InstanceList {
 		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
 			if (expense.checkValidity(month, year)) {
-				value = value + Double.valueOf(expense.getParameter("value"));
+				value = value + expense.getValue();
 			}
 		}
 		return value;
@@ -136,8 +136,8 @@ public class ExpenseList extends InstanceList {
 		ArrayList<Month> months = new ArrayList<Month>();
 		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
-			if (!months.contains(new Date(expense.getParameter("date")).month)) {
-				months.add(new Date(expense.getParameter("date")).month);
+			if (!months.contains(expense.getDate().month)) {
+				months.add(expense.getDate().month);
 			}
 		}
 		return months;

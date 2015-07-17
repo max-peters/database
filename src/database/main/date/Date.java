@@ -33,6 +33,9 @@ public class Date implements Comparable<Date> {
 				this.month = year.months[Integer.parseInt(splitResult[1]) - 1];
 				this.day = year.months[Integer.parseInt(splitResult[1]) - 1].days[Integer.parseInt(splitResult[0]) - 1];
 			}
+			else {
+				throw new IllegalArgumentException("wrong input string for date instantiation: '" + date + "'");
+			}
 		}
 	}
 

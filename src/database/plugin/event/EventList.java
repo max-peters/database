@@ -16,7 +16,7 @@ public abstract class EventList extends InstanceList {
 		for (Object object : getList()) {
 			Event event = (Event) object;
 			localDate = event.updateYear();
-			if ((localDate.compareTo(currentDate) < 3) && (localDate.compareTo(currentDate) >= 0)) {
+			if (localDate.compareTo(currentDate) < 3) {
 				nearEvents.add(event);
 			}
 		}

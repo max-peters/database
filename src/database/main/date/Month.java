@@ -1,6 +1,5 @@
 package database.main.date;
 
-
 public class Month {
 	public int		counter;
 	public int		dayCount;
@@ -92,5 +91,9 @@ public class Month {
 			equal = true;
 		}
 		return equal;
+	}
+
+	public String toString() {
+		return String.valueOf(counter);
 	}
 }

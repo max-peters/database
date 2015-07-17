@@ -48,7 +48,7 @@ public class SubjectList extends InstanceList {
 		Subject wanted = null;
 		for (Instance instance : getList()) {
 			Subject subject = (Subject) instance;
-			if (subject.getParameter("tag").equals(tag)) {
+			if (subject.getTag().equals(tag)) {
 				wanted = subject;
 			}
 		}
@@ -59,7 +59,7 @@ public class SubjectList extends InstanceList {
 		String regex = "(";
 		for (Instance instance : getList()) {
 			Subject subject = (Subject) instance;
-			regex = regex + subject.getParameter("tag");
+			regex = regex + subject.getTag();
 			if (!(getList().indexOf(subject) == getList().size() - 1)) {
 				regex = regex + "|";
 			}
