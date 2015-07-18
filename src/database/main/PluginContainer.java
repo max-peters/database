@@ -4,29 +4,18 @@ import java.util.ArrayList;
 
 import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
+import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
-public class Store {
+public class PluginContainer {
 	private ArrayList<Plugin>	plugins;
-	private ArrayList<String>	storage;
-	private boolean				changes;
 
-	public Store() {
+	public PluginContainer() {
 		this.plugins = new ArrayList<Plugin>();
-		this.storage = new ArrayList<String>();
-		this.changes = false;
 	}
 
 	public void addPlugin(Plugin plugin) {
 		plugins.add(plugin);
-	}
-
-	public void addToStorage(String toAdd) {
-		storage.add(toAdd);
-	}
-
-	@Setter public void setChanges(boolean changes) {
-		this.changes = changes;
 	}
 
 	@Getter public ArrayList<Plugin> getPlugins() {
@@ -42,12 +31,16 @@ public class Store {
 		return null;
 	}
 
-	@Getter public ArrayList<String> getStorage() {
-		return storage;
-	}
-
 	@Getter public boolean getChanges() {
-		return changes;
+		for (Plugin plugin : plugins) {
+			if (plugin instanceof InstancePlugin) {
+				InstancePlugin current = (InstancePlugin) plugin;
+				if (current.getChanges()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Getter public String getPluginNameTagsAsRegesx() {
@@ -59,5 +52,14 @@ public class Store {
 			}
 		}
 		return regex + ")";
+	}
+
+	@Setter public void setUnchanged() {
+		for (Plugin plugin : plugins) {
+			if (plugin instanceof InstancePlugin) {
+				InstancePlugin current = (InstancePlugin) plugin;
+				current.setChanges(false);
+			}
+		}
 	}
 }

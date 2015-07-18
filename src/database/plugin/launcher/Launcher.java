@@ -7,7 +7,7 @@ import database.plugin.Plugin;
 
 public class Launcher extends Plugin {
 	public Launcher() {
-		super("launcher");
+		super("launcher", null);
 	}
 
 	@Command(tag = "pull") public void pull() throws IOException {

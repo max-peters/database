@@ -11,7 +11,7 @@ import database.plugin.task.TaskPlugin;
 
 public class Main {
 	public static void main(String[] args) {
-		Store store = new Store();
+		PluginContainer store = new PluginContainer();
 		GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
 		Terminal terminal = new Terminal(graphicalUserInterface);
 		WriterReader writerReader = new WriterReader(store);

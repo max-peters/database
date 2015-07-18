@@ -26,10 +26,10 @@ import database.plugin.event.EventExtention;
 
 public class WriterReader {
 	private String	storageDirectory;
-	private Store	store;
+	private PluginContainer	store;
 	private File	file;
 
-	public WriterReader(Store store) {
+	public WriterReader(PluginContainer store) {
 		this.store = store;
 		this.storageDirectory = "Z:/storage.xml";
 		this.file = new File(storageDirectory);

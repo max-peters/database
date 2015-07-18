@@ -15,11 +15,11 @@ import database.plugin.Plugin;
 // TODO: stundenplan, extendable plugin, store (pugin?)
 public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
-	private Store					store;
+	private PluginContainer			store;
 	private Terminal				terminal;
 	private WriterReader			writerReader;
 
-	public Administration(GraphicalUserInterface graphicalUserInterface, Store store, Terminal terminal, WriterReader writerReader) {
+	public Administration(GraphicalUserInterface graphicalUserInterface, PluginContainer store, Terminal terminal, WriterReader writerReader) {
 		this.graphicalUserInterface = graphicalUserInterface;
 		this.store = store;
 		this.terminal = terminal;
@@ -41,14 +41,6 @@ public class Administration {
 		graphicalUserInterface.show();
 	}
 
-	private void initialOutput() {
-		for (Plugin plugin : store.getPlugins()) {
-			if (plugin instanceof InstancePlugin) {
-				((InstancePlugin) plugin).initialOutput();
-			}
-		}
-	}
-
 	private void connect() throws IOException, InterruptedException {
 		if (!writerReader.checkDirectory()) {
 			Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
@@ -67,7 +59,7 @@ public class Administration {
 				command = request(command, plugin.getCommandTags());
 				plugin.conduct(command);
 			}
-			else if (command.matches("(check|exit|save|push|pull)")) {
+			else if (command.matches("(check|exit|save)")) {
 				switch (command) {
 					case "check":
 						((InstancePlugin) store.getPlugin("task")).remove(((InstancePlugin) store.getPlugin("task")).check());
@@ -89,7 +81,7 @@ public class Administration {
 	private void save() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
 		graphicalUserInterface.blockInput();
 		writerReader.write();
-		store.setChanges(false);
+		store.setUnchanged();
 		terminal.requestOut("saved");
 		graphicalUserInterface.waitForInput();
 	}
@@ -147,9 +139,11 @@ public class Administration {
 		graphicalUserInterface.waitForInput();
 	}
 
-	public void update() {
-		graphicalUserInterface.clear();
-		initialOutput();
-		store.setChanges(true);
+	public void initialOutput() {
+		for (Plugin plugin : store.getPlugins()) {
+			if (plugin instanceof InstancePlugin) {
+				((InstancePlugin) plugin).initialOutput();
+			}
+		}
 	}
 }

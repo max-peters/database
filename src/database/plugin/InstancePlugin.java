@@ -7,60 +7,41 @@ import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
-import database.main.Store;
+import database.main.PluginContainer;
 import database.main.Terminal;
-import database.main.date.Date;
 
 public abstract class InstancePlugin extends Plugin {
-	protected Store						store;
+	protected PluginContainer			store;
 	protected Terminal					terminal;
 	protected GraphicalUserInterface	graphicalUserInterface;
-	protected Administration			administration;
 	protected InstanceList				instanceList;
 	protected boolean					display;
+	private boolean						changes;
 
-	public InstancePlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
-		super(identity);
+	public InstancePlugin(PluginContainer store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
+		super(identity, administration);
 		this.store = store;
 		this.terminal = terminal;
 		this.graphicalUserInterface = graphicalUserInterface;
-		this.administration = administration;
 		this.instanceList = instanceList;
+		this.changes = false;
 	}
 
 	@Command(tag = "display") public void display() throws InterruptedException {
 		String[][] displayInformation = { { identity, "(true|false)" } };
 		try {
 			display = Boolean.valueOf(request(displayInformation)[0][1]);
-			administration.update();
+			update();
 		}
 		catch (CancellationException e) {
 			return;
 		}
 	}
 
-	@Command(tag = "store") public void store() {
-		for (Object object : instanceList.getList()) {
-			Instance instance = (Instance) object;
-			store.addToStorage(instance.toString());
-		}
-		instanceList.getList().clear();
-		administration.update();
-	}
-
-	protected String[][] request(String[][] information) throws CancellationException, InterruptedException {
-		String[][] parameter = new String[information.length][2];
-		for (int i = 0; i < information.length; i++) {
-			String parameterInformation = administration.request(information[i][0], information[i][1]);
-			parameter[i][0] = information[i][0];
-			if (information[i][0].equals("date")) {
-				parameter[i][1] = new Date(parameterInformation).toString();
-			}
-			else {
-				parameter[i][1] = parameterInformation;
-			}
-		}
-		return parameter;
+	public void update() {
+		graphicalUserInterface.clear();
+		administration.initialOutput();
+		setChanges(true);
 	}
 
 	public Instance check() throws InterruptedException {
@@ -99,8 +80,16 @@ public abstract class InstancePlugin extends Plugin {
 		this.display = display;
 	}
 
+	@Setter public void setChanges(boolean changes) {
+		this.changes = changes;
+	}
+
 	@Getter public boolean getDisplay() {
 		return display;
+	}
+
+	@Getter public boolean getChanges() {
+		return changes;
 	}
 
 	@Getter public ArrayList<Instance> getList() {

@@ -7,7 +7,7 @@ import java.util.concurrent.CancellationException;
 
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
-import database.main.Store;
+import database.main.PluginContainer;
 import database.main.Terminal;
 import database.plugin.Command;
 import database.plugin.Extendable;
@@ -17,7 +17,7 @@ import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 
 public class EventPlugin extends InstancePlugin implements Extendable {
-	public EventPlugin(Store store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
+	public EventPlugin(PluginContainer store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
 		super(store, terminal, graphicalUserInterface, administration, "event", null);
 		initialise();
 	}
@@ -27,7 +27,7 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 			EventExtention extention = chooseType();
 			if (extention != null) {
 				extention.create();
-				administration.update();
+				update();
 			}
 		}
 		catch (CancellationException e) {
@@ -39,24 +39,10 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 		chooseType().display();
 	}
 
-	@Override @Command(tag = "store") public void store() {
-		for (EventExtention extention : extentionList) {
-			for (Object object : extention.getList()) {
-				Instance instance = (Instance) object;
-				store.addToStorage(instance.toString());
-			}
-			extention.getList().clear();
-		}
-		administration.update();
-	}
-
 	@Override public void conduct(String command) throws InterruptedException {
 		switch (command) {
 			case "new":
 				create();
-				break;
-			case "store":
-				store();
 				break;
 			case "display":
 				display();
