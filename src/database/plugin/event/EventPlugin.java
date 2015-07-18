@@ -17,8 +17,8 @@ import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 
 public class EventPlugin extends InstancePlugin implements Extendable {
-	public EventPlugin(PluginContainer store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(store, terminal, graphicalUserInterface, administration, "event", null);
+	public EventPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
+		super(pluginContainer, terminal, graphicalUserInterface, administration, "event", null);
 		initialise();
 	}
 
@@ -126,8 +126,8 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 	}
 
 	@Override public void initialise() {
-		extentionList.add(new AllDayEventPlugin(store, terminal, graphicalUserInterface, administration));
-		extentionList.add(new BirthdayPlugin(store, terminal, graphicalUserInterface, administration));
+		extentionList.add(new AllDayEventPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
+		extentionList.add(new BirthdayPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 	}
 
 	private EventExtention chooseType() throws InterruptedException {

@@ -10,8 +10,9 @@ import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
+import database.plugin.Writeable;
 
-public class Storage extends Plugin {
+public class Storage extends Plugin implements Writeable {
 	private ArrayList<String>	storage;
 	private PluginContainer		pluginContainer;
 
@@ -27,7 +28,7 @@ public class Storage extends Plugin {
 	@Override public void conduct(String command) throws InterruptedException, IOException {
 	}
 
-	@Command(tag = "store") public void store() throws InterruptedException {
+	@Command(tag = "store") public void pluginContainer() throws InterruptedException {
 		Plugin plugin = pluginContainer.getPlugin(request(new String[][] { { "store", pluginContainer.getPluginNameTagsAsRegesx() } })[0][1]);
 		InstancePlugin instancePlugin;
 		String parameter;
@@ -47,5 +48,9 @@ public class Storage extends Plugin {
 		}
 		instancePlugin.getList().clear();
 		instancePlugin.update();
+	}
+
+	@Override public ArrayList<String> write() {
+		return storage;
 	}
 }

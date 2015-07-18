@@ -12,8 +12,8 @@ import database.plugin.InstanceList;
 import database.plugin.InstancePlugin;
 
 public abstract class EventExtention extends InstancePlugin {
-	public EventExtention(PluginContainer store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
-		super(store, terminal, graphicalUserInterface, administration, identity, instanceList);
+	public EventExtention(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
+		super(pluginContainer, terminal, graphicalUserInterface, administration, identity, instanceList);
 	}
 
 	@Command(tag = "new") public void create() throws InterruptedException {

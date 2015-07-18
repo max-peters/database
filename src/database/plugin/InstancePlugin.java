@@ -11,16 +11,16 @@ import database.main.PluginContainer;
 import database.main.Terminal;
 
 public abstract class InstancePlugin extends Plugin {
-	protected PluginContainer			store;
+	protected PluginContainer			pluginContainer;
 	protected Terminal					terminal;
 	protected GraphicalUserInterface	graphicalUserInterface;
 	protected InstanceList				instanceList;
 	protected boolean					display;
 	private boolean						changes;
 
-	public InstancePlugin(PluginContainer store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
+	public InstancePlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
 		super(identity, administration);
-		this.store = store;
+		this.pluginContainer = pluginContainer;
 		this.terminal = terminal;
 		this.graphicalUserInterface = graphicalUserInterface;
 		this.instanceList = instanceList;
@@ -94,9 +94,5 @@ public abstract class InstancePlugin extends Plugin {
 
 	@Getter public ArrayList<Instance> getList() {
 		return instanceList.getList();
-	}
-
-	@Getter public String getDisplayAsString() {
-		return "boolean : " + identity + " / " + display;
 	}
 }

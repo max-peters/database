@@ -12,16 +12,16 @@ import database.main.date.Date;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
-// TODO: stundenplan, extendable plugin, store (pugin?)
+// TODO: stundenplan
 public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
-	private PluginContainer			store;
+	private PluginContainer			pluginContainer;
 	private Terminal				terminal;
 	private WriterReader			writerReader;
 
-	public Administration(GraphicalUserInterface graphicalUserInterface, PluginContainer store, Terminal terminal, WriterReader writerReader) {
+	public Administration(GraphicalUserInterface graphicalUserInterface, PluginContainer pluginContainer, Terminal terminal, WriterReader writerReader) {
 		this.graphicalUserInterface = graphicalUserInterface;
-		this.store = store;
+		this.pluginContainer = pluginContainer;
 		this.terminal = terminal;
 		this.writerReader = writerReader;
 	}
@@ -53,16 +53,16 @@ public class Administration {
 	private void inputRequestAdministration() throws InterruptedException, IOException, ParserConfigurationException, TransformerException {
 		String command = null;
 		try {
-			command = request("command", store.getPluginNameTagsAsRegesx().replace(")", "|") + "check|exit|save)");
-			if (command.matches(store.getPluginNameTagsAsRegesx())) {
-				Plugin plugin = store.getPlugin(command);
+			command = request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "check|exit|save)");
+			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx())) {
+				Plugin plugin = pluginContainer.getPlugin(command);
 				command = request(command, plugin.getCommandTags());
 				plugin.conduct(command);
 			}
 			else if (command.matches("(check|exit|save)")) {
 				switch (command) {
 					case "check":
-						((InstancePlugin) store.getPlugin("task")).remove(((InstancePlugin) store.getPlugin("task")).check());
+						((InstancePlugin) pluginContainer.getPlugin("task")).remove(((InstancePlugin) pluginContainer.getPlugin("task")).check());
 						break;
 					case "save":
 						save();
@@ -81,13 +81,13 @@ public class Administration {
 	private void save() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
 		graphicalUserInterface.blockInput();
 		writerReader.write();
-		store.setUnchanged();
+		pluginContainer.setUnchanged();
 		terminal.requestOut("saved");
 		graphicalUserInterface.waitForInput();
 	}
 
 	private void exit() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
-		if (store.getChanges()) {
+		if (pluginContainer.getChanges()) {
 			String command;
 			command = request("there are unsaved changes - exit", "(y|n|s)");
 			switch (command) {
@@ -140,7 +140,7 @@ public class Administration {
 	}
 
 	public void initialOutput() {
-		for (Plugin plugin : store.getPlugins()) {
+		for (Plugin plugin : pluginContainer.getPlugins()) {
 			if (plugin instanceof InstancePlugin) {
 				((InstancePlugin) plugin).initialOutput();
 			}

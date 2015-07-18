@@ -11,23 +11,23 @@ import database.plugin.task.TaskPlugin;
 
 public class Main {
 	public static void main(String[] args) {
-		PluginContainer store = new PluginContainer();
+		PluginContainer pluginContainer = new PluginContainer();
 		GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
 		Terminal terminal = new Terminal(graphicalUserInterface);
-		WriterReader writerReader = new WriterReader(store);
-		Administration administration = new Administration(graphicalUserInterface, store, terminal, writerReader);
-		SubjectPlugin subject = new SubjectPlugin(store, terminal, graphicalUserInterface, administration);
-		RefillingPlugin refilling = new RefillingPlugin(store, terminal, graphicalUserInterface, administration);
-		TaskPlugin task = new TaskPlugin(store, terminal, graphicalUserInterface, administration);
-		ExpensePlugin expense = new ExpensePlugin(store, terminal, graphicalUserInterface, administration);
-		EventPlugin event = new EventPlugin(store, terminal, graphicalUserInterface, administration);
+		WriterReader writerReader = new WriterReader(pluginContainer);
+		Administration administration = new Administration(graphicalUserInterface, pluginContainer, terminal, writerReader);
+		SubjectPlugin subject = new SubjectPlugin(pluginContainer, terminal, graphicalUserInterface, administration);
+		RefillingPlugin refilling = new RefillingPlugin(pluginContainer, terminal, graphicalUserInterface, administration);
+		TaskPlugin task = new TaskPlugin(pluginContainer, terminal, graphicalUserInterface, administration);
+		ExpensePlugin expense = new ExpensePlugin(pluginContainer, terminal, graphicalUserInterface, administration);
+		EventPlugin event = new EventPlugin(pluginContainer, terminal, graphicalUserInterface, administration);
 		Launcher launcher = new Launcher();
-		store.addPlugin(launcher);
-		store.addPlugin(subject);
-		store.addPlugin(refilling);
-		store.addPlugin(expense);
-		store.addPlugin(task);
-		store.addPlugin(event);
+		pluginContainer.addPlugin(launcher);
+		pluginContainer.addPlugin(subject);
+		pluginContainer.addPlugin(refilling);
+		pluginContainer.addPlugin(expense);
+		pluginContainer.addPlugin(task);
+		pluginContainer.addPlugin(event);
 		try {
 			administration.main();
 		}

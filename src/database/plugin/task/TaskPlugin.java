@@ -10,8 +10,8 @@ import database.plugin.Command;
 import database.plugin.InstancePlugin;
 
 public class TaskPlugin extends InstancePlugin {
-	public TaskPlugin(PluginContainer store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(store, terminal, graphicalUserInterface, administration, "task", new TaskList());
+	public TaskPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
+		super(pluginContainer, terminal, graphicalUserInterface, administration, "task", new TaskList());
 	}
 
 	@Command(tag = "new") public void create() throws InterruptedException {

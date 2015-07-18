@@ -11,8 +11,8 @@ import database.plugin.Command;
 import database.plugin.InstancePlugin;
 
 public class RefillingPlugin extends InstancePlugin {
-	public RefillingPlugin(PluginContainer store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(store, terminal, graphicalUserInterface, administration, "refilling", new RefillingList());
+	public RefillingPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
+		super(pluginContainer, terminal, graphicalUserInterface, administration, "refilling", new RefillingList());
 	}
 
 	@Command(tag = "new") public void create() throws InterruptedException {

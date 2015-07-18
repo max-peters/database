@@ -11,8 +11,8 @@ import database.plugin.Command;
 import database.plugin.InstancePlugin;
 
 public class SubjectPlugin extends InstancePlugin {
-	public SubjectPlugin(PluginContainer store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(store, terminal, graphicalUserInterface, administration, "subject", new SubjectList());
+	public SubjectPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
+		super(pluginContainer, terminal, graphicalUserInterface, administration, "subject", new SubjectList());
 	}
 
 	@Command(tag = "new") public void create() throws InterruptedException {

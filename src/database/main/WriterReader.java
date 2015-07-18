@@ -22,15 +22,16 @@ import database.plugin.Extendable;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
+import database.plugin.Writeable;
 import database.plugin.event.EventExtention;
 
 public class WriterReader {
-	private String	storageDirectory;
-	private PluginContainer	store;
-	private File	file;
+	private String			storageDirectory;
+	private PluginContainer	pluginContainer;
+	private File			file;
 
-	public WriterReader(PluginContainer store) {
-		this.store = store;
+	public WriterReader(PluginContainer pluginContainer) {
+		this.pluginContainer = pluginContainer;
 		this.storageDirectory = "Z:/storage.xml";
 		this.file = new File(storageDirectory);
 	}
@@ -49,38 +50,48 @@ public class WriterReader {
 		document.appendChild(database);
 		Element plugin = document.createElement("plugin");
 		database.appendChild(plugin);
-		for (Plugin currentPlugin : store.getPlugins()) {
-			if (currentPlugin instanceof InstancePlugin) {
-				InstancePlugin instancePlugin = (InstancePlugin) currentPlugin;
-				Element currentElement = null;
-				if (document.getElementsByTagName(instancePlugin.getIdentity()).getLength() == 1) {
-					currentElement = (Element) document.getElementsByTagName(currentPlugin.getIdentity()).item(0);
-				}
-				else {
-					currentElement = document.createElement(currentPlugin.getIdentity());
-					plugin.appendChild(currentElement);
-				}
-				for (Instance instance : instancePlugin.getList()) {
-					Element parameter = null;
-					if (instancePlugin instanceof Extendable) {
-						Extendable extendable = (Extendable) instancePlugin;
-						for (EventExtention extention : extendable.getExtentions()) {
-							if (extention.getInstanceList().getList().contains(instance)) {
-								parameter = document.createElement(extention.getIdentity());
-							}
-						}
+		for (Plugin currentPlugin : pluginContainer.getPlugins()) {
+			if (currentPlugin instanceof Writeable || currentPlugin instanceof InstancePlugin) {
+				if (currentPlugin instanceof InstancePlugin) {
+					InstancePlugin instancePlugin = (InstancePlugin) currentPlugin;
+					Element currentElement = null;
+					if (document.getElementsByTagName(instancePlugin.getIdentity()).getLength() == 1) {
+						currentElement = (Element) document.getElementsByTagName(currentPlugin.getIdentity()).item(0);
 					}
 					else {
-						parameter = document.createElement("entry");
+						currentElement = document.createElement(currentPlugin.getIdentity());
+						plugin.appendChild(currentElement);
 					}
-					currentElement.appendChild(parameter);
-					for (int i = 0; i < instance.getParameter().length; i++) {
-						parameter.setAttribute(instance.getParameter()[i][0], instance.getParameter()[i][1]);
+					for (Instance instance : instancePlugin.getList()) {
+						Element parameter = null;
+						if (instancePlugin instanceof Extendable) {
+							Extendable extendable = (Extendable) instancePlugin;
+							for (EventExtention extention : extendable.getExtentions()) {
+								if (extention.getInstanceList().getList().contains(instance)) {
+									parameter = document.createElement(extention.getIdentity());
+								}
+							}
+						}
+						else {
+							parameter = document.createElement("entry");
+						}
+						currentElement.appendChild(parameter);
+						for (int i = 0; i < instance.getParameter().length; i++) {
+							parameter.setAttribute(instance.getParameter()[i][0], instance.getParameter()[i][1]);
+						}
 					}
+					Element display = document.createElement("display");
+					display.setAttribute("boolean", String.valueOf(instancePlugin.getDisplay()));
+					currentElement.appendChild(display);
 				}
-				Element display = document.createElement("display");
-				display.setAttribute("boolean", String.valueOf(instancePlugin.getDisplay()));
-				currentElement.appendChild(display);
+				else {
+					Writeable writeable = (Writeable) currentPlugin;
+					Element writeablePlugin = document.createElement(currentPlugin.getIdentity());
+					for (String string : writeable.write()) {
+						writeablePlugin.setAttribute("entry", string);
+					}
+					plugin.appendChild(writeablePlugin);
+				}
 			}
 		}
 		DOMSource domSource = new DOMSource(document);
@@ -100,7 +111,7 @@ public class WriterReader {
 		doc.getDocumentElement().normalize();
 		NodeList nList = doc.getElementsByTagName("*");
 		for (int i = 0; i < nList.getLength(); i++) {
-			Plugin plugin = store.getPlugin(nList.item(i).getParentNode().getNodeName());
+			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
 			if (plugin != null && plugin instanceof InstancePlugin) {
 				if (nList.item(i).getNodeName().equals("entry")) {
 					String[][] parameter = new String[nList.item(i).getAttributes().getLength()][2];

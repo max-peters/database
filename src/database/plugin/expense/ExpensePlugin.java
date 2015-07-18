@@ -11,8 +11,8 @@ import database.plugin.Command;
 import database.plugin.InstancePlugin;
 
 public class ExpensePlugin extends InstancePlugin {
-	public ExpensePlugin(PluginContainer store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(store, terminal, graphicalUserInterface, administration, "expense", new ExpenseList());
+	public ExpensePlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
+		super(pluginContainer, terminal, graphicalUserInterface, administration, "expense", new ExpenseList());
 	}
 
 	@Command(tag = "new") public void create() throws InterruptedException {

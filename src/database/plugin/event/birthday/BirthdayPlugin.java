@@ -8,8 +8,8 @@ import database.plugin.event.EventExtention;
 import database.plugin.event.birthday.BirthdayList;
 
 public class BirthdayPlugin extends EventExtention {
-	public BirthdayPlugin(PluginContainer store, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(store, terminal, graphicalUserInterface, administration, "birthday", new BirthdayList());
+	public BirthdayPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
+		super(pluginContainer, terminal, graphicalUserInterface, administration, "birthday", new BirthdayList());
 		this.display = true;
 	}
 }
