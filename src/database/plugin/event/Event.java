@@ -1,5 +1,6 @@
 package database.plugin.event;
 
+import jdk.nashorn.internal.objects.annotations.Getter;
 import database.main.date.Date;
 import database.plugin.Instance;
 
@@ -25,11 +26,11 @@ public abstract class Event extends Instance implements Comparable<Event> {
 		return localDate;
 	}
 
-	protected Date getDate() {
+	@Getter protected Date getDate() {
 		return new Date(getParameter("date"));
 	}
 
-	protected String getName() {
+	@Getter protected String getName() {
 		return getParameter("name");
 	}
 

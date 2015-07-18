@@ -1,5 +1,6 @@
 package database.plugin.expense;
 
+import jdk.nashorn.internal.objects.annotations.Getter;
 import database.main.date.Date;
 import database.plugin.Instance;
 
@@ -8,19 +9,19 @@ public class Expense extends Instance {
 		super(parameter, parameter[2][1], list);
 	}
 
-	Date getDate() {
+	@Getter Date getDate() {
 		return new Date(getParameter("date"));
 	}
 
-	String getName() {
+	@Getter String getName() {
 		return getParameter("name");
 	}
 
-	String getCategory() {
+	@Getter String getCategory() {
 		return getParameter("category");
 	}
 
-	Double getValue() {
+	@Getter Double getValue() {
 		return Double.valueOf(getParameter("value"));
 	}
 

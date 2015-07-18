@@ -3,7 +3,8 @@ package database.plugin.subject;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-import database.main.date.Date;
+import jdk.nashorn.internal.objects.annotations.Getter;
+import jdk.nashorn.internal.objects.annotations.Setter;
 import database.plugin.Instance;
 
 public class Subject extends Instance {
@@ -11,40 +12,36 @@ public class Subject extends Instance {
 		super(parameter, parameter[2][1], list);
 	}
 
-	Integer getCounter() {
+	@Getter Integer getCounter() {
 		return Integer.valueOf(getParameter("counter"));
 	}
 
-	Double getMaxPoints() {
+	@Getter Double getMaxPoints() {
 		return Double.valueOf(getParameter("maxPoints"));
 	}
 
-	Double getScore() {
+	@Getter Double getScore() {
 		return Double.valueOf(getParameter("score"));
 	}
 
-	String getName() {
+	@Getter String getName() {
 		return getParameter("name");
 	}
 
-	String getTag() {
+	@Getter String getTag() {
 		return getParameter("tag");
 	}
 
-	void setCounter(int counter) {
+	@Setter void setCounter(int counter) {
 		setParameter("counter", String.valueOf(counter));
 	}
 
-	void setMaxPoints(double maxPoints) {
+	@Setter void setMaxPoints(double maxPoints) {
 		setParameter("maxPoints", String.valueOf(maxPoints));
 	}
 
-	void setScore(double score) {
+	@Setter void setScore(double score) {
 		setParameter("score", String.valueOf(score));
-	}
-
-	Date getDate() {
-		return new Date(getParameter("date"));
 	}
 
 	protected double calcPercent() {

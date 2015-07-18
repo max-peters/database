@@ -1,5 +1,6 @@
 package database.plugin.task;
 
+import jdk.nashorn.internal.objects.annotations.Getter;
 import database.plugin.Instance;
 
 public class Task extends Instance {
@@ -7,7 +8,7 @@ public class Task extends Instance {
 		super(parameter, parameter[0][1], list);
 	}
 
-	String getTask() {
+	@Getter String getTask() {
 		return getParameter("name");
 	}
 }

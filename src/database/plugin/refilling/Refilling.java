@@ -1,5 +1,6 @@
 package database.plugin.refilling;
 
+import jdk.nashorn.internal.objects.annotations.Getter;
 import database.main.date.Date;
 import database.plugin.Instance;
 
@@ -10,23 +11,23 @@ public class Refilling extends Instance {
 		createExpense();
 	}
 
-	Double getValue() {
+	@Getter Double getValue() {
 		return Double.valueOf(getParameter("value"));
 	}
 
-	Double getDistance() {
+	@Getter Double getDistance() {
 		return Double.valueOf(getParameter("distance"));
 	}
 
-	Double getRefuelAmount() {
+	@Getter Double getRefuelAmount() {
 		return Double.valueOf(getParameter("refuelAmount"));
 	}
 
-	Date getDate() {
+	@Getter Date getDate() {
 		return new Date(getParameter("date"));
 	}
 
-	int getCount() {
+	@Getter int getCount() {
 		return Integer.valueOf(getParameter("count"));
 	}
 
