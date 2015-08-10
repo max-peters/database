@@ -6,8 +6,6 @@ import java.util.concurrent.CancellationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.xml.sax.SAXException;
-
 import database.main.date.Date;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
@@ -26,14 +24,14 @@ public class Administration {
 		this.writerReader = writerReader;
 	}
 
-	public void main() throws IOException, InterruptedException, SAXException, ParserConfigurationException, TransformerException {
+	public void main() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
 		initiation();
 		while (true) {
 			inputRequestAdministration();
 		}
 	}
 
-	private void initiation() throws IOException, InterruptedException, SAXException, ParserConfigurationException {
+	private void initiation() throws InterruptedException, IOException {
 		connect();
 		graphicalUserInterface.initialise();
 		writerReader.read();

@@ -119,11 +119,17 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 	}
 
 	@Override public ArrayList<Instance> getList() {
+		ArrayList<Event> events = new ArrayList<Event>();
 		ArrayList<Instance> instances = new ArrayList<Instance>();
 		for (InstancePlugin extention : extentionList) {
 			for (Instance instance : extention.getList()) {
-				instances.add(instance);
+				Event event = (Event) instance;
+				events.add(event);
 			}
+		}
+		Collections.sort(events);
+		for (Event event : events) {
+			instances.add(event);
 		}
 		return instances;
 	}

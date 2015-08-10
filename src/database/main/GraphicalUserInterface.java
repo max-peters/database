@@ -253,6 +253,6 @@ class UpdateTime extends TimerTask {
 	}
 
 	public void run() {
-		timeTextfield.setText(Date.getDate() + " " + Time.getTime());
+		timeTextfield.setText(Date.getDateAsString() + " " + Time.getTime());
 	}
 }

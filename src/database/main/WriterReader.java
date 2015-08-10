@@ -106,7 +106,7 @@ public class WriterReader {
 		serializer.transform(domSource, streamResult);
 	}
 
-	public void read() throws SAXException, IOException, ParserConfigurationException {
+	public void read() {
 		try {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -143,7 +143,7 @@ public class WriterReader {
 				}
 			}
 		}
-		catch (Throwable e) {
+		catch (SAXException | ParserConfigurationException | IOException e) {
 			String stackTrace = "";
 			for (StackTraceElement element : e.getStackTrace()) {
 				stackTrace = stackTrace + "\r\n" + element;
