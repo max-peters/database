@@ -6,6 +6,7 @@ import database.plugin.event.EventPlugin;
 import database.plugin.expense.ExpensePlugin;
 import database.plugin.launcher.Launcher;
 import database.plugin.refilling.RefillingPlugin;
+import database.plugin.storage.Storage;
 import database.plugin.subject.SubjectPlugin;
 import database.plugin.task.TaskPlugin;
 
@@ -16,23 +17,22 @@ public class Main {
 		Terminal terminal = new Terminal(graphicalUserInterface);
 		WriterReader writerReader = new WriterReader(pluginContainer);
 		Administration administration = new Administration(graphicalUserInterface, pluginContainer, terminal, writerReader);
-		SubjectPlugin subject = new SubjectPlugin(pluginContainer, terminal, graphicalUserInterface, administration);
-		RefillingPlugin refilling = new RefillingPlugin(pluginContainer, terminal, graphicalUserInterface, administration);
-		TaskPlugin task = new TaskPlugin(pluginContainer, terminal, graphicalUserInterface, administration);
-		ExpensePlugin expense = new ExpensePlugin(pluginContainer, terminal, graphicalUserInterface, administration);
-		EventPlugin event = new EventPlugin(pluginContainer, terminal, graphicalUserInterface, administration);
-		Launcher launcher = new Launcher();
-		pluginContainer.addPlugin(launcher);
-		pluginContainer.addPlugin(subject);
-		pluginContainer.addPlugin(refilling);
-		pluginContainer.addPlugin(expense);
-		pluginContainer.addPlugin(task);
-		pluginContainer.addPlugin(event);
+		pluginContainer.addPlugin(new Launcher());
+		pluginContainer.addPlugin(new Storage(pluginContainer, administration));
+		pluginContainer.addPlugin(new SubjectPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
+		pluginContainer.addPlugin(new RefillingPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
+		pluginContainer.addPlugin(new ExpensePlugin(pluginContainer, terminal, graphicalUserInterface, administration));
+		pluginContainer.addPlugin(new TaskPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
+		pluginContainer.addPlugin(new EventPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 		try {
 			administration.main();
 		}
 		catch (Throwable e) {
-			JOptionPane.showMessageDialog(graphicalUserInterface.frame, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			String stackTrace = "";
+			for (StackTraceElement element : e.getStackTrace()) {
+				stackTrace = stackTrace + "\r\n" + element;
+			}
+			JOptionPane.showMessageDialog(graphicalUserInterface.frame, stackTrace, "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 	}

@@ -17,8 +17,11 @@ import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 
 public class EventPlugin extends InstancePlugin implements Extendable {
+	private ArrayList<InstancePlugin>	extentionList;
+
 	public EventPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
 		super(pluginContainer, terminal, graphicalUserInterface, administration, "event", null);
+		extentionList = new ArrayList<InstancePlugin>();
 		initialise();
 	}
 
@@ -51,7 +54,7 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 	}
 
 	@Override public void create(String[][] parameter) {
-		for (EventExtention extention : extentionList) {
+		for (InstancePlugin extention : extentionList) {
 			for (int i = 0; i < parameter.length; i++) {
 				if (parameter[i][0].equals("type")) {
 					if (parameter[i][1].equals(extention.getIdentity())) {
@@ -64,7 +67,7 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 	}
 
 	@Override public void remove(Instance toRemove) {
-		for (EventExtention extention : extentionList) {
+		for (InstancePlugin extention : extentionList) {
 			if (extention.getList().contains(toRemove)) {
 				extention.getList().remove(toRemove);
 			}
@@ -75,9 +78,9 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 		String initialOutput = "";
 		List<Event> eventList = new ArrayList<Event>();
 		if (display) {
-			for (EventExtention extention : extentionList) {
+			for (InstancePlugin extention : extentionList) {
 				if (extention.getDisplay()) {
-					EventList currentEventList = (EventList) extention.getInstanceList();
+					EventList currentEventList = (EventList) ((EventExtention) extention).getInstanceList();
 					for (Event event : currentEventList.getNearEvents()) {
 						eventList.add(event);
 					}
@@ -98,7 +101,7 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 		int position;
 		ArrayList<String> strings = new ArrayList<String>();
 		ArrayList<Event> events = new ArrayList<Event>();
-		for (EventExtention extention : extentionList) {
+		for (InstancePlugin extention : extentionList) {
 			for (Instance instance : extention.getList()) {
 				Event event = (Event) instance;
 				events.add(event);
@@ -117,7 +120,7 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 
 	@Override public ArrayList<Instance> getList() {
 		ArrayList<Instance> instances = new ArrayList<Instance>();
-		for (EventExtention extention : extentionList) {
+		for (InstancePlugin extention : extentionList) {
 			for (Instance instance : extention.getList()) {
 				instances.add(instance);
 			}
@@ -130,20 +133,24 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 		extentionList.add(new BirthdayPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 	}
 
+	@Override public ArrayList<InstancePlugin> getExtentions() {
+		return extentionList;
+	}
+
 	private EventExtention chooseType() throws InterruptedException {
 		ArrayList<String> strings = new ArrayList<String>();
 		EventExtention toReturn = null;
 		String pluginIdentity;
 		int position;
-		for (EventExtention extention : extentionList) {
+		for (InstancePlugin extention : extentionList) {
 			strings.add(extention.getIdentity());
 		}
 		position = graphicalUserInterface.check(strings);
 		if (position != -1) {
 			pluginIdentity = strings.get(position);
-			for (EventExtention extention : extentionList) {
+			for (InstancePlugin extention : extentionList) {
 				if (pluginIdentity.equals(extention.getIdentity())) {
-					toReturn = extention;
+					toReturn = (EventExtention) extention;
 				}
 			}
 		}

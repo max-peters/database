@@ -3,6 +3,7 @@ package database.main;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,7 +24,6 @@ import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 import database.plugin.Writeable;
-import database.plugin.event.EventExtention;
 
 public class WriterReader {
 	private String			storageDirectory;
@@ -66,8 +66,8 @@ public class WriterReader {
 						Element parameter = null;
 						if (instancePlugin instanceof Extendable) {
 							Extendable extendable = (Extendable) instancePlugin;
-							for (EventExtention extention : extendable.getExtentions()) {
-								if (extention.getInstanceList().getList().contains(instance)) {
+							for (InstancePlugin extention : extendable.getExtentions()) {
+								if (extention.getList().contains(instance)) {
 									parameter = document.createElement(extention.getIdentity());
 								}
 							}
@@ -88,7 +88,9 @@ public class WriterReader {
 					Writeable writeable = (Writeable) currentPlugin;
 					Element writeablePlugin = document.createElement(currentPlugin.getIdentity());
 					for (String string : writeable.write()) {
-						writeablePlugin.setAttribute("entry", string);
+						Element entry = document.createElement("entry");
+						entry.setAttribute("string", string);
+						writeablePlugin.appendChild(entry);
 					}
 					plugin.appendChild(writeablePlugin);
 				}
@@ -105,39 +107,48 @@ public class WriterReader {
 	}
 
 	public void read() throws SAXException, IOException, ParserConfigurationException {
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(file);
-		doc.getDocumentElement().normalize();
-		NodeList nList = doc.getElementsByTagName("*");
-		for (int i = 0; i < nList.getLength(); i++) {
-			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
-			if (plugin != null && plugin instanceof InstancePlugin) {
-				if (nList.item(i).getNodeName().equals("entry")) {
-					String[][] parameter = new String[nList.item(i).getAttributes().getLength()][2];
-					for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
-						parameter[j][0] = nList.item(i).getAttributes().item(j).getNodeName();
-						parameter[j][1] = nList.item(i).getAttributes().item(j).getNodeValue();
+		try {
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(file);
+			doc.getDocumentElement().normalize();
+			NodeList nList = doc.getElementsByTagName("*");
+			for (int i = 0; i < nList.getLength(); i++) {
+				Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
+				if (plugin != null && plugin instanceof InstancePlugin) {
+					if (nList.item(i).getNodeName().equals("entry")) {
+						String[][] parameter = new String[nList.item(i).getAttributes().getLength()][2];
+						for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
+							parameter[j][0] = nList.item(i).getAttributes().item(j).getNodeName();
+							parameter[j][1] = nList.item(i).getAttributes().item(j).getNodeValue();
+						}
+						((InstancePlugin) plugin).create(parameter);
 					}
-					((InstancePlugin) plugin).create(parameter);
-				}
-				else if (nList.item(i).getNodeName().equals("display")) {
-					if (plugin != null && plugin instanceof InstancePlugin) {
-						((InstancePlugin) plugin).setDisplay(Boolean.valueOf(nList.item(i).getAttributes().item(0).getNodeValue()));
+					else if (nList.item(i).getNodeName().equals("display")) {
+						if (plugin != null && plugin instanceof InstancePlugin) {
+							((InstancePlugin) plugin).setDisplay(Boolean.valueOf(nList.item(i).getAttributes().item(0).getNodeValue()));
+						}
 					}
-				}
-				else {
-					int j;
-					String[][] parameter = new String[nList.item(i).getAttributes().getLength() + 1][2];
-					for (j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
-						parameter[j][0] = nList.item(i).getAttributes().item(j).getNodeName();
-						parameter[j][1] = nList.item(i).getAttributes().item(j).getNodeValue();
+					else {
+						int j;
+						String[][] parameter = new String[nList.item(i).getAttributes().getLength() + 1][2];
+						for (j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
+							parameter[j][0] = nList.item(i).getAttributes().item(j).getNodeName();
+							parameter[j][1] = nList.item(i).getAttributes().item(j).getNodeValue();
+						}
+						parameter[j][0] = "type";
+						parameter[j][1] = nList.item(i).getNodeName();
+						((InstancePlugin) plugin).create(parameter);
 					}
-					parameter[j][0] = "type";
-					parameter[j][1] = nList.item(i).getNodeName();
-					((InstancePlugin) plugin).create(parameter);
 				}
 			}
+		}
+		catch (Throwable e) {
+			String stackTrace = "";
+			for (StackTraceElement element : e.getStackTrace()) {
+				stackTrace = stackTrace + "\r\n" + element;
+			}
+			JOptionPane.showMessageDialog(null, e.getClass().toString() + stackTrace, "storage reset", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 }

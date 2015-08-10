@@ -11,27 +11,30 @@ public class Date implements Comparable<Date> {
 
 	public Date(String date) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.getTime();
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
 		String currentDate = format.format(calendar.getTime());
+		String inputSplitResult[] = date.split(Pattern.quote("."));
+		String dateSplitResult[] = currentDate.split(Pattern.quote("."));
 		if ((date == null) || (date.length() == 0)) {
-			String splitResult[] = currentDate.split(Pattern.quote("."));
-			year = new Year(Integer.parseInt(splitResult[2]));
-			this.month = year.months[Integer.parseInt(splitResult[1]) - 1];
-			this.day = year.months[Integer.parseInt(splitResult[1]) - 1].days[Integer.parseInt(splitResult[0]) - 1];
+			year = new Year(Integer.parseInt(dateSplitResult[2]));
+			month = year.months[Integer.parseInt(dateSplitResult[1]) - 1];
+			day = year.months[Integer.parseInt(dateSplitResult[1]) - 1].days[Integer.parseInt(dateSplitResult[0]) - 1];
 		}
 		else {
-			String splitResult[] = date.split(Pattern.quote("."));
-			if (splitResult.length == 3) {
-				year = new Year(Integer.parseInt(splitResult[2]));
-				this.month = year.months[Integer.parseInt(splitResult[1]) - 1];
-				this.day = year.months[Integer.parseInt(splitResult[1]) - 1].days[Integer.parseInt(splitResult[0]) - 1];
+			if (inputSplitResult.length == 3) {
+				year = new Year(Integer.parseInt(inputSplitResult[2]));
+				month = year.months[Integer.parseInt(inputSplitResult[1]) - 1];
+				day = year.months[Integer.parseInt(inputSplitResult[1]) - 1].days[Integer.parseInt(inputSplitResult[0]) - 1];
 			}
-			else if (splitResult.length == 2) {
-				String dateSplitResult[] = currentDate.split(Pattern.quote("."));
+			else if (inputSplitResult.length == 2) {
 				year = new Year(Integer.parseInt(dateSplitResult[2]));
-				this.month = year.months[Integer.parseInt(splitResult[1]) - 1];
-				this.day = year.months[Integer.parseInt(splitResult[1]) - 1].days[Integer.parseInt(splitResult[0]) - 1];
+				month = year.months[Integer.parseInt(inputSplitResult[1]) - 1];
+				day = year.months[Integer.parseInt(inputSplitResult[1]) - 1].days[Integer.parseInt(inputSplitResult[0]) - 1];
+			}
+			else if (inputSplitResult.length == 1) {
+				year = new Year(Integer.parseInt(dateSplitResult[2]));
+				month = year.months[Integer.parseInt(dateSplitResult[1]) - 1];
+				day = year.months[Integer.parseInt(inputSplitResult[1]) - 1].days[Integer.parseInt(inputSplitResult[0]) - 1];
 			}
 			else {
 				throw new IllegalArgumentException("wrong input string for date instantiation: '" + date + "'");
