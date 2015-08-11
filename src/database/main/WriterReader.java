@@ -40,6 +40,10 @@ public class WriterReader {
 		return file.exists();
 	}
 
+	public void setDirectory() {
+		file = new File("storage.xml");
+	}
+
 	public void write() throws ParserConfigurationException, TransformerException, IOException {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -139,6 +143,12 @@ public class WriterReader {
 						parameter[j][0] = "type";
 						parameter[j][1] = nList.item(i).getNodeName();
 						((InstancePlugin) plugin).create(parameter);
+					}
+				}
+				else if (plugin != null && plugin instanceof Writeable) {
+					Writeable writeable = (Writeable) plugin;
+					for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
+						writeable.read(nList.item(i).getAttributes().item(j).getNodeValue());
 					}
 				}
 			}

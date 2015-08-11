@@ -58,4 +58,8 @@ public class Storage extends Plugin implements Writeable {
 	@Override public ArrayList<String> write() {
 		return storage;
 	}
+
+	@Override public void read(String line) {
+		storage.add(line);
+	}
 }

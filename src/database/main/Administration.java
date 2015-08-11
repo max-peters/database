@@ -41,11 +41,10 @@ public class Administration {
 
 	private void connect() throws IOException, InterruptedException {
 		if (!writerReader.checkDirectory()) {
-			Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
-			// Process connection =
-			// if (connection.waitFor() != 0) {
-			// throw new IOException("Error: server unavailable");
-			// }
+			Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
+			if (connection.waitFor() != 0) {
+				writerReader.setDirectory();
+			}
 		}
 	}
 

@@ -63,6 +63,7 @@ public abstract class InstancePlugin extends Plugin {
 
 	public void remove(Instance toRemove) {
 		instanceList.remove(toRemove);
+		update();
 	}
 
 	public void initialOutput() {
