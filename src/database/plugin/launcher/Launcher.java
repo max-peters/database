@@ -1,10 +1,8 @@
 package database.plugin.launcher;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.io.PrintWriter;
 
 import database.plugin.Command;
 import database.plugin.Plugin;
@@ -15,37 +13,23 @@ public class Launcher extends Plugin {
 	}
 
 	@Command(tag = "pull") public void pull() throws IOException {
-		//
-		//
-		//
-		// IF %LOCAL% == %REMOTE% (
-		// echo databse up-to-date
-		// ) ELSE (
-		// IF %REMOTE% == %BASE% (
-		// git push --force
-		// )
-		// )
-		//
-		// String[][] commands = { { "cd", "C:\\Dateien\\Workspace\\Eclipse\\database" }, { "git", "add -A" }, { "git", "commit -m \"update\"" },
-		// { "for /f %%i in ('git rev-parse @') do set LOCAL=%%i" }, { "for /f %%i in ('git rev-parse @{u}') do set REMOTE=%%i" }, {
-		// "for /f %%i in ('git merge-base @ @{u}') do set BASE=%%i" },
-		// { "IF %LOCAL% == %REMOTE% (echo databse up-to-date) ELSE (IF %REMOTE% == %BASE% (git push --force))" } };
-		String[][] commands = { { "git", "add", "-A" }, { "git", "commit", "-m \"update\"" }, { "git", "push", "--force", "***REMOVED***" }, { "git", "status" } };
+		String[] command = { "git", "push", "--force" };
 		try {
 			ProcessBuilder pb = new ProcessBuilder();
 			pb.directory(new File("C:\\Dateien\\Workspace\\Eclipse\\database"));
-			String s = null;
-			Charset charset = Charset.defaultCharset();
-			BufferedReader stdInput;
+			// String s = null;
+			// Charset charset = Charset.defaultCharset();
+			// BufferedReader stdInput;
 			Process proc;
-			for (String[] command : commands) {
-				pb.command(command);
-				proc = pb.start();
-				stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream(), charset));
-				while ((s = stdInput.readLine()) != null) {
-					System.out.println(s);
-				}
-			}
+			pb.command(command);
+			proc = pb.start();
+			PrintWriter printWriter = new PrintWriter(proc.getOutputStream());
+			printWriter.println("***REMOVED***");
+			// stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream(), charset));
+			//
+			// while ((s = stdInput.readLine()) != null) {
+			// System.out.println(s);
+			// }
 		}
 		catch (Exception ex) {
 			System.out.println("Hi");
