@@ -25,6 +25,7 @@ public class Launcher extends Plugin {
 			proc = pb.start();
 			PrintWriter printWriter = new PrintWriter(proc.getOutputStream());
 			printWriter.println("***REMOVED***");
+			printWriter.flush();
 			// stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream(), charset));
 			//
 			// while ((s = stdInput.readLine()) != null) {
