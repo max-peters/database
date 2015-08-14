@@ -17,6 +17,7 @@ public class GitInterface {
 			final Process p = pb.start();
 			final BufferedReader stdinReader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			final BufferedReader stderrReader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			Thread.sleep(100);
 			new Thread(new Runnable() {
 				@Override public void run() {
 					try {
