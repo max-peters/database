@@ -30,7 +30,7 @@ public class Launcher extends Plugin {
 		// { "for /f %%i in ('git rev-parse @') do set LOCAL=%%i" }, { "for /f %%i in ('git rev-parse @{u}') do set REMOTE=%%i" }, {
 		// "for /f %%i in ('git merge-base @ @{u}') do set BASE=%%i" },
 		// { "IF %LOCAL% == %REMOTE% (echo databse up-to-date) ELSE (IF %REMOTE% == %BASE% (git push --force))" } };
-		String[][] commands = { { "git", "add", "-A" }, { "git", "commit", "-m \"update\"" }, { "git", "push", "--force" }, { "git", "status" } };
+		String[][] commands = { { "git", "add", "-A" }, { "git", "commit", "-m \"update\"" }, { "git", "push", "--force", "***REMOVED***" }, { "git", "status" } };
 		try {
 			ProcessBuilder pb = new ProcessBuilder();
 			pb.directory(new File("C:\\Dateien\\Workspace\\Eclipse\\database"));
