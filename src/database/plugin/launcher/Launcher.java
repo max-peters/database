@@ -1,9 +1,6 @@
 package database.plugin.launcher;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 import database.plugin.Command;
 import database.plugin.Plugin;
@@ -14,20 +11,8 @@ public class Launcher extends Plugin {
 	}
 
 	@Command(tag = "pull") public void pull() throws IOException {
-		String[] command = { "git", "push" };
-		try {
-			ProcessBuilder pb = new ProcessBuilder(command);
-			pb.directory(new File("C:\\Dateien\\Workspace\\Eclipse\\database"));
-			pb.redirectErrorStream(true);
-			Process process = pb.start();
-			System.out.println("reading");
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
-			bw.write("***REMOVED***");
-		}
-		catch (Exception ex) {
-			System.out.println("Hi");
-			System.out.println(ex.getMessage());
-		}
+		GitInterface git = new GitInterface();
+		git.push();
 		System.exit(0);
 		// Runtime.getRuntime().exec("C:/WINDOWS/system32/cmd.exe /c start Z:/pull.bat");
 	}
