@@ -1,8 +1,9 @@
 package database.plugin.launcher;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 
 import database.plugin.Command;
 import database.plugin.Plugin;
@@ -13,24 +14,15 @@ public class Launcher extends Plugin {
 	}
 
 	@Command(tag = "pull") public void pull() throws IOException {
-		String[] command = { "git", "push", "--force" };
+		String[] command = { "git", "push" };
 		try {
-			ProcessBuilder pb = new ProcessBuilder();
+			ProcessBuilder pb = new ProcessBuilder(command);
 			pb.directory(new File("C:\\Dateien\\Workspace\\Eclipse\\database"));
-			// String s = null;
-			// Charset charset = Charset.defaultCharset();
-			// BufferedReader stdInput;
-			Process proc;
-			pb.command(command);
-			proc = pb.start();
-			PrintWriter printWriter = new PrintWriter(proc.getOutputStream());
-			printWriter.println("***REMOVED***");
-			printWriter.flush();
-			// stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream(), charset));
-			//
-			// while ((s = stdInput.readLine()) != null) {
-			// System.out.println(s);
-			// }
+			pb.redirectErrorStream(true);
+			Process process = pb.start();
+			System.out.println("reading");
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()));
+			bw.write("***REMOVED***");
 		}
 		catch (Exception ex) {
 			System.out.println("Hi");
