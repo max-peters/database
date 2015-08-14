@@ -1,21 +1,19 @@
 package database.plugin.launcher;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GitInterface {
-	private char[]	password	= new char[] { 'p', 'a', 's', 's', 'w', 'o', 'r', 'd' };
+	private char[]	password	= new char[] { 'v', 'f', 'r', '4', 'd', 'b', '2' };
 
 	public void push() {
 		try {
-			List<String> sb = new ArrayList<String>();
-			sb.add("git");
-			sb.add("push");
-			ProcessBuilder pb = new ProcessBuilder(sb);
+			String[] command = { "git", "push" };
+			ProcessBuilder pb = new ProcessBuilder(command);
+			pb.directory(new File("C:\\Dateien\\Workspace\\Eclipse\\database"));
 			final Process p = pb.start();
 			final BufferedReader stdinReader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			final BufferedReader stderrReader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
@@ -28,6 +26,7 @@ public class GitInterface {
 						s.flush();
 					}
 					catch (IOException e) {
+						System.out.println("error");
 					}
 				}
 			}).start();
@@ -40,6 +39,7 @@ public class GitInterface {
 						}
 					}
 					catch (IOException e) {
+						System.out.println("error");
 					}
 				}
 			}).start();
@@ -52,12 +52,14 @@ public class GitInterface {
 						}
 					}
 					catch (IOException e) {
+						System.out.println("error");
 					}
 				}
 			}).start();
 			p.waitFor();
 		}
 		catch (Exception e) {
+			System.out.println("error");
 		}
 	}
 }
