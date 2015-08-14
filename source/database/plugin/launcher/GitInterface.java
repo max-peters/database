@@ -17,17 +17,18 @@ public class GitInterface {
 			final Process p = pb.start();
 			final BufferedReader stdinReader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			final BufferedReader stderrReader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			Thread.sleep(100);
+			Thread.sleep(1000);
 			new Thread(new Runnable() {
 				@Override public void run() {
 					try {
 						OutputStreamWriter s = new OutputStreamWriter(p.getOutputStream());
-						s.write(password);
-						s.write(System.getProperty("line.separator"));
+						s.write("***REMOVED***");
+						s.write("\n");
 						s.flush();
+						System.out.println("pw written");
 					}
 					catch (IOException e) {
-						System.out.println("error");
+						System.out.println(e.getMessage());
 					}
 				}
 			}).start();
@@ -40,7 +41,7 @@ public class GitInterface {
 						}
 					}
 					catch (IOException e) {
-						System.out.println("error");
+						System.out.println(e.getMessage());
 					}
 				}
 			}).start();
@@ -53,14 +54,14 @@ public class GitInterface {
 						}
 					}
 					catch (IOException e) {
-						System.out.println("error");
+						System.out.println(e.getMessage());
 					}
 				}
 			}).start();
 			p.waitFor();
 		}
 		catch (Exception e) {
-			System.out.println("error");
+			System.out.println(e.getMessage());
 		}
 	}
 }
