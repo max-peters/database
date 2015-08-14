@@ -36,7 +36,7 @@ public class GraphicalUserInterface {
 	private JTextArea		output						= new JTextArea();
 	private JTextArea		outputChangeable			= new JTextArea();
 	private Timer			timer						= new Timer();
-	private Image			icon						= new ImageIcon("Z:/icon.png").getImage();
+	private Image			icon						= new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icon.png")).getImage();
 	private int				pressedKey;
 	private String			inputText;
 

@@ -16,9 +16,8 @@ public abstract class Event extends Instance implements Comparable<Event> {
 	protected Date updateYear() {
 		Date localDate = null;
 		Date currentDate = Date.getDate();
-		if (currentDate.month.counter > getDate().month.counter) {
-			int nextYear = currentDate.year.counter + 1;
-			localDate = new Date(getDate().day.counter + "." + getDate().month.counter + "." + nextYear);
+		if (currentDate.month.counter > getDate().month.counter || (currentDate.month.counter == getDate().month.counter && currentDate.day.counter > getDate().day.counter)) {
+			localDate = new Date(getDate().day.counter + "." + getDate().month.counter + "." + String.valueOf(currentDate.year.counter + 1));
 		}
 		else {
 			localDate = new Date(getDate().day.counter + "." + getDate().month.counter + "." + currentDate.year.counter);
