@@ -1,5 +1,6 @@
 package database.main;
 
+import java.awt.FontFormatException;
 import java.io.IOException;
 import java.util.concurrent.CancellationException;
 
@@ -17,34 +18,16 @@ public class Administration {
 	private Terminal				terminal;
 	private WriterReader			writerReader;
 
-	public Administration(GraphicalUserInterface graphicalUserInterface, PluginContainer pluginContainer, Terminal terminal, WriterReader writerReader) {
+	public Administration(GraphicalUserInterface graphicalUserInterface, PluginContainer pluginContainer, Terminal terminal, WriterReader writerReader) throws IOException, InterruptedException {
 		this.graphicalUserInterface = graphicalUserInterface;
 		this.pluginContainer = pluginContainer;
 		this.terminal = terminal;
 		this.writerReader = writerReader;
 	}
 
-	public void main() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
-		initiation();
+	public void request() throws IOException, InterruptedException, ParserConfigurationException, TransformerException, FontFormatException {
 		while (true) {
 			inputRequestAdministration();
-		}
-	}
-
-	private void initiation() throws InterruptedException, IOException {
-		connect();
-		graphicalUserInterface.initialise();
-		writerReader.read();
-		initialOutput();
-		graphicalUserInterface.show();
-	}
-
-	private void connect() throws IOException, InterruptedException {
-		if (!writerReader.checkDirectory()) {
-			Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
-			if (connection.waitFor() != 0) {
-				writerReader.setDirectory();
-			}
 		}
 	}
 

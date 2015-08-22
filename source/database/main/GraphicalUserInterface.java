@@ -3,11 +3,14 @@ package database.main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -29,18 +32,24 @@ public class GraphicalUserInterface {
 	private Object			synchronizerKeyInput		= new Object();
 	private List<String>	linesToWrite				= new ArrayList<String>();
 	private List<String>	requestsToWrite				= new ArrayList<String>();
-	private Font			font						= new Font("DejaVu Sans Mono", Font.PLAIN, 15);
 	private JPanel			panel						= new JPanel();
 	private JTextField		input						= new JTextField();
 	private JTextField		time						= new JTextField();
 	private JTextArea		output						= new JTextArea();
 	private JTextArea		outputChangeable			= new JTextArea();
 	private Timer			timer						= new Timer();
-	private Image			icon						= new ImageIcon(ClassLoader.getSystemClassLoader().getResource("icon.png")).getImage();
+	private Font			font;
+	private Image			icon;
 	private int				pressedKey;
 	private String			inputText;
 
-	public void initialise() {
+	public GraphicalUserInterface() throws IOException, FontFormatException {
+		ClassLoader classLoader = this.getClass().getClassLoader();
+		InputStream inputStream = classLoader.getResourceAsStream("DejaVuSansMono.ttf");
+		font = Font.createFont(Font.PLAIN, inputStream);
+		font = font.deriveFont(Font.PLAIN, 15);
+		inputStream.close();
+		icon = new ImageIcon(classLoader.getResource("icon.png")).getImage();
 		ActionListener inputListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				inputText = input.getText();
