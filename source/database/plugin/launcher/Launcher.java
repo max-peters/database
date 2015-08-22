@@ -11,10 +11,7 @@ public class Launcher extends Plugin {
 	}
 
 	@Command(tag = "pull") public void pull() throws IOException {
-		GitInterface git = new GitInterface();
-		git.push();
-		System.exit(0);
-		// Runtime.getRuntime().exec("C:/WINDOWS/system32/cmd.exe /c start Z:/pull.bat");
+		Runtime.getRuntime().exec("C:/WINDOWS/system32/cmd.exe /c start Z:/pull.bat");
 	}
 
 	@Command(tag = "push") public void push() throws IOException {
