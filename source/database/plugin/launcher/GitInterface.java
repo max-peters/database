@@ -16,7 +16,7 @@ public class GitInterface {
 		Git git = new Git(repository);
 		git.add().addFilepattern(".").call();
 		git.commit().setMessage("update").call();
-		System.out.println(git.push().setForce(true).setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxpst", "***REMOVED***")));
+		git.push().setForce(true).setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxpst", "***REMOVED***")).call();
 		repository.close();
 		git.close();
 	}
