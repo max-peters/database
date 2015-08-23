@@ -7,6 +7,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 public class GitInterface {
 	public void push() throws IOException, GitAPIException {
@@ -15,7 +16,7 @@ public class GitInterface {
 		Git git = new Git(repository);
 		git.add().addFilepattern(".").call();
 		git.commit().setMessage("update").call();
-		git.push().setForce(true).setRemote("server").call();
+		git.push().setForce(true).setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
 		repository.close();
 		git.close();
 	}
