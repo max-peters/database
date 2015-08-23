@@ -24,9 +24,7 @@ public class GitInterface {
 	public void push() throws IOException, GitAPIException {
 		push(database);
 		System.out.println("databse pushed");
-		for (String s : studium.status().call().getModified()) {
-			System.out.println(s);
-		}
+		System.out.println(studium.getRepository().isBare());
 		// push(studium);
 		// System.out.println("studium pushed");
 		// push(mail);
