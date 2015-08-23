@@ -5,20 +5,39 @@ import java.io.IOException;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.api.errors.NoFilepatternException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 public class GitInterface {
-	public void push() throws IOException, GitAPIException {
+	Git	database;
+	Git	studium;
+	Git	mail;
+
+	public GitInterface() throws IOException {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		Repository repository = builder.setGitDir(new File("C:\\Dateien\\Workspace\\Eclipse\\database\\.git")).readEnvironment().findGitDir().build();
-		Git git = new Git(repository);
-		git.add().addFilepattern(".").call();
-		git.commit().setMessage("update").call();
-		git.push().setForce(true).setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
-		repository.close();
-		git.close();
+		database = new Git(builder.setGitDir(new File("C:\\Dateien\\Workspace\\Eclipse\\database\\.git")).readEnvironment().findGitDir().build());
+		mail = new Git(builder.setGitDir(new File("C:\\Users\\Max\\AppData\\Roaming\\Thunderbird\\Profiles\\mail\\Mail\\Local Folders\\.git")).readEnvironment().findGitDir().build());
+		studium = new Git(builder.setGitDir(new File("C:\\Users\\Max\\Desktop\\studium\\.git")).readEnvironment().findGitDir().build());
+	}
+
+	public void push() throws IOException, GitAPIException {
+		push(database);
+		System.out.println("databse pushed");
+		push(studium);
+		System.out.println("studium pushed");
+		push(mail);
+		System.out.println("mail pushed");
+	}
+
+	private void push(Git git) throws NoFilepatternException, GitAPIException {
+		if (git.status().call().hasUncommittedChanges()) {
+			git.add().addFilepattern(".").call();
+			git.commit().setMessage("update").call();
+			git.push().setForce(true).setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
+			git.getRepository().close();
+			git.close();
+		}
 	}
 }
 // public void push() {private char[] password = new char[] { 'v', 'f', 'r', '4', 'd', 'b', '2' };
