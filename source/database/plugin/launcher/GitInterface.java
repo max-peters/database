@@ -25,9 +25,9 @@ public class GitInterface {
 		push(database);
 		System.out.println("databse pushed");
 		// push(studium);
-		System.out.println("studium pushed");
-		push(mail);
-		System.out.println("mail pushed");
+		// System.out.println("studium pushed");
+		// push(mail);
+		// System.out.println("mail pushed");
 	}
 
 	private void push(Git git) throws NoFilepatternException, GitAPIException {
