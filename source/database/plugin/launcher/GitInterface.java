@@ -13,14 +13,9 @@ public class GitInterface {
 		FileRepositoryBuilder builder = new FileRepositoryBuilder();
 		Repository repository = builder.setGitDir(new File("C:\\Dateien\\Workspace\\Eclipse\\database\\.git")).readEnvironment().findGitDir().build();
 		Git git = new Git(repository);
-		for (String string : git.status().call().getAdded()) {
-			System.out.println("befor" + string);
-		}
 		git.add().addFilepattern(".").call();
-		for (String string : git.status().call().getAdded()) {
-			System.out.println(string);
-		}
 		git.commit().setMessage("update").call();
+		git.push().setForce(true).call();
 		repository.close();
 		git.close();
 	}
