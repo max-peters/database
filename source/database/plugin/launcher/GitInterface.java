@@ -15,7 +15,7 @@ public class GitInterface {
 		Git git = new Git(repository);
 		git.add().addFilepattern(".").call();
 		git.commit().setMessage("update").call();
-		System.out.println(git.push().setForce(true).setRemote("server").getRepository());
+		System.out.println(git.push().setForce(true).setRemote("server").getRemote());
 		repository.close();
 		git.close();
 	}
