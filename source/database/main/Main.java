@@ -1,5 +1,7 @@
 package database.main;
 
+import java.io.IOException;
+
 import javax.swing.JOptionPane;
 
 import database.plugin.event.EventPlugin;
@@ -12,6 +14,13 @@ import database.plugin.task.TaskPlugin;
 
 public class Main {
 	public static void main(String[] args) {
+		try {
+			new Launcher().pull();
+		}
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		System.exit(0);
 		try {
 			PluginContainer pluginContainer = new PluginContainer();
 			GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
