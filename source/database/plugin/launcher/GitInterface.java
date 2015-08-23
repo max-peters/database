@@ -24,7 +24,7 @@ public class GitInterface {
 	public void push() throws IOException, GitAPIException {
 		push(database);
 		System.out.println("databse pushed");
-		push(studium);
+		// push(studium);
 		System.out.println("studium pushed");
 		push(mail);
 		System.out.println("mail pushed");
