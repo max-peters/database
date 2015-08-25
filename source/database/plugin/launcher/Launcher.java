@@ -24,8 +24,10 @@ public class Launcher extends Plugin {
 	@Command(tag = "push") public void push() throws IOException, GitAPIException, InterruptedException {
 		graphicalUserInterface.blockInput();
 		terminal.requestOut("pushing...");
+		long time = System.currentTimeMillis();
 		git.push();
-		terminal.requestOut("finished pushing");
+		time = System.currentTimeMillis() - time;
+		terminal.requestOut("finished pushing - took " + time + " ms");
 		graphicalUserInterface.waitForInput();
 	}
 
