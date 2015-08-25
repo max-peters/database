@@ -27,15 +27,17 @@ public class Launcher extends Plugin {
 		long time = System.currentTimeMillis();
 		git.push();
 		time = System.currentTimeMillis() - time;
-		terminal.requestOut("finished pushing - took " + time + " ms");
+		terminal.requestOut("finished pushing in " + time + " ms");
 		graphicalUserInterface.waitForInput();
 	}
 
 	@Command(tag = "pull") public void pull() throws IOException, GitAPIException, InterruptedException {
 		graphicalUserInterface.blockInput();
 		terminal.requestOut("pulling...");
+		long time = System.currentTimeMillis();
 		git.pull();
-		terminal.requestOut("finished pulling");
+		time = System.currentTimeMillis() - time;
+		terminal.requestOut("finished pulling in " + time + " ms");
 		graphicalUserInterface.waitForInput();
 	}
 
