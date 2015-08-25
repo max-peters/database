@@ -50,10 +50,11 @@ public class GitInterface {
 	}
 
 	private void pull(Git git) throws InvalidRemoteException, TransportException, GitAPIException {
-		System.out.println(git + " " + git.status().call().isClean());
-		git.fetch().setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
-		git.reset().setMode(ResetCommand.ResetType.HARD).setRef("server/master").call();
-		git.clean().setCleanDirectories(true).call();
+		if (git.status().call().isClean()) {
+			git.fetch().setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
+			git.reset().setMode(ResetCommand.ResetType.HARD).setRef("server/master").call();
+			git.clean().setCleanDirectories(true).call();
+		}
 	}
 }
 // public void push() {private char[] password = new char[] { 'v', 'f', 'r', '4', 'd', 'b', '2' };
