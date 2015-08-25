@@ -47,8 +47,8 @@ public class GitInterface {
 			git.push().setForce(true).setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
 			git.getRepository().close();
 			git.close();
-			System.out.println("hi2");
 		}
+		System.out.println("hi2");
 	}
 
 	private void pull(Git git) throws InvalidRemoteException, TransportException, GitAPIException {
