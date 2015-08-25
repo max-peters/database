@@ -52,7 +52,7 @@ public class GitInterface {
 			for (Object i : iterable) {
 				PushResult r = (PushResult) i;
 				for (RemoteRefUpdate o : r.getRemoteUpdates()) {
-					System.out.println(o.getMessage());
+					System.out.println(o.getRemoteName());
 				}
 			}
 		}
