@@ -10,8 +10,6 @@ import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.NoFilepatternException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.PushResult;
-import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 public class GitInterface {
@@ -45,16 +43,9 @@ public class GitInterface {
 		if (git.status().call().hasUncommittedChanges()) {
 			git.add().addFilepattern(".").call();
 			git.commit().setMessage("update").call();
-			Iterable iterable = git.push().setForce(true).setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
+			git.push().setForce(true).setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
 			git.getRepository().close();
 			git.close();
-			System.out.println(git.toString() + iterable.iterator().hasNext());
-			for (Object i : iterable) {
-				PushResult r = (PushResult) i;
-				for (RemoteRefUpdate o : r.getRemoteUpdates()) {
-					System.out.println(o.getRemoteName());
-				}
-			}
 		}
 	}
 
