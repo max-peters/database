@@ -25,11 +25,16 @@ public class Launcher extends Plugin {
 		graphicalUserInterface.blockInput();
 		terminal.requestOut("pushing...");
 		git.push();
+		terminal.requestOut("finished pushing");
 		graphicalUserInterface.waitForInput();
 	}
 
-	@Command(tag = "pull") public void pull() throws IOException, GitAPIException {
+	@Command(tag = "pull") public void pull() throws IOException, GitAPIException, InterruptedException {
+		graphicalUserInterface.blockInput();
+		terminal.requestOut("pulling...");
 		git.pull();
+		terminal.requestOut("finished pulling");
+		graphicalUserInterface.waitForInput();
 	}
 
 	@Override public void conduct(String command) throws InterruptedException, IOException, GitAPIException {
