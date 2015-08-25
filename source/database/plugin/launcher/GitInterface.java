@@ -50,7 +50,7 @@ public class GitInterface {
 	}
 
 	private void pull(Git git) throws InvalidRemoteException, TransportException, GitAPIException {
-		if (git.status().call().isClean()) {
+		if (!git.status().call().isClean()) {
 			git.fetch().setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
 			git.reset().setMode(ResetCommand.ResetType.HARD).setRef("server/master").call();
 			git.clean().setCleanDirectories(true).call();
