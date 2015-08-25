@@ -11,6 +11,7 @@ import org.eclipse.jgit.api.errors.NoFilepatternException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteRefUpdate;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 public class GitInterface {
@@ -50,7 +51,9 @@ public class GitInterface {
 			System.out.println(git.toString() + iterable.iterator().hasNext());
 			for (Object i : iterable) {
 				PushResult r = (PushResult) i;
-				System.out.println("hi" + r.getMessages());
+				for (RemoteRefUpdate o : r.getRemoteUpdates()) {
+					System.out.println(o.getMessage());
+				}
 			}
 		}
 	}
