@@ -30,10 +30,12 @@ public class GitInterface {
 	}
 
 	public void pull() throws IOException, GitAPIException {
+		long time = System.currentTimeMillis();
+		System.out.println(System.currentTimeMillis());
 		pull(database);
 		pull(studium);
 		pull(mail);
-		System.out.println("hi");
+		System.out.println(time - System.currentTimeMillis());
 	}
 
 	private Git initialise(String repository) throws IOException {
@@ -48,11 +50,10 @@ public class GitInterface {
 			git.getRepository().close();
 			git.close();
 		}
-		System.out.println("hi2");
 	}
 
 	private void pull(Git git) throws InvalidRemoteException, TransportException, GitAPIException {
-		System.out.println(git.fetch().setRemote("server").call().getMessages());
+		git.fetch().setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
 		git.reset().setMode(ResetCommand.ResetType.HARD).setRef("server/master").call();
 		git.clean().setCleanDirectories(true).call();
 	}
