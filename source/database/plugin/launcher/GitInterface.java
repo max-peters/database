@@ -46,6 +46,7 @@ public class GitInterface {
 			Iterable iterable = git.push().setForce(true).setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
 			git.getRepository().close();
 			git.close();
+			System.out.println(git.toString() + iterable.iterator().hasNext());
 			for (Object i : iterable) {
 				System.out.println("hi");
 			}
