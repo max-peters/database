@@ -33,6 +33,7 @@ public class GitInterface {
 		pull(database);
 		pull(studium);
 		pull(mail);
+		System.out.println("hi");
 	}
 
 	private Git initialise(String repository) throws IOException {
@@ -46,6 +47,7 @@ public class GitInterface {
 			git.push().setForce(true).setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
 			git.getRepository().close();
 			git.close();
+			System.out.println("hi2");
 		}
 	}
 
