@@ -10,7 +10,6 @@ import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.NoFilepatternException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
-import org.eclipse.jgit.transport.PushResult;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 public class GitInterface {
@@ -48,8 +47,7 @@ public class GitInterface {
 			git.getRepository().close();
 			git.close();
 			for (Object i : iterable) {
-				PushResult r = (PushResult) i;
-				System.out.println(r.getRemoteUpdate("server/master").getMessage());
+				System.out.println("hi");
 			}
 		}
 	}
