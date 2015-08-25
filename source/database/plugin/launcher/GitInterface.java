@@ -49,7 +49,7 @@ public class GitInterface {
 			git.close();
 			for (Object i : iterable) {
 				PushResult r = (PushResult) i;
-				System.out.println(r.getMessages());
+				System.out.println(r.getRemoteUpdate("server/master").getMessage());
 			}
 		}
 	}
