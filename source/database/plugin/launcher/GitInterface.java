@@ -30,12 +30,9 @@ public class GitInterface {
 	}
 
 	public void pull() throws IOException, GitAPIException {
-		long time = System.currentTimeMillis();
-		System.out.println(System.currentTimeMillis());
 		pull(database);
 		pull(studium);
 		pull(mail);
-		System.out.println(time - System.currentTimeMillis());
 	}
 
 	private Git initialise(String repository) throws IOException {

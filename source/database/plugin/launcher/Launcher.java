@@ -4,19 +4,28 @@ import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import database.main.GraphicalUserInterface;
+import database.main.Terminal;
 import database.plugin.Command;
 import database.plugin.Plugin;
 
 public class Launcher extends Plugin {
-	GitInterface	git;
+	GitInterface			git;
+	GraphicalUserInterface	graphicalUserInterface;
+	Terminal				terminal;
 
-	public Launcher() throws IOException {
+	public Launcher(GraphicalUserInterface graphicalUserInterface, Terminal terminal) throws IOException {
 		super("launcher", null);
 		git = new GitInterface();
+		this.terminal = terminal;
+		this.graphicalUserInterface = graphicalUserInterface;
 	}
 
-	@Command(tag = "push") public void push() throws IOException, GitAPIException {
+	@Command(tag = "push") public void push() throws IOException, GitAPIException, InterruptedException {
+		graphicalUserInterface.blockInput();
+		terminal.requestOut("pushing...");
 		git.push();
+		graphicalUserInterface.waitForInput();
 	}
 
 	@Command(tag = "pull") public void pull() throws IOException, GitAPIException {
