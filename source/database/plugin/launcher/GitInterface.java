@@ -4,31 +4,39 @@ import java.io.File;
 import java.io.IOException;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.InvalidRemoteException;
 import org.eclipse.jgit.api.errors.NoFilepatternException;
+import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 public class GitInterface {
-	Git	database;
-	Git	studium;
-	Git	mail;
+	private Git	database;
+	private Git	studium;
+	private Git	mail;
 
 	public GitInterface() throws IOException {
-		FileRepositoryBuilder builder = new FileRepositoryBuilder();
-		database = new Git(builder.setGitDir(new File("C:\\Dateien\\Workspace\\Eclipse\\database\\.git")).readEnvironment().findGitDir().build());
-		mail = new Git(builder.setGitDir(new File("C:\\Users\\Max\\AppData\\Roaming\\Thunderbird\\Profiles\\mail\\Mail\\Local Folders\\.git")).readEnvironment().findGitDir().build());
-		studium = new Git(builder.setGitDir(new File("C:\\Users\\Max\\Desktop\\studium\\.git")).readEnvironment().findGitDir().build());
+		database = initialise("C:\\Dateien\\Workspace\\Eclipse\\database\\.git");
+		mail = initialise("C:\\Users\\Max\\AppData\\Roaming\\Thunderbird\\Profiles\\mail\\Mail\\Local Folders\\.git");
+		studium = initialise("C:\\Users\\Max\\Desktop\\Studium\\.git");
 	}
 
 	public void push() throws IOException, GitAPIException {
 		push(database);
-		System.out.println("databse pushed");
-		System.out.println(studium.getRepository().isBare());
-		// push(studium);
-		// System.out.println("studium pushed");
-		// push(mail);
-		// System.out.println("mail pushed");
+		push(studium);
+		push(mail);
+	}
+
+	public void pull() throws IOException, GitAPIException {
+		pull(database);
+		pull(studium);
+		pull(mail);
+	}
+
+	private Git initialise(String repository) throws IOException {
+		return new Git(new FileRepositoryBuilder().setGitDir(new File(repository)).readEnvironment().findGitDir().build());
 	}
 
 	private void push(Git git) throws NoFilepatternException, GitAPIException {
@@ -39,6 +47,12 @@ public class GitInterface {
 			git.getRepository().close();
 			git.close();
 		}
+	}
+
+	private void pull(Git git) throws InvalidRemoteException, TransportException, GitAPIException {
+		System.out.println(git.fetch().setRemote("server").call().getMessages());
+		git.reset().setMode(ResetCommand.ResetType.HARD).setRef("server/master").call();
+		git.clean().setCleanDirectories(true).call();
 	}
 }
 // public void push() {private char[] password = new char[] { 'v', 'f', 'r', '4', 'd', 'b', '2' };

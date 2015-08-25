@@ -8,26 +8,22 @@ import database.plugin.Command;
 import database.plugin.Plugin;
 
 public class Launcher extends Plugin {
-	public Launcher() {
+	GitInterface	git;
+
+	public Launcher() throws IOException {
 		super("launcher", null);
+		git = new GitInterface();
 	}
 
-	@Command(tag = "pull") public void pull() throws IOException {
-		GitInterface git = new GitInterface();
-		try {
-			git.push();
-		}
-		catch (GitAPIException e) {
-			e.printStackTrace();
-		}
-		// Runtime.getRuntime().exec("C:/WINDOWS/system32/cmd.exe /c start Z:/pull.bat");
+	@Command(tag = "push") public void push() throws IOException, GitAPIException {
+		git.push();
 	}
 
-	@Command(tag = "push") public void push() throws IOException {
-		Runtime.getRuntime().exec("C:/WINDOWS/system32/cmd.exe /c start Z:/push.bat");
+	@Command(tag = "pull") public void pull() throws IOException, GitAPIException {
+		git.pull();
 	}
 
-	@Override public void conduct(String command) throws InterruptedException, IOException {
+	@Override public void conduct(String command) throws InterruptedException, IOException, GitAPIException {
 		switch (command) {
 			case "pull":
 				pull();

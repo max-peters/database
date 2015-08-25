@@ -7,6 +7,8 @@ import java.util.concurrent.CancellationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import database.main.date.Date;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
@@ -25,13 +27,13 @@ public class Administration {
 		this.writerReader = writerReader;
 	}
 
-	public void request() throws IOException, InterruptedException, ParserConfigurationException, TransformerException, FontFormatException {
+	public void request() throws IOException, InterruptedException, ParserConfigurationException, TransformerException, FontFormatException, GitAPIException {
 		while (true) {
 			inputRequestAdministration();
 		}
 	}
 
-	private void inputRequestAdministration() throws InterruptedException, IOException, ParserConfigurationException, TransformerException {
+	private void inputRequestAdministration() throws InterruptedException, IOException, ParserConfigurationException, TransformerException, GitAPIException {
 		String command = null;
 		try {
 			command = request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "check|exit|save)");

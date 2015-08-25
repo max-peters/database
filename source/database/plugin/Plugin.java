@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
 
 import jdk.nashorn.internal.objects.annotations.Getter;
+
+import org.eclipse.jgit.api.errors.GitAPIException;
+
 import database.main.Administration;
 import database.main.date.Date;
 
@@ -54,5 +57,5 @@ public abstract class Plugin {
 		return identity;
 	}
 
-	public abstract void conduct(String command) throws InterruptedException, IOException;
+	public abstract void conduct(String command) throws InterruptedException, IOException, GitAPIException;
 }
