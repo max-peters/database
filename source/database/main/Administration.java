@@ -12,6 +12,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import database.main.date.Date;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
+import database.plugin.launcher.News;
 
 // TODO: stundenplan
 public class Administration {
@@ -123,6 +124,12 @@ public class Administration {
 	}
 
 	public void initialOutput() {
+		try {
+			terminal.out(new News().getCurrentRank());
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 		for (Plugin plugin : pluginContainer.getPlugins()) {
 			if (plugin instanceof InstancePlugin) {
 				((InstancePlugin) plugin).initialOutput();

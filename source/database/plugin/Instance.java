@@ -1,6 +1,6 @@
 package database.plugin;
 
-public abstract class Instance {
+public abstract class Instance implements Comparable<Instance> {
 	public String			identity;
 	protected String[][]	parameter;
 	protected InstanceList	list;
@@ -30,5 +30,9 @@ public abstract class Instance {
 
 	public String[][] getParameter() {
 		return parameter;
+	}
+
+	public int compareTo(Instance instance) {
+		return 0;
 	}
 }

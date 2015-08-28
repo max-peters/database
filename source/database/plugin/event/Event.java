@@ -4,13 +4,26 @@ import jdk.nashorn.internal.objects.annotations.Getter;
 import database.main.date.Date;
 import database.plugin.Instance;
 
-public abstract class Event extends Instance implements Comparable<Event> {
+public abstract class Event extends Instance {
 	public Event(String[][] parameter, EventList list) {
 		super(parameter, parameter[0][1], list);
 	}
 
-	@Override public int compareTo(Event event) {
-		return getDate().compareTo(event.getDate());
+	@Override public int compareTo(Instance instance) {
+		if (instance instanceof Event) {
+			return getDate().compareTo(((Event) instance).getDate());
+		}
+		else {
+			return 0;
+		}
+	}
+
+	@Getter protected Date getDate() {
+		return new Date(getParameter("date"));
+	}
+
+	@Getter protected String getName() {
+		return getParameter("name");
 	}
 
 	protected Date updateYear() {
@@ -23,14 +36,6 @@ public abstract class Event extends Instance implements Comparable<Event> {
 			localDate = new Date(getDate().day.counter + "." + getDate().month.counter + "." + currentDate.year.counter);
 		}
 		return localDate;
-	}
-
-	@Getter protected Date getDate() {
-		return new Date(getParameter("date"));
-	}
-
-	@Getter protected String getName() {
-		return getParameter("name");
 	}
 
 	protected abstract String output();

@@ -1,6 +1,7 @@
 package database.plugin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.CancellationException;
 
 import jdk.nashorn.internal.objects.annotations.Getter;
@@ -94,6 +95,7 @@ public abstract class InstancePlugin extends Plugin {
 	}
 
 	@Getter public ArrayList<Instance> getList() {
+		Collections.sort(instanceList.getList());
 		return instanceList.getList();
 	}
 }

@@ -9,6 +9,5 @@ import database.plugin.event.EventExtention;
 public class AllDayEventPlugin extends EventExtention {
 	public AllDayEventPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
 		super(pluginContainer, terminal, graphicalUserInterface, administration, "day", new AllDayEventList());
-		this.display = true;
 	}
 }

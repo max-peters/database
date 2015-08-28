@@ -79,11 +79,9 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 		List<Event> eventList = new ArrayList<Event>();
 		if (display) {
 			for (InstancePlugin extention : extentionList) {
-				if (extention.getDisplay()) {
-					EventList currentEventList = (EventList) ((EventExtention) extention).getInstanceList();
-					for (Event event : currentEventList.getNearEvents()) {
-						eventList.add(event);
-					}
+				EventList currentEventList = (EventList) ((EventExtention) extention).getInstanceList();
+				for (Event event : currentEventList.getNearEvents()) {
+					eventList.add(event);
 				}
 			}
 			Collections.sort(eventList);
@@ -119,17 +117,9 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 	}
 
 	@Override public ArrayList<Instance> getList() {
-		ArrayList<Event> events = new ArrayList<Event>();
 		ArrayList<Instance> instances = new ArrayList<Instance>();
 		for (InstancePlugin extention : extentionList) {
-			for (Instance instance : extention.getList()) {
-				Event event = (Event) instance;
-				events.add(event);
-			}
-		}
-		Collections.sort(events);
-		for (Event event : events) {
-			instances.add(event);
+			instances.addAll(extention.getList());
 		}
 		return instances;
 	}
