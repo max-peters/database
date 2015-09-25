@@ -18,6 +18,7 @@ import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -26,7 +27,7 @@ import database.main.date.Date;
 import database.main.date.Time;
 
 public class GraphicalUserInterface {
-	public JFrame			frame						= new JFrame("Database");
+	private JFrame			frame						= new JFrame("Database");
 	private Object			synchronizerInputConfirm	= new Object();
 	private Object			synchronizerNewInput		= new Object();
 	private Object			synchronizerKeyInput		= new Object();
@@ -251,6 +252,14 @@ public class GraphicalUserInterface {
 		input.setEditable(false);
 		input.setFocusable(false);
 		input.setCaretColor(Color.BLACK);
+	}
+
+	public void showMessageDialog(Throwable e) {
+		String stackTrace = "";
+		for (StackTraceElement element : e.getStackTrace()) {
+			stackTrace = stackTrace + "\r\n" + element;
+		}
+		JOptionPane.showMessageDialog(frame, stackTrace, e.getClass().getName(), JOptionPane.INFORMATION_MESSAGE);
 	}
 }
 

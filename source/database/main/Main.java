@@ -1,5 +1,7 @@
 package database.main;
 
+import java.io.IOException;
+
 import javax.swing.JOptionPane;
 
 import database.plugin.event.EventPlugin;
@@ -31,7 +33,12 @@ public class Main {
 					writerReader.setDirectory();
 				}
 			}
-			writerReader.read();
+			try {
+				writerReader.read();
+			}
+			catch (IOException e) {
+				graphicalUserInterface.showMessageDialog(e);
+			}
 			administration.initialOutput();
 			graphicalUserInterface.show();
 			administration.request();

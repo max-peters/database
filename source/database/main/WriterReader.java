@@ -3,7 +3,6 @@ package database.main;
 import java.io.File;
 import java.io.IOException;
 
-import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -110,55 +109,46 @@ public class WriterReader {
 		serializer.transform(domSource, streamResult);
 	}
 
-	public void read() {
-		try {
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(file);
-			doc.getDocumentElement().normalize();
-			NodeList nList = doc.getElementsByTagName("*");
-			for (int i = 0; i < nList.getLength(); i++) {
-				Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
-				if (plugin != null && plugin instanceof InstancePlugin) {
-					if (nList.item(i).getNodeName().equals("entry")) {
-						String[][] parameter = new String[nList.item(i).getAttributes().getLength()][2];
-						for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
-							parameter[j][0] = nList.item(i).getAttributes().item(j).getNodeName();
-							parameter[j][1] = nList.item(i).getAttributes().item(j).getNodeValue();
-						}
-						((InstancePlugin) plugin).create(parameter);
-					}
-					else if (nList.item(i).getNodeName().equals("display")) {
-						if (plugin != null && plugin instanceof InstancePlugin) {
-							((InstancePlugin) plugin).setDisplay(Boolean.valueOf(nList.item(i).getAttributes().item(0).getNodeValue()));
-						}
-					}
-					else {
-						int j;
-						String[][] parameter = new String[nList.item(i).getAttributes().getLength() + 1][2];
-						for (j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
-							parameter[j][0] = nList.item(i).getAttributes().item(j).getNodeName();
-							parameter[j][1] = nList.item(i).getAttributes().item(j).getNodeValue();
-						}
-						parameter[j][0] = "type";
-						parameter[j][1] = nList.item(i).getNodeName();
-						((InstancePlugin) plugin).create(parameter);
-					}
-				}
-				else if (plugin != null && plugin instanceof Writeable) {
-					Writeable writeable = (Writeable) plugin;
+	public void read() throws IOException, ParserConfigurationException, SAXException {
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(file);
+		doc.getDocumentElement().normalize();
+		NodeList nList = doc.getElementsByTagName("*");
+		for (int i = 0; i < nList.getLength(); i++) {
+			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
+			if (plugin != null && plugin instanceof InstancePlugin) {
+				if (nList.item(i).getNodeName().equals("entry")) {
+					String[][] parameter = new String[nList.item(i).getAttributes().getLength()][2];
 					for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
-						writeable.read(nList.item(i).getAttributes().item(j).getNodeValue());
+						parameter[j][0] = nList.item(i).getAttributes().item(j).getNodeName();
+						parameter[j][1] = nList.item(i).getAttributes().item(j).getNodeValue();
+					}
+					((InstancePlugin) plugin).create(parameter);
+				}
+				else if (nList.item(i).getNodeName().equals("display")) {
+					if (plugin != null && plugin instanceof InstancePlugin) {
+						((InstancePlugin) plugin).setDisplay(Boolean.valueOf(nList.item(i).getAttributes().item(0).getNodeValue()));
 					}
 				}
+				else {
+					int j;
+					String[][] parameter = new String[nList.item(i).getAttributes().getLength() + 1][2];
+					for (j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
+						parameter[j][0] = nList.item(i).getAttributes().item(j).getNodeName();
+						parameter[j][1] = nList.item(i).getAttributes().item(j).getNodeValue();
+					}
+					parameter[j][0] = "type";
+					parameter[j][1] = nList.item(i).getNodeName();
+					((InstancePlugin) plugin).create(parameter);
+				}
 			}
-		}
-		catch (SAXException | ParserConfigurationException | IOException e) {
-			String stackTrace = "";
-			for (StackTraceElement element : e.getStackTrace()) {
-				stackTrace = stackTrace + "\r\n" + element;
+			else if (plugin != null && plugin instanceof Writeable) {
+				Writeable writeable = (Writeable) plugin;
+				for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
+					writeable.read(nList.item(i).getAttributes().item(j).getNodeValue());
+				}
 			}
-			JOptionPane.showMessageDialog(null, e.getClass().toString() + stackTrace, "storage reset", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 }

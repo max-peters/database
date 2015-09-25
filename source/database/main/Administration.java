@@ -128,7 +128,7 @@ public class Administration {
 			terminal.out(new News().getCurrentRank());
 		}
 		catch (IOException e) {
-			e.printStackTrace();
+			graphicalUserInterface.showMessageDialog(e);
 		}
 		for (Plugin plugin : pluginContainer.getPlugins()) {
 			if (plugin instanceof InstancePlugin) {
