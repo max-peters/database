@@ -1,14 +1,12 @@
 package database.plugin.launcher;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import database.main.GraphicalUserInterface;
 import database.main.Terminal;
 import database.plugin.Command;
-import database.plugin.Pair;
 import database.plugin.Plugin;
 
 public class Launcher extends Plugin {
@@ -41,6 +39,17 @@ public class Launcher extends Plugin {
 		graphicalUserInterface.waitForInput();
 	}
 
+	@Override public String initialOutput() {
+		String initialOutput = null;
+		try {
+			initialOutput = new News().getCurrentRank();
+		}
+		catch (IOException e) {
+			graphicalUserInterface.showMessageDialog(e);
+		}
+		return initialOutput;
+	}
+
 	@Override public void conduct(String command) throws InterruptedException, IOException, GitAPIException {
 		switch (command) {
 			case "pull":
@@ -50,12 +59,5 @@ public class Launcher extends Plugin {
 				push();
 				break;
 		}
-	}
-
-	@Override public List<Pair> write() {
-		return null;
-	}
-
-	@Override public void create(Pair pair) {
 	}
 }

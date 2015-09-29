@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
@@ -27,7 +26,7 @@ public class Storage extends Plugin {
 		this.storage = new ArrayList<String>();
 	}
 
-	@Getter public ArrayList<String> getStorage() {
+	public ArrayList<String> getStorage() {
 		return storage;
 	}
 
@@ -60,7 +59,7 @@ public class Storage extends Plugin {
 		instancePlugin.update();
 	}
 
-	@Override public List<Pair> write() {
+	@Override public List<Pair> getPairList() {
 		List<Pair> list = new ArrayList<Pair>();
 		for (String string : storage) {
 			Pair pair = new Pair("entry");

@@ -2,28 +2,27 @@ package database.plugin.expense;
 
 import java.util.Map;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
 import database.main.date.Date;
 import database.plugin.Instance;
 
 public class Expense extends Instance {
 	public Expense(Map<String, String> parameter, ExpenseList list) {
-		super(parameter, "expense", list);
+		super(parameter, list);
 	}
 
-	@Getter Date getDate() {
+	protected Date getDate() {
 		return new Date(getParameter("date"));
 	}
 
-	@Getter String getName() {
+	protected String getName() {
 		return getParameter("name");
 	}
 
-	@Getter String getCategory() {
+	protected String getCategory() {
 		return getParameter("category");
 	}
 
-	@Getter Double getValue() {
+	protected Double getValue() {
 		return Double.valueOf(getParameter("value"));
 	}
 

@@ -2,13 +2,12 @@ package database.plugin.event;
 
 import java.util.Map;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
 import database.main.date.Date;
 import database.plugin.Instance;
 
 public abstract class Event extends Instance {
 	public Event(Map<String, String> parameter, EventList list) {
-		super(parameter, "event", list);
+		super(parameter, list);
 	}
 
 	@Override public int compareTo(Instance instance) {
@@ -20,11 +19,11 @@ public abstract class Event extends Instance {
 		}
 	}
 
-	@Getter protected Date getDate() {
+	protected Date getDate() {
 		return new Date(getParameter("date"));
 	}
 
-	@Getter protected String getName() {
+	protected String getName() {
 		return getParameter("name");
 	}
 

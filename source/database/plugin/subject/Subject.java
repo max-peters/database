@@ -4,47 +4,45 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
 import database.plugin.Instance;
 
 public class Subject extends Instance {
 	public Subject(Map<String, String> parameter, SubjectList list) {
-		super(parameter, "subject", list);
+		super(parameter, list);
 		parameter.put("score", "0");
 		parameter.put("maxPoints", "0");
 		parameter.put("counter", "0");
 	}
 
-	@Getter Integer getCounter() {
+	private Integer getCounter() {
 		return Integer.valueOf(getParameter("counter"));
 	}
 
-	@Getter Double getMaxPoints() {
+	private Double getMaxPoints() {
 		return Double.valueOf(getParameter("maxPoints"));
 	}
 
-	@Getter Double getScore() {
+	private Double getScore() {
 		return Double.valueOf(getParameter("score"));
 	}
 
-	@Getter String getName() {
+	private String getName() {
 		return getParameter("name");
 	}
 
-	@Getter String getTag() {
+	protected String getTag() {
 		return getParameter("tag");
 	}
 
-	@Setter void setCounter(int counter) {
+	private void setCounter(int counter) {
 		setParameter("counter", String.valueOf(counter));
 	}
 
-	@Setter void setMaxPoints(double maxPoints) {
+	private void setMaxPoints(double maxPoints) {
 		setParameter("maxPoints", String.valueOf(maxPoints));
 	}
 
-	@Setter void setScore(double score) {
+	private void setScore(double score) {
 		setParameter("score", String.valueOf(score));
 	}
 

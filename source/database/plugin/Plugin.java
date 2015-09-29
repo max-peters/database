@@ -9,9 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CancellationException;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
-
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import database.main.Administration;
@@ -73,32 +70,36 @@ public abstract class Plugin {
 		return regex + ")";
 	}
 
-	@Setter public void setDisplay(boolean display) {
+	public void setDisplay(boolean display) {
 		this.display = display;
 	}
 
-	@Setter public void setChanges(boolean changes) {
+	public void setChanges(boolean changes) {
 		this.changes = changes;
 	}
 
-	@Getter public boolean getChanges() {
+	public boolean getChanges() {
 		return changes;
 	}
 
-	@Getter public String getIdentity() {
+	public String getIdentity() {
 		return identity;
 	}
 
-	@Getter public boolean getDisplay() {
+	public boolean getDisplay() {
 		return display;
 	}
 
-	public void initialOutput() {
+	public String initialOutput() {
+		return null;
 	}
 
-	public abstract List<Pair> write();
+	public List<Pair> getPairList() {
+		return null;
+	}
 
-	public abstract void create(Pair pair);
+	public void create(Pair pair) {
+	}
 
 	public abstract void conduct(String command) throws InterruptedException, IOException, GitAPIException;
 }

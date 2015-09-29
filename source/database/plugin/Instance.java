@@ -3,13 +3,11 @@ package database.plugin;
 import java.util.Map;
 
 public abstract class Instance implements Comparable<Instance> {
-	private String				identity;
 	private Map<String, String>	parameter;
 	private InstanceList		instanceList;
 
-	public Instance(Map<String, String> parameter, String identity, InstanceList list) {
+	public Instance(Map<String, String> parameter, InstanceList list) {
 		this.parameter = parameter;
-		this.identity = identity;
 		this.instanceList = list;
 	}
 
@@ -30,7 +28,7 @@ public abstract class Instance implements Comparable<Instance> {
 	}
 
 	public String getIdentity() {
-		return identity;
+		return toString();
 	}
 
 	public InstanceList getInstanceList() {

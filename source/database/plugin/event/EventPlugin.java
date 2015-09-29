@@ -59,7 +59,7 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	@Override public void initialOutput() {
+	@Override public String initialOutput() {
 		String initialOutput = "";
 		List<Event> eventList = new ArrayList<Event>();
 		if (display) {
@@ -76,8 +76,8 @@ public class EventPlugin extends InstancePlugin {
 			if (!initialOutput.isEmpty()) {
 				initialOutput = "event" + ":\r\n" + initialOutput;
 			}
-			terminal.out(initialOutput);
 		}
+		return initialOutput;
 	}
 
 	@Override public Instance check() throws InterruptedException {
@@ -114,7 +114,7 @@ public class EventPlugin extends InstancePlugin {
 		extentionList.add(new BirthdayPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 	}
 
-	public List<Pair> write() {
+	public List<Pair> getPairList() {
 		List<Pair> list = new ArrayList<Pair>();
 		Collections.sort(getList());
 		for (int i = 0; i < getList().size(); i++) {

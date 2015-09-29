@@ -13,7 +13,7 @@ public class TaskList extends InstanceList {
 	@Override public String initialOutput() {
 		String output = "";
 		for (Instance instance : getList()) {
-			output = output + "\u2610 " + instance.getIdentity() + "\r\n";
+			output = output + "\u2610 " + ((Task) instance).getTask() + "\r\n";
 		}
 		return output;
 	}

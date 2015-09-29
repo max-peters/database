@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CancellationException;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
@@ -35,7 +34,7 @@ public abstract class EventExtention extends InstancePlugin {
 	@Override public void conduct(String command) throws InterruptedException {
 	}
 
-	@Getter public InstanceList getInstanceList() {
+	public InstanceList getInstanceList() {
 		return instanceList;
 	}
 }

@@ -2,8 +2,6 @@ package database.main;
 
 import java.util.ArrayList;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
@@ -18,11 +16,11 @@ public class PluginContainer {
 		plugins.add(plugin);
 	}
 
-	@Getter public ArrayList<Plugin> getPlugins() {
+	public ArrayList<Plugin> getPlugins() {
 		return plugins;
 	}
 
-	@Getter public Plugin getPlugin(String identity) {
+	public Plugin getPlugin(String identity) {
 		for (Plugin plugin : plugins) {
 			if (plugin.getIdentity().equals(identity)) {
 				return plugin;
@@ -31,7 +29,7 @@ public class PluginContainer {
 		return null;
 	}
 
-	@Getter public boolean getChanges() {
+	public boolean getChanges() {
 		for (Plugin plugin : plugins) {
 			if (plugin instanceof InstancePlugin) {
 				InstancePlugin current = (InstancePlugin) plugin;
@@ -43,7 +41,7 @@ public class PluginContainer {
 		return false;
 	}
 
-	@Getter public String getPluginNameTagsAsRegesx() {
+	public String getPluginNameTagsAsRegesx() {
 		String regex = "(";
 		for (Plugin plugin : plugins) {
 			regex = regex + plugin.getIdentity();
@@ -54,7 +52,7 @@ public class PluginContainer {
 		return regex + ")";
 	}
 
-	@Setter public void setUnchanged() {
+	public void setUnchanged() {
 		for (Plugin plugin : plugins) {
 			if (plugin instanceof InstancePlugin) {
 				InstancePlugin current = (InstancePlugin) plugin;

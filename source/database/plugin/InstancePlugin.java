@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
@@ -46,7 +45,7 @@ public abstract class InstancePlugin extends Plugin {
 		update();
 	}
 
-	public void initialOutput() {
+	public String initialOutput() {
 		String initialOutput = "";
 		if (display) {
 			initialOutput = instanceList.initialOutput();
@@ -54,10 +53,10 @@ public abstract class InstancePlugin extends Plugin {
 		if (!initialOutput.isEmpty()) {
 			initialOutput = identity + ":\r\n" + initialOutput;
 		}
-		terminal.out(initialOutput);
+		return initialOutput;
 	}
 
-	public List<Pair> write() {
+	public List<Pair> getPairList() {
 		List<Pair> list = new ArrayList<Pair>();
 		Collections.sort(instanceList.getList());
 		for (int i = 0; i < instanceList.getList().size(); i++) {
@@ -78,7 +77,7 @@ public abstract class InstancePlugin extends Plugin {
 		}
 	}
 
-	@Getter public ArrayList<Instance> getList() {
+	public ArrayList<Instance> getList() {
 		Collections.sort(instanceList.getList());
 		return instanceList.getList();
 	}

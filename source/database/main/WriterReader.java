@@ -51,7 +51,7 @@ public class WriterReader {
 		Element plugin = document.createElement("plugin");
 		database.appendChild(plugin);
 		for (Plugin currentPlugin : pluginContainer.getPlugins()) {
-			List<Pair> list = currentPlugin.write();
+			List<Pair> list = currentPlugin.getPairList();
 			if (list != null) {
 				Element element = document.createElement(currentPlugin.getIdentity());
 				for (Pair pair : list) {

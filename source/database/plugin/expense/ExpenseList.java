@@ -2,6 +2,7 @@ package database.plugin.expense;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 import database.main.date.Date;
@@ -42,6 +43,10 @@ public class ExpenseList extends InstanceList {
 		return print;
 	}
 
+	@Override public String initialOutput() {
+		return "hi im gosu";
+	}
+
 	private String outputIntervall(int month, int year) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		int nameLength = 0;
@@ -50,12 +55,12 @@ public class ExpenseList extends InstanceList {
 		double value;
 		String blanks;
 		String toReturn = "";
-		ArrayList<String> categorys = new ArrayList<String>();
+		ArrayList<String> categories = new ArrayList<String>();
 		ArrayList<String> names;
 		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
-			if (expense.checkValidity(month, year) && !(categorys.contains(expense.getCategory()))) {
-				categorys.add(expense.getCategory());
+			if (expense.checkValidity(month, year) && !(categories.contains(expense.getCategory()))) {
+				categories.add(expense.getCategory());
 			}
 			if (expense.checkValidity(month, year) && expense.getName().length() > nameLength) {
 				nameLength = expense.getName().length();
@@ -64,7 +69,8 @@ public class ExpenseList extends InstanceList {
 				valueLength = format.format(expense.getValue()).length();
 			}
 		}
-		for (String current : categorys) {
+		// Collections.sort(categories); nach wichtigkeit ordnen
+		for (String current : categories) {
 			toReturn = toReturn + current + ":\r\n";
 			names = new ArrayList<String>();
 			for (Instance instance : getList()) {
@@ -73,6 +79,7 @@ public class ExpenseList extends InstanceList {
 					names.add(expense.getName());
 				}
 			}
+			Collections.sort(names);
 			for (String name : names) {
 				value = 0;
 				blanks = "";
