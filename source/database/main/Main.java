@@ -20,7 +20,7 @@ public class Main {
 			Terminal terminal = new Terminal(graphicalUserInterface);
 			WriterReader writerReader = new WriterReader(pluginContainer);
 			Administration administration = new Administration(graphicalUserInterface, pluginContainer, terminal, writerReader);
-			pluginContainer.addPlugin(new Launcher(graphicalUserInterface, terminal));
+			pluginContainer.addPlugin(new Launcher(graphicalUserInterface, terminal, administration));
 			pluginContainer.addPlugin(new Storage(pluginContainer, administration, graphicalUserInterface));
 			pluginContainer.addPlugin(new SubjectPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 			pluginContainer.addPlugin(new RefillingPlugin(pluginContainer, terminal, graphicalUserInterface, administration));

@@ -238,9 +238,7 @@ public class GraphicalUserInterface {
 	}
 
 	public void waitForInput() throws InterruptedException {
-		input.setEditable(true);
-		input.setFocusable(true);
-		input.grabFocus();
+		releaseInput();
 		input.setCaretColor(Color.BLACK);
 		synchronized (synchronizerNewInput) {
 			synchronizerNewInput.wait();
@@ -252,6 +250,13 @@ public class GraphicalUserInterface {
 		input.setEditable(false);
 		input.setFocusable(false);
 		input.setCaretColor(Color.BLACK);
+	}
+
+	public void releaseInput() {
+		input.setEditable(true);
+		input.setFocusable(true);
+		input.grabFocus();
+		input.setCaretColor(Color.WHITE);
 	}
 
 	public void showMessageDialog(Throwable e) {

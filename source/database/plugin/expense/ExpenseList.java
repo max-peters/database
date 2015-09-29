@@ -44,7 +44,8 @@ public class ExpenseList extends InstanceList {
 	}
 
 	@Override public String initialOutput() {
-		return "hi im gosu";
+		DecimalFormat format = new DecimalFormat("#0.00");
+		return "total expenditure this mounth: " + format.format(value(Date.getDate().month.counter, Date.getDate().year.counter)) + "€";
 	}
 
 	private String outputIntervall(int month, int year) {

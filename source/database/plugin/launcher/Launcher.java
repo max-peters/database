@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
+import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.Terminal;
 import database.plugin.Command;
@@ -12,11 +13,15 @@ import database.plugin.Plugin;
 public class Launcher extends Plugin {
 	GitInterface	git;
 	Terminal		terminal;
+	News			news;
+	String			rank;
 
-	public Launcher(GraphicalUserInterface graphicalUserInterface, Terminal terminal) throws IOException {
-		super("launcher", null, graphicalUserInterface);
-		git = new GitInterface();
+	public Launcher(GraphicalUserInterface graphicalUserInterface, Terminal terminal, Administration administration) throws IOException {
+		super("launcher", administration, graphicalUserInterface);
+		this.git = new GitInterface();
+		this.news = new News();
 		this.terminal = terminal;
+		this.rank = news.getCurrentRank();
 	}
 
 	@Command(tag = "push") public void push() throws IOException, GitAPIException, InterruptedException {
@@ -40,14 +45,7 @@ public class Launcher extends Plugin {
 	}
 
 	@Override public String initialOutput() {
-		String initialOutput = null;
-		try {
-			initialOutput = new News().getCurrentRank();
-		}
-		catch (IOException e) {
-			graphicalUserInterface.showMessageDialog(e);
-		}
-		return initialOutput;
+		return rank;
 	}
 
 	@Override public void conduct(String command) throws InterruptedException, IOException, GitAPIException {
@@ -57,6 +55,9 @@ public class Launcher extends Plugin {
 				break;
 			case "push":
 				push();
+				break;
+			case "display":
+				display();
 				break;
 		}
 	}

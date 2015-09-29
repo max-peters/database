@@ -31,9 +31,9 @@ public abstract class Plugin {
 
 	@Command(tag = "display") public void display() throws InterruptedException {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put(identity, "(true|false)");
+		map.put("display", "(true|false)");
 		request(map);
-		display = Boolean.valueOf(map.get(identity));
+		display = Boolean.valueOf(map.get("display"));
 		update();
 	}
 
@@ -49,7 +49,9 @@ public abstract class Plugin {
 
 	public void update() {
 		graphicalUserInterface.clear();
+		graphicalUserInterface.blockInput();
 		administration.initialOutput();
+		graphicalUserInterface.releaseInput();
 		setChanges(true);
 	}
 

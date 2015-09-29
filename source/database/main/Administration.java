@@ -63,6 +63,7 @@ public class Administration {
 
 	private void save() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
 		graphicalUserInterface.blockInput();
+		terminal.requestOut("saving");
 		writerReader.write();
 		pluginContainer.setUnchanged();
 		terminal.requestOut("saved");
@@ -83,6 +84,7 @@ public class Administration {
 					graphicalUserInterface.blockInput();
 					terminal.requestOut("saving");
 					writerReader.write();
+					pluginContainer.setUnchanged();
 					System.exit(0);
 					break;
 			}
@@ -124,7 +126,9 @@ public class Administration {
 
 	public void initialOutput() {
 		for (Plugin plugin : pluginContainer.getPlugins()) {
-			terminal.out(plugin.initialOutput());
+			if (plugin.getDisplay()) {
+				terminal.out(plugin.initialOutput());
+			}
 		}
 	}
 }

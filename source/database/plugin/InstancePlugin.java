@@ -23,6 +23,38 @@ public abstract class InstancePlugin extends Plugin {
 		this.instanceList = instanceList;
 	}
 
+	@Override public String initialOutput() {
+		String initialOutput = "";
+		if (display) {
+			initialOutput = instanceList.initialOutput();
+		}
+		if (initialOutput != null && !initialOutput.isEmpty()) {
+			initialOutput = identity + ":\r\n" + initialOutput;
+		}
+		return initialOutput;
+	}
+
+	@Override public List<Pair> getPairList() {
+		List<Pair> list = new ArrayList<Pair>();
+		Collections.sort(instanceList.getList());
+		for (int i = 0; i < instanceList.getList().size(); i++) {
+			list.add(new Pair("entry", instanceList.getList().get(i).getParameter()));
+		}
+		list.add(new Pair("display", "boolean", String.valueOf(getDisplay())));
+		return list;
+	}
+
+	@Override public void create(Pair pair) {
+		if (pair.getName().equals("entry")) {
+			create(pair.getMap());
+		}
+		else if (pair.getName().equals("display")) {
+			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
+		}
+		else {
+		}
+	}
+
 	public Instance check() throws InterruptedException {
 		int position;
 		ArrayList<String> strings = new ArrayList<String>();
@@ -43,38 +75,6 @@ public abstract class InstancePlugin extends Plugin {
 	public void remove(Instance toRemove) {
 		instanceList.remove(toRemove);
 		update();
-	}
-
-	public String initialOutput() {
-		String initialOutput = "";
-		if (display) {
-			initialOutput = instanceList.initialOutput();
-		}
-		if (!initialOutput.isEmpty()) {
-			initialOutput = identity + ":\r\n" + initialOutput;
-		}
-		return initialOutput;
-	}
-
-	public List<Pair> getPairList() {
-		List<Pair> list = new ArrayList<Pair>();
-		Collections.sort(instanceList.getList());
-		for (int i = 0; i < instanceList.getList().size(); i++) {
-			list.add(new Pair("entry", instanceList.getList().get(i).getParameter()));
-		}
-		list.add(new Pair("display", "boolean", String.valueOf(getDisplay())));
-		return list;
-	}
-
-	public void create(Pair pair) {
-		if (pair.getName().equals("entry")) {
-			create(pair.getMap());
-		}
-		else if (pair.getName().equals("display")) {
-			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
-		}
-		else {
-		}
 	}
 
 	public ArrayList<Instance> getList() {
