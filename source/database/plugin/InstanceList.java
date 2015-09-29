@@ -1,6 +1,7 @@
 package database.plugin;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public abstract class InstanceList {
 	private ArrayList<Instance>	list;
@@ -21,9 +22,9 @@ public abstract class InstanceList {
 		return null;
 	}
 
-	public String output(String[][] tags) {
+	public String output(Map<String, String> map) {
 		return null;
 	}
 
-	public abstract void add(String[][] parameter);
+	public abstract void add(Map<String, String> map);
 }

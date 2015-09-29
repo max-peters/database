@@ -1,12 +1,13 @@
 package database.plugin.event;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import database.main.date.Date;
 import database.plugin.InstanceList;
 
 public abstract class EventList extends InstanceList {
-	@Override public void add(String[][] parameter) {
+	@Override public void add(Map<String, String> parameter) {
 	}
 
 	public ArrayList<Event> getNearEvents() {

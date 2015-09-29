@@ -1,12 +1,14 @@
 package database.plugin.expense;
 
+import java.util.Map;
+
 import jdk.nashorn.internal.objects.annotations.Getter;
 import database.main.date.Date;
 import database.plugin.Instance;
 
 public class Expense extends Instance {
-	public Expense(String[][] parameter, ExpenseList list) {
-		super(parameter, parameter[2][1], list);
+	public Expense(Map<String, String> parameter, ExpenseList list) {
+		super(parameter, "expense", list);
 	}
 
 	@Getter Date getDate() {

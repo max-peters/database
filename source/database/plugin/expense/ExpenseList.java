@@ -2,6 +2,7 @@ package database.plugin.expense;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Map;
 
 import database.main.date.Date;
 import database.main.date.Month;
@@ -9,13 +10,13 @@ import database.plugin.Instance;
 import database.plugin.InstanceList;
 
 public class ExpenseList extends InstanceList {
-	@Override public void add(String[][] parameter) {
+	@Override public void add(Map<String, String> parameter) {
 		getList().add(new Expense(parameter, this));
 	}
 
-	@Override public String output(String[][] tags) {
+	@Override public String output(Map<String, String> map) {
 		String print = null;
-		switch (tags[0][1]) {
+		switch (map.get("show")) {
 			case "all":
 				print = outputIntervall(-1, -1);
 				if (print.length() == 0) {

@@ -3,20 +3,20 @@ package database.plugin.event;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CancellationException;
+import java.util.Map;
 
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
 import database.main.Terminal;
 import database.plugin.Command;
-import database.plugin.Extendable;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
+import database.plugin.Pair;
 import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 
-public class EventPlugin extends InstancePlugin implements Extendable {
+public class EventPlugin extends InstancePlugin {
 	private ArrayList<InstancePlugin>	extentionList;
 
 	public EventPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
@@ -26,16 +26,8 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 	}
 
 	@Command(tag = "new") public void create() throws InterruptedException {
-		try {
-			EventExtention extention = chooseType();
-			if (extention != null) {
-				extention.create();
-				update();
-			}
-		}
-		catch (CancellationException e) {
-			return;
-		}
+		chooseType().create();
+		update();
 	}
 
 	@Override @Command(tag = "display") public void display() throws InterruptedException {
@@ -53,24 +45,17 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 		}
 	}
 
-	@Override public void create(String[][] parameter) {
+	@Override public void create(Map<String, String> map) {
 		for (InstancePlugin extention : extentionList) {
-			for (int i = 0; i < parameter.length; i++) {
-				if (parameter[i][0].equals("type")) {
-					if (parameter[i][1].equals(extention.getIdentity())) {
-						int k = (i + 1) % 3;
-						extention.create(new String[][] { parameter[k], parameter[(k + 1) % 3] });
-					}
-				}
+			if (map.get("type").equals(extention.getIdentity())) {
+				extention.create(map);
 			}
 		}
 	}
 
 	@Override public void remove(Instance toRemove) {
 		for (InstancePlugin extention : extentionList) {
-			if (extention.getList().contains(toRemove)) {
-				extention.getList().remove(toRemove);
-			}
+			extention.getList().remove(toRemove);
 		}
 	}
 
@@ -107,7 +92,7 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 		}
 		Collections.sort(events);
 		for (Event event : events) {
-			strings.add(event.identity);
+			strings.add(event.getIdentity());
 		}
 		position = graphicalUserInterface.check(strings);
 		if (position != -1) {
@@ -124,13 +109,34 @@ public class EventPlugin extends InstancePlugin implements Extendable {
 		return instances;
 	}
 
-	@Override public void initialise() {
+	public void initialise() {
 		extentionList.add(new AllDayEventPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 		extentionList.add(new BirthdayPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 	}
 
-	@Override public ArrayList<InstancePlugin> getExtentions() {
-		return extentionList;
+	public List<Pair> write() {
+		List<Pair> list = new ArrayList<Pair>();
+		Collections.sort(getList());
+		for (int i = 0; i < getList().size(); i++) {
+			Map<String, String> map = getList().get(i).getParameter();
+			list.add(new Pair(map.remove("type"), map));
+		}
+		list.add(new Pair("display", "boolean", String.valueOf(getDisplay())));
+		return list;
+	}
+
+	public void create(Pair pair) {
+		if (pair.getName().equals("display")) {
+			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
+		}
+		else {
+			for (InstancePlugin extention : extentionList) {
+				if (pair.getName().equals(extention.getIdentity())) {
+					pair.getMap().put("type", extention.getIdentity());
+					extention.create(pair.getMap());
+				}
+			}
+		}
 	}
 
 	private EventExtention chooseType() throws InterruptedException {

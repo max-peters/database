@@ -21,7 +21,7 @@ public class Main {
 			WriterReader writerReader = new WriterReader(pluginContainer);
 			Administration administration = new Administration(graphicalUserInterface, pluginContainer, terminal, writerReader);
 			pluginContainer.addPlugin(new Launcher(graphicalUserInterface, terminal));
-			pluginContainer.addPlugin(new Storage(pluginContainer, administration));
+			pluginContainer.addPlugin(new Storage(pluginContainer, administration, graphicalUserInterface));
 			pluginContainer.addPlugin(new SubjectPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 			pluginContainer.addPlugin(new RefillingPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 			pluginContainer.addPlugin(new ExpensePlugin(pluginContainer, terminal, graphicalUserInterface, administration));
@@ -48,7 +48,7 @@ public class Main {
 			for (StackTraceElement element : e.getStackTrace()) {
 				stackTrace = stackTrace + "\r\n" + element;
 			}
-			JOptionPane.showMessageDialog(null, stackTrace, "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, stackTrace, e.getClass().getName(), JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 	}

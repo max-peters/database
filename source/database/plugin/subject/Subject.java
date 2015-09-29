@@ -2,14 +2,18 @@ package database.plugin.subject;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Map;
 
 import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
 import database.plugin.Instance;
 
 public class Subject extends Instance {
-	public Subject(String[][] parameter, SubjectList list) {
-		super(parameter, parameter[2][1], list);
+	public Subject(Map<String, String> parameter, SubjectList list) {
+		super(parameter, "subject", list);
+		parameter.put("score", "0");
+		parameter.put("maxPoints", "0");
+		parameter.put("counter", "0");
 	}
 
 	@Getter Integer getCounter() {

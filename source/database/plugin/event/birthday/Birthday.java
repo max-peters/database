@@ -1,19 +1,21 @@
 package database.plugin.event.birthday;
 
+import java.util.Map;
+
 import database.main.date.Date;
 import database.plugin.event.Event;
 import database.plugin.event.EventList;
 
 public class Birthday extends Event {
-	public Birthday(String[][] parameter, BirthdayList list) {
-		super(new String[][] { parameter[0], parameter[1] }, list);
+	public Birthday(Map<String, String> parameter, BirthdayList list) {
+		super(parameter, list);
 	}
 
 	@Override protected String output() {
 		int nameLength = 0;
 		int ageLength = 0;
 		String newName = getName();
-		for (Event event : ((EventList) list).getNearEvents()) {
+		for (Event event : ((EventList) getInstanceList()).getNearEvents()) {
 			Birthday birthday = (Birthday) event;
 			if (birthday.getName().length() > nameLength) {
 				nameLength = birthday.getName().length();

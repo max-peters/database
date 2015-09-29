@@ -1,12 +1,14 @@
 package database.plugin.event;
 
+import java.util.Map;
+
 import jdk.nashorn.internal.objects.annotations.Getter;
 import database.main.date.Date;
 import database.plugin.Instance;
 
 public abstract class Event extends Instance {
-	public Event(String[][] parameter, EventList list) {
-		super(parameter, parameter[0][1], list);
+	public Event(Map<String, String> parameter, EventList list) {
+		super(parameter, "event", list);
 	}
 
 	@Override public int compareTo(Instance instance) {

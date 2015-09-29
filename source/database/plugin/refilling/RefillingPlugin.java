@@ -1,5 +1,7 @@
 package database.plugin.refilling;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -17,7 +19,13 @@ public class RefillingPlugin extends InstancePlugin {
 
 	@Command(tag = "new") public void create() throws InterruptedException {
 		try {
-			create(request(new String[][] { { "refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?" }, { "value", "[0-9]{1,13}(\\.[0-9]*)?" }, { "distance", "[0-9]{1,13}(\\.[0-9]*)?" }, { "date", null } }));
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?");
+			map.put("value", "[0-9]{1,13}(\\.[0-9]*)?");
+			map.put("distance", "[0-9]{1,13}(\\.[0-9]*)?");
+			map.put("date", null);
+			request(map);
+			create(map);
 			update();
 		}
 		catch (CancellationException e) {

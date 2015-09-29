@@ -1,38 +1,39 @@
 package database.plugin;
 
-public abstract class Instance implements Comparable<Instance> {
-	public String			identity;
-	protected String[][]	parameter;
-	protected InstanceList	list;
+import java.util.Map;
 
-	public Instance(String[][] parameter, String identity, InstanceList list) {
+public abstract class Instance implements Comparable<Instance> {
+	private String				identity;
+	private Map<String, String>	parameter;
+	private InstanceList		instanceList;
+
+	public Instance(Map<String, String> parameter, String identity, InstanceList list) {
 		this.parameter = parameter;
 		this.identity = identity;
-		this.list = list;
+		this.instanceList = list;
 	}
 
-	public String getParameter(String tag) {
-		for (int i = 0; i < parameter.length; i++) {
-			if (parameter[i][0].equals(tag)) {
-				return parameter[i][1];
-			}
-		}
-		return null;
+	public String getParameter(String key) {
+		return parameter.get(key);
 	}
 
-	protected void setParameter(String tag, String value) {
-		for (int i = 0; i < parameter.length; i++) {
-			if (parameter[i][0].equals(tag)) {
-				parameter[i][1] = value;
-			}
-		}
+	protected void setParameter(String key, String value) {
+		parameter.replace(key, value);
 	}
 
-	public String[][] getParameter() {
+	public Map<String, String> getParameter() {
 		return parameter;
 	}
 
 	public int compareTo(Instance instance) {
 		return 0;
+	}
+
+	public String getIdentity() {
+		return identity;
+	}
+
+	public InstanceList getInstanceList() {
+		return instanceList;
 	}
 }

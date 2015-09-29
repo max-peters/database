@@ -1,11 +1,13 @@
 package database.plugin.task;
 
+import java.util.Map;
+
 import jdk.nashorn.internal.objects.annotations.Getter;
 import database.plugin.Instance;
 
 public class Task extends Instance {
-	public Task(String[][] parameter, TaskList list) {
-		super(parameter, parameter[0][1], list);
+	public Task(Map<String, String> parameter, TaskList list) {
+		super(parameter, "task", list);
 	}
 
 	@Getter String getTask() {

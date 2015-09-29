@@ -2,54 +2,33 @@ package database.plugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.CancellationException;
+import java.util.List;
+import java.util.Map;
 
 import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
 import database.main.Terminal;
 
 public abstract class InstancePlugin extends Plugin {
-	protected PluginContainer			pluginContainer;
-	protected Terminal					terminal;
-	protected GraphicalUserInterface	graphicalUserInterface;
-	protected InstanceList				instanceList;
-	protected boolean					display;
-	private boolean						changes;
+	protected PluginContainer	pluginContainer;
+	protected Terminal			terminal;
+	protected InstanceList		instanceList;
 
 	public InstancePlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
-		super(identity, administration);
+		super(identity, administration, graphicalUserInterface);
 		this.pluginContainer = pluginContainer;
 		this.terminal = terminal;
 		this.graphicalUserInterface = graphicalUserInterface;
 		this.instanceList = instanceList;
-		this.changes = false;
-	}
-
-	@Command(tag = "display") public void display() throws InterruptedException {
-		String[][] displayInformation = { { identity, "(true|false)" } };
-		try {
-			display = Boolean.valueOf(request(displayInformation)[0][1]);
-			update();
-		}
-		catch (CancellationException e) {
-			return;
-		}
-	}
-
-	public void update() {
-		graphicalUserInterface.clear();
-		administration.initialOutput();
-		setChanges(true);
 	}
 
 	public Instance check() throws InterruptedException {
 		int position;
 		ArrayList<String> strings = new ArrayList<String>();
 		for (Instance instance : instanceList.getList()) {
-			strings.add(instance.identity);
+			strings.add(instance.getIdentity());
 		}
 		position = graphicalUserInterface.check(strings);
 		if (position != -1) {
@@ -58,8 +37,8 @@ public abstract class InstancePlugin extends Plugin {
 		return null;
 	}
 
-	public void create(String[][] parameter) {
-		instanceList.add(parameter);
+	public void create(Map<String, String> map) {
+		instanceList.add(map);
 	}
 
 	public void remove(Instance toRemove) {
@@ -78,20 +57,25 @@ public abstract class InstancePlugin extends Plugin {
 		terminal.out(initialOutput);
 	}
 
-	@Setter public void setDisplay(boolean display) {
-		this.display = display;
+	public List<Pair> write() {
+		List<Pair> list = new ArrayList<Pair>();
+		Collections.sort(instanceList.getList());
+		for (int i = 0; i < instanceList.getList().size(); i++) {
+			list.add(new Pair("entry", instanceList.getList().get(i).getParameter()));
+		}
+		list.add(new Pair("display", "boolean", String.valueOf(getDisplay())));
+		return list;
 	}
 
-	@Setter public void setChanges(boolean changes) {
-		this.changes = changes;
-	}
-
-	@Getter public boolean getDisplay() {
-		return display;
-	}
-
-	@Getter public boolean getChanges() {
-		return changes;
+	public void create(Pair pair) {
+		if (pair.getName().equals("entry")) {
+			create(pair.getMap());
+		}
+		else if (pair.getName().equals("display")) {
+			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
+		}
+		else {
+		}
 	}
 
 	@Getter public ArrayList<Instance> getList() {

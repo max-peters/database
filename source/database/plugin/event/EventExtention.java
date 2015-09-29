@@ -1,5 +1,7 @@
 package database.plugin.event;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CancellationException;
 
 import jdk.nashorn.internal.objects.annotations.Getter;
@@ -18,7 +20,11 @@ public abstract class EventExtention extends InstancePlugin {
 
 	@Command(tag = "new") public void create() throws InterruptedException {
 		try {
-			instanceList.add(request(new String[][] { { "name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)" }, { "date", null } }));
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)");
+			map.put("date", null);
+			request(map);
+			instanceList.add(map);
 			update();
 		}
 		catch (CancellationException e) {

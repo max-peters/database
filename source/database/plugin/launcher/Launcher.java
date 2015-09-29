@@ -1,24 +1,24 @@
 package database.plugin.launcher;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import database.main.GraphicalUserInterface;
 import database.main.Terminal;
 import database.plugin.Command;
+import database.plugin.Pair;
 import database.plugin.Plugin;
 
 public class Launcher extends Plugin {
-	GitInterface			git;
-	GraphicalUserInterface	graphicalUserInterface;
-	Terminal				terminal;
+	GitInterface	git;
+	Terminal		terminal;
 
 	public Launcher(GraphicalUserInterface graphicalUserInterface, Terminal terminal) throws IOException {
-		super("launcher", null);
+		super("launcher", null, graphicalUserInterface);
 		git = new GitInterface();
 		this.terminal = terminal;
-		this.graphicalUserInterface = graphicalUserInterface;
 	}
 
 	@Command(tag = "push") public void push() throws IOException, GitAPIException, InterruptedException {
@@ -50,5 +50,12 @@ public class Launcher extends Plugin {
 				push();
 				break;
 		}
+	}
+
+	@Override public List<Pair> write() {
+		return null;
+	}
+
+	@Override public void create(Pair pair) {
 	}
 }

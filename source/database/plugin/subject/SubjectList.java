@@ -1,21 +1,27 @@
 package database.plugin.subject;
 
+import java.util.Map;
+
 import database.plugin.Instance;
 import database.plugin.InstanceList;
 
 public class SubjectList extends InstanceList {
-	@Override public void add(String[][] parameter) {
+	@Override public void add(Map<String, String> parameter) {
 		getList().add(new Subject(parameter, this));
 	}
 
-	@Override public String output(String[][] tags) {
-		if (tags[0][1].equals("average")) {
-			return getAverage();
+	@Override public String output(Map<String, String> map) {
+		String returnValue = null;
+		for (String string : map.values()) {
+			if (string.equals("average")) {
+				returnValue = getAverage();
+			}
+			else {
+				Subject subject = getSubject(string);
+				returnValue = subject.output(getList());
+			}
 		}
-		else {
-			Subject subject = getSubject(tags[0][1]);
-			return subject.output(getList());
-		}
+		return returnValue;
 	}
 
 	@Override public String initialOutput() {

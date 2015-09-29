@@ -1,14 +1,16 @@
 package database.plugin.refilling;
 
+import java.util.Map;
+
 import database.plugin.Instance;
 import database.plugin.InstanceList;
 
 public class RefillingList extends InstanceList {
-	@Override public void add(String[][] parameter) {
+	@Override public void add(Map<String, String> parameter) {
 		getList().add(new Refilling(parameter, this));
 	}
 
-	@Override public String output(String[][] tags) {
+	@Override public String output(Map<String, String> map) {
 		String print = "";
 		if (getList().isEmpty()) {
 			print = "no entries";

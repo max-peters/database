@@ -1,6 +1,7 @@
 package database.plugin.task;
 
-import java.util.concurrent.CancellationException;
+import java.util.HashMap;
+import java.util.Map;
 
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
@@ -15,13 +16,11 @@ public class TaskPlugin extends InstancePlugin {
 	}
 
 	@Command(tag = "new") public void create() throws InterruptedException {
-		try {
-			create(request(new String[][] { { "name", ".+" } }));
-			update();
-		}
-		catch (CancellationException e) {
-			return;
-		}
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("name", ".+");
+		request(map);
+		create(map);
+		update();
 	}
 
 	@Override public void conduct(String command) throws InterruptedException {

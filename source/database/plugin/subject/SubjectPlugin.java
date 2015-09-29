@@ -1,8 +1,8 @@
 package database.plugin.subject;
 
-import java.util.concurrent.CancellationException;
+import java.util.HashMap;
+import java.util.Map;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
@@ -16,40 +16,38 @@ public class SubjectPlugin extends InstancePlugin {
 	}
 
 	@Command(tag = "new") public void create() throws InterruptedException {
-		try {
-			String[][] parameter = request(new String[][] { { "name", "[A-ZÖÄÜ].*" }, { "tag", "[a-zöäüß]*" } });
-			create(new String[][] { { parameter[0][0], parameter[0][1] }, { parameter[1][0], parameter[1][1] }, { "score", "0" }, { "maxPoints", "0" }, { "counter", "0" } });
-			update();
-		}
-		catch (CancellationException e) {
-			return;
-		}
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("name", "[A-ZÖÄÜ].*");
+		map.put("tag", "[a-zöäüß]*");
+		request(map);
+		create(map);
+		update();
 	}
 
-	@Command(tag = "show") public void show() throws InterruptedException, NotImplementedException {
-		try {
-			terminal.solutionOut(instanceList.output(request(new String[][] { { "show", "(average|" + ((SubjectList) instanceList).getTagsAsRegex() + ")" } })));
-			graphicalUserInterface.waitForInput();
-		}
-		catch (CancellationException e) {
-			return;
-		}
+	@Command(tag = "show") public void show() throws InterruptedException {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("show", "(average|" + ((SubjectList) instanceList).getTagsAsRegex() + ")");
+		request(map);
+		terminal.solutionOut(instanceList.output(map));
+		graphicalUserInterface.waitForInput();
 	}
 
-	@Command(tag = "add") public void change() throws InterruptedException, NotImplementedException {
-		try {
-			change(request(new String[][] { { "add", ((SubjectList) instanceList).getTagsAsRegex() }, { "score", "[0-9]{1,13}(\\.[0-9]*)?" }, { "maximum points", "[0-9]{1,13}(\\.[0-9]*)?" } }));
-			update();
-		}
-		catch (CancellationException e) {
-			return;
-		}
+	@Command(tag = "add") public void add() throws InterruptedException {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("add", ((SubjectList) instanceList).getTagsAsRegex());
+		map.put("score", "[0-9]{1,13}(\\.[0-9]*)?");
+		map.put("maximum points", "[0-9]{1,13}(\\.[0-9]*)?");
+		request(map);
+		Subject toChange = ((SubjectList) instanceList).getSubject(map.get("add"));
+		toChange.setGrade(Double.parseDouble(map.get("score")), Double.parseDouble(map.get("maximum points")));
+		toChange.calcPercent();
+		update();
 	}
 
 	@Override public void conduct(String command) throws InterruptedException {
 		switch (command) {
 			case "add":
-				change();
+				add();
 				break;
 			case "new":
 				create();
@@ -61,11 +59,5 @@ public class SubjectPlugin extends InstancePlugin {
 				display();
 				break;
 		}
-	}
-
-	private void change(String[][] parameter) {
-		Subject toChange = ((SubjectList) instanceList).getSubject(parameter[0][1]);
-		toChange.setGrade(Double.parseDouble(parameter[1][1]), Double.parseDouble(parameter[2][1]));
-		toChange.calcPercent();
 	}
 }
