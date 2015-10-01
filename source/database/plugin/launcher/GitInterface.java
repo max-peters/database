@@ -2,6 +2,8 @@ package database.plugin.launcher;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
@@ -13,30 +15,31 @@ import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
 public class GitInterface {
-	private Git	database;
-	private Git	studium;
-	private Git	mail;
+	private List<Git>	repositories;
 
 	public GitInterface() throws IOException {
-		database = initialise("C:\\Dateien\\Workspace\\Eclipse\\database\\.git");
-		mail = initialise("C:\\Users\\Max\\AppData\\Roaming\\Thunderbird\\Profiles\\mail\\Mail\\Local Folders\\.git");
-		studium = initialise("C:\\Users\\Max\\Desktop\\Studium\\.git");
+		repositories = new ArrayList<Git>();
+		initialise("C:\\Dateien\\Workspace\\Eclipse\\database\\.git");
+		initialise("C:\\Users\\Max\\AppData\\Roaming\\Thunderbird\\Profiles\\mail\\Mail\\Local Folders\\.git");
+		initialise("C:\\Users\\Max\\Desktop\\Studium\\.git");
 	}
 
 	public void push() throws IOException, GitAPIException {
-		push(database);
-		push(studium);
-		push(mail);
+		for (Git git : repositories) {
+			push(git);
+		}
 	}
 
 	public void pull() throws IOException, GitAPIException {
-		pull(database);
-		pull(studium);
-		pull(mail);
+		for (Git git : repositories) {
+			pull(git);
+		}
 	}
 
-	private Git initialise(String repository) throws IOException {
-		return new Git(new FileRepositoryBuilder().setGitDir(new File(repository)).readEnvironment().findGitDir().build());
+	private void initialise(String repository) throws IOException {
+		if (new File(repository).exists()) {
+			repositories.add(new Git(new FileRepositoryBuilder().setGitDir(new File(repository)).readEnvironment().findGitDir().build()));
+		}
 	}
 
 	private void push(Git git) throws NoFilepatternException, GitAPIException {
