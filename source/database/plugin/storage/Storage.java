@@ -13,7 +13,7 @@ import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
-import database.plugin.Pair;
+import database.plugin.RequestInformation;
 import database.plugin.Plugin;
 
 public class Storage extends Plugin {
@@ -59,17 +59,17 @@ public class Storage extends Plugin {
 		instancePlugin.update();
 	}
 
-	@Override public List<Pair> getPairList() {
-		List<Pair> list = new ArrayList<Pair>();
+	@Override public List<RequestInformation> getPairList() {
+		List<RequestInformation> list = new ArrayList<RequestInformation>();
 		for (String string : storage) {
-			Pair pair = new Pair("entry");
+			RequestInformation pair = new RequestInformation("entry");
 			pair.put("string", string);
 			list.add(pair);
 		}
 		return list;
 	}
 
-	@Override public void create(Pair pair) {
+	@Override public void create(RequestInformation pair) {
 		storage.addAll(pair.getMap().values());
 	}
 }

@@ -20,7 +20,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import database.plugin.Pair;
+import database.plugin.RequestInformation;
 import database.plugin.Plugin;
 
 public class WriterReader {
@@ -51,10 +51,10 @@ public class WriterReader {
 		Element plugin = document.createElement("plugin");
 		database.appendChild(plugin);
 		for (Plugin currentPlugin : pluginContainer.getPlugins()) {
-			List<Pair> list = currentPlugin.getPairList();
+			List<RequestInformation> list = currentPlugin.getPairList();
 			if (list != null && !list.isEmpty()) {
 				Element element = document.createElement(currentPlugin.getIdentity());
-				for (Pair pair : list) {
+				for (RequestInformation pair : list) {
 					Element entryElement = document.createElement(pair.getName());
 					for (Entry<String, String> entry : pair.getMap().entrySet()) {
 						entryElement.setAttribute(entry.getKey(), entry.getValue());
@@ -83,7 +83,7 @@ public class WriterReader {
 		for (int i = 0; i < nList.getLength(); i++) {
 			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
 			if (plugin != null) {
-				Pair pair = new Pair(nList.item(i).getNodeName());
+				RequestInformation pair = new RequestInformation(nList.item(i).getNodeName());
 				for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
 					pair.put(nList.item(i).getAttributes().item(j).getNodeName(), nList.item(i).getAttributes().item(j).getNodeValue());
 				}

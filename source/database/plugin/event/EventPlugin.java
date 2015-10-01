@@ -12,7 +12,7 @@ import database.main.Terminal;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
-import database.plugin.Pair;
+import database.plugin.RequestInformation;
 import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 
@@ -112,18 +112,18 @@ public class EventPlugin extends InstancePlugin {
 		extentionList.add(new BirthdayPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 	}
 
-	public List<Pair> getPairList() {
-		List<Pair> list = new ArrayList<Pair>();
+	public List<RequestInformation> getPairList() {
+		List<RequestInformation> list = new ArrayList<RequestInformation>();
 		Collections.sort(getList());
 		for (int i = 0; i < getList().size(); i++) {
 			Map<String, String> map = getList().get(i).getParameter();
-			list.add(new Pair(map.remove("type"), map));
+			list.add(new RequestInformation(map.remove("type"), map));
 		}
-		list.add(new Pair("display", "boolean", String.valueOf(getDisplay())));
+		list.add(new RequestInformation("display", "boolean", String.valueOf(getDisplay())));
 		return list;
 	}
 
-	public void create(Pair pair) {
+	public void create(RequestInformation pair) {
 		if (pair.getName().equals("display")) {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}

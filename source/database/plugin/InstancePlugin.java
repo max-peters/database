@@ -31,17 +31,17 @@ public abstract class InstancePlugin extends Plugin {
 		return initialOutput;
 	}
 
-	@Override public List<Pair> getPairList() {
-		List<Pair> list = new ArrayList<Pair>();
+	@Override public List<RequestInformation> getPairList() {
+		List<RequestInformation> list = new ArrayList<RequestInformation>();
 		Collections.sort(instanceList.getList());
 		for (int i = 0; i < instanceList.getList().size(); i++) {
-			list.add(new Pair("entry", instanceList.getList().get(i).getParameter()));
+			list.add(new RequestInformation("entry", instanceList.getList().get(i).getParameter()));
 		}
-		list.add(new Pair("display", "boolean", String.valueOf(getDisplay())));
+		list.add(new RequestInformation("display", "boolean", String.valueOf(getDisplay())));
 		return list;
 	}
 
-	@Override public void create(Pair pair) {
+	@Override public void create(RequestInformation pair) {
 		if (pair.getName().equals("entry")) {
 			create(pair.getMap());
 		}

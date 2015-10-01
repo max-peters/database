@@ -3,21 +3,21 @@ package database.plugin;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Pair {
+public class RequestInformation {
 	private String				name;
 	private Map<String, String>	map;
 
-	public Pair(String name) {
+	public RequestInformation(String name) {
 		this.name = name;
 		this.map = new HashMap<String, String>();
 	}
 
-	public Pair(String name, Map<String, String> parameter) {
+	public RequestInformation(String name, Map<String, String> parameter) {
 		this.name = name;
 		this.map = parameter;
 	}
 
-	public Pair(String name, String key, String value) {
+	public RequestInformation(String name, String key, String value) {
 		this.name = name;
 		this.map = new HashMap<String, String>();
 		map.put(key, value);

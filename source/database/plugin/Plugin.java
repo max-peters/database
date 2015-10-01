@@ -96,11 +96,11 @@ public abstract class Plugin {
 		return null;
 	}
 
-	public List<Pair> getPairList() {
+	public List<RequestInformation> getPairList() {
 		return null;
 	}
 
-	public void create(Pair pair) {
+	public void create(RequestInformation pair) {
 	}
 
 	public abstract void conduct(String command) throws InterruptedException, IOException, GitAPIException;
