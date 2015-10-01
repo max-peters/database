@@ -62,20 +62,18 @@ public class EventPlugin extends InstancePlugin {
 	@Override public String initialOutput() {
 		String initialOutput = "";
 		List<Event> eventList = new ArrayList<Event>();
-		if (display) {
-			for (InstancePlugin extention : extentionList) {
-				EventList currentEventList = (EventList) ((EventExtention) extention).getInstanceList();
-				for (Event event : currentEventList.getNearEvents()) {
-					eventList.add(event);
-				}
+		for (InstancePlugin extention : extentionList) {
+			EventList currentEventList = (EventList) ((EventExtention) extention).getInstanceList();
+			for (Event event : currentEventList.getNearEvents()) {
+				eventList.add(event);
 			}
-			Collections.sort(eventList);
-			for (Event event : eventList) {
-				initialOutput = initialOutput + event.output() + "\r\n";
-			}
-			if (!initialOutput.isEmpty()) {
-				initialOutput = "event" + ":\r\n" + initialOutput;
-			}
+		}
+		Collections.sort(eventList);
+		for (Event event : eventList) {
+			initialOutput = initialOutput + event.output() + "\r\n";
+		}
+		if (!initialOutput.isEmpty()) {
+			initialOutput = "event" + ":\r\n" + initialOutput;
 		}
 		return initialOutput;
 	}

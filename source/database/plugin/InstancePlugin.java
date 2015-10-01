@@ -24,10 +24,7 @@ public abstract class InstancePlugin extends Plugin {
 	}
 
 	@Override public String initialOutput() {
-		String initialOutput = "";
-		if (display) {
-			initialOutput = instanceList.initialOutput();
-		}
+		String initialOutput = instanceList.initialOutput();
 		if (initialOutput != null && !initialOutput.isEmpty()) {
 			initialOutput = identity + ":\r\n" + initialOutput;
 		}
