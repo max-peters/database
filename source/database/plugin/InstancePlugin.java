@@ -33,9 +33,9 @@ public abstract class InstancePlugin extends Plugin {
 
 	@Override public List<RequestInformation> getPairList() {
 		List<RequestInformation> list = new ArrayList<RequestInformation>();
-		Collections.sort(instanceList.getList());
-		for (int i = 0; i < instanceList.getList().size(); i++) {
-			list.add(new RequestInformation("entry", instanceList.getList().get(i).getParameter()));
+		Collections.sort(getList());
+		for (int i = 0; i < getList().size(); i++) {
+			list.add(new RequestInformation("entry", getList().get(i).getParameter()));
 		}
 		list.add(new RequestInformation("display", "boolean", String.valueOf(getDisplay())));
 		return list;
@@ -55,12 +55,12 @@ public abstract class InstancePlugin extends Plugin {
 	public Instance check() throws InterruptedException {
 		int position;
 		ArrayList<String> strings = new ArrayList<String>();
-		for (Instance instance : instanceList.getList()) {
+		for (Instance instance : getList()) {
 			strings.add(instance.getIdentity());
 		}
 		position = graphicalUserInterface.check(strings);
 		if (position != -1) {
-			return instanceList.getList().get(position);
+			return getList().get(position);
 		}
 		return null;
 	}
@@ -77,5 +77,9 @@ public abstract class InstancePlugin extends Plugin {
 	public ArrayList<Instance> getList() {
 		Collections.sort(instanceList.getList());
 		return instanceList.getList();
+	}
+
+	public InstanceList getInstanceList() {
+		return instanceList;
 	}
 }

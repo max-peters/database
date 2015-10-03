@@ -7,6 +7,8 @@ import database.plugin.Instance;
 public class Task extends Instance {
 	public Task(Map<String, String> parameter, TaskList list) {
 		super(parameter, list);
+		assert parameter.size() == 1;
+		assert parameter.containsKey("name");
 	}
 
 	protected String getTask() {

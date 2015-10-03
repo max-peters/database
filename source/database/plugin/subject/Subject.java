@@ -12,6 +12,12 @@ public class Subject extends Instance {
 		parameter.put("score", "0");
 		parameter.put("maxPoints", "0");
 		parameter.put("counter", "0");
+		assert parameter.size() == 5;
+		assert parameter.containsKey("counter");
+		assert parameter.containsKey("maxPoints");
+		assert parameter.containsKey("score");
+		assert parameter.containsKey("name");
+		assert parameter.containsKey("tag");
 	}
 
 	private Integer getCounter() {

@@ -4,10 +4,17 @@ import java.util.Map;
 
 import database.plugin.Instance;
 import database.plugin.InstanceList;
+import database.plugin.expense.ExpenseList;
 
 public class RefillingList extends InstanceList {
+	private ExpenseList	expenseList;
+
+	public RefillingList(ExpenseList expenseList) {
+		this.expenseList = expenseList;
+	}
+
 	@Override public void add(Map<String, String> parameter) {
-		getList().add(new Refilling(parameter, this));
+		getList().add(new Refilling(parameter, this, expenseList));
 	}
 
 	@Override public String output(Map<String, String> map) {

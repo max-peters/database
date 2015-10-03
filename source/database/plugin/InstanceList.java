@@ -22,7 +22,7 @@ public abstract class InstanceList {
 		return null;
 	}
 
-	public String output(Map<String, String> map) {
+	public String output(Map<String, String> parameter) {
 		return null;
 	}
 

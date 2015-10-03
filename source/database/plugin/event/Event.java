@@ -8,22 +8,20 @@ import database.plugin.Instance;
 public abstract class Event extends Instance {
 	public Event(Map<String, String> parameter, EventList list) {
 		super(parameter, list);
+		assert parameter.containsKey("date");
+		assert parameter.containsKey("name");
 	}
 
 	@Override public int compareTo(Instance instance) {
-		if (instance instanceof Event) {
-			return getDate().compareTo(((Event) instance).getDate());
-		}
-		else {
-			return 0;
-		}
+		System.out.println(updateYear().compareTo(((Event) instance).updateYear()));
+		return updateYear().compareTo(((Event) instance).updateYear());
 	}
 
-	protected Date getDate() {
+	public Date getDate() {
 		return new Date(getParameter("date"));
 	}
 
-	protected String getName() {
+	public String getName() {
 		return getParameter("name");
 	}
 

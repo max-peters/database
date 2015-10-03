@@ -11,10 +11,11 @@ import database.main.PluginContainer;
 import database.main.Terminal;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
+import database.plugin.expense.ExpenseList;
 
 public class RefillingPlugin extends InstancePlugin {
-	public RefillingPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(pluginContainer, terminal, graphicalUserInterface, administration, "refilling", new RefillingList());
+	public RefillingPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, ExpenseList expenseList) {
+		super(pluginContainer, terminal, graphicalUserInterface, administration, "refilling", new RefillingList(expenseList));
 	}
 
 	@Command(tag = "new") public void create() throws InterruptedException {

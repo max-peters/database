@@ -1,5 +1,6 @@
 package database.plugin.event;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -15,11 +16,12 @@ import database.plugin.InstancePlugin;
 import database.plugin.RequestInformation;
 import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
+import database.plugin.event.holiday.HolidayPlugin;
 
 public class EventPlugin extends InstancePlugin {
 	private ArrayList<InstancePlugin>	extentionList;
 
-	public EventPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
+	public EventPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) throws IOException {
 		super(pluginContainer, terminal, graphicalUserInterface, administration, "event", null);
 		extentionList = new ArrayList<InstancePlugin>();
 		initialise();
@@ -63,7 +65,7 @@ public class EventPlugin extends InstancePlugin {
 		String initialOutput = "";
 		List<Event> eventList = new ArrayList<Event>();
 		for (InstancePlugin extention : extentionList) {
-			EventList currentEventList = (EventList) ((EventExtention) extention).getInstanceList();
+			EventList currentEventList = (EventList) ((EventPluginExtention) extention).getInstanceList();
 			for (Event event : currentEventList.getNearEvents()) {
 				eventList.add(event);
 			}
@@ -78,38 +80,19 @@ public class EventPlugin extends InstancePlugin {
 		return initialOutput;
 	}
 
-	@Override public Instance check() throws InterruptedException {
-		int position;
-		ArrayList<String> strings = new ArrayList<String>();
-		ArrayList<Event> events = new ArrayList<Event>();
-		for (InstancePlugin extention : extentionList) {
-			for (Instance instance : extention.getList()) {
-				Event event = (Event) instance;
-				events.add(event);
-			}
-		}
-		Collections.sort(events);
-		for (Event event : events) {
-			strings.add(event.getIdentity());
-		}
-		position = graphicalUserInterface.check(strings);
-		if (position != -1) {
-			return events.get(position);
-		}
-		return null;
-	}
-
 	@Override public ArrayList<Instance> getList() {
 		ArrayList<Instance> instances = new ArrayList<Instance>();
 		for (InstancePlugin extention : extentionList) {
 			instances.addAll(extention.getList());
 		}
+		Collections.sort(instances);
 		return instances;
 	}
 
-	public void initialise() {
+	public void initialise() throws IOException {
 		extentionList.add(new AllDayEventPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 		extentionList.add(new BirthdayPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
+		extentionList.add(new HolidayPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 	}
 
 	public List<RequestInformation> getPairList() {
@@ -137,9 +120,9 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	private EventExtention chooseType() throws InterruptedException {
+	private EventPluginExtention chooseType() throws InterruptedException {
 		ArrayList<String> strings = new ArrayList<String>();
-		EventExtention toReturn = null;
+		EventPluginExtention toReturn = null;
 		String pluginIdentity;
 		int position;
 		for (InstancePlugin extention : extentionList) {
@@ -150,7 +133,7 @@ public class EventPlugin extends InstancePlugin {
 			pluginIdentity = strings.get(position);
 			for (InstancePlugin extention : extentionList) {
 				if (pluginIdentity.equals(extention.getIdentity())) {
-					toReturn = (EventExtention) extention;
+					toReturn = (EventPluginExtention) extention;
 				}
 			}
 		}

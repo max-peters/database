@@ -12,8 +12,8 @@ import database.plugin.Command;
 import database.plugin.InstanceList;
 import database.plugin.InstancePlugin;
 
-public abstract class EventExtention extends InstancePlugin {
-	public EventExtention(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
+public abstract class EventPluginExtention extends InstancePlugin {
+	public EventPluginExtention(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
 		super(pluginContainer, terminal, graphicalUserInterface, administration, identity, instanceList);
 	}
 
@@ -32,9 +32,5 @@ public abstract class EventExtention extends InstancePlugin {
 	}
 
 	@Override public void conduct(String command) throws InterruptedException {
-	}
-
-	public InstanceList getInstanceList() {
-		return instanceList;
 	}
 }
