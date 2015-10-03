@@ -3,6 +3,7 @@ package database.plugin.event;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -28,8 +29,11 @@ public class EventPlugin extends InstancePlugin {
 	}
 
 	@Command(tag = "new") public void create() throws InterruptedException {
-		chooseType().create();
-		update();
+		EventPluginExtention extention = chooseType();
+		if (extention != null) {
+			extention.create();
+			update();
+		}
 	}
 
 	@Override @Command(tag = "display") public void display() throws InterruptedException {
@@ -70,7 +74,11 @@ public class EventPlugin extends InstancePlugin {
 				eventList.add(event);
 			}
 		}
-		Collections.sort(eventList);
+		Collections.sort(eventList, new Comparator<Instance>() {
+			@Override public int compare(Instance arg0, Instance arg1) {
+				return ((Event) arg0).updateYear().compareTo(((Event) arg1).updateYear());
+			}
+		});
 		for (Event event : eventList) {
 			initialOutput = initialOutput + event.output() + "\r\n";
 		}
@@ -85,7 +93,6 @@ public class EventPlugin extends InstancePlugin {
 		for (InstancePlugin extention : extentionList) {
 			instances.addAll(extention.getList());
 		}
-		Collections.sort(instances);
 		return instances;
 	}
 
@@ -97,7 +104,6 @@ public class EventPlugin extends InstancePlugin {
 
 	public List<RequestInformation> getPairList() {
 		List<RequestInformation> list = new ArrayList<RequestInformation>();
-		Collections.sort(getList());
 		for (int i = 0; i < getList().size(); i++) {
 			Map<String, String> map = getList().get(i).getParameter();
 			list.add(new RequestInformation(map.remove("type"), map));

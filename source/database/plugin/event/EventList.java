@@ -6,6 +6,14 @@ import database.main.date.Date;
 import database.plugin.InstanceList;
 
 public abstract class EventList extends InstanceList {
+	protected void sortedAdd(Event event) {
+		int i = getList().size();
+		while (i > 0 && ((Event) getList().get(i - 1)).getDate().compareTo(event.getDate()) > 0) {
+			i--;
+		}
+		getList().add(i, event);
+	}
+
 	public ArrayList<Event> getNearEvents() {
 		Date currentDate = Date.getDate();
 		Date localDate;

@@ -7,15 +7,7 @@ public class Year {
 	public Month[]	months	= new Month[12];
 
 	public Year(int counter) {
-		if (counter < 30) {
-			this.counter = counter + 2000;
-		}
-		else if (counter < 99) {
-			this.counter = counter + 1900;
-		}
-		else {
-			this.counter = counter;
-		}
+		this.counter = counter;
 		if (((counter % 4 == 0) & !(counter % 100 == 0)) | (counter % 400 == 0)) {
 			this.leapYear = true;
 		}

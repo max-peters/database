@@ -2,7 +2,7 @@ package database.plugin;
 
 import java.util.Map;
 
-public abstract class Instance implements Comparable<Instance> {
+public abstract class Instance {
 	private Map<String, String>	parameter;
 	private InstanceList		instanceList;
 
@@ -21,10 +21,6 @@ public abstract class Instance implements Comparable<Instance> {
 
 	public Map<String, String> getParameter() {
 		return parameter;
-	}
-
-	public int compareTo(Instance instance) {
-		return 0;
 	}
 
 	public String getIdentity() {

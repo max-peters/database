@@ -1,5 +1,6 @@
 package database.plugin.expense;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
 import database.main.Terminal;
 import database.plugin.Command;
+import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 
 public class ExpensePlugin extends InstancePlugin {
@@ -18,8 +20,8 @@ public class ExpensePlugin extends InstancePlugin {
 
 	@Command(tag = "new") public void create() throws InterruptedException {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]*");
-		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]*");
+		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
+		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("value", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("date", null);
 		request(map);
@@ -47,5 +49,9 @@ public class ExpensePlugin extends InstancePlugin {
 				display();
 				break;
 		}
+	}
+
+	@Override public ArrayList<Instance> getList() {
+		return instanceList.getList();
 	}
 }

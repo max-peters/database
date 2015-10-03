@@ -101,7 +101,7 @@ public class Administration {
 		while (request) {
 			terminal.requestOut(printOut + ":");
 			input = terminal.in();
-			if (input.compareTo("back") == 0) {
+			if (input.equals("back")) {
 				throw new CancellationException();
 			}
 			else if ((regex != null) && (input.matches(regex))) {

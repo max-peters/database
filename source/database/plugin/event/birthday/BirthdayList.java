@@ -6,6 +6,6 @@ import database.plugin.event.EventList;
 
 public class BirthdayList extends EventList {
 	@Override public void add(Map<String, String> parameter) {
-		getList().add(new Birthday(parameter, this));
+		sortedAdd(new Birthday(parameter, this));
 	}
 }

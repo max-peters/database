@@ -20,8 +20,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import database.plugin.RequestInformation;
 import database.plugin.Plugin;
+import database.plugin.RequestInformation;
 
 public class WriterReader {
 	private String			storageDirectory;

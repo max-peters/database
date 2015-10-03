@@ -1,7 +1,6 @@
 package database.plugin;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +32,6 @@ public abstract class InstancePlugin extends Plugin {
 
 	@Override public List<RequestInformation> getPairList() {
 		List<RequestInformation> list = new ArrayList<RequestInformation>();
-		Collections.sort(getList());
 		for (int i = 0; i < getList().size(); i++) {
 			list.add(new RequestInformation("entry", getList().get(i).getParameter()));
 		}
@@ -75,7 +73,6 @@ public abstract class InstancePlugin extends Plugin {
 	}
 
 	public ArrayList<Instance> getList() {
-		Collections.sort(instanceList.getList());
 		return instanceList.getList();
 	}
 

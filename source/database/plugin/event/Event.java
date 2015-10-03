@@ -12,11 +12,6 @@ public abstract class Event extends Instance {
 		assert parameter.containsKey("name");
 	}
 
-	@Override public int compareTo(Instance instance) {
-		System.out.println(updateYear().compareTo(((Event) instance).updateYear()));
-		return updateYear().compareTo(((Event) instance).updateYear());
-	}
-
 	public Date getDate() {
 		return new Date(getParameter("date"));
 	}
