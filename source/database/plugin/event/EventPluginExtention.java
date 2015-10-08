@@ -1,8 +1,8 @@
 package database.plugin.event;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
 
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
@@ -12,25 +12,18 @@ import database.plugin.Command;
 import database.plugin.InstanceList;
 import database.plugin.InstancePlugin;
 
-public abstract class EventPluginExtention extends InstancePlugin {
-	public EventPluginExtention(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
+public class EventPluginExtention extends InstancePlugin {
+	public EventPluginExtention(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity,
+			InstanceList instanceList) {
 		super(pluginContainer, terminal, graphicalUserInterface, administration, identity, instanceList);
 	}
 
-	@Command(tag = "new") public void create() throws InterruptedException {
-		try {
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)");
-			map.put("date", null);
-			request(map);
-			instanceList.add(map);
-			update();
-		}
-		catch (CancellationException e) {
-			return;
-		}
-	}
-
-	@Override public void conduct(String command) throws InterruptedException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)");
+		map.put("date", null);
+		request(map);
+		instanceList.add(map);
+		update();
 	}
 }

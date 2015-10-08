@@ -28,27 +28,16 @@ public class EventPlugin extends InstancePlugin {
 		initialise();
 	}
 
-	@Command(tag = "new") public void create() throws InterruptedException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
 		EventPluginExtention extention = chooseType();
 		if (extention != null) {
-			extention.create();
+			extention.createRequest();
 			update();
 		}
 	}
 
 	@Override @Command(tag = "display") public void display() throws InterruptedException {
 		chooseType().display();
-	}
-
-	@Override public void conduct(String command) throws InterruptedException {
-		switch (command) {
-			case "new":
-				create();
-				break;
-			case "display":
-				display();
-				break;
-		}
 	}
 
 	@Override public void remove(Instance toRemove) {
@@ -88,13 +77,13 @@ public class EventPlugin extends InstancePlugin {
 		return instances;
 	}
 
-	public void initialise() throws IOException {
+	private void initialise() throws IOException {
 		extentionList.add(new AllDayEventPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 		extentionList.add(new BirthdayPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 		extentionList.add(new HolidayPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
 	}
 
-	public List<RequestInformation> getPairList() {
+	public List<RequestInformation> getInformationList() {
 		List<RequestInformation> list = new ArrayList<RequestInformation>();
 		for (InstancePlugin extention : extentionList) {
 			for (Instance instance : extention.getList()) {
@@ -106,7 +95,7 @@ public class EventPlugin extends InstancePlugin {
 		return list;
 	}
 
-	public void create(RequestInformation pair) {
+	public void readInformation(RequestInformation pair) throws IOException {
 		if (pair.getName().equals("display")) {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}

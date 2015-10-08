@@ -47,18 +47,4 @@ public class Launcher extends Plugin {
 	@Override public String initialOutput() {
 		return rank;
 	}
-
-	@Override public void conduct(String command) throws InterruptedException, IOException, GitAPIException {
-		switch (command) {
-			case "pull":
-				pull();
-				break;
-			case "push":
-				push();
-				break;
-			case "display":
-				display();
-				break;
-		}
-	}
 }

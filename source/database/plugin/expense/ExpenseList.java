@@ -24,13 +24,13 @@ public class ExpenseList extends InstanceList {
 		String print = null;
 		switch (map.get("show")) {
 			case "all":
-				print = outputIntervall(-1, -1);
+				print = outputIntervall(null);
 				if (print.length() == 0) {
 					print = "no entries";
 				}
 				break;
 			case "current":
-				print = outputIntervall(Date.getCurrentDate().month.counter, Date.getCurrentDate().year.counter);
+				print = outputIntervall(Date.getCurrentDate().month);
 				if (print.length() == 0) {
 					print = "no entries";
 				}
@@ -50,10 +50,10 @@ public class ExpenseList extends InstanceList {
 
 	@Override public String initialOutput() {
 		DecimalFormat format = new DecimalFormat("#0.00");
-		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month.counter, Date.getCurrentDate().year.counter)) + "€";
+		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month)) + "€";
 	}
 
-	private String outputIntervall(int month, int year) {
+	private String outputIntervall(Month month) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		int nameLength = 0;
 		int valueLength = 0;
@@ -65,13 +65,13 @@ public class ExpenseList extends InstanceList {
 		ArrayList<String> names;
 		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
-			if (expense.checkValidity(month, year) && !(categories.contains(expense.getCategory()))) {
+			if (expense.checkValidity(month) && !(categories.contains(expense.getCategory()))) {
 				categories.add(expense.getCategory());
 			}
-			if (expense.checkValidity(month, year) && expense.getName().length() > nameLength) {
+			if (expense.checkValidity(month) && expense.getName().length() > nameLength) {
 				nameLength = expense.getName().length();
 			}
-			if (expense.checkValidity(month, year) && format.format(expense.getValue()).length() > valueLength) {
+			if (expense.checkValidity(month) && format.format(expense.getValue()).length() > valueLength) {
 				valueLength = format.format(expense.getValue()).length();
 			}
 		}
@@ -81,7 +81,7 @@ public class ExpenseList extends InstanceList {
 			names = new ArrayList<String>();
 			for (Instance instance : getList()) {
 				Expense expense = (Expense) instance;
-				if (expense.checkValidity(month, year) && expense.getCategory().equals(current) && !(names.contains(expense.getName()))) {
+				if (expense.checkValidity(month) && expense.getCategory().equals(current) && !(names.contains(expense.getName()))) {
 					names.add(expense.getName());
 				}
 			}
@@ -92,7 +92,7 @@ public class ExpenseList extends InstanceList {
 				toReturn = toReturn + "-" + name;
 				for (Instance instance : getList()) {
 					Expense expense = (Expense) instance;
-					if (expense.checkValidity(month, year) && expense.getCategory().equals(current) && expense.getName().equals(name)) {
+					if (expense.checkValidity(month) && expense.getCategory().equals(current) && expense.getName().equals(name)) {
 						value = value + expense.getValue();
 					}
 				}
@@ -110,7 +110,7 @@ public class ExpenseList extends InstanceList {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		double value = 0;
 		for (Month month : getMonths()) {
-			value = value + value(month.counter, month.year.counter);
+			value = value + value(month);
 		}
 		return "average value per month: " + format.format(value / getMonths().size()) + "€";
 	}
@@ -120,7 +120,7 @@ public class ExpenseList extends InstanceList {
 		double value = 0;
 		int dayCounter = 0;
 		for (Month month : getMonths()) {
-			value = value + value(month.counter, month.year.counter);
+			value = value + value(month);
 			dayCounter = dayCounter + month.getDayCount();
 		}
 		return "average value per day: " + format.format(value / dayCounter) + "€";
@@ -130,16 +130,16 @@ public class ExpenseList extends InstanceList {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		String output = "";
 		for (Month month : getMonths()) {
-			output = output + String.format("%2s", month.counter).replace(" ", "0") + "/" + month.year.counter + " : " + format.format(value(month.counter, month.year.counter)) + "€" + "\r\n";
+			output = output + String.format("%2s", month.counter).replace(" ", "0") + "/" + month.year.counter + " : " + format.format(value(month)) + "€" + "\r\n";
 		}
 		return output;
 	}
 
-	private double value(int month, int year) {
+	private double value(Month month) {
 		double value = 0;
 		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
-			if (expense.checkValidity(month, year)) {
+			if (expense.checkValidity(month)) {
 				value = value + expense.getValue();
 			}
 		}

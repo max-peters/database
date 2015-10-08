@@ -3,10 +3,12 @@ package database.plugin.expense;
 import java.util.Map;
 
 import database.main.date.Date;
+import database.main.date.Month;
 import database.plugin.Instance;
+import database.plugin.InstanceList;
 
 public class Expense extends Instance {
-	public Expense(Map<String, String> parameter, ExpenseList list) {
+	public Expense(Map<String, String> parameter, InstanceList list) {
 		super(parameter, list);
 	}
 
@@ -26,8 +28,8 @@ public class Expense extends Instance {
 		return Double.valueOf(getParameter("value"));
 	}
 
-	protected boolean checkValidity(int month, int year) {
-		if ((getDate().month.counter == month && getDate().year.counter == year) || (month < 0 && year < 0)) {
+	protected boolean checkValidity(Month month) {
+		if (getDate().month.equals(month) || month == null) {
 			return true;
 		}
 		return false;

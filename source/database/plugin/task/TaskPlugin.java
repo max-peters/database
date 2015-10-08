@@ -1,5 +1,6 @@
 package database.plugin.task;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,22 +16,11 @@ public class TaskPlugin extends InstancePlugin {
 		super(pluginContainer, terminal, graphicalUserInterface, administration, "task", new TaskList());
 	}
 
-	@Command(tag = "new") public void create() throws InterruptedException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", ".+");
 		request(map);
 		create(map);
 		update();
-	}
-
-	@Override public void conduct(String command) throws InterruptedException {
-		switch (command) {
-			case "new":
-				create();
-				break;
-			case "display":
-				display();
-				break;
-		}
 	}
 }

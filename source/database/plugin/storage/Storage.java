@@ -1,6 +1,5 @@
 package database.plugin.storage;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +12,8 @@ import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
-import database.plugin.RequestInformation;
 import database.plugin.Plugin;
+import database.plugin.RequestInformation;
 
 public class Storage extends Plugin {
 	private ArrayList<String>	storage;
@@ -30,11 +29,7 @@ public class Storage extends Plugin {
 		return storage;
 	}
 
-	@Override public void conduct(String command) throws InterruptedException, IOException {
-		store();
-	}
-
-	@Command(tag = "store") public void store() throws InterruptedException {
+	@Command(tag = "store") public void storeRequest() throws InterruptedException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("store", pluginContainer.getPluginNameTagsAsRegesx());
 		request(map);
@@ -59,7 +54,7 @@ public class Storage extends Plugin {
 		instancePlugin.update();
 	}
 
-	@Override public List<RequestInformation> getPairList() {
+	@Override public List<RequestInformation> getInformationList() {
 		List<RequestInformation> list = new ArrayList<RequestInformation>();
 		for (String string : storage) {
 			RequestInformation pair = new RequestInformation("entry");
@@ -69,7 +64,7 @@ public class Storage extends Plugin {
 		return list;
 	}
 
-	@Override public void create(RequestInformation pair) {
+	@Override public void readInformation(RequestInformation pair) {
 		storage.addAll(pair.getMap().values());
 	}
 }

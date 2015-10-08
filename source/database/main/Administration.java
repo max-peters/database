@@ -2,6 +2,7 @@ package database.main;
 
 import java.awt.FontFormatException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CancellationException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,13 +28,15 @@ public class Administration {
 		this.writerReader = writerReader;
 	}
 
-	public void request() throws IOException, InterruptedException, ParserConfigurationException, TransformerException, FontFormatException, GitAPIException {
+	public void request() throws IOException, InterruptedException, ParserConfigurationException, TransformerException, FontFormatException, GitAPIException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException {
 		while (true) {
 			inputRequestAdministration();
 		}
 	}
 
-	private void inputRequestAdministration() throws InterruptedException, IOException, ParserConfigurationException, TransformerException, GitAPIException {
+	private void inputRequestAdministration() throws InterruptedException, IOException, TransformerException, GitAPIException, IllegalArgumentException, ParserConfigurationException,
+			IllegalAccessException, InvocationTargetException {
 		String command = null;
 		try {
 			command = request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "check|exit|save)");
@@ -94,7 +97,7 @@ public class Administration {
 		}
 	}
 
-	public String request(String printOut, String regex) throws InterruptedException, CancellationException {
+	public String request(String printOut, String regex) throws InterruptedException {
 		boolean request = true;
 		String result = null;
 		String input = null;

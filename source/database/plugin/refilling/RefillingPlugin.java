@@ -1,10 +1,9 @@
 package database.plugin.refilling;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
@@ -18,38 +17,19 @@ public class RefillingPlugin extends InstancePlugin {
 		super(pluginContainer, terminal, graphicalUserInterface, administration, "refilling", new RefillingList(expenseList));
 	}
 
-	@Command(tag = "new") public void create() throws InterruptedException {
-		try {
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?");
-			map.put("value", "[0-9]{1,13}(\\.[0-9]*)?");
-			map.put("distance", "[0-9]{1,13}(\\.[0-9]*)?");
-			map.put("date", null);
-			request(map);
-			create(map);
-			update();
-		}
-		catch (CancellationException e) {
-			return;
-		}
+	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?");
+		map.put("value", "[0-9]{1,13}(\\.[0-9]*)?");
+		map.put("distance", "[0-9]{1,13}(\\.[0-9]*)?");
+		map.put("date", null);
+		request(map);
+		create(map);
+		update();
 	}
 
-	@Command(tag = "show") public void show() throws InterruptedException, NotImplementedException {
+	@Command(tag = "show") public void showRequest() throws InterruptedException {
 		terminal.solutionOut(instanceList.output(null));
 		graphicalUserInterface.waitForInput();
-	}
-
-	@Override public void conduct(String command) throws InterruptedException {
-		switch (command) {
-			case "new":
-				create();
-				break;
-			case "show":
-				show();
-				break;
-			case "display":
-				display();
-				break;
-		}
 	}
 }

@@ -1,5 +1,6 @@
 package database.plugin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +31,7 @@ public abstract class InstancePlugin extends Plugin {
 		return initialOutput;
 	}
 
-	@Override public List<RequestInformation> getPairList() {
+	@Override public List<RequestInformation> getInformationList() {
 		List<RequestInformation> list = new ArrayList<RequestInformation>();
 		for (int i = 0; i < getList().size(); i++) {
 			list.add(new RequestInformation("entry", getList().get(i).getParameter()));
@@ -39,7 +40,7 @@ public abstract class InstancePlugin extends Plugin {
 		return list;
 	}
 
-	@Override public void create(RequestInformation pair) {
+	@Override public void readInformation(RequestInformation pair) throws IOException {
 		if (pair.getName().equals("entry")) {
 			create(pair.getMap());
 		}
@@ -63,7 +64,7 @@ public abstract class InstancePlugin extends Plugin {
 		return null;
 	}
 
-	public void create(Map<String, String> map) {
+	public void create(Map<String, String> map) throws IOException {
 		instanceList.add(map);
 	}
 

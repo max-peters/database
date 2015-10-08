@@ -1,5 +1,6 @@
 package database.plugin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,5 +48,5 @@ public abstract class InstanceList {
 		return false;
 	}
 
-	public abstract void add(Map<String, String> map);
+	public abstract void add(Map<String, String> map) throws IOException;
 }

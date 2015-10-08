@@ -1,15 +1,13 @@
 package database.plugin;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.CancellationException;
-
-import org.eclipse.jgit.api.errors.GitAPIException;
 
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
@@ -37,7 +35,7 @@ public abstract class Plugin {
 		update();
 	}
 
-	protected void request(Map<String, String> map) throws CancellationException, InterruptedException {
+	protected void request(Map<String, String> map) throws InterruptedException {
 		for (Entry<String, String> entry : map.entrySet()) {
 			String parameterInformation = administration.request(entry.getKey(), entry.getValue());
 			if (entry.getKey().equals("date")) {
@@ -72,6 +70,17 @@ public abstract class Plugin {
 		return regex + ")";
 	}
 
+	public void conduct(String command) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		for (Method method : this.getClass().getMethods()) {
+			if (method.isAnnotationPresent(Command.class)) {
+				if (method.getAnnotation(Command.class).tag().equals(command)) {
+					method.invoke(this, (Object[]) method.getParameterTypes());
+					return;
+				}
+			}
+		}
+	}
+
 	public void setDisplay(boolean display) {
 		this.display = display;
 	}
@@ -96,12 +105,10 @@ public abstract class Plugin {
 		return null;
 	}
 
-	public List<RequestInformation> getPairList() {
+	public List<RequestInformation> getInformationList() {
 		return null;
 	}
 
-	public void create(RequestInformation pair) {
+	public void readInformation(RequestInformation pair) throws IOException {
 	}
-
-	public abstract void conduct(String command) throws InterruptedException, IOException, GitAPIException;
 }

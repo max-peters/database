@@ -10,6 +10,7 @@ public class RefillingList extends InstanceList {
 	private ExpenseList	expenseList;
 
 	public RefillingList(ExpenseList expenseList) {
+		super();
 		this.expenseList = expenseList;
 	}
 

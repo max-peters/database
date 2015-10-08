@@ -1,5 +1,6 @@
 package database.plugin.subject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ public class SubjectPlugin extends InstancePlugin {
 		super(pluginContainer, terminal, graphicalUserInterface, administration, "subject", new SubjectList());
 	}
 
-	@Command(tag = "new") public void create() throws InterruptedException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜ].*");
 		map.put("tag", "[a-zöäüß]*");
@@ -24,7 +25,7 @@ public class SubjectPlugin extends InstancePlugin {
 		update();
 	}
 
-	@Command(tag = "show") public void show() throws InterruptedException {
+	@Command(tag = "show") public void showRequest() throws InterruptedException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("show", "(average|" + ((SubjectList) instanceList).getTagsAsRegex() + ")");
 		request(map);
@@ -32,7 +33,7 @@ public class SubjectPlugin extends InstancePlugin {
 		graphicalUserInterface.waitForInput();
 	}
 
-	@Command(tag = "add") public void add() throws InterruptedException {
+	@Command(tag = "add") public void addRequest() throws InterruptedException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("add", ((SubjectList) instanceList).getTagsAsRegex());
 		map.put("score", "[0-9]{1,13}(\\.[0-9]*)?");
@@ -42,22 +43,5 @@ public class SubjectPlugin extends InstancePlugin {
 		toChange.setGrade(Double.parseDouble(map.get("score")), Double.parseDouble(map.get("maximum points")));
 		toChange.calcPercent();
 		update();
-	}
-
-	@Override public void conduct(String command) throws InterruptedException {
-		switch (command) {
-			case "add":
-				add();
-				break;
-			case "new":
-				create();
-				break;
-			case "show":
-				show();
-				break;
-			case "display":
-				display();
-				break;
-		}
 	}
 }

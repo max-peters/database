@@ -71,16 +71,16 @@ public class Month {
 	}
 
 	public boolean equals(Object object) {
-		Month month;
-		boolean equal = false;
-		if (!object.getClass().equals(Month.class)) {
-			equal = false;
+		if (object == null || !object.getClass().equals(Month.class)) {
+			return false;
 		}
-		month = (Month) object;
+		Month month = (Month) object;
 		if (month.counter == counter && month.year.counter == year.counter) {
-			equal = true;
+			return true;
 		}
-		return equal;
+		else {
+			return false;
+		}
 	}
 
 	public int getDayCount() {
