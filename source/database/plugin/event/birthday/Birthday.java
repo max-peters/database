@@ -31,6 +31,6 @@ public class Birthday extends Event {
 	}
 
 	private int getAge() {
-		return Date.getDate().year.counter - getDate().year.counter;
+		return Date.getCurrentDate().year.counter - getDate().year.counter;
 	}
 }

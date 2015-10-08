@@ -8,8 +8,6 @@ import database.plugin.Instance;
 public abstract class Event extends Instance {
 	public Event(Map<String, String> parameter, EventList list) {
 		super(parameter, list);
-		assert parameter.containsKey("date");
-		assert parameter.containsKey("name");
 	}
 
 	public Date getDate() {
@@ -22,7 +20,7 @@ public abstract class Event extends Instance {
 
 	protected Date updateYear() {
 		Date localDate = null;
-		Date currentDate = Date.getDate();
+		Date currentDate = Date.getCurrentDate();
 		if (currentDate.month.counter > getDate().month.counter || (currentDate.month.counter == getDate().month.counter && currentDate.day.counter > getDate().day.counter)) {
 			localDate = new Date(getDate().day.counter + "." + getDate().month.counter + "." + String.valueOf(currentDate.year.counter + 1));
 		}

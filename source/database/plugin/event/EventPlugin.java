@@ -51,14 +51,6 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	@Override public void create(Map<String, String> map) {
-		for (InstancePlugin extention : extentionList) {
-			if (map.get("type").equals(extention.getIdentity())) {
-				extention.create(map);
-			}
-		}
-	}
-
 	@Override public void remove(Instance toRemove) {
 		for (InstancePlugin extention : extentionList) {
 			extention.getList().remove(toRemove);
@@ -104,9 +96,11 @@ public class EventPlugin extends InstancePlugin {
 
 	public List<RequestInformation> getPairList() {
 		List<RequestInformation> list = new ArrayList<RequestInformation>();
-		for (int i = 0; i < getList().size(); i++) {
-			Map<String, String> map = getList().get(i).getParameter();
-			list.add(new RequestInformation(map.remove("type"), map));
+		for (InstancePlugin extention : extentionList) {
+			for (Instance instance : extention.getList()) {
+				Map<String, String> map = instance.getParameter();
+				list.add(new RequestInformation(extention.getIdentity(), map));
+			}
 		}
 		list.add(new RequestInformation("display", "boolean", String.valueOf(getDisplay())));
 		return list;
@@ -119,7 +113,6 @@ public class EventPlugin extends InstancePlugin {
 		else {
 			for (InstancePlugin extention : extentionList) {
 				if (pair.getName().equals(extention.getIdentity())) {
-					pair.getMap().put("type", extention.getIdentity());
 					extention.create(pair.getMap());
 				}
 			}
@@ -134,6 +127,7 @@ public class EventPlugin extends InstancePlugin {
 		for (InstancePlugin extention : extentionList) {
 			strings.add(extention.getIdentity());
 		}
+		strings.remove(2);
 		position = graphicalUserInterface.check(strings);
 		if (position != -1) {
 			pluginIdentity = strings.get(position);

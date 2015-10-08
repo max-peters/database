@@ -30,7 +30,7 @@ public class ExpenseList extends InstanceList {
 				}
 				break;
 			case "current":
-				print = outputIntervall(Date.getDate().month.counter, Date.getDate().year.counter);
+				print = outputIntervall(Date.getCurrentDate().month.counter, Date.getCurrentDate().year.counter);
 				if (print.length() == 0) {
 					print = "no entries";
 				}
@@ -50,7 +50,7 @@ public class ExpenseList extends InstanceList {
 
 	@Override public String initialOutput() {
 		DecimalFormat format = new DecimalFormat("#0.00");
-		return "total expenditure this mounth: " + format.format(value(Date.getDate().month.counter, Date.getDate().year.counter)) + "€";
+		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month.counter, Date.getCurrentDate().year.counter)) + "€";
 	}
 
 	private String outputIntervall(int month, int year) {
@@ -121,7 +121,7 @@ public class ExpenseList extends InstanceList {
 		int dayCounter = 0;
 		for (Month month : getMonths()) {
 			value = value + value(month.counter, month.year.counter);
-			dayCounter = dayCounter + month.dayCount;
+			dayCounter = dayCounter + month.getDayCount();
 		}
 		return "average value per day: " + format.format(value / dayCounter) + "€";
 	}

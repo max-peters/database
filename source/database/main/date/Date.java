@@ -48,27 +48,36 @@ public class Date implements Comparable<Date> {
 	}
 
 	public int compareTo(Date date) {
-		return calculateDaySum(this) - calculateDaySum(date);
+		int startYear = this.year.counter < date.year.counter ? this.year.counter : date.year.counter;
+		return calculateDaySum(this, startYear) - calculateDaySum(date, startYear);
 	}
 
-	private int calculateDaySum(Date date) {
+	public boolean isPast() {
+		return getCurrentDate().compareTo(this) > 0;
+	}
+
+	public boolean isToday() {
+		return getCurrentDate().compareTo(this) == 0;
+	}
+
+	private int calculateDaySum(Date date, int startYear) {
 		int sum = 0;
 		for (int i = 0; i < date.month.counter - 1; i++) {
-			for (int j = 0; j < date.year.months[i].days.length; j++) {
+			for (int j = 0; j < date.year.months[i].getDayCount(); j++) {
 				sum++;
 			}
 		}
 		for (int j = 0; j < date.day.counter; j++) {
 			sum++;
 		}
-		for (int i = 1900; i < date.year.counter; i++) {
+		for (int i = startYear; i < date.year.counter; i++) {
 			Year currentYear = new Year(i);
-			sum = currentYear.dayCount + sum;
+			sum = currentYear.getDayCount() + sum;
 		}
 		return sum;
 	}
 
-	public static Date getDate() {
+	public static Date getCurrentDate() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.getTime();
 		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");

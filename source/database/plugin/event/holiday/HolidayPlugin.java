@@ -51,7 +51,6 @@ public class HolidayPlugin extends EventPluginExtention {
 				String name = temp.substring(14, temp.length() - 1);
 				map.put("name", name);
 				map.put("date", date);
-				map.put("type", "holiday");
 				create(map);
 			}
 		}

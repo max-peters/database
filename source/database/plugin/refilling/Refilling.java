@@ -11,12 +11,6 @@ public class Refilling extends Instance {
 	public Refilling(Map<String, String> parameter, RefillingList list, ExpenseList expenseList) {
 		super(parameter, list);
 		setParameter("count", String.valueOf(list.getList().size() + 1));
-		assert parameter.size() == 5;
-		assert parameter.containsKey("value");
-		assert parameter.containsKey("distance");
-		assert parameter.containsKey("refuelAmount");
-		assert parameter.containsKey("date");
-		assert parameter.containsKey("count");
 		createExpense(expenseList);
 	}
 
@@ -42,8 +36,8 @@ public class Refilling extends Instance {
 
 	private void createExpense(ExpenseList expenseList) {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("name", "Tankstelle - Auto");
-		map.put("category", "Transport");
+		map.put("name", "Tankstelle");
+		map.put("category", "Fahrtkosten");
 		map.put("value", getParameter("value"));
 		map.put("date", getParameter("date"));
 		expenseList.add(map);

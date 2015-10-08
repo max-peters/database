@@ -8,26 +8,21 @@ import database.plugin.Instance;
 public class Expense extends Instance {
 	public Expense(Map<String, String> parameter, ExpenseList list) {
 		super(parameter, list);
-		assert parameter.size() == 4;
-		assert parameter.containsKey("date");
-		assert parameter.containsKey("name");
-		assert parameter.containsKey("category");
-		assert parameter.containsKey("value");
 	}
 
 	protected Date getDate() {
 		return new Date(getParameter("date"));
 	}
 
-	protected String getName() {
+	public String getName() {
 		return getParameter("name");
 	}
 
-	protected String getCategory() {
+	public String getCategory() {
 		return getParameter("category");
 	}
 
-	protected Double getValue() {
+	public Double getValue() {
 		return Double.valueOf(getParameter("value"));
 	}
 

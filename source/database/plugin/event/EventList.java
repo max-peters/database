@@ -15,7 +15,7 @@ public abstract class EventList extends InstanceList {
 	}
 
 	public ArrayList<Event> getNearEvents() {
-		Date currentDate = Date.getDate();
+		Date currentDate = Date.getCurrentDate();
 		Date localDate;
 		ArrayList<Event> nearEvents = new ArrayList<Event>();
 		for (Object object : getList()) {

@@ -2,6 +2,7 @@ package database.plugin;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public abstract class InstanceList {
 	private ArrayList<Instance>	list;
@@ -24,6 +25,26 @@ public abstract class InstanceList {
 
 	public String output(Map<String, String> parameter) {
 		return null;
+	}
+
+	public boolean contains(Map<String, String> parameter) {
+		boolean contains = false;
+		for (Instance instance : list) {
+			contains = false;
+			for (Entry<String, String> entry : parameter.entrySet()) {
+				if (instance.getParameter().containsKey(entry.getKey()) && instance.getParameter(entry.getKey()).equals(entry.getValue())) {
+					contains = true;
+				}
+				else {
+					contains = false;
+					break;
+				}
+			}
+			if (contains) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public abstract void add(Map<String, String> map);

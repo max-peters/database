@@ -4,8 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Time {
-	public int	hour;
-	public int	minute;
+	private int	hour;
+	private int	minute;
 
 	public Time(int hour, int minute) {
 		if ((hour >= 0) && (hour <= 24) && (minute >= 0) && (minute <= 60)) {
