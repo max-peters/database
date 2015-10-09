@@ -57,8 +57,13 @@ public class Administration {
 				}
 			}
 		}
-		catch (CancellationException e) {
-			return;
+		catch (InvocationTargetException e) {
+			if (e.getCause().getClass().equals(CancellationException.class)) {
+				return;
+			}
+			else {
+				throw e;
+			}
 		}
 	}
 
