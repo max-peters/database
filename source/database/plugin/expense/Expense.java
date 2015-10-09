@@ -5,11 +5,10 @@ import java.util.Map;
 import database.main.date.Date;
 import database.main.date.Month;
 import database.plugin.Instance;
-import database.plugin.InstanceList;
 
 public class Expense extends Instance {
-	public Expense(Map<String, String> parameter, InstanceList list) {
-		super(parameter, list);
+	public Expense(Map<String, String> parameter) {
+		super(parameter);
 		parameter.replace("value", String.valueOf(Double.valueOf(getParameter("value"))));
 	}
 

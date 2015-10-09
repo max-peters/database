@@ -7,8 +7,8 @@ import java.util.Map;
 import database.plugin.Instance;
 
 public class Subject extends Instance {
-	public Subject(Map<String, String> parameter, SubjectList list) {
-		super(parameter, list);
+	public Subject(Map<String, String> parameter) {
+		super(parameter);
 		parameter.put("score", "0");
 		parameter.put("maxPoints", "0");
 		parameter.put("counter", "0");

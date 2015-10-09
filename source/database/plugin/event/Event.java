@@ -6,8 +6,8 @@ import database.main.date.Date;
 import database.plugin.Instance;
 
 public abstract class Event extends Instance {
-	public Event(Map<String, String> parameter, EventList list) {
-		super(parameter, list);
+	public Event(Map<String, String> parameter) {
+		super(parameter);
 	}
 
 	public Date getDate() {

@@ -14,6 +14,6 @@ public class MonthlyExpenseList extends InstanceList {
 	}
 
 	@Override public void add(Map<String, String> parameter) {
-		getList().add(new MonthlyExpense(parameter, this, expenseList));
+		getList().add(new MonthlyExpense(parameter, expenseList));
 	}
 }

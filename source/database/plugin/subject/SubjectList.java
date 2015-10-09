@@ -7,7 +7,7 @@ import database.plugin.InstanceList;
 
 public class SubjectList extends InstanceList {
 	@Override public void add(Map<String, String> parameter) {
-		getList().add(new Subject(parameter, this));
+		getList().add(new Subject(parameter));
 	}
 
 	@Override public String output(Map<String, String> map) {

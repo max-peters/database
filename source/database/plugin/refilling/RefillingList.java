@@ -15,7 +15,7 @@ public class RefillingList extends InstanceList {
 	}
 
 	@Override public void add(Map<String, String> parameter) {
-		getList().add(new Refilling(parameter, this, expenseList));
+		getList().add(new Refilling(parameter, getList().size(), expenseList));
 	}
 
 	@Override public String output(Map<String, String> map) {
@@ -26,7 +26,7 @@ public class RefillingList extends InstanceList {
 		else {
 			for (Instance instance : getList()) {
 				Refilling refilling = (Refilling) instance;
-				print = print + refilling.output() + "\r\n";
+				print = print + singleOutput(refilling) + "\r\n";
 			}
 		}
 		return print;
@@ -39,6 +39,13 @@ public class RefillingList extends InstanceList {
 					+ "[" + getAverageConsumptionTotal() + " l/km" + "]";
 		}
 		return output;
+	}
+
+	private String singleOutput(Refilling refilling) {
+		return "[" + String.format("%" + String.valueOf(getList().size()).length() + "s", refilling.getCount()).replace(' ', '0') + "] distance: ["
+				+ String.format("%" + String.valueOf(getHighestDistance()).length() + "s", refilling.getDistance()) + " km] refuelAmount: ["
+				+ String.format("%" + String.valueOf(String.format("%.1f", getHighestRefuelAmount())).length() + "s", String.format("%.1f", refilling.getRefuelAmount())).replace(",", ".")
+				+ " l] averageConsumption: [" + String.format("%" + String.valueOf(getHighestAverageConsumption()).length() + "s", refilling.calcAverageConsumption()) + " l/km]";
 	}
 
 	private double getDistanceTotal() {

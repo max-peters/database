@@ -4,11 +4,9 @@ import java.util.Map;
 
 public abstract class Instance {
 	private Map<String, String>	parameter;
-	private InstanceList		instanceList;
 
-	public Instance(Map<String, String> parameter, InstanceList list) {
+	public Instance(Map<String, String> parameter) {
 		this.parameter = parameter;
-		this.instanceList = list;
 	}
 
 	public String getParameter(String key) {
@@ -25,9 +23,5 @@ public abstract class Instance {
 
 	public String getIdentity() {
 		return toString();
-	}
-
-	public InstanceList getInstanceList() {
-		return instanceList;
 	}
 }

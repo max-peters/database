@@ -9,8 +9,8 @@ import database.plugin.expense.Expense;
 import database.plugin.expense.ExpenseList;
 
 public class MonthlyExpense extends Expense {
-	public MonthlyExpense(Map<String, String> parameter, MonthlyExpenseList list, ExpenseList expenseList) {
-		super(parameter, list);
+	public MonthlyExpense(Map<String, String> parameter, ExpenseList expenseList) {
+		super(parameter);
 		createExpense(parameter, expenseList);
 	}
 

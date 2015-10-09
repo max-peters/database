@@ -5,8 +5,8 @@ import java.util.Map;
 import database.plugin.Instance;
 
 public class Task extends Instance {
-	public Task(Map<String, String> parameter, TaskList list) {
-		super(parameter, list);
+	public Task(Map<String, String> parameter) {
+		super(parameter);
 	}
 
 	protected String getTask() {

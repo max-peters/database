@@ -12,7 +12,7 @@ import database.plugin.InstanceList;
 
 public class ExpenseList extends InstanceList {
 	@Override public void add(Map<String, String> parameter) {
-		Expense expense = new Expense(parameter, this);
+		Expense expense = new Expense(parameter);
 		int i = getList().size();
 		while (i > 0 && ((Expense) getList().get(i - 1)).getDate().compareTo(expense.getDate()) > 0) {
 			i--;

@@ -5,8 +5,8 @@ import java.util.Map;
 import database.plugin.event.Event;
 
 public class AllDayEvent extends Event {
-	public AllDayEvent(Map<String, String> parameter, AllDayEventList list) {
-		super(parameter, list);
+	public AllDayEvent(Map<String, String> parameter) {
+		super(parameter);
 	}
 
 	@Override protected String output() {

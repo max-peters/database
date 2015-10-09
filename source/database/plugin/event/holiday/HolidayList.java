@@ -18,7 +18,7 @@ public class HolidayList extends EventList {
 			getHolidays();
 		}
 		else {
-			sortedAdd(new Holiday(parameter, this));
+			sortedAdd(new Holiday(parameter));
 		}
 	}
 
@@ -52,7 +52,7 @@ public class HolidayList extends EventList {
 				map.put("name", name);
 				map.put("date", date);
 				if (getList().isEmpty() && new Date(map.get("date")).compareTo(Date.getCurrentDate()) >= 0) {
-					sortedAdd(new Holiday(map, this));
+					sortedAdd(new Holiday(map));
 				}
 				else {
 					boolean contains = false;
@@ -67,7 +67,7 @@ public class HolidayList extends EventList {
 						}
 					}
 					if (!contains && new Date(map.get("date")).compareTo(Date.getCurrentDate()) >= 0) {
-						sortedAdd(new Holiday(map, this));
+						sortedAdd(new Holiday(map));
 					}
 				}
 			}

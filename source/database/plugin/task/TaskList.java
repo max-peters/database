@@ -7,7 +7,7 @@ import database.plugin.InstanceList;
 
 public class TaskList extends InstanceList {
 	@Override public void add(Map<String, String> parameter) {
-		getList().add(new Task(parameter, this));
+		getList().add(new Task(parameter));
 	}
 
 	@Override public String initialOutput() {

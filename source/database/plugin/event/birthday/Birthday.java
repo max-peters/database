@@ -6,8 +6,8 @@ import database.main.date.Date;
 import database.plugin.event.Event;
 
 public class Birthday extends Event {
-	public Birthday(Map<String, String> parameter, BirthdayList list) {
-		super(parameter, list);
+	public Birthday(Map<String, String> parameter) {
+		super(parameter);
 	}
 
 	@Override protected String output() {
