@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ProgressMonitor;
 
 import database.main.date.Date;
 import database.main.date.Time;
@@ -41,6 +42,7 @@ public class GraphicalUserInterface {
 	private JTextArea		output						= new JTextArea();
 	private JTextArea		outputChangeable			= new JTextArea();
 	private Timer			timer						= new Timer();
+	private ProgressMonitor	progressMonitor				= new ProgressMonitor(frame, "", "", 0, 100);
 	private Font			font;
 	private Image			icon;
 	private int				pressedKey;
@@ -137,6 +139,10 @@ public class GraphicalUserInterface {
 
 	private void moveTextField(int steps) {
 		input.setBounds(0, steps * 18, 670, 20);
+	}
+
+	public void setProgress(int progress) {
+		progressMonitor.setProgress(progress);
 	}
 
 	public void show() {
