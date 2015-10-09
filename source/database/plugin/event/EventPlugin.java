@@ -36,10 +36,6 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	@Override @Command(tag = "display") public void display() throws InterruptedException {
-		chooseType().display();
-	}
-
 	@Override public void remove(Instance toRemove) {
 		for (InstancePlugin extention : extentionList) {
 			extention.getList().remove(toRemove);
@@ -50,7 +46,7 @@ public class EventPlugin extends InstancePlugin {
 		String initialOutput = "";
 		List<Event> eventList = new ArrayList<Event>();
 		for (InstancePlugin extention : extentionList) {
-			EventList currentEventList = (EventList) ((EventPluginExtention) extention).getInstanceList();
+			EventList currentEventList = (EventList) extention.getInstanceList();
 			for (Event event : currentEventList.getNearEvents()) {
 				eventList.add(event);
 			}

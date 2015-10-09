@@ -47,6 +47,7 @@ public class Main {
 			catch (IOException e) {
 				graphicalUserInterface.showMessageDialog(e);
 			}
+			expensePlugin.initialise();
 			administration.initialOutput();
 			graphicalUserInterface.show();
 			administration.request();

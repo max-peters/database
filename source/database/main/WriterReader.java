@@ -48,8 +48,6 @@ public class WriterReader {
 		Document document = documentBuilder.newDocument();
 		Element database = document.createElement("database");
 		document.appendChild(database);
-		Element plugin = document.createElement("plugin");
-		database.appendChild(plugin);
 		for (Plugin currentPlugin : pluginContainer.getPlugins()) {
 			List<RequestInformation> list = currentPlugin.getInformationList();
 			if (list != null && !list.isEmpty()) {
@@ -61,7 +59,7 @@ public class WriterReader {
 						element.appendChild(entryElement);
 					}
 				}
-				plugin.appendChild(element);
+				database.appendChild(element);
 			}
 		}
 		DOMSource domSource = new DOMSource(document);

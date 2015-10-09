@@ -14,30 +14,15 @@ import database.plugin.event.EventList;
 
 public class HolidayList extends EventList {
 	@Override public void add(Map<String, String> parameter) throws IOException {
-		if (getList().isEmpty() && new Date(parameter.get("date")).compareTo(Date.getCurrentDate()) >= 0) {
-			sortedAdd(new Holiday(parameter, this));
+		if (new Date(parameter.get("date")).isPast()) {
+			getHolidays();
 		}
 		else {
-			getHolidays();
-			boolean contains = false;
-			for (Instance instance : getList()) {
-				Holiday holiday = (Holiday) instance;
-				if (holiday.getName().equals(parameter.get("name"))) {
-					contains = true;
-					if (holiday.getDate().compareTo(new Date(parameter.get("date"))) < 0 && holiday.getDate().isPast()) {
-						holiday.getParameter().replace("date", parameter.get("date"));
-						return;
-					}
-				}
-			}
-			if (!contains && new Date(parameter.get("date")).compareTo(Date.getCurrentDate()) >= 0) {
-				sortedAdd(new Holiday(parameter, this));
-			}
+			sortedAdd(new Holiday(parameter, this));
 		}
 	}
 
 	private void getHolidays() throws IOException {
-		System.out.println("hiu");
 		int lineCounter = 0;
 		String line;
 		String[] lines;
@@ -66,7 +51,25 @@ public class HolidayList extends EventList {
 				String name = temp.substring(14, temp.length() - 1);
 				map.put("name", name);
 				map.put("date", date);
-				add(map);
+				if (getList().isEmpty() && new Date(map.get("date")).compareTo(Date.getCurrentDate()) >= 0) {
+					sortedAdd(new Holiday(map, this));
+				}
+				else {
+					boolean contains = false;
+					for (Instance instance : getList()) {
+						Holiday holiday = (Holiday) instance;
+						if (holiday.getName().equals(map.get("name"))) {
+							contains = true;
+							if (holiday.getDate().compareTo(new Date(map.get("date"))) < 0 && holiday.getDate().isPast()) {
+								holiday.getParameter().replace("date", map.get("date"));
+								return;
+							}
+						}
+					}
+					if (!contains && new Date(map.get("date")).compareTo(Date.getCurrentDate()) >= 0) {
+						sortedAdd(new Holiday(map, this));
+					}
+				}
 			}
 		}
 	}

@@ -15,19 +15,15 @@ import database.plugin.InstancePlugin;
 import database.plugin.expense.monthlyExpense.MonthlyExpensePlugin;
 
 public class ExpensePlugin extends InstancePlugin {
-	private ArrayList<InstancePlugin>	extentionList;
-
 	public ExpensePlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) throws IOException {
 		super(pluginContainer, terminal, graphicalUserInterface, administration, "expense", new ExpenseList());
-		extentionList = new ArrayList<InstancePlugin>();
-		initialise();
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
-		map.put("value", "[0-9]{1,13}(\\.[0-9]*)?");
+		map.put("value", "[0-9]{1,13}(\\.[0-9]{0,2})?");
 		map.put("date", null);
 		request(map);
 		create(map);
@@ -46,7 +42,18 @@ public class ExpensePlugin extends InstancePlugin {
 		return instanceList.getList();
 	}
 
-	private void initialise() {
-		extentionList.add(new MonthlyExpensePlugin(pluginContainer, terminal, graphicalUserInterface, administration, (ExpenseList) getInstanceList()));
+	public void initialise() {
+		MonthlyExpensePlugin monthlyExpensePlugin = new MonthlyExpensePlugin(pluginContainer, terminal, graphicalUserInterface, administration, (ExpenseList) getInstanceList());
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("name", "Miete");
+		map.put("category", "Wohnung");
+		map.put("value", "350");
+		map.put("date", "01.05.2015");
+		try {
+			monthlyExpensePlugin.create(map);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

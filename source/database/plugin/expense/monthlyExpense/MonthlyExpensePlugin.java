@@ -14,7 +14,7 @@ import database.plugin.expense.ExpenseList;
 
 public class MonthlyExpensePlugin extends InstancePlugin {
 	public MonthlyExpensePlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, ExpenseList expenseList) {
-		super(pluginContainer, terminal, graphicalUserInterface, administration, "monthly expense", new MonthlyExpenseList(expenseList));
+		super(pluginContainer, terminal, graphicalUserInterface, administration, "monthlyexpense", new MonthlyExpenseList(expenseList));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {

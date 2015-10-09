@@ -10,6 +10,7 @@ import database.plugin.InstanceList;
 public class Expense extends Instance {
 	public Expense(Map<String, String> parameter, InstanceList list) {
 		super(parameter, list);
+		parameter.replace("value", String.valueOf(Double.valueOf(getParameter("value"))));
 	}
 
 	protected Date getDate() {

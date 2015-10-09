@@ -11,6 +11,7 @@ public class Refilling extends Instance {
 	public Refilling(Map<String, String> parameter, RefillingList list, ExpenseList expenseList) {
 		super(parameter, list);
 		setParameter("count", String.valueOf(list.getList().size() + 1));
+		parameter.replace("value", String.valueOf(Double.valueOf(getParameter("value"))));
 		createExpense(expenseList);
 	}
 

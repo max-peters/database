@@ -48,6 +48,7 @@ public abstract class InstancePlugin extends Plugin {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}
 		else {
+			throw new IOException();
 		}
 	}
 
