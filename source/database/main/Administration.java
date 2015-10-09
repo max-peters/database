@@ -18,13 +18,11 @@ import database.plugin.Plugin;
 public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
 	private PluginContainer			pluginContainer;
-	private Terminal				terminal;
 	private WriterReader			writerReader;
 
-	public Administration(GraphicalUserInterface graphicalUserInterface, PluginContainer pluginContainer, Terminal terminal, WriterReader writerReader) throws IOException, InterruptedException {
+	public Administration(GraphicalUserInterface graphicalUserInterface, PluginContainer pluginContainer, WriterReader writerReader) throws IOException, InterruptedException {
 		this.graphicalUserInterface = graphicalUserInterface;
 		this.pluginContainer = pluginContainer;
-		this.terminal = terminal;
 		this.writerReader = writerReader;
 	}
 
@@ -66,10 +64,10 @@ public class Administration {
 
 	private void save() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
 		graphicalUserInterface.blockInput();
-		terminal.requestOut("saving");
+		Terminal.requestOut("saving");
 		writerReader.write();
 		pluginContainer.setUnchanged();
-		terminal.requestOut("saved");
+		Terminal.requestOut("saved");
 		graphicalUserInterface.waitForInput();
 	}
 
@@ -85,7 +83,7 @@ public class Administration {
 					break;
 				case "s":
 					graphicalUserInterface.blockInput();
-					terminal.requestOut("saving");
+					Terminal.requestOut("saving");
 					writerReader.write();
 					pluginContainer.setUnchanged();
 					System.exit(0);
@@ -102,8 +100,8 @@ public class Administration {
 		String result = null;
 		String input = null;
 		while (request) {
-			terminal.requestOut(printOut + ":");
-			input = terminal.in();
+			Terminal.requestOut(printOut + ":");
+			input = Terminal.in();
 			if (input.equals("back")) {
 				throw new CancellationException();
 			}
@@ -123,14 +121,14 @@ public class Administration {
 	}
 
 	public void errorMessage() throws InterruptedException {
-		terminal.requestOut("invalid input");
+		Terminal.requestOut("invalid input");
 		graphicalUserInterface.waitForInput();
 	}
 
 	public void initialOutput() {
 		for (Plugin plugin : pluginContainer.getPlugins()) {
 			if (plugin.getDisplay()) {
-				terminal.out(plugin.initialOutput());
+				Terminal.out(plugin.initialOutput());
 			}
 		}
 	}

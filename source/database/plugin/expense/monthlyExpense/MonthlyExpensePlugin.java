@@ -7,14 +7,13 @@ import java.util.Map;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
-import database.main.Terminal;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.expense.ExpenseList;
 
 public class MonthlyExpensePlugin extends InstancePlugin {
-	public MonthlyExpensePlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, ExpenseList expenseList) {
-		super(pluginContainer, terminal, graphicalUserInterface, administration, "monthlyexpense", new MonthlyExpenseList(expenseList));
+	public MonthlyExpensePlugin(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration, ExpenseList expenseList) {
+		super(pluginContainer, graphicalUserInterface, administration, "monthlyexpense", new MonthlyExpenseList(expenseList));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {

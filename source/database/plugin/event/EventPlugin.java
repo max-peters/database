@@ -10,7 +10,6 @@ import java.util.Map;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
-import database.main.Terminal;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
@@ -22,8 +21,8 @@ import database.plugin.event.holiday.HolidayPlugin;
 public class EventPlugin extends InstancePlugin {
 	private ArrayList<InstancePlugin>	extentionList;
 
-	public EventPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) throws IOException {
-		super(pluginContainer, terminal, graphicalUserInterface, administration, "event", null);
+	public EventPlugin(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration) throws IOException {
+		super(pluginContainer, graphicalUserInterface, administration, "event", null);
 		extentionList = new ArrayList<InstancePlugin>();
 		initialise();
 	}
@@ -74,9 +73,9 @@ public class EventPlugin extends InstancePlugin {
 	}
 
 	private void initialise() throws IOException {
-		extentionList.add(new AllDayEventPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
-		extentionList.add(new BirthdayPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
-		extentionList.add(new HolidayPlugin(pluginContainer, terminal, graphicalUserInterface, administration));
+		extentionList.add(new AllDayEventPlugin(pluginContainer, graphicalUserInterface, administration));
+		extentionList.add(new BirthdayPlugin(pluginContainer, graphicalUserInterface, administration));
+		extentionList.add(new HolidayPlugin(pluginContainer, graphicalUserInterface, administration));
 	}
 
 	public List<RequestInformation> getInformationList() {

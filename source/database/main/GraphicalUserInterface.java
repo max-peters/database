@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -34,6 +35,7 @@ public class GraphicalUserInterface {
 	private List<String>	linesToWrite				= new ArrayList<String>();
 	private List<String>	requestsToWrite				= new ArrayList<String>();
 	private JPanel			panel						= new JPanel();
+	private JScrollPane		scrollPane					= new JScrollPane(panel);
 	private JTextField		input						= new JTextField();
 	private JTextField		time						= new JTextField();
 	private JTextArea		output						= new JTextArea();
@@ -90,7 +92,6 @@ public class GraphicalUserInterface {
 		panel.setLayout(new BorderLayout(0, 0));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setBounds(670, 330, 670, 450);
-		frame.setContentPane(panel);
 		frame.setIconImage(icon);
 		frame.setResizable(false);
 		time.setEditable(false);
@@ -126,6 +127,12 @@ public class GraphicalUserInterface {
 		outputChangeable.addKeyListener(keyListenerDetail);
 		output.add(outputChangeable, BorderLayout.AFTER_LAST_LINE);
 		timer.scheduleAtFixedRate(new UpdateTime(time), 0, 500);
+		// scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
+		scrollPane.getViewport().setBorder(null);
+		scrollPane.setViewportBorder(null);
+		scrollPane.setBorder(null);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(10);
+		frame.setContentPane(scrollPane);
 	}
 
 	private void moveTextField(int steps) {

@@ -12,8 +12,8 @@ import database.plugin.Command;
 import database.plugin.InstancePlugin;
 
 public class SubjectPlugin extends InstancePlugin {
-	public SubjectPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(pluginContainer, terminal, graphicalUserInterface, administration, "subject", new SubjectList());
+	public SubjectPlugin(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration) {
+		super(pluginContainer, graphicalUserInterface, administration, "subject", new SubjectList());
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
@@ -29,7 +29,7 @@ public class SubjectPlugin extends InstancePlugin {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("show", "(average|" + ((SubjectList) instanceList).getTagsAsRegex() + ")");
 		request(map);
-		terminal.solutionOut(instanceList.output(map));
+		Terminal.solutionOut(instanceList.output(map));
 		graphicalUserInterface.waitForInput();
 	}
 

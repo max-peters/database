@@ -13,8 +13,8 @@ import database.plugin.InstancePlugin;
 import database.plugin.expense.ExpenseList;
 
 public class RefillingPlugin extends InstancePlugin {
-	public RefillingPlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, ExpenseList expenseList) {
-		super(pluginContainer, terminal, graphicalUserInterface, administration, "refilling", new RefillingList(expenseList));
+	public RefillingPlugin(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration, ExpenseList expenseList) {
+		super(pluginContainer, graphicalUserInterface, administration, "refilling", new RefillingList(expenseList));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
@@ -29,7 +29,7 @@ public class RefillingPlugin extends InstancePlugin {
 	}
 
 	@Command(tag = "show") public void showRequest() throws InterruptedException {
-		terminal.solutionOut(instanceList.output(null));
+		Terminal.solutionOut(instanceList.output(null));
 		graphicalUserInterface.waitForInput();
 	}
 }

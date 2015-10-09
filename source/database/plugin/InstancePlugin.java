@@ -8,17 +8,14 @@ import java.util.Map;
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
-import database.main.Terminal;
 
 public abstract class InstancePlugin extends Plugin {
 	protected PluginContainer	pluginContainer;
-	protected Terminal			terminal;
 	protected InstanceList		instanceList;
 
-	public InstancePlugin(PluginContainer pluginContainer, Terminal terminal, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
+	public InstancePlugin(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
 		super(identity, administration, graphicalUserInterface);
 		this.pluginContainer = pluginContainer;
-		this.terminal = terminal;
 		this.graphicalUserInterface = graphicalUserInterface;
 		this.instanceList = instanceList;
 	}

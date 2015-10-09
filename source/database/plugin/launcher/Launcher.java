@@ -11,36 +11,34 @@ import database.plugin.Command;
 import database.plugin.Plugin;
 
 public class Launcher extends Plugin {
-	GitInterface	git;
-	Terminal		terminal;
-	News			news;
-	String			rank;
+	private GitInterface	git;
+	private News			news;
+	private String			rank;
 
-	public Launcher(GraphicalUserInterface graphicalUserInterface, Terminal terminal, Administration administration) throws IOException {
+	public Launcher(GraphicalUserInterface graphicalUserInterface, Administration administration) throws IOException {
 		super("launcher", administration, graphicalUserInterface);
 		this.git = new GitInterface();
 		this.news = new News();
-		this.terminal = terminal;
 		this.rank = news.getCurrentRank();
 	}
 
 	@Command(tag = "push") public void push() throws IOException, GitAPIException, InterruptedException {
 		graphicalUserInterface.blockInput();
-		terminal.requestOut("pushing...");
+		Terminal.requestOut("pushing...");
 		long time = System.currentTimeMillis();
 		git.push();
 		time = System.currentTimeMillis() - time;
-		terminal.requestOut("finished pushing in " + time + " ms");
+		Terminal.requestOut("finished pushing in " + time + " ms");
 		graphicalUserInterface.waitForInput();
 	}
 
 	@Command(tag = "pull") public void pull() throws IOException, GitAPIException, InterruptedException {
 		graphicalUserInterface.blockInput();
-		terminal.requestOut("pulling...");
+		Terminal.requestOut("pulling...");
 		long time = System.currentTimeMillis();
 		git.pull();
 		time = System.currentTimeMillis() - time;
-		terminal.requestOut("finished pulling in " + time + " ms");
+		Terminal.requestOut("finished pulling in " + time + " ms");
 		graphicalUserInterface.waitForInput();
 	}
 
