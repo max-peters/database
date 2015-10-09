@@ -24,6 +24,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
+import javax.swing.UIManager;
 
 import database.main.date.Date;
 import database.main.date.Time;
@@ -49,6 +50,7 @@ public class GraphicalUserInterface {
 	private String			inputText;
 
 	public GraphicalUserInterface() throws IOException, FontFormatException {
+		UIManager.put("ProgressMonitor.progressText", "loading database");
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		InputStream inputStream = classLoader.getResourceAsStream("DejaVuSansMono.ttf");
 		font = Font.createFont(Font.PLAIN, inputStream);
