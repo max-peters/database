@@ -1,7 +1,6 @@
 package database.plugin.event.birthday;
 
 import java.util.Map;
-
 import database.main.date.Date;
 import database.plugin.event.Event;
 
@@ -26,7 +25,9 @@ public class Birthday extends Event {
 		// for (newName.length(); newName.length() < nameLength + 1;) {
 		// newName = newName + " ";
 		// }
-		// return updateYear().toString() + " - " + newName + " [" + String.format("%" + ageLength + "s", getAge()).replace(' ', '0') + "]";
+		// return updateYear().toString() + " - " + newName + " [" +
+		// String.format("%" + ageLength + "s", getAge()).replace(' ', '0') +
+		// "]";
 		return updateYear().toString() + " - " + getName() + " [" + getAge() + "]";
 	}
 

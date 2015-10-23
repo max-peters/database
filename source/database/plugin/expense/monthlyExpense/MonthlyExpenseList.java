@@ -3,14 +3,13 @@ package database.plugin.expense.monthlyExpense;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import database.main.Terminal;
 import database.main.date.Date;
 import database.plugin.InstanceList;
 import database.plugin.expense.ExpenseList;
 
 public class MonthlyExpenseList extends InstanceList {
-	private ExpenseList	expenseList;
+	private ExpenseList expenseList;
 
 	public MonthlyExpenseList(ExpenseList expenseList) {
 		super();

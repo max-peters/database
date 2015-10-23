@@ -7,8 +7,7 @@ public class Terminal {
 	private static GraphicalUserInterface	graphicalUserInterface;
 	private static List<String>				list	= new ArrayList<String>();
 
-	private Terminal() {
-	}
+	private Terminal() {}
 
 	public static void setGraphicalUserInterface(GraphicalUserInterface graphicalUserInterface) {
 		Terminal.graphicalUserInterface = graphicalUserInterface;

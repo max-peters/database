@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -25,7 +24,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ProgressMonitor;
 import javax.swing.UIManager;
-
 import database.main.date.Date;
 import database.main.date.Time;
 
@@ -73,11 +71,9 @@ public class GraphicalUserInterface {
 				}
 			}
 
-			public void keyReleased(KeyEvent e) {
-			}
+			public void keyReleased(KeyEvent e) {}
 
-			public void keyTyped(KeyEvent e) {
-			}
+			public void keyTyped(KeyEvent e) {}
 		};
 		KeyListener keyListenerDetail = new KeyListener() {
 			public void keyPressed(KeyEvent arg0) {
@@ -87,11 +83,9 @@ public class GraphicalUserInterface {
 				}
 			}
 
-			public void keyReleased(KeyEvent e) {
-			}
+			public void keyReleased(KeyEvent e) {}
 
-			public void keyTyped(KeyEvent e) {
-			}
+			public void keyTyped(KeyEvent e) {}
 		};
 		panel.setLayout(new BorderLayout(0, 0));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -131,7 +125,8 @@ public class GraphicalUserInterface {
 		outputChangeable.addKeyListener(keyListenerDetail);
 		output.add(outputChangeable, BorderLayout.AFTER_LAST_LINE);
 		timer.scheduleAtFixedRate(new UpdateTime(time), 0, 500);
-		// scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
+		// scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0,
+		// 0));
 		scrollPane.getViewport().setBorder(null);
 		scrollPane.setViewportBorder(null);
 		scrollPane.setBorder(null);
@@ -284,7 +279,7 @@ public class GraphicalUserInterface {
 }
 
 class UpdateTime extends TimerTask {
-	private JTextField	timeTextfield;
+	private JTextField timeTextfield;
 
 	public UpdateTime(JTextField timeTextfield) {
 		this.timeTextfield = timeTextfield;

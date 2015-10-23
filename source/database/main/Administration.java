@@ -4,17 +4,13 @@ import java.awt.FontFormatException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CancellationException;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-
 import org.eclipse.jgit.api.errors.GitAPIException;
-
 import database.main.date.Date;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
-// TODO: stundenplan
 public class Administration {
 	private GraphicalUserInterface	graphicalUserInterface;
 	private PluginContainer			pluginContainer;
@@ -26,15 +22,15 @@ public class Administration {
 		this.writerReader = writerReader;
 	}
 
-	public void request() throws IOException, InterruptedException, ParserConfigurationException, TransformerException, FontFormatException, GitAPIException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException {
+	public void request()	throws IOException, InterruptedException, ParserConfigurationException, TransformerException, FontFormatException, GitAPIException,
+							IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		while (true) {
 			inputRequestAdministration();
 		}
 	}
 
-	private void inputRequestAdministration() throws InterruptedException, IOException, TransformerException, GitAPIException, IllegalArgumentException, ParserConfigurationException,
-			IllegalAccessException, InvocationTargetException {
+	private void inputRequestAdministration()	throws InterruptedException, IOException, TransformerException, GitAPIException, IllegalArgumentException,
+												ParserConfigurationException, IllegalAccessException, InvocationTargetException {
 		String command = null;
 		try {
 			command = request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "check|exit|save)");

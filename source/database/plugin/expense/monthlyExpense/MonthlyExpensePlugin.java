@@ -3,7 +3,6 @@ package database.plugin.expense.monthlyExpense;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;

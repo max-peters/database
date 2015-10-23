@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
@@ -19,7 +18,7 @@ import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
 
 public class EventPlugin extends InstancePlugin {
-	private ArrayList<InstancePlugin>	extentionList;
+	private ArrayList<InstancePlugin> extentionList;
 
 	public EventPlugin(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration) throws IOException {
 		super(pluginContainer, graphicalUserInterface, administration, "event", null);

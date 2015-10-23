@@ -1,7 +1,6 @@
 package database.plugin.event;
 
 import java.util.ArrayList;
-
 import database.main.date.Date;
 import database.plugin.InstanceList;
 

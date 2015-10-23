@@ -1,7 +1,6 @@
 package database.plugin.event.allDayEvent;
 
 import java.util.Map;
-
 import database.plugin.event.Event;
 
 public class AllDayEvent extends Event {

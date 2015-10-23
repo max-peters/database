@@ -3,7 +3,7 @@ package database.plugin;
 import java.util.Map;
 
 public abstract class Instance {
-	private Map<String, String>	parameter;
+	private Map<String, String> parameter;
 
 	public Instance(Map<String, String> parameter) {
 		this.parameter = parameter;

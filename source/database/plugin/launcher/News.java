@@ -3,13 +3,11 @@ package database.plugin.launcher;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.UnknownHostException;
 
 public class News {
-	public String getCurrentRank() throws MalformedURLException, IOException, UnknownHostException {
+	public String getCurrentRank() throws IOException {
 		String rank = null;
 		String line;
 		URL url = new URL("http://www.lolking.net/summoner/euw/37588528");

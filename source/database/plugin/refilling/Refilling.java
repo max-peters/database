@@ -2,7 +2,6 @@ package database.plugin.refilling;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import database.main.date.Date;
 import database.plugin.Instance;
 import database.plugin.expense.ExpenseList;

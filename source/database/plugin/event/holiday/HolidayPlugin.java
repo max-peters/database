@@ -1,7 +1,6 @@
 package database.plugin.event.holiday;
 
 import java.io.IOException;
-
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;

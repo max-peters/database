@@ -3,7 +3,6 @@ package database.plugin.event;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
@@ -12,7 +11,8 @@ import database.plugin.InstanceList;
 import database.plugin.InstancePlugin;
 
 public class EventPluginExtention extends InstancePlugin {
-	public EventPluginExtention(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
+	public EventPluginExtention(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity,
+								InstanceList instanceList) {
 		super(pluginContainer, graphicalUserInterface, administration, identity, instanceList);
 	}
 

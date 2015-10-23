@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public abstract class InstanceList {
-	private ArrayList<Instance>	list;
+	private ArrayList<Instance> list;
 
 	public InstanceList() {
 		this.list = new ArrayList<Instance>();

@@ -3,7 +3,6 @@ package database.plugin.subject;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
-
 import database.plugin.Instance;
 
 public class Subject extends Instance {
@@ -102,8 +101,9 @@ public class Subject extends Instance {
 		toPrint = newName;
 		if (getCounter() > 0) {
 			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(getScore())) + "/"
-					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(getMaxPoints())) + " - " + String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent()))
-					+ "%" + "]" + " in [" + String.format("%" + counterLength + "s", getCounter()).replace(' ', '0');
+					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(getMaxPoints())) + " - "
+					+ String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent())) + "%" + "]" + " in ["
+					+ String.format("%" + counterLength + "s", getCounter()).replace(' ', '0');
 			if (getCounter() == 1) {
 				toPrint = toPrint + "] Blatt";
 			}

@@ -1,7 +1,6 @@
 package database.plugin.subject;
 
 import java.util.Map;
-
 import database.plugin.Instance;
 import database.plugin.InstanceList;
 

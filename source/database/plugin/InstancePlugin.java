@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
@@ -13,7 +12,8 @@ public abstract class InstancePlugin extends Plugin {
 	protected PluginContainer	pluginContainer;
 	protected InstanceList		instanceList;
 
-	public InstancePlugin(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity, InstanceList instanceList) {
+	public InstancePlugin(	PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity,
+							InstanceList instanceList) {
 		super(identity, administration, graphicalUserInterface);
 		this.pluginContainer = pluginContainer;
 		this.graphicalUserInterface = graphicalUserInterface;

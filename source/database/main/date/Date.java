@@ -44,7 +44,8 @@ public class Date implements Comparable<Date> {
 	}
 
 	public String toString() {
-		return String.format("%2s", day.counter).replace(' ', '0') + "." + String.format("%2s", month.counter).replace(' ', '0') + "." + String.format("%4s", year.counter).replace(' ', '0');
+		return String.format("%2s", day.counter).replace(' ', '0') + "." + String.format("%2s", month.counter).replace(' ', '0') + "."
+				+ String.format("%4s", year.counter).replace(' ', '0');
 	}
 
 	public int compareTo(Date date) {

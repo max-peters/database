@@ -1,7 +1,6 @@
 package database.plugin.event;
 
 import java.util.Map;
-
 import database.main.date.Date;
 import database.plugin.Instance;
 

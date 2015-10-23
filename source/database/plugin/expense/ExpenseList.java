@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
-
 import database.main.date.Date;
 import database.main.date.Month;
 import database.plugin.Instance;

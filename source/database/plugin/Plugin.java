@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.date.Date;
@@ -109,6 +108,5 @@ public abstract class Plugin {
 		return null;
 	}
 
-	public void readInformation(RequestInformation pair) throws IOException {
-	}
+	public void readInformation(RequestInformation pair) throws IOException {}
 }

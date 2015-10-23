@@ -1,12 +1,11 @@
 package database.main;
 
 import java.util.ArrayList;
-
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
 public class PluginContainer {
-	private ArrayList<Plugin>	plugins;
+	private ArrayList<Plugin> plugins;
 
 	public PluginContainer() {
 		this.plugins = new ArrayList<Plugin>();

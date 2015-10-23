@@ -1,9 +1,7 @@
 package database.plugin.launcher;
 
 import java.io.IOException;
-
 import org.eclipse.jgit.api.errors.GitAPIException;
-
 import database.main.Administration;
 import database.main.GraphicalUserInterface;
 import database.main.Terminal;

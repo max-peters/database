@@ -1,7 +1,6 @@
 package database.plugin.event.holiday;
 
 import java.util.Map;
-
 import database.plugin.event.Event;
 
 public class Holiday extends Event {
