@@ -1,6 +1,7 @@
 package database.plugin.event.holiday;
 
 import java.util.Map;
+import database.main.date.Date;
 import database.plugin.event.Event;
 
 public class Holiday extends Event {
@@ -10,5 +11,10 @@ public class Holiday extends Event {
 
 	@Override protected String output() {
 		return getDate() + " - " + getName();
+	}
+
+	@Override protected Date updateYear() {
+		System.out.println(getName());
+		return getDate();
 	}
 }
