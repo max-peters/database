@@ -14,7 +14,6 @@ public class Holiday extends Event {
 	}
 
 	@Override protected Date updateYear() {
-		System.out.println(getName());
 		return getDate();
 	}
 }
