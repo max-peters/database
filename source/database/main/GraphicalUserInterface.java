@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ProgressMonitor;
 import javax.swing.UIManager;
 import database.main.date.Date;
 import database.main.date.Time;
@@ -41,7 +40,6 @@ public class GraphicalUserInterface {
 	private JTextArea		output						= new JTextArea();
 	private JTextArea		outputChangeable			= new JTextArea();
 	private Timer			timer						= new Timer();
-	private ProgressMonitor	progressMonitor				= new ProgressMonitor(frame, "", "", 0, 100);
 	private Font			font;
 	private Image			icon;
 	private int				pressedKey;
@@ -138,48 +136,52 @@ public class GraphicalUserInterface {
 		input.setBounds(0, steps * 18, 670, 20);
 	}
 
-	public void setProgress(int progress) {
-		progressMonitor.setProgress(progress);
-	}
-
-	public void show() {
+	public void showInterface() {
 		frame.setVisible(true);
 	}
 
-	public void clear() {
+	protected void clear() {
 		linesToWrite.clear();
 		requestsToWrite.clear();
 	}
 
-	public void printLine(String line) {
-		linesToWrite.add(line);
-		output.setText(write(linesToWrite));
+	protected void printLine(List<String> lines) {
+		linesToWrite.addAll(lines);
+		output.setText(convert(linesToWrite));
 		moveTextField(linesToWrite.size());
 	}
 
-	public void printRequest(String line) {
+	protected void printRequest(List<String> lines) {
 		requestsToWrite.clear();
 		requestsToWrite.addAll(linesToWrite);
-		requestsToWrite.add(line);
-		output.setText(write(requestsToWrite));
+		requestsToWrite.addAll(lines);
+		output.setText(convert(requestsToWrite));
 		moveTextField(requestsToWrite.size());
 		requestsToWrite.clear();
 	}
 
-	public void printSolution(String line) {
+	protected void printSolution(List<String> lines) {
 		if (!requestsToWrite.containsAll(linesToWrite)) {
 			requestsToWrite.addAll(linesToWrite);
 		}
-		requestsToWrite.add(line);
-		output.setText(write(requestsToWrite));
+		requestsToWrite.addAll(lines);
+		output.setText(convert(requestsToWrite));
 		moveTextField(requestsToWrite.size());
 	}
 
-	public int check(ArrayList<String> strings) throws InterruptedException {
+	private String convert(List<String> stringList) {
+		String conversion = "";
+		for (String current : stringList) {
+			conversion = conversion + current + "\r\n";
+		}
+		return conversion;
+	}
+
+	protected int checkRequest(ArrayList<String> strings) throws InterruptedException {
 		int position = -1;
-		printRequest("check:");
+		Terminal.printRequest("check:");
 		if (strings.isEmpty()) {
-			printSolution("no entries");
+			Terminal.printLine("no entries");
 			waitForInput();
 			return position;
 		}
@@ -189,7 +191,7 @@ public class GraphicalUserInterface {
 		outputChangeable.setVisible(true);
 		outputChangeable.grabFocus();
 		while (pressedKey != 10) {
-			outputChangeable.setText(getOutput(strings, current));
+			outputChangeable.setText(formatCheckLine(strings, current));
 			synchronized (synchronizerKeyInput) {
 				synchronizerKeyInput.wait();
 			}
@@ -217,7 +219,7 @@ public class GraphicalUserInterface {
 		return position;
 	}
 
-	private String getOutput(ArrayList<String> strings, int currentLine) {
+	private String formatCheckLine(ArrayList<String> strings, int currentLine) {
 		String output = "";
 		int counter = 1;
 		for (String string : strings) {
@@ -233,14 +235,6 @@ public class GraphicalUserInterface {
 		return output;
 	}
 
-	private String write(List<String> stringList) {
-		String toReturn = "";
-		for (String current : stringList) {
-			toReturn = toReturn + current + "\r\n";
-		}
-		return toReturn;
-	}
-
 	public String readLine() throws InterruptedException {
 		synchronized (synchronizerInputConfirm) {
 			synchronizerInputConfirm.wait();
@@ -248,7 +242,7 @@ public class GraphicalUserInterface {
 		return inputText;
 	}
 
-	public void waitForInput() throws InterruptedException {
+	protected void waitForInput() throws InterruptedException {
 		releaseInput();
 		input.setCaretColor(Color.BLACK);
 		synchronized (synchronizerNewInput) {
@@ -257,13 +251,13 @@ public class GraphicalUserInterface {
 		input.setCaretColor(Color.WHITE);
 	}
 
-	public void blockInput() {
+	protected void blockInput() {
 		input.setEditable(false);
 		input.setFocusable(false);
 		input.setCaretColor(Color.BLACK);
 	}
 
-	public void releaseInput() {
+	protected void releaseInput() {
 		input.setEditable(true);
 		input.setFocusable(true);
 		input.grabFocus();

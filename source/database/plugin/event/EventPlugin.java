@@ -6,9 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import database.main.Administration;
-import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
+import database.main.Terminal;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
@@ -20,8 +19,8 @@ import database.plugin.event.holiday.HolidayPlugin;
 public class EventPlugin extends InstancePlugin {
 	private ArrayList<InstancePlugin> extentionList;
 
-	public EventPlugin(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration) throws IOException {
-		super(pluginContainer, graphicalUserInterface, administration, "event", null);
+	public EventPlugin(PluginContainer pluginContainer) throws IOException {
+		super(pluginContainer, "event", null);
 		extentionList = new ArrayList<InstancePlugin>();
 		initialise();
 	}
@@ -58,7 +57,7 @@ public class EventPlugin extends InstancePlugin {
 			initialOutput = initialOutput + event.output() + "\r\n";
 		}
 		if (!initialOutput.isEmpty()) {
-			initialOutput = "event" + ":\r\n" + initialOutput;
+			initialOutput = "event:\r\n" + initialOutput;
 		}
 		return initialOutput;
 	}
@@ -72,9 +71,9 @@ public class EventPlugin extends InstancePlugin {
 	}
 
 	private void initialise() throws IOException {
-		extentionList.add(new AllDayEventPlugin(pluginContainer, graphicalUserInterface, administration));
-		extentionList.add(new BirthdayPlugin(pluginContainer, graphicalUserInterface, administration));
-		extentionList.add(new HolidayPlugin(pluginContainer, graphicalUserInterface, administration));
+		extentionList.add(new AllDayEventPlugin(pluginContainer));
+		extentionList.add(new BirthdayPlugin(pluginContainer));
+		extentionList.add(new HolidayPlugin(pluginContainer));
 	}
 
 	public List<RequestInformation> getInformationList() {
@@ -111,7 +110,7 @@ public class EventPlugin extends InstancePlugin {
 			strings.add(extention.getIdentity());
 		}
 		strings.remove(2);
-		position = graphicalUserInterface.check(strings);
+		position = Terminal.checkRequest(strings);
 		if (position != -1) {
 			pluginIdentity = strings.get(position);
 			for (InstancePlugin extention : extentionList) {

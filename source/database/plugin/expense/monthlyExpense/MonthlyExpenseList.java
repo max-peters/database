@@ -26,7 +26,10 @@ public class MonthlyExpenseList extends InstanceList {
 		while (date.isPast() || date.isToday()) {
 			if (!expenseList.contains(parameter)) {
 				expenseList.add(parameter);
-				Terminal.collectStartInformation("expense created");
+				Terminal.collectLines("expense created:");
+				for (String value : parameter.values()) {
+					Terminal.collectLines(value);
+				}
 			}
 			if (date.month.counter + 1 == 13) {
 				date = new Date(date.day.counter + ".01." + (date.year.counter + 1));

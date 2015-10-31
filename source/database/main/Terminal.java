@@ -1,64 +1,115 @@
 package database.main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CancellationException;
+import database.main.date.Date;
+import database.plugin.Plugin;
 
 public class Terminal {
 	private static GraphicalUserInterface	graphicalUserInterface;
+	private static PluginContainer			pluginContainer;
 	private static List<String>				list	= new ArrayList<String>();
 
-	private Terminal() {}
-
-	public static void setGraphicalUserInterface(GraphicalUserInterface graphicalUserInterface) {
+	public Terminal(GraphicalUserInterface graphicalUserInterface, PluginContainer pluginContainer) {
 		Terminal.graphicalUserInterface = graphicalUserInterface;
+		Terminal.pluginContainer = pluginContainer;
 	}
 
 	public static String readLine() throws InterruptedException {
 		return graphicalUserInterface.readLine();
 	}
 
-	public static void printLineMain(String output) {
-		if (output != null && output.length() != 0) {
-			String splitResult[] = output.split("\r\n");
-			for (int i = 0; i < splitResult.length; i++) {
-				graphicalUserInterface.printLine(splitResult[i]);
-			}
-		}
+	public static void printLineMain(Object output) {
+		graphicalUserInterface.printLine(buildList(output));
 	}
 
-	public static void printRequest(String output) {
-		if (output != null && output.length() != 0) {
-			String splitResult[] = output.split("\r\n");
-			for (int i = 0; i < splitResult.length; i++) {
-				graphicalUserInterface.printRequest(splitResult[i]);
-			}
-		}
+	public static void printRequest(Object output) {
+		graphicalUserInterface.printRequest(buildList(output));
 	}
 
 	public static void printLine(Object output) {
-		if (output != null && output.toString().length() != 0) {
-			String splitResult[] = output.toString().split("\r\n");
-			for (int i = 0; i < splitResult.length; i++) {
-				graphicalUserInterface.printSolution(splitResult[i]);
-			}
-		}
+		graphicalUserInterface.printSolution(buildList(output));
 	}
 
-	public static void collectStartInformation(String output) {
-		if (output != null && output.length() != 0) {
-			String splitResult[] = output.split("\r\n");
-			for (int i = 0; i < splitResult.length; i++) {
-				list.add(splitResult[i]);
-			}
-		}
+	public static void collectLines(Object output) {
+		list.addAll(buildList(output));
 	}
 
-	public static void startOut() throws InterruptedException {
-		for (String string : list) {
-			graphicalUserInterface.printRequest(string);
-		}
+	public static void printCollectedLines() throws InterruptedException {
+		graphicalUserInterface.printRequest(list);
 		if (!list.isEmpty()) {
 			graphicalUserInterface.waitForInput();
 		}
+	}
+
+	public static void waitForInput() throws InterruptedException {
+		graphicalUserInterface.waitForInput();
+	}
+
+	public static void blockInput() {
+		graphicalUserInterface.blockInput();
+	}
+
+	public static void releaseInput() {
+		graphicalUserInterface.releaseInput();
+	}
+
+	public static int checkRequest(ArrayList<String> strings) throws InterruptedException {
+		return graphicalUserInterface.checkRequest(strings);
+	}
+
+	public static String request(String printOut, String regex) throws InterruptedException {
+		boolean request = true;
+		String result = null;
+		String input = null;
+		while (request) {
+			Terminal.printRequest(printOut + ":");
+			input = Terminal.readLine();
+			if (input.equals("back")) {
+				throw new CancellationException();
+			}
+			else if ((regex != null) && (input.matches(regex))) {
+				result = input;
+				request = false;
+			}
+			else if ((regex == null) && (Date.testDateString(input))) {
+				result = input;
+				request = false;
+			}
+			else {
+				errorMessage();
+			}
+		}
+		return result;
+	}
+
+	public static void update() {
+		graphicalUserInterface.clear();
+		Terminal.blockInput();
+		Terminal.initialOutput();
+		Terminal.releaseInput();
+	}
+
+	public static void errorMessage() throws InterruptedException {
+		Terminal.printRequest("invalid input");
+		graphicalUserInterface.waitForInput();
+	}
+
+	public static void initialOutput() {
+		for (Plugin plugin : pluginContainer.getPlugins()) {
+			if (plugin.getDisplay()) {
+				Terminal.printLineMain(plugin.initialOutput());
+			}
+		}
+	}
+
+	private static List<String> buildList(Object object) {
+		String[] splitResult = new String[0];
+		if (object != null && object.toString().length() != 0) {
+			splitResult = object.toString().split("\r\n");
+		}
+		return Arrays.asList(splitResult);
 	}
 }

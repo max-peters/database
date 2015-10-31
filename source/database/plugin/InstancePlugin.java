@@ -4,19 +4,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import database.main.Administration;
-import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
+import database.main.Terminal;
 
 public abstract class InstancePlugin extends Plugin {
 	protected PluginContainer	pluginContainer;
 	protected InstanceList		instanceList;
 
-	public InstancePlugin(	PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity,
-							InstanceList instanceList) {
-		super(identity, administration, graphicalUserInterface);
+	public InstancePlugin(PluginContainer pluginContainer, String identity, InstanceList instanceList) {
+		super(identity);
 		this.pluginContainer = pluginContainer;
-		this.graphicalUserInterface = graphicalUserInterface;
 		this.instanceList = instanceList;
 	}
 
@@ -55,7 +52,7 @@ public abstract class InstancePlugin extends Plugin {
 		for (Instance instance : getList()) {
 			strings.add(instance.getIdentity());
 		}
-		position = graphicalUserInterface.check(strings);
+		position = Terminal.checkRequest(strings);
 		if (position != -1) {
 			return getList().get(position);
 		}

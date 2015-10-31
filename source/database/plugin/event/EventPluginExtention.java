@@ -3,17 +3,14 @@ package database.plugin.event;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import database.main.Administration;
-import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.InstanceList;
 import database.plugin.InstancePlugin;
 
 public class EventPluginExtention extends InstancePlugin {
-	public EventPluginExtention(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration, String identity,
-								InstanceList instanceList) {
-		super(pluginContainer, graphicalUserInterface, administration, identity, instanceList);
+	public EventPluginExtention(PluginContainer pluginContainer, String identity, InstanceList instanceList) {
+		super(pluginContainer, identity, instanceList);
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {

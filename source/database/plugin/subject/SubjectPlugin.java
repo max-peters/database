@@ -3,16 +3,14 @@ package database.plugin.subject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import database.main.Administration;
-import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
 import database.main.Terminal;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 
 public class SubjectPlugin extends InstancePlugin {
-	public SubjectPlugin(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration) {
-		super(pluginContainer, graphicalUserInterface, administration, "subject", new SubjectList());
+	public SubjectPlugin(PluginContainer pluginContainer) {
+		super(pluginContainer, "subject", new SubjectList());
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
@@ -29,7 +27,7 @@ public class SubjectPlugin extends InstancePlugin {
 		map.put("show", "(average|" + ((SubjectList) instanceList).getTagsAsRegex() + ")");
 		request(map);
 		Terminal.printLine(instanceList.output(map));
-		graphicalUserInterface.waitForInput();
+		Terminal.waitForInput();
 	}
 
 	@Command(tag = "add") public void addRequest() throws InterruptedException {

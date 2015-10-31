@@ -3,8 +3,6 @@ package database.plugin.refilling;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import database.main.Administration;
-import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
 import database.main.Terminal;
 import database.plugin.Command;
@@ -12,8 +10,8 @@ import database.plugin.InstancePlugin;
 import database.plugin.expense.ExpenseList;
 
 public class RefillingPlugin extends InstancePlugin {
-	public RefillingPlugin(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration, ExpenseList expenseList) {
-		super(pluginContainer, graphicalUserInterface, administration, "refilling", new RefillingList(expenseList));
+	public RefillingPlugin(PluginContainer pluginContainer, ExpenseList expenseList) {
+		super(pluginContainer, "refilling", new RefillingList(expenseList));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
@@ -29,6 +27,6 @@ public class RefillingPlugin extends InstancePlugin {
 
 	@Command(tag = "show") public void showRequest() throws InterruptedException {
 		Terminal.printLine(instanceList.output(null));
-		graphicalUserInterface.waitForInput();
+		Terminal.waitForInput();
 	}
 }

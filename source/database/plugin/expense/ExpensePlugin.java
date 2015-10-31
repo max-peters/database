@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import database.main.Administration;
-import database.main.GraphicalUserInterface;
 import database.main.PluginContainer;
 import database.main.Terminal;
 import database.plugin.Command;
@@ -14,8 +12,9 @@ import database.plugin.InstancePlugin;
 import database.plugin.expense.monthlyExpense.MonthlyExpensePlugin;
 
 public class ExpensePlugin extends InstancePlugin {
-	public ExpensePlugin(PluginContainer pluginContainer, GraphicalUserInterface graphicalUserInterface, Administration administration) throws IOException {
-		super(pluginContainer, graphicalUserInterface, administration, "expense", new ExpenseList());
+	public ExpensePlugin(PluginContainer pluginContainer) throws IOException {
+		super(pluginContainer, "expense", new ExpenseList());
+		
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
@@ -34,7 +33,7 @@ public class ExpensePlugin extends InstancePlugin {
 		map.put("show", "(all|current|average|month|day)");
 		request(map);
 		Terminal.printLine(instanceList.output(map));
-		graphicalUserInterface.waitForInput();
+		Terminal.waitForInput();
 	}
 
 	@Override public ArrayList<Instance> getList() {
@@ -42,7 +41,7 @@ public class ExpensePlugin extends InstancePlugin {
 	}
 
 	public void initialise() {
-		MonthlyExpensePlugin monthlyExpensePlugin = new MonthlyExpensePlugin(pluginContainer, graphicalUserInterface, administration, (ExpenseList) getInstanceList());
+		MonthlyExpensePlugin monthlyExpensePlugin = new MonthlyExpensePlugin(pluginContainer, (ExpenseList) getInstanceList());
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "Miete");
 		map.put("category", "Wohnung");

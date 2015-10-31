@@ -8,21 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import database.main.Administration;
-import database.main.GraphicalUserInterface;
+import database.main.Terminal;
 import database.main.date.Date;
 
 public abstract class Plugin {
-	protected String					identity;
-	protected Administration			administration;
-	protected GraphicalUserInterface	graphicalUserInterface;
-	protected boolean					display;
-	private boolean						changes;
+	protected String	identity;
+	protected boolean	display;
+	private boolean		changes;
 
-	public Plugin(String identity, Administration administration, GraphicalUserInterface graphicalUserInterface) {
+	public Plugin(String identity) {
 		this.identity = identity;
-		this.administration = administration;
-		this.graphicalUserInterface = graphicalUserInterface;
 		this.changes = false;
 	}
 
@@ -36,7 +31,7 @@ public abstract class Plugin {
 
 	protected void request(Map<String, String> map) throws InterruptedException {
 		for (Entry<String, String> entry : map.entrySet()) {
-			String parameterInformation = administration.request(entry.getKey(), entry.getValue());
+			String parameterInformation = Terminal.request(entry.getKey(), entry.getValue());
 			if (entry.getKey().equals("date")) {
 				parameterInformation = new Date(parameterInformation).toString();
 			}
@@ -45,10 +40,7 @@ public abstract class Plugin {
 	}
 
 	public void update() {
-		graphicalUserInterface.clear();
-		graphicalUserInterface.blockInput();
-		administration.initialOutput();
-		graphicalUserInterface.releaseInput();
+		Terminal.update();
 		setChanges(true);
 	}
 

@@ -16,22 +16,18 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
-			graphicalUserInterface.setProgress(0);
 			PluginContainer pluginContainer = new PluginContainer();
+			new Terminal(graphicalUserInterface, pluginContainer);
 			WriterReader writerReader = new WriterReader(pluginContainer);
-			graphicalUserInterface.setProgress(20);
-			Administration administration = new Administration(graphicalUserInterface, pluginContainer, writerReader);
-			Launcher launcher = new Launcher(graphicalUserInterface, administration);
-			Storage storage = new Storage(pluginContainer, administration, graphicalUserInterface);
-			SubjectPlugin subjectPlugin = new SubjectPlugin(pluginContainer, graphicalUserInterface, administration);
-			ExpensePlugin expensePlugin = new ExpensePlugin(pluginContainer, graphicalUserInterface, administration);
-			graphicalUserInterface.setProgress(40);
-			RefillingPlugin refillingPlugin = new RefillingPlugin(pluginContainer, graphicalUserInterface, administration, (ExpenseList) expensePlugin.getInstanceList());
-			TaskPlugin taskPlugin = new TaskPlugin(pluginContainer, graphicalUserInterface, administration);
-			EventPlugin eventPlugin = new EventPlugin(pluginContainer, graphicalUserInterface, administration);
-			UtilityPlugin utilityPlugin = new UtilityPlugin(administration, graphicalUserInterface);
-			Terminal.setGraphicalUserInterface(graphicalUserInterface);
-			graphicalUserInterface.setProgress(60);
+			Administration administration = new Administration(pluginContainer, writerReader);
+			Launcher launcher = new Launcher();
+			Storage storage = new Storage(pluginContainer);
+			SubjectPlugin subjectPlugin = new SubjectPlugin(pluginContainer);
+			ExpensePlugin expensePlugin = new ExpensePlugin(pluginContainer);
+			RefillingPlugin refillingPlugin = new RefillingPlugin(pluginContainer, (ExpenseList) expensePlugin.getInstanceList());
+			TaskPlugin taskPlugin = new TaskPlugin(pluginContainer);
+			EventPlugin eventPlugin = new EventPlugin(pluginContainer);
+			UtilityPlugin utilityPlugin = new UtilityPlugin();
 			pluginContainer.addPlugin(launcher);
 			pluginContainer.addPlugin(storage);
 			pluginContainer.addPlugin(subjectPlugin);
@@ -46,19 +42,16 @@ public class Main {
 					writerReader.setDirectory();
 				}
 			}
-			graphicalUserInterface.setProgress(80);
 			try {
 				writerReader.read();
 			}
 			catch (IOException e) {
 				graphicalUserInterface.showMessageDialog(e);
 			}
-			graphicalUserInterface.setProgress(90);
+			Terminal.initialOutput();
 			expensePlugin.initialise();
-			administration.initialOutput();
-			graphicalUserInterface.show();
-			Terminal.startOut();
-			graphicalUserInterface.setProgress(100);
+			graphicalUserInterface.showInterface();
+			Terminal.printCollectedLines();
 			administration.request();
 		}
 		catch (Throwable e) {
