@@ -13,11 +13,11 @@ public class Terminal {
 		Terminal.graphicalUserInterface = graphicalUserInterface;
 	}
 
-	public static String in() throws InterruptedException {
-		return graphicalUserInterface.in();
+	public static String readLine() throws InterruptedException {
+		return graphicalUserInterface.readLine();
 	}
 
-	public static void out(String output) {
+	public static void printLineMain(String output) {
 		if (output != null && output.length() != 0) {
 			String splitResult[] = output.split("\r\n");
 			for (int i = 0; i < splitResult.length; i++) {
@@ -26,7 +26,7 @@ public class Terminal {
 		}
 	}
 
-	public static void requestOut(String output) {
+	public static void printRequest(String output) {
 		if (output != null && output.length() != 0) {
 			String splitResult[] = output.split("\r\n");
 			for (int i = 0; i < splitResult.length; i++) {
@@ -35,9 +35,9 @@ public class Terminal {
 		}
 	}
 
-	public static void solutionOut(String output) {
-		if (output != null && output.length() != 0) {
-			String splitResult[] = output.split("\r\n");
+	public static void printLine(Object output) {
+		if (output != null && output.toString().length() != 0) {
+			String splitResult[] = output.toString().split("\r\n");
 			for (int i = 0; i < splitResult.length; i++) {
 				graphicalUserInterface.printSolution(splitResult[i]);
 			}

@@ -22,21 +22,21 @@ public class Launcher extends Plugin {
 
 	@Command(tag = "push") public void push() throws IOException, GitAPIException, InterruptedException {
 		graphicalUserInterface.blockInput();
-		Terminal.requestOut("pushing...");
+		Terminal.printRequest("pushing...");
 		long time = System.currentTimeMillis();
 		git.push();
 		time = System.currentTimeMillis() - time;
-		Terminal.requestOut("finished pushing in " + time + " ms");
+		Terminal.printRequest("finished pushing in " + time + " ms");
 		graphicalUserInterface.waitForInput();
 	}
 
 	@Command(tag = "pull") public void pull() throws IOException, GitAPIException, InterruptedException {
 		graphicalUserInterface.blockInput();
-		Terminal.requestOut("pulling...");
+		Terminal.printRequest("pulling...");
 		long time = System.currentTimeMillis();
 		git.pull();
 		time = System.currentTimeMillis() - time;
-		Terminal.requestOut("finished pulling in " + time + " ms");
+		Terminal.printRequest("finished pulling in " + time + " ms");
 		graphicalUserInterface.waitForInput();
 	}
 

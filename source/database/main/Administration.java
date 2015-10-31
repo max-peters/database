@@ -65,10 +65,10 @@ public class Administration {
 
 	private void save() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
 		graphicalUserInterface.blockInput();
-		Terminal.requestOut("saving");
+		Terminal.printRequest("saving");
 		writerReader.write();
 		pluginContainer.setUnchanged();
-		Terminal.requestOut("saved");
+		Terminal.printRequest("saved");
 		graphicalUserInterface.waitForInput();
 	}
 
@@ -84,7 +84,7 @@ public class Administration {
 					break;
 				case "s":
 					graphicalUserInterface.blockInput();
-					Terminal.requestOut("saving");
+					Terminal.printRequest("saving");
 					writerReader.write();
 					pluginContainer.setUnchanged();
 					System.exit(0);
@@ -101,8 +101,8 @@ public class Administration {
 		String result = null;
 		String input = null;
 		while (request) {
-			Terminal.requestOut(printOut + ":");
-			input = Terminal.in();
+			Terminal.printRequest(printOut + ":");
+			input = Terminal.readLine();
 			if (input.equals("back")) {
 				throw new CancellationException();
 			}
@@ -122,14 +122,14 @@ public class Administration {
 	}
 
 	public void errorMessage() throws InterruptedException {
-		Terminal.requestOut("invalid input");
+		Terminal.printRequest("invalid input");
 		graphicalUserInterface.waitForInput();
 	}
 
 	public void initialOutput() {
 		for (Plugin plugin : pluginContainer.getPlugins()) {
 			if (plugin.getDisplay()) {
-				Terminal.out(plugin.initialOutput());
+				Terminal.printLineMain(plugin.initialOutput());
 			}
 		}
 	}

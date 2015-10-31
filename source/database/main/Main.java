@@ -10,6 +10,7 @@ import database.plugin.refilling.RefillingPlugin;
 import database.plugin.storage.Storage;
 import database.plugin.subject.SubjectPlugin;
 import database.plugin.task.TaskPlugin;
+import database.plugin.utility.UtilityPlugin;
 
 public class Main {
 	public static void main(String[] args) {
@@ -28,6 +29,7 @@ public class Main {
 			RefillingPlugin refillingPlugin = new RefillingPlugin(pluginContainer, graphicalUserInterface, administration, (ExpenseList) expensePlugin.getInstanceList());
 			TaskPlugin taskPlugin = new TaskPlugin(pluginContainer, graphicalUserInterface, administration);
 			EventPlugin eventPlugin = new EventPlugin(pluginContainer, graphicalUserInterface, administration);
+			UtilityPlugin utilityPlugin = new UtilityPlugin(administration, graphicalUserInterface);
 			Terminal.setGraphicalUserInterface(graphicalUserInterface);
 			graphicalUserInterface.setProgress(60);
 			pluginContainer.addPlugin(launcher);
@@ -37,6 +39,7 @@ public class Main {
 			pluginContainer.addPlugin(refillingPlugin);
 			pluginContainer.addPlugin(taskPlugin);
 			pluginContainer.addPlugin(eventPlugin);
+			pluginContainer.addPlugin(utilityPlugin);
 			if (!writerReader.checkDirectory()) {
 				Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
 				if (connection.waitFor() != 0) {

@@ -28,7 +28,7 @@ public class RefillingPlugin extends InstancePlugin {
 	}
 
 	@Command(tag = "show") public void showRequest() throws InterruptedException {
-		Terminal.solutionOut(instanceList.output(null));
+		Terminal.printLine(instanceList.output(null));
 		graphicalUserInterface.waitForInput();
 	}
 }

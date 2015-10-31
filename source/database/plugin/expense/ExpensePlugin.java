@@ -33,7 +33,7 @@ public class ExpensePlugin extends InstancePlugin {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("show", "(all|current|average|month|day)");
 		request(map);
-		Terminal.solutionOut(instanceList.output(map));
+		Terminal.printLine(instanceList.output(map));
 		graphicalUserInterface.waitForInput();
 	}
 

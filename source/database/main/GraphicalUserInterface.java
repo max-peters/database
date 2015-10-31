@@ -163,6 +163,7 @@ public class GraphicalUserInterface {
 		requestsToWrite.add(line);
 		output.setText(write(requestsToWrite));
 		moveTextField(requestsToWrite.size());
+		requestsToWrite.clear();
 	}
 
 	public void printSolution(String line) {
@@ -240,7 +241,7 @@ public class GraphicalUserInterface {
 		return toReturn;
 	}
 
-	public String in() throws InterruptedException {
+	public String readLine() throws InterruptedException {
 		synchronized (synchronizerInputConfirm) {
 			synchronizerInputConfirm.wait();
 		}

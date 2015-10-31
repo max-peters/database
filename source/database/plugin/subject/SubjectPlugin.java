@@ -28,7 +28,7 @@ public class SubjectPlugin extends InstancePlugin {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("show", "(average|" + ((SubjectList) instanceList).getTagsAsRegex() + ")");
 		request(map);
-		Terminal.solutionOut(instanceList.output(map));
+		Terminal.printLine(instanceList.output(map));
 		graphicalUserInterface.waitForInput();
 	}
 
