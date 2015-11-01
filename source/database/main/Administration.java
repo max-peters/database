@@ -43,6 +43,7 @@ public class Administration {
 						break;
 					case "save":
 						save();
+						Terminal.waitForInput();
 						break;
 					case "exit":
 						exit();
@@ -66,7 +67,6 @@ public class Administration {
 		writerReader.write();
 		pluginContainer.setUnchanged();
 		Terminal.printRequest("saved");
-		Terminal.waitForInput();
 	}
 
 	private void exit() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
@@ -80,10 +80,7 @@ public class Administration {
 				case "n":
 					break;
 				case "s":
-					Terminal.blockInput();
-					Terminal.printRequest("saving");
-					writerReader.write();
-					pluginContainer.setUnchanged();
+					save();
 					System.exit(0);
 					break;
 			}

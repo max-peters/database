@@ -28,6 +28,17 @@ public class PluginContainer {
 		return null;
 	}
 
+	public String getPluginNameTagsAsRegesx() {
+		String regex = "(";
+		for (Plugin plugin : plugins) {
+			regex = regex + plugin.getIdentity();
+			if (!(plugins.indexOf(plugin) == plugins.size() - 1)) {
+				regex = regex + "|";
+			}
+		}
+		return regex + ")";
+	}
+
 	public boolean getChanges() {
 		for (Plugin plugin : plugins) {
 			if (plugin instanceof InstancePlugin) {
@@ -38,17 +49,6 @@ public class PluginContainer {
 			}
 		}
 		return false;
-	}
-
-	public String getPluginNameTagsAsRegesx() {
-		String regex = "(";
-		for (Plugin plugin : plugins) {
-			regex = regex + plugin.getIdentity();
-			if (!(plugins.indexOf(plugin) == plugins.size() - 1)) {
-				regex = regex + "|";
-			}
-		}
-		return regex + ")";
 	}
 
 	public void setUnchanged() {

@@ -1,20 +1,17 @@
 package database.plugin.expense;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import database.main.PluginContainer;
 import database.main.Terminal;
 import database.plugin.Command;
-import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.expense.monthlyExpense.MonthlyExpensePlugin;
 
 public class ExpensePlugin extends InstancePlugin {
 	public ExpensePlugin(PluginContainer pluginContainer) throws IOException {
 		super(pluginContainer, "expense", new ExpenseList());
-		
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
@@ -34,10 +31,6 @@ public class ExpensePlugin extends InstancePlugin {
 		request(map);
 		Terminal.printLine(instanceList.output(map));
 		Terminal.waitForInput();
-	}
-
-	@Override public ArrayList<Instance> getList() {
-		return instanceList.getList();
 	}
 
 	public void initialise() {
