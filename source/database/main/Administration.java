@@ -39,7 +39,12 @@ public class Administration {
 			else if (command.matches("(check|exit|save)")) {
 				switch (command) {
 					case "check":
-						((InstancePlugin) pluginContainer.getPlugin("task")).remove(((InstancePlugin) pluginContainer.getPlugin("task")).check());
+						InstancePlugin taskPlugin = ((InstancePlugin) pluginContainer.getPlugin("task"));
+						boolean taskDisplay = taskPlugin.getDisplay();
+						taskPlugin.setDisplay(false);
+						Terminal.update();
+						taskPlugin.setDisplay(taskDisplay);
+						taskPlugin.remove(((InstancePlugin) pluginContainer.getPlugin("task")).check());
 						break;
 					case "save":
 						save();

@@ -157,7 +157,6 @@ public class GraphicalUserInterface {
 		requestsToWrite.addAll(lines);
 		output.setText(convert(requestsToWrite));
 		moveTextField(requestsToWrite.size());
-		requestsToWrite.clear();
 	}
 
 	protected void printSolution(List<String> lines) {
