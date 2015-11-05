@@ -80,7 +80,6 @@ public class Administration {
 			command = Terminal.request("there are unsaved changes - exit", "(y|n|s)");
 			switch (command) {
 				case "y":
-					System.exit(0);
 					break;
 				case "n":
 					break;
