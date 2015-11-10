@@ -8,45 +8,81 @@ import database.plugin.Instance;
 public class Subject extends Instance {
 	public Subject(Map<String, String> parameter) {
 		super(parameter);
-		parameter.put("score", "0");
-		parameter.put("maxPoints", "0");
-		parameter.put("counter", "0");
+		parameter.putIfAbsent("score", "0");
+		parameter.putIfAbsent("maxPoints", "0");
+		parameter.putIfAbsent("counter", "0");
+	}
+
+	protected double calcPercent() {
+		return getScore() / getMaxPoints() * 100;
 	}
 
 	private Integer getCounter() {
 		return Integer.valueOf(getParameter("counter"));
 	}
 
-	private Double getMaxPoints() {
-		return Double.valueOf(getParameter("maxPoints"));
+	private int getCounterStringLength() {
+		return String.valueOf(getCounter()).length();
 	}
 
-	private Double getScore() {
-		return Double.valueOf(getParameter("score"));
+	private Double getMaxPoints() {
+		return Double.valueOf(getParameter("maxPoints"));
 	}
 
 	private String getName() {
 		return getParameter("name");
 	}
 
+	private Double getScore() {
+		return Double.valueOf(getParameter("score"));
+	}
+
 	protected String getTag() {
 		return getParameter("tag");
 	}
 
+	protected String output(ArrayList<Instance> instances) {
+		DecimalFormat oneDecimalPlace = new DecimalFormat("#0.0");
+		DecimalFormat twoDecimalPlace = new DecimalFormat("#0.00");
+		String toPrint;
+		int allGradesLength = 0;
+		int allGradesTotalLength = 0;
+		int percentLength = 0;
+		int counterLength = 0;
+		int nameLength = 0;
+		for (Instance instance : instances) {
+			Subject current = (Subject) instance;
+			allGradesLength = (oneDecimalPlace.format(current.getScore()).length() > allGradesLength) ? oneDecimalPlace.format(current.getScore()).length() : allGradesLength;
+			allGradesTotalLength = (oneDecimalPlace.format(current.getMaxPoints()).length() > allGradesTotalLength)	? oneDecimalPlace.format(current.getMaxPoints()).length()
+																													: allGradesTotalLength;
+			percentLength = (twoDecimalPlace.format(current.calcPercent()).length() > percentLength) ? twoDecimalPlace.format(current.calcPercent()).length() : percentLength;
+			counterLength = (current.getCounterStringLength() > counterLength) ? current.getCounterStringLength() : counterLength;
+			nameLength = (current.getName().length() > nameLength) ? current.getName().length() : nameLength;
+		}
+		toPrint = getName();
+		for (toPrint.length(); toPrint.length() < nameLength + 4;) {
+			toPrint = toPrint + " ";
+		}
+		if (!instances.isEmpty()) {
+			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(getScore())) + "/"
+					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(getMaxPoints())) + " - "
+					+ String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent())) + "%" + "]" + " in ["
+					+ String.format("%" + counterLength + "s", getCounter()).replace(' ', '0') + "] ";
+			if (instances.size() == 1) {
+				toPrint.concat("Blatt");
+			}
+			else {
+				toPrint.concat("Bl\u00e4tter");
+			}
+		}
+		else {
+			toPrint.concat("keine Bl\u00e4tter");
+		}
+		return toPrint;
+	}
+
 	private void setCounter(int counter) {
 		setParameter("counter", String.valueOf(counter));
-	}
-
-	private void setMaxPoints(double maxPoints) {
-		setParameter("maxPoints", String.valueOf(maxPoints));
-	}
-
-	private void setScore(double score) {
-		setParameter("score", String.valueOf(score));
-	}
-
-	protected double calcPercent() {
-		return (getScore() / getMaxPoints()) * 100;
 	}
 
 	protected void setGrade(double newScore, double newMaxPoint) {
@@ -55,65 +91,11 @@ public class Subject extends Instance {
 		setScore(getScore() + newScore);
 	}
 
-	protected String output(ArrayList<Instance> instances) {
-		ArrayList<Subject> subjects = new ArrayList<Subject>();
-		for (Instance instance : instances) {
-			subjects.add((Subject) instance);
-		}
-		DecimalFormat oneDecimalPlace = new DecimalFormat("#0.0");
-		DecimalFormat twoDecimalPlace = new DecimalFormat("#0.00");
-		String toPrint;
-		String newName;
-		int currentLength;
-		int allGradesLength = oneDecimalPlace.format(subjects.get(0).getScore()).length();
-		int allGradesTotalLength = oneDecimalPlace.format(subjects.get(0).getMaxPoints()).length();
-		int percentLength = twoDecimalPlace.format(subjects.get(0).calcPercent()).length();
-		int counterLength = subjects.get(0).getParameter("counter").length();
-		int nameLength = subjects.get(0).getName().length();
-		for (Subject current : subjects) {
-			currentLength = oneDecimalPlace.format(current.getScore()).length();
-			if (allGradesLength < currentLength)
-				allGradesLength = currentLength;
-		}
-		for (Subject current : subjects) {
-			currentLength = oneDecimalPlace.format(current.getMaxPoints()).length();
-			if (allGradesTotalLength < currentLength)
-				allGradesTotalLength = currentLength;
-		}
-		for (Subject current : subjects) {
-			currentLength = twoDecimalPlace.format(current.calcPercent()).length();
-			if (percentLength < currentLength)
-				percentLength = currentLength;
-		}
-		for (Subject current : subjects) {
-			if (counterLength < current.getParameter("counter").length())
-				counterLength = current.getParameter("counter").length();
-		}
-		for (Subject current : subjects) {
-			if (nameLength < current.getName().length())
-				nameLength = current.getName().length();
-		}
-		nameLength = nameLength + 4;
-		newName = getName();
-		for (newName.length(); newName.length() < nameLength;) {
-			newName = newName + " ";
-		}
-		toPrint = newName;
-		if (getCounter() > 0) {
-			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(getScore())) + "/"
-					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(getMaxPoints())) + " - "
-					+ String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent())) + "%" + "]" + " in ["
-					+ String.format("%" + counterLength + "s", getCounter()).replace(' ', '0');
-			if (getCounter() == 1) {
-				toPrint = toPrint + "] Blatt";
-			}
-			else {
-				toPrint = toPrint + "] Bl\u00e4tter";
-			}
-		}
-		else {
-			toPrint = toPrint + "keine Bl\u00e4tter";
-		}
-		return toPrint;
+	private void setMaxPoints(double maxPoints) {
+		setParameter("maxPoints", String.valueOf(maxPoints));
+	}
+
+	private void setScore(double score) {
+		setParameter("score", String.valueOf(score));
 	}
 }
