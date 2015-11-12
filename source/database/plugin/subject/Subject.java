@@ -69,14 +69,14 @@ public class Subject extends Instance {
 					+ String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent())) + "%" + "]" + " in ["
 					+ String.format("%" + counterLength + "s", getCounter()).replace(' ', '0') + "] ";
 			if (instances.size() == 1) {
-				toPrint.concat("Blatt");
+				toPrint += "Blatt";
 			}
 			else {
-				toPrint.concat("Bl\u00e4tter");
+				toPrint += "Bl\u00e4tter";
 			}
 		}
 		else {
-			toPrint.concat("keine Bl\u00e4tter");
+			toPrint += "keine Bl\u00e4tter";
 		}
 		return toPrint;
 	}
