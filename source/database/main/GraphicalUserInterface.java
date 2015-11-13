@@ -87,7 +87,7 @@ public class GraphicalUserInterface {
 		};
 		panel.setLayout(new BorderLayout(0, 0));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setBounds(670, 330, 670, 450);
+		frame.setBounds(670, 330, 750, 500);
 		frame.setIconImage(icon);
 		frame.setResizable(false);
 		time.setEditable(false);
