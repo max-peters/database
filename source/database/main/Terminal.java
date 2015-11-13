@@ -98,11 +98,19 @@ public class Terminal {
 	}
 
 	public static void initialOutput() {
+		String longestString = "";
 		for (Plugin plugin : pluginContainer.getPlugins()) {
-			if (plugin.getDisplay()) {
+			if (plugin.getDisplay() && plugin.initialOutput() != null) {
 				Terminal.printLineMain(plugin.initialOutput());
+				String splitResult[] = plugin.initialOutput().split("\r\n");
+				for (int i = 0; i < splitResult.length; i++) {
+					if (splitResult[i].length() > longestString.length()) {
+						longestString = splitResult[i];
+					}
+				}
 			}
 		}
+		graphicalUserInterface.setBounds(longestString);;
 	}
 
 	private static List<String> buildList(Object object) {

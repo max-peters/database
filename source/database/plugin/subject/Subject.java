@@ -63,12 +63,12 @@ public class Subject extends Instance {
 		for (toPrint.length(); toPrint.length() < nameLength + 4;) {
 			toPrint = toPrint + " ";
 		}
-		if (!instances.isEmpty()) {
+		if (getCounter() != 0) {
 			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(getScore())) + "/"
 					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(getMaxPoints())) + " - "
 					+ String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent())) + "%" + "]" + " in ["
 					+ String.format("%" + counterLength + "s", getCounter()).replace(' ', '0') + "] ";
-			if (instances.size() == 1) {
+			if (getCounter() == 1) {
 				toPrint += "Blatt";
 			}
 			else {

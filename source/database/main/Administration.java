@@ -79,14 +79,11 @@ public class Administration {
 			String command;
 			command = Terminal.request("there are unsaved changes - exit", "(y|n|s)");
 			switch (command) {
-				case "y":
-					break;
-				case "n":
-					break;
 				case "s":
 					save();
+					//$FALL-THROUGH$
+				case "y":
 					System.exit(0);
-					break;
 			}
 		}
 		else {

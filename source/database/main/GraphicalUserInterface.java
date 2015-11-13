@@ -2,9 +2,11 @@ package database.main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -87,7 +89,6 @@ public class GraphicalUserInterface {
 		};
 		panel.setLayout(new BorderLayout(0, 0));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setBounds(670, 330, 750, 500);
 		frame.setIconImage(icon);
 		frame.setResizable(false);
 		time.setEditable(false);
@@ -130,6 +131,15 @@ public class GraphicalUserInterface {
 		scrollPane.setBorder(null);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(10);
 		frame.setContentPane(scrollPane);
+	}
+
+	public void setBounds(String longestString) {
+		int width = output.getFontMetrics(font).stringWidth(longestString) + 25;
+		int height = width * 2 / 3;
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		frame.setSize(width, height);
+		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
+		// frame.setBounds(670, 330, 700, 475);
 	}
 
 	private void moveTextField(int steps) {
