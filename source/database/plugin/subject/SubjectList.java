@@ -9,6 +9,18 @@ public class SubjectList extends InstanceList {
 		getList().add(new Subject(parameter));
 	}
 
+	@Override public String initialOutput() {
+		String output = "";
+		for (Instance instance : getList()) {
+			Subject subject = (Subject) instance;
+			if (getList().indexOf(subject) != 0) {
+				output = output + "\r\n";
+			}
+			output = output + subject.output(getList());
+		}
+		return output;
+	}
+
 	@Override public String output(Map<String, String> map) {
 		String returnValue = null;
 		for (String string : map.values()) {
@@ -21,18 +33,6 @@ public class SubjectList extends InstanceList {
 			}
 		}
 		return returnValue;
-	}
-
-	@Override public String initialOutput() {
-		String output = "";
-		for (Instance instance : getList()) {
-			Subject subject = (Subject) instance;
-			if (getList().indexOf(subject) != 0) {
-				output = output + "\r\n";
-			}
-			output = output + subject.output(getList());
-		}
-		return output;
 	}
 
 	private String getAverage() {

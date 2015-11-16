@@ -13,6 +13,18 @@ public class SubjectPlugin extends InstancePlugin {
 		super(pluginContainer, "subject", new SubjectList());
 	}
 
+	@Command(tag = "add") public void addRequest() throws InterruptedException {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("add", ((SubjectList) instanceList).getTagsAsRegex());
+		map.put("score", "[0-9]{1,13}(\\.[0-9]*)?");
+		map.put("maximum points", "[0-9]{1,13}(\\.[0-9]*)?");
+		request(map);
+		Subject toChange = ((SubjectList) instanceList).getSubject(map.get("add"));
+		toChange.setGrade(Double.parseDouble(map.get("score")), Double.parseDouble(map.get("maximum points")));
+		toChange.calcPercent();
+		update();
+	}
+
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜ].*");
@@ -28,17 +40,5 @@ public class SubjectPlugin extends InstancePlugin {
 		request(map);
 		Terminal.printLine(instanceList.output(map));
 		Terminal.waitForInput();
-	}
-
-	@Command(tag = "add") public void addRequest() throws InterruptedException {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("add", ((SubjectList) instanceList).getTagsAsRegex());
-		map.put("score", "[0-9]{1,13}(\\.[0-9]*)?");
-		map.put("maximum points", "[0-9]{1,13}(\\.[0-9]*)?");
-		request(map);
-		Subject toChange = ((SubjectList) instanceList).getSubject(map.get("add"));
-		toChange.setGrade(Double.parseDouble(map.get("score")), Double.parseDouble(map.get("maximum points")));
-		toChange.calcPercent();
-		update();
 	}
 }

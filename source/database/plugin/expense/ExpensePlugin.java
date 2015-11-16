@@ -25,14 +25,6 @@ public class ExpensePlugin extends InstancePlugin {
 		update();
 	}
 
-	@Command(tag = "show") public void showRequest() throws InterruptedException {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("show", "(all|current|average|month|day)");
-		request(map);
-		Terminal.printLine(instanceList.output(map));
-		Terminal.waitForInput();
-	}
-
 	public void initialise() {
 		MonthlyExpensePlugin monthlyExpensePlugin = new MonthlyExpensePlugin(pluginContainer, (ExpenseList) getInstanceList());
 		Map<String, String> map = new HashMap<String, String>();
@@ -46,5 +38,13 @@ public class ExpensePlugin extends InstancePlugin {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Command(tag = "show") public void showRequest() throws InterruptedException {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("show", "(all|current|average|month|day)");
+		request(map);
+		Terminal.printLine(instanceList.output(map));
+		Terminal.waitForInput();
 	}
 }

@@ -7,7 +7,7 @@ public class Day {
 		this.counter = counter;
 	}
 
-	public String toString() {
+	@Override public String toString() {
 		return String.valueOf(counter);
 	}
 }

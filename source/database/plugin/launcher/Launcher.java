@@ -13,19 +13,13 @@ public class Launcher extends Plugin {
 
 	public Launcher() throws IOException {
 		super("launcher");
-		this.git = new GitInterface();
-		this.news = new News();
-		this.rank = news.getCurrentRank();
+		git = new GitInterface();
+		news = new News();
+		rank = news.getCurrentRank();
 	}
 
-	@Command(tag = "push") public void push() throws IOException, GitAPIException, InterruptedException {
-		Terminal.blockInput();
-		Terminal.printRequest("pushing...");
-		long time = System.currentTimeMillis();
-		git.push();
-		time = System.currentTimeMillis() - time;
-		Terminal.printRequest("finished pushing in " + time + " ms");
-		Terminal.waitForInput();
+	@Override public String initialOutput() {
+		return rank;
 	}
 
 	@Command(tag = "pull") public void pull() throws IOException, GitAPIException, InterruptedException {
@@ -38,7 +32,13 @@ public class Launcher extends Plugin {
 		Terminal.waitForInput();
 	}
 
-	@Override public String initialOutput() {
-		return rank;
+	@Command(tag = "push") public void push() throws IOException, GitAPIException, InterruptedException {
+		Terminal.blockInput();
+		Terminal.printRequest("pushing...");
+		long time = System.currentTimeMillis();
+		git.push();
+		time = System.currentTimeMillis() - time;
+		Terminal.printRequest("finished pushing in " + time + " ms");
+		Terminal.waitForInput();
 	}
 }

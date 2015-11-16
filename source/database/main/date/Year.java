@@ -1,15 +1,15 @@
 package database.main.date;
 
 public class Year {
-	public boolean	leapYear;
 	public int		counter;
+	public boolean	leapYear;
 	public Month[]	months;
 
 	public Year(int counter) {
 		this.counter = counter;
-		this.months = new Month[12];
-		if (((counter % 4 == 0) & !(counter % 100 == 0)) | (counter % 400 == 0)) {
-			this.leapYear = true;
+		months = new Month[12];
+		if (counter % 4 == 0 & !(counter % 100 == 0) | counter % 400 == 0) {
+			leapYear = true;
 		}
 		for (int x = 0; x < 12; x++) {
 			months[x] = new Month(x + 1, this);
@@ -24,7 +24,7 @@ public class Year {
 		return dayCount;
 	}
 
-	public String toString() {
+	@Override public String toString() {
 		return String.valueOf(counter);
 	}
 }

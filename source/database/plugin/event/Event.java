@@ -17,10 +17,12 @@ public abstract class Event extends Instance {
 		return getParameter("name");
 	}
 
+	protected abstract String output();
+
 	protected Date updateYear() {
 		Date localDate = null;
 		Date currentDate = Date.getCurrentDate();
-		if (currentDate.month.counter > getDate().month.counter || (currentDate.month.counter == getDate().month.counter && currentDate.day.counter > getDate().day.counter)) {
+		if (currentDate.month.counter > getDate().month.counter || currentDate.month.counter == getDate().month.counter && currentDate.day.counter > getDate().day.counter) {
 			localDate = new Date(getDate().day.counter + "." + getDate().month.counter + "." + String.valueOf(currentDate.year.counter + 1));
 		}
 		else {
@@ -28,6 +30,4 @@ public abstract class Event extends Instance {
 		}
 		return localDate;
 	}
-
-	protected abstract String output();
 }

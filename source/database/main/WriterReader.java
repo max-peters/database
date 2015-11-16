@@ -21,18 +21,36 @@ import database.plugin.Plugin;
 import database.plugin.RequestInformation;
 
 public class WriterReader {
-	private String			storageDirectory;
-	private PluginContainer	pluginContainer;
 	private File			file;
+	private PluginContainer	pluginContainer;
+	private String			storageDirectory;
 
 	public WriterReader(PluginContainer pluginContainer) {
 		this.pluginContainer = pluginContainer;
-		this.storageDirectory = "Z:/storage.xml";
-		this.file = new File(storageDirectory);
+		storageDirectory = "Z:/storage.xml";
+		file = new File(storageDirectory);
 	}
 
 	public boolean checkDirectory() {
 		return file.exists();
+	}
+
+	public void read() throws IOException, ParserConfigurationException, SAXException {
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document doc = dBuilder.parse(file);
+		doc.getDocumentElement().normalize();
+		NodeList nList = doc.getElementsByTagName("*");
+		for (int i = 0; i < nList.getLength(); i++) {
+			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
+			if (plugin != null) {
+				RequestInformation pair = new RequestInformation(nList.item(i).getNodeName());
+				for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
+					pair.put(nList.item(i).getAttributes().item(j).getNodeName(), nList.item(i).getAttributes().item(j).getNodeValue());
+				}
+				plugin.readInformation(pair);
+			}
+		}
 	}
 
 	public void setDirectory() {
@@ -67,23 +85,5 @@ public class WriterReader {
 		serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 		serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 		serializer.transform(domSource, streamResult);
-	}
-
-	public void read() throws IOException, ParserConfigurationException, SAXException {
-		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(file);
-		doc.getDocumentElement().normalize();
-		NodeList nList = doc.getElementsByTagName("*");
-		for (int i = 0; i < nList.getLength(); i++) {
-			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
-			if (plugin != null) {
-				RequestInformation pair = new RequestInformation(nList.item(i).getNodeName());
-				for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
-					pair.put(nList.item(i).getAttributes().item(j).getNodeName(), nList.item(i).getAttributes().item(j).getNodeValue());
-				}
-				plugin.readInformation(pair);
-			}
-		}
 	}
 }

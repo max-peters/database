@@ -8,42 +8,13 @@ import database.main.PluginContainer;
 import database.main.Terminal;
 
 public abstract class InstancePlugin extends Plugin {
-	protected PluginContainer	pluginContainer;
 	protected InstanceList		instanceList;
+	protected PluginContainer	pluginContainer;
 
 	public InstancePlugin(PluginContainer pluginContainer, String identity, InstanceList instanceList) {
 		super(identity);
 		this.pluginContainer = pluginContainer;
 		this.instanceList = instanceList;
-	}
-
-	@Override public String initialOutput() {
-		String initialOutput = instanceList.initialOutput();
-		if (initialOutput != null && !initialOutput.isEmpty()) {
-			initialOutput = identity + ":\r\n" + initialOutput;
-		}
-		return initialOutput;
-	}
-
-	@Override public List<RequestInformation> getInformationList() {
-		List<RequestInformation> list = new ArrayList<RequestInformation>();
-		for (int i = 0; i < getList().size(); i++) {
-			list.add(new RequestInformation("entry", getList().get(i).getParameter()));
-		}
-		list.add(new RequestInformation("display", "boolean", String.valueOf(getDisplay())));
-		return list;
-	}
-
-	@Override public void readInformation(RequestInformation pair) throws IOException {
-		if (pair.getName().equals("entry")) {
-			create(pair.getMap());
-		}
-		else if (pair.getName().equals("display")) {
-			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
-		}
-		else {
-			throw new IOException();
-		}
 	}
 
 	public Instance check() throws InterruptedException {
@@ -63,16 +34,45 @@ public abstract class InstancePlugin extends Plugin {
 		instanceList.add(map);
 	}
 
-	public void remove(Instance toRemove) {
-		instanceList.remove(toRemove);
-		update();
+	@Override public List<RequestInformation> getInformationList() {
+		List<RequestInformation> list = new ArrayList<RequestInformation>();
+		for (int i = 0; i < getList().size(); i++) {
+			list.add(new RequestInformation("entry", getList().get(i).getParameter()));
+		}
+		list.add(new RequestInformation("display", "boolean", String.valueOf(getDisplay())));
+		return list;
+	}
+
+	public InstanceList getInstanceList() {
+		return instanceList;
 	}
 
 	public ArrayList<Instance> getList() {
 		return instanceList.getList();
 	}
 
-	public InstanceList getInstanceList() {
-		return instanceList;
+	@Override public String initialOutput() {
+		String initialOutput = instanceList.initialOutput();
+		if (initialOutput != null && !initialOutput.isEmpty()) {
+			initialOutput = identity + ":\r\n" + initialOutput;
+		}
+		return initialOutput;
+	}
+
+	@Override public void readInformation(RequestInformation pair) throws IOException {
+		if (pair.getName().equals("entry")) {
+			create(pair.getMap());
+		}
+		else if (pair.getName().equals("display")) {
+			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
+		}
+		else {
+			throw new IOException();
+		}
+	}
+
+	public void remove(Instance toRemove) {
+		instanceList.remove(toRemove);
+		update();
 	}
 }

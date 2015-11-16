@@ -14,20 +14,8 @@ public class Refilling extends Instance {
 		createExpense(expenseList);
 	}
 
-	protected Double getValue() {
-		return Double.valueOf(getParameter("value"));
-	}
-
-	protected Double getDistance() {
-		return Double.valueOf(getParameter("distance"));
-	}
-
-	protected Double getRefuelAmount() {
-		return Double.valueOf(getParameter("refuelAmount"));
-	}
-
-	protected Date getDate() {
-		return new Date(getParameter("date"));
+	public double calcAverageConsumption() {
+		return Math.round(getRefuelAmount() / getDistance() * 1000) / 10.0;
 	}
 
 	public int getCount() {
@@ -43,7 +31,19 @@ public class Refilling extends Instance {
 		expenseList.add(map);
 	}
 
-	public double calcAverageConsumption() {
-		return Math.round(getRefuelAmount() / getDistance() * 1000) / 10.0;
+	protected Date getDate() {
+		return new Date(getParameter("date"));
+	}
+
+	protected Double getDistance() {
+		return Double.valueOf(getParameter("distance"));
+	}
+
+	protected Double getRefuelAmount() {
+		return Double.valueOf(getParameter("refuelAmount"));
+	}
+
+	protected Double getValue() {
+		return Double.valueOf(getParameter("value"));
 	}
 }

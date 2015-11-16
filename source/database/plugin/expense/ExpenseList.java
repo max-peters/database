@@ -19,6 +19,11 @@ public class ExpenseList extends InstanceList {
 		getList().add(i, expense);
 	}
 
+	@Override public String initialOutput() {
+		DecimalFormat format = new DecimalFormat("#0.00");
+		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month)) + "€";
+	}
+
 	@Override public String output(Map<String, String> map) {
 		String print = null;
 		switch (map.get("show")) {
@@ -47,9 +52,35 @@ public class ExpenseList extends InstanceList {
 		return print;
 	}
 
-	@Override public String initialOutput() {
+	private ArrayList<Month> getMonths() {
+		ArrayList<Month> months = new ArrayList<Month>();
+		for (Instance instance : getList()) {
+			Expense expense = (Expense) instance;
+			if (!months.contains(expense.getDate().month)) {
+				months.add(expense.getDate().month);
+			}
+		}
+		return months;
+	}
+
+	private String outputAverageDay() {
 		DecimalFormat format = new DecimalFormat("#0.00");
-		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month)) + "€";
+		double value = 0;
+		int dayCounter = 0;
+		for (Month month : getMonths()) {
+			value = value + value(month);
+			dayCounter = dayCounter + month.getDayCount();
+		}
+		return "average value per day: " + format.format(value / dayCounter) + "€";
+	}
+
+	private String outputAverageMonth() {
+		DecimalFormat format = new DecimalFormat("#0.00");
+		double value = 0;
+		for (Month month : getMonths()) {
+			value = value + value(month);
+		}
+		return "average value per month: " + format.format(value / getMonths().size()) + "€";
 	}
 
 	private String outputIntervall(Month month) {
@@ -64,7 +95,7 @@ public class ExpenseList extends InstanceList {
 		ArrayList<String> names;
 		for (Instance instance : getList()) {
 			Expense expense = (Expense) instance;
-			if (expense.checkValidity(month) && !(categories.contains(expense.getCategory()))) {
+			if (expense.checkValidity(month) && !categories.contains(expense.getCategory())) {
 				categories.add(expense.getCategory());
 			}
 			if (expense.checkValidity(month) && expense.getName().length() > nameLength) {
@@ -80,7 +111,7 @@ public class ExpenseList extends InstanceList {
 			names = new ArrayList<String>();
 			for (Instance instance : getList()) {
 				Expense expense = (Expense) instance;
-				if (expense.checkValidity(month) && expense.getCategory().equals(current) && !(names.contains(expense.getName()))) {
+				if (expense.checkValidity(month) && expense.getCategory().equals(current) && !names.contains(expense.getName())) {
 					names.add(expense.getName());
 				}
 			}
@@ -95,7 +126,7 @@ public class ExpenseList extends InstanceList {
 						value = value + expense.getValue();
 					}
 				}
-				blankCounter = (nameLength - name.length() + 1) + valueLength - format.format(value).length();
+				blankCounter = nameLength - name.length() + 1 + valueLength - format.format(value).length();
 				for (int i = 0; i < blankCounter; i++) {
 					blanks = blanks + " ";
 				}
@@ -103,26 +134,6 @@ public class ExpenseList extends InstanceList {
 			}
 		}
 		return toReturn;
-	}
-
-	private String outputAverageMonth() {
-		DecimalFormat format = new DecimalFormat("#0.00");
-		double value = 0;
-		for (Month month : getMonths()) {
-			value = value + value(month);
-		}
-		return "average value per month: " + format.format(value / getMonths().size()) + "€";
-	}
-
-	private String outputAverageDay() {
-		DecimalFormat format = new DecimalFormat("#0.00");
-		double value = 0;
-		int dayCounter = 0;
-		for (Month month : getMonths()) {
-			value = value + value(month);
-			dayCounter = dayCounter + month.getDayCount();
-		}
-		return "average value per day: " + format.format(value / dayCounter) + "€";
 	}
 
 	private String outputMonth() {
@@ -143,16 +154,5 @@ public class ExpenseList extends InstanceList {
 			}
 		}
 		return value;
-	}
-
-	private ArrayList<Month> getMonths() {
-		ArrayList<Month> months = new ArrayList<Month>();
-		for (Instance instance : getList()) {
-			Expense expense = (Expense) instance;
-			if (!months.contains(expense.getDate().month)) {
-				months.add(expense.getDate().month);
-			}
-		}
-		return months;
 	}
 }

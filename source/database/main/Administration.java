@@ -26,6 +26,23 @@ public class Administration {
 		}
 	}
 
+	private void exit() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
+		if (pluginContainer.getChanges()) {
+			String command;
+			command = Terminal.request("there are unsaved changes - exit", "(y|n|s)");
+			switch (command) {
+				case "s":
+					save();
+					//$FALL-THROUGH$
+				case "y":
+					System.exit(0);
+			}
+		}
+		else {
+			System.exit(0);
+		}
+	}
+
 	private void inputRequestAdministration()	throws InterruptedException, IOException, TransformerException, GitAPIException, IllegalArgumentException,
 												ParserConfigurationException, IllegalAccessException, InvocationTargetException {
 		String command = null;
@@ -39,7 +56,7 @@ public class Administration {
 			else if (command.matches("(check|exit|save)")) {
 				switch (command) {
 					case "check":
-						InstancePlugin taskPlugin = ((InstancePlugin) pluginContainer.getPlugin("task"));
+						InstancePlugin taskPlugin = (InstancePlugin) pluginContainer.getPlugin("task");
 						boolean taskDisplay = taskPlugin.getDisplay();
 						taskPlugin.setDisplay(false);
 						Terminal.update();
@@ -72,22 +89,5 @@ public class Administration {
 		writerReader.write();
 		pluginContainer.setUnchanged();
 		Terminal.printRequest("saved");
-	}
-
-	private void exit() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
-		if (pluginContainer.getChanges()) {
-			String command;
-			command = Terminal.request("there are unsaved changes - exit", "(y|n|s)");
-			switch (command) {
-				case "s":
-					save();
-					//$FALL-THROUGH$
-				case "y":
-					System.exit(0);
-			}
-		}
-		else {
-			System.exit(0);
-		}
 	}
 }

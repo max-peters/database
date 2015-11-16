@@ -14,17 +14,31 @@ import database.plugin.Plugin;
 import database.plugin.RequestInformation;
 
 public class Storage extends Plugin {
-	private ArrayList<String>	storage;
 	private PluginContainer		pluginContainer;
+	private ArrayList<String>	storage;
 
 	public Storage(PluginContainer pluginContainer) {
 		super("storage");
 		this.pluginContainer = pluginContainer;
-		this.storage = new ArrayList<String>();
+		storage = new ArrayList<String>();
+	}
+
+	@Override public List<RequestInformation> getInformationList() {
+		List<RequestInformation> list = new ArrayList<RequestInformation>();
+		for (String string : storage) {
+			RequestInformation pair = new RequestInformation("entry");
+			pair.put("string", string);
+			list.add(pair);
+		}
+		return list;
 	}
 
 	public ArrayList<String> getStorage() {
 		return storage;
+	}
+
+	@Override public void readInformation(RequestInformation pair) {
+		storage.addAll(pair.getMap().values());
 	}
 
 	@Command(tag = "store") public void storeRequest() throws InterruptedException {
@@ -50,19 +64,5 @@ public class Storage extends Plugin {
 		}
 		instancePlugin.getList().clear();
 		instancePlugin.update();
-	}
-
-	@Override public List<RequestInformation> getInformationList() {
-		List<RequestInformation> list = new ArrayList<RequestInformation>();
-		for (String string : storage) {
-			RequestInformation pair = new RequestInformation("entry");
-			pair.put("string", string);
-			list.add(pair);
-		}
-		return list;
-	}
-
-	@Override public void readInformation(RequestInformation pair) {
-		storage.addAll(pair.getMap().values());
 	}
 }

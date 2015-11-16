@@ -33,10 +33,24 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	@Override public void remove(Instance toRemove) {
+	@Override public List<RequestInformation> getInformationList() {
+		List<RequestInformation> list = new ArrayList<RequestInformation>();
 		for (InstancePlugin extention : extentionList) {
-			extention.getList().remove(toRemove);
+			for (Instance instance : extention.getList()) {
+				Map<String, String> map = instance.getParameter();
+				list.add(new RequestInformation(extention.getIdentity(), map));
+			}
 		}
+		list.add(new RequestInformation("display", "boolean", String.valueOf(getDisplay())));
+		return list;
+	}
+
+	@Override public ArrayList<Instance> getList() {
+		ArrayList<Instance> instances = new ArrayList<Instance>();
+		for (InstancePlugin extention : extentionList) {
+			instances.addAll(extention.getList());
+		}
+		return instances;
 	}
 
 	@Override public String initialOutput() {
@@ -62,33 +76,7 @@ public class EventPlugin extends InstancePlugin {
 		return initialOutput;
 	}
 
-	@Override public ArrayList<Instance> getList() {
-		ArrayList<Instance> instances = new ArrayList<Instance>();
-		for (InstancePlugin extention : extentionList) {
-			instances.addAll(extention.getList());
-		}
-		return instances;
-	}
-
-	private void initialise() throws IOException {
-		extentionList.add(new AllDayEventPlugin(pluginContainer));
-		extentionList.add(new BirthdayPlugin(pluginContainer));
-		extentionList.add(new HolidayPlugin(pluginContainer));
-	}
-
-	public List<RequestInformation> getInformationList() {
-		List<RequestInformation> list = new ArrayList<RequestInformation>();
-		for (InstancePlugin extention : extentionList) {
-			for (Instance instance : extention.getList()) {
-				Map<String, String> map = instance.getParameter();
-				list.add(new RequestInformation(extention.getIdentity(), map));
-			}
-		}
-		list.add(new RequestInformation("display", "boolean", String.valueOf(getDisplay())));
-		return list;
-	}
-
-	public void readInformation(RequestInformation pair) throws IOException {
+	@Override public void readInformation(RequestInformation pair) throws IOException {
 		if (pair.getName().equals("display")) {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}
@@ -98,6 +86,12 @@ public class EventPlugin extends InstancePlugin {
 					extention.create(pair.getMap());
 				}
 			}
+		}
+	}
+
+	@Override public void remove(Instance toRemove) {
+		for (InstancePlugin extention : extentionList) {
+			extention.getList().remove(toRemove);
 		}
 	}
 
@@ -120,5 +114,11 @@ public class EventPlugin extends InstancePlugin {
 			}
 		}
 		return toReturn;
+	}
+
+	private void initialise() throws IOException {
+		extentionList.add(new AllDayEventPlugin(pluginContainer));
+		extentionList.add(new BirthdayPlugin(pluginContainer));
+		extentionList.add(new HolidayPlugin(pluginContainer));
 	}
 }

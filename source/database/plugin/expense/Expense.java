@@ -11,16 +11,12 @@ public class Expense extends Instance {
 		parameter.replace("value", String.valueOf(Double.valueOf(getParameter("value"))));
 	}
 
-	protected Date getDate() {
-		return new Date(getParameter("date"));
+	public String getCategory() {
+		return getParameter("category");
 	}
 
 	public String getName() {
 		return getParameter("name");
-	}
-
-	public String getCategory() {
-		return getParameter("category");
 	}
 
 	public Double getValue() {
@@ -32,5 +28,9 @@ public class Expense extends Instance {
 			return true;
 		}
 		return false;
+	}
+
+	protected Date getDate() {
+		return new Date(getParameter("date"));
 	}
 }

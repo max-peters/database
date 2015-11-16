@@ -9,19 +9,19 @@ public abstract class Instance {
 		this.parameter = parameter;
 	}
 
-	public String getParameter(String key) {
-		return parameter.get(key);
-	}
-
-	protected void setParameter(String key, String value) {
-		parameter.replace(key, value);
+	public String getIdentity() {
+		return toString();
 	}
 
 	public Map<String, String> getParameter() {
 		return parameter;
 	}
 
-	public String getIdentity() {
-		return toString();
+	public String getParameter(String key) {
+		return parameter.get(key);
+	}
+
+	protected void setParameter(String key, String value) {
+		parameter.replace(key, value);
 	}
 }

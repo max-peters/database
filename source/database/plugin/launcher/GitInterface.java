@@ -23,21 +23,29 @@ public class GitInterface {
 		initialise("C:\\Users\\Max\\Desktop\\Studium\\.git");
 	}
 
-	public void push() throws IOException, GitAPIException {
-		for (Git git : repositories) {
-			push(git);
-		}
-	}
-
 	public void pull() throws IOException, GitAPIException {
 		for (Git git : repositories) {
 			pull(git);
 		}
 	}
 
+	public void push() throws IOException, GitAPIException {
+		for (Git git : repositories) {
+			push(git);
+		}
+	}
+
 	private void initialise(String repository) throws IOException {
 		if (new File(repository).exists()) {
 			repositories.add(new Git(new FileRepositoryBuilder().setGitDir(new File(repository)).readEnvironment().findGitDir().build()));
+		}
+	}
+
+	private void pull(Git git) throws InvalidRemoteException, TransportException, GitAPIException {
+		if (!git.status().call().isClean()) {
+			git.fetch().setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
+			git.reset().setMode(ResetCommand.ResetType.HARD).setRef("server/master").call();
+			git.clean().setCleanDirectories(true).call();
 		}
 	}
 
@@ -48,14 +56,6 @@ public class GitInterface {
 			git.push().setForce(true).setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
 			git.getRepository().close();
 			git.close();
-		}
-	}
-
-	private void pull(Git git) throws InvalidRemoteException, TransportException, GitAPIException {
-		if (!git.status().call().isClean()) {
-			git.fetch().setRemote("server").setCredentialsProvider(new UsernamePasswordCredentialsProvider("maxptrs@git.hidrive.strato.com", "***REMOVED***")).call();
-			git.reset().setMode(ResetCommand.ResetType.HARD).setRef("server/master").call();
-			git.clean().setCleanDirectories(true).call();
 		}
 	}
 }

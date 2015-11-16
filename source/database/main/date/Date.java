@@ -5,6 +5,30 @@ import java.util.Calendar;
 import java.util.regex.Pattern;
 
 public class Date implements Comparable<Date> {
+	public static Date getCurrentDate() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.getTime();
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		return new Date(format.format(calendar.getTime()));
+	}
+
+	public static String getDateAsString() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.getTime();
+		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+		return format.format(calendar.getTime());
+	}
+
+	public static boolean testDateString(String dateInformation) {
+		try {
+			new Date(dateInformation);
+		}
+		catch (Throwable e) {
+			return false;
+		}
+		return true;
+	}
+
 	public Day		day;
 	public Month	month;
 	public Year		year;
@@ -43,13 +67,8 @@ public class Date implements Comparable<Date> {
 		}
 	}
 
-	public String toString() {
-		return String.format("%2s", day.counter).replace(' ', '0') + "." + String.format("%2s", month.counter).replace(' ', '0') + "."
-				+ String.format("%4s", year.counter).replace(' ', '0');
-	}
-
-	public int compareTo(Date date) {
-		int startYear = this.year.counter < date.year.counter ? this.year.counter : date.year.counter;
+	@Override public int compareTo(Date date) {
+		int startYear = year.counter < date.year.counter ? year.counter : date.year.counter;
 		return calculateDaySum(this, startYear) - calculateDaySum(date, startYear);
 	}
 
@@ -59,6 +78,11 @@ public class Date implements Comparable<Date> {
 
 	public boolean isToday() {
 		return getCurrentDate().compareTo(this) == 0;
+	}
+
+	@Override public String toString() {
+		return String.format("%2s", day.counter).replace(' ', '0') + "." + String.format("%2s", month.counter).replace(' ', '0') + "."
+				+ String.format("%4s", year.counter).replace(' ', '0');
 	}
 
 	private int calculateDaySum(Date date, int startYear) {
@@ -76,29 +100,5 @@ public class Date implements Comparable<Date> {
 			sum = currentYear.getDayCount() + sum;
 		}
 		return sum;
-	}
-
-	public static Date getCurrentDate() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.getTime();
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-		return new Date(format.format(calendar.getTime()));
-	}
-
-	public static String getDateAsString() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.getTime();
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-		return format.format(calendar.getTime());
-	}
-
-	public static boolean testDateString(String dateInformation) {
-		try {
-			new Date(dateInformation);
-		}
-		catch (Throwable e) {
-			return false;
-		}
-		return true;
 	}
 }

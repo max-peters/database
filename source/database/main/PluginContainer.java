@@ -8,15 +8,23 @@ public class PluginContainer {
 	private ArrayList<Plugin> plugins;
 
 	public PluginContainer() {
-		this.plugins = new ArrayList<Plugin>();
+		plugins = new ArrayList<Plugin>();
 	}
 
 	public void addPlugin(Plugin plugin) {
 		plugins.add(plugin);
 	}
 
-	public ArrayList<Plugin> getPlugins() {
-		return plugins;
+	public boolean getChanges() {
+		for (Plugin plugin : plugins) {
+			if (plugin instanceof InstancePlugin) {
+				InstancePlugin current = (InstancePlugin) plugin;
+				if (current.getChanges()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public Plugin getPlugin(String identity) {
@@ -39,16 +47,8 @@ public class PluginContainer {
 		return regex + ")";
 	}
 
-	public boolean getChanges() {
-		for (Plugin plugin : plugins) {
-			if (plugin instanceof InstancePlugin) {
-				InstancePlugin current = (InstancePlugin) plugin;
-				if (current.getChanges()) {
-					return true;
-				}
-			}
-		}
-		return false;
+	public ArrayList<Plugin> getPlugins() {
+		return plugins;
 	}
 
 	public void setUnchanged() {

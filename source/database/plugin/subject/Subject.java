@@ -13,10 +13,6 @@ public class Subject extends Instance {
 		parameter.putIfAbsent("counter", "0");
 	}
 
-	protected double calcPercent() {
-		return getScore() / getMaxPoints() * 100;
-	}
-
 	private Integer getCounter() {
 		return Integer.valueOf(getParameter("counter"));
 	}
@@ -37,6 +33,22 @@ public class Subject extends Instance {
 		return Double.valueOf(getParameter("score"));
 	}
 
+	private void setCounter(int counter) {
+		setParameter("counter", String.valueOf(counter));
+	}
+
+	private void setMaxPoints(double maxPoints) {
+		setParameter("maxPoints", String.valueOf(maxPoints));
+	}
+
+	private void setScore(double score) {
+		setParameter("score", String.valueOf(score));
+	}
+
+	protected double calcPercent() {
+		return getScore() / getMaxPoints() * 100;
+	}
+
 	protected String getTag() {
 		return getParameter("tag");
 	}
@@ -52,12 +64,12 @@ public class Subject extends Instance {
 		int nameLength = 0;
 		for (Instance instance : instances) {
 			Subject current = (Subject) instance;
-			allGradesLength = (oneDecimalPlace.format(current.getScore()).length() > allGradesLength) ? oneDecimalPlace.format(current.getScore()).length() : allGradesLength;
-			allGradesTotalLength = (oneDecimalPlace.format(current.getMaxPoints()).length() > allGradesTotalLength)	? oneDecimalPlace.format(current.getMaxPoints()).length()
+			allGradesLength = oneDecimalPlace.format(current.getScore()).length() > allGradesLength ? oneDecimalPlace.format(current.getScore()).length() : allGradesLength;
+			allGradesTotalLength = oneDecimalPlace.format(current.getMaxPoints()).length() > allGradesTotalLength	? oneDecimalPlace.format(current.getMaxPoints()).length()
 																													: allGradesTotalLength;
-			percentLength = (twoDecimalPlace.format(current.calcPercent()).length() > percentLength) ? twoDecimalPlace.format(current.calcPercent()).length() : percentLength;
-			counterLength = (current.getCounterStringLength() > counterLength) ? current.getCounterStringLength() : counterLength;
-			nameLength = (current.getName().length() > nameLength) ? current.getName().length() : nameLength;
+			percentLength = twoDecimalPlace.format(current.calcPercent()).length() > percentLength ? twoDecimalPlace.format(current.calcPercent()).length() : percentLength;
+			counterLength = current.getCounterStringLength() > counterLength ? current.getCounterStringLength() : counterLength;
+			nameLength = current.getName().length() > nameLength ? current.getName().length() : nameLength;
 		}
 		toPrint = getName();
 		for (toPrint.length(); toPrint.length() < nameLength + 4;) {
@@ -81,21 +93,9 @@ public class Subject extends Instance {
 		return toPrint;
 	}
 
-	private void setCounter(int counter) {
-		setParameter("counter", String.valueOf(counter));
-	}
-
 	protected void setGrade(double newScore, double newMaxPoint) {
 		setCounter(getCounter() + 1);
 		setMaxPoints(getMaxPoints() + newMaxPoint);
 		setScore(getScore() + newScore);
-	}
-
-	private void setMaxPoints(double maxPoints) {
-		setParameter("maxPoints", String.valueOf(maxPoints));
-	}
-
-	private void setScore(double score) {
-		setParameter("score", String.valueOf(score));
 	}
 }

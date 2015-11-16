@@ -63,14 +63,14 @@ public class Month {
 		else {
 			throw new IllegalArgumentException();
 		}
-		this.days = new Day[dayCount];
+		days = new Day[dayCount];
 		for (int i = 0; i < dayCount; i++) {
-			this.days[i] = new Day(i + 1);
+			days[i] = new Day(i + 1);
 		}
 		this.year = year;
 	}
 
-	public boolean equals(Object object) {
+	@Override public boolean equals(Object object) {
 		if (object == null || !object.getClass().equals(Month.class)) {
 			return false;
 		}
@@ -87,7 +87,7 @@ public class Month {
 		return days.length;
 	}
 
-	public String toString() {
+	@Override public String toString() {
 		return String.valueOf(counter);
 	}
 }
