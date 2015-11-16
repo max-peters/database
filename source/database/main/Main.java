@@ -50,7 +50,7 @@ public class Main {
 			}
 			Terminal.initialOutput();
 			expensePlugin.initialise();
-			graphicalUserInterface.showInterface();
+			graphicalUserInterface.setVisible(true);
 			Terminal.printCollectedLines();
 			administration.request();
 		}

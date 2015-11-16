@@ -28,8 +28,7 @@ import javax.swing.UIManager;
 import database.main.date.Date;
 import database.main.date.Time;
 
-public class GraphicalUserInterface {
-	private JFrame			frame						= new JFrame("Database");
+public class GraphicalUserInterface extends JFrame {
 	private Object			synchronizerInputConfirm	= new Object();
 	private Object			synchronizerNewInput		= new Object();
 	private Object			synchronizerKeyInput		= new Object();
@@ -48,6 +47,7 @@ public class GraphicalUserInterface {
 	private String			inputText;
 
 	public GraphicalUserInterface() throws IOException, FontFormatException {
+		super("Database");
 		UIManager.put("ProgressMonitor.progressText", "loading database");
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		InputStream inputStream = classLoader.getResourceAsStream("DejaVuSansMono.ttf");
@@ -88,9 +88,9 @@ public class GraphicalUserInterface {
 			public void keyTyped(KeyEvent e) {}
 		};
 		panel.setLayout(new BorderLayout(0, 0));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setIconImage(icon);
-		frame.setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setIconImage(icon);
+		setResizable(false);
 		time.setEditable(false);
 		time.setEnabled(false);
 		time.setFont(font);
@@ -130,24 +130,19 @@ public class GraphicalUserInterface {
 		scrollPane.setViewportBorder(null);
 		scrollPane.setBorder(null);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(10);
-		frame.setContentPane(scrollPane);
+		setContentPane(scrollPane);
 	}
 
 	public void setBounds(String longestString) {
 		int width = output.getFontMetrics(font).stringWidth(longestString) + 25;
 		int height = width * 2 / 3;
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		frame.setSize(width, height);
-		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
-		// frame.setBounds(670, 330, 700, 475);
+		setSize(width, height);
+		setLocation(dim.width / 2 - getSize().width / 2, dim.height / 2 - getSize().height / 2);
 	}
 
 	private void moveTextField(int steps) {
 		input.setBounds(0, steps * 18, 670, 20);
-	}
-
-	public void showInterface() {
-		frame.setVisible(true);
 	}
 
 	protected void clear() {
@@ -278,7 +273,7 @@ public class GraphicalUserInterface {
 		for (StackTraceElement element : e.getStackTrace()) {
 			stackTrace = stackTrace + "\r\n" + element;
 		}
-		JOptionPane.showMessageDialog(frame, stackTrace, e.getClass().getName(), JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(this, stackTrace, e.getClass().getName(), JOptionPane.INFORMATION_MESSAGE);
 	}
 }
 
