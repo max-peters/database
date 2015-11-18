@@ -76,10 +76,10 @@ public class Subject extends Instance {
 			toPrint = toPrint + " ";
 		}
 		if (getCounter() != 0) {
-			toPrint = toPrint + "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(getScore())) + "/"
-					+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(getMaxPoints())) + " - "
-					+ String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent())) + "%" + "]" + " in ["
-					+ String.format("%" + counterLength + "s", getCounter()).replace(' ', '0') + "] ";
+			toPrint = toPrint+ "[" + String.format("%" + allGradesLength + "s", oneDecimalPlace.format(getScore())) + "/"
+						+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(getMaxPoints())) + " - "
+						+ String.format("%" + percentLength + "s", twoDecimalPlace.format(calcPercent())) + "%" + "]" + " in ["
+						+ String.format("%" + counterLength + "s", getCounter()).replace(' ', '0') + "] ";
 			if (getCounter() == 1) {
 				toPrint += "Blatt";
 			}
