@@ -20,8 +20,8 @@ public class RefillingList extends InstanceList {
 	@Override public String initialOutput() {
 		String output = "";
 		if (!getList().isEmpty()) {
-			output = "[" + getList().size() + "] " + "distance: " + "[" + getDistanceTotal() + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal() + " l" + "] "
-					+ "averageConsumption: " + "[" + getAverageConsumptionTotal() + " l/km" + "]";
+			output = "["+ getList().size() + "] " + "distance: " + "[" + getDistanceTotal() + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal() + " l" + "] "
+						+ "averageConsumption: " + "[" + getAverageConsumptionTotal() + " l/km" + "]";
 		}
 		return output;
 	}
@@ -63,16 +63,12 @@ public class RefillingList extends InstanceList {
 	}
 
 	private String singleOutput(Refilling refilling) {
-		return "[" + String.format("%" + String.valueOf(getList().size()).length() + "s", refilling.getCount()).replace(' ', '0') + "] distance: ["
-				+ String.format("%" + String.valueOf(getHighestDistance()).length() + "s", refilling.getDistance()) + " km] refuelAmount: [" + String
-																																						.format("%"
-																																								+ String.valueOf(String.format(	"%.1f",
-																																																getHighestRefuelAmount()))
-																																										.length()
-																																								+ "s",
-																																								String.format(	"%.1f",
-																																												refilling.getRefuelAmount()))
-																																						.replace(",", ".")
+		return "["+ String.format("%" + String.valueOf(getList().size()).length() + "s", refilling.getCount()).replace(' ', '0')
+				+ "] distance: [" + String.format("%"+ String.valueOf(getHighestDistance()).length() + "s",
+													refilling.getDistance())
+				+ " km] refuelAmount: ["
+				+ String.format("%" + String.valueOf(String.format("%.1f", getHighestRefuelAmount())).length() + "s", String.format("%.1f", refilling.getRefuelAmount()))
+						.replace(",", ".")
 				+ " l] averageConsumption: [" + String.format("%" + String.valueOf(getHighestAverageConsumption()).length() + "s", refilling.calcAverageConsumption()) + " l/km]";
 	}
 
