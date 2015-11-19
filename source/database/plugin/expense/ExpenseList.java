@@ -118,8 +118,8 @@ public class ExpenseList extends InstanceList {
 			Collections.sort(names);
 			for (String name : names) {
 				value = 0;
-				blanks = "";
-				toReturn = toReturn + "-" + name;
+				blanks = "      ";
+				toReturn = toReturn + "  - " + name;
 				for (Instance instance : getList()) {
 					Expense expense = (Expense) instance;
 					if (expense.checkValidity(month) && expense.getCategory().equals(current) && expense.getName().equals(name)) {
