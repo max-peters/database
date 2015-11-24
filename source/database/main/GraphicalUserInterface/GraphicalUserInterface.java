@@ -1,4 +1,4 @@
-package database.main;
+package database.main.GraphicalUserInterface;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -22,8 +22,12 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 import database.main.date.Date;
 import database.main.date.Time;
 
@@ -34,8 +38,6 @@ public class GraphicalUserInterface extends JFrame {
 	private JTextField		input						= new JTextField();
 	private String			inputText;
 	private List<String>	linesToWrite				= new ArrayList<String>();
-	private JTextArea		output						= new JTextArea();
-	private JTextArea		outputChangeable			= new JTextArea();
 	private JPanel			panel						= new JPanel();
 	private int				pressedKey;
 	private List<String>	requestsToWrite				= new ArrayList<String>();
@@ -45,6 +47,7 @@ public class GraphicalUserInterface extends JFrame {
 	private Object			synchronizerNewInput		= new Object();
 	private JTextField		time						= new JTextField();
 	private Timer			timer						= new Timer();
+	private JTextPane		textPane					= new JTextPane();
 
 	public GraphicalUserInterface() throws IOException, FontFormatException {
 		super("Database");
@@ -97,13 +100,13 @@ public class GraphicalUserInterface extends JFrame {
 		time.setBackground(Color.BLACK);
 		time.setDisabledTextColor(Color.WHITE);
 		panel.add(time, BorderLayout.NORTH);
-		output.setEditable(false);
-		output.setEnabled(false);
-		output.setFont(font);
-		output.setBorder(null);
-		output.setBackground(Color.BLACK);
-		output.setDisabledTextColor(Color.WHITE);
-		panel.add(output, BorderLayout.CENTER);
+		textPane.setEditable(false);
+		textPane.setEnabled(false);
+		textPane.setFont(font);
+		textPane.setBorder(null);
+		textPane.setBackground(Color.BLACK);
+		textPane.setDisabledTextColor(Color.WHITE);
+		panel.add(textPane, BorderLayout.CENTER);
 		input.setBorder(null);
 		input.setFont(font);
 		input.setCaretColor(Color.WHITE);
@@ -111,16 +114,7 @@ public class GraphicalUserInterface extends JFrame {
 		input.setForeground(Color.WHITE);
 		input.addActionListener(inputListener);
 		input.addKeyListener(keyListener);
-		output.add(input, BorderLayout.AFTER_LAST_LINE);
-		outputChangeable.setBorder(null);
-		outputChangeable.setFont(font);
-		outputChangeable.setCaretColor(Color.BLACK);
-		outputChangeable.setBackground(Color.BLACK);
-		outputChangeable.setForeground(Color.WHITE);
-		outputChangeable.setEditable(false);
-		outputChangeable.setVisible(false);
-		outputChangeable.addKeyListener(keyListenerDetail);
-		output.add(outputChangeable, BorderLayout.AFTER_LAST_LINE);
+		textPane.add(input, BorderLayout.AFTER_LAST_LINE);
 		timer.scheduleAtFixedRate(new UpdateTime(time), 0, 500);
 		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
 		scrollPane.getViewport().setBorder(null);
@@ -128,6 +122,7 @@ public class GraphicalUserInterface extends JFrame {
 		scrollPane.setBorder(null);
 		scrollPane.getVerticalScrollBar().setUnitIncrement(10);
 		setContentPane(scrollPane);
+		panel.add(textPane);
 	}
 
 	public String readLine() throws InterruptedException {
@@ -138,7 +133,7 @@ public class GraphicalUserInterface extends JFrame {
 	}
 
 	public void setBounds(String longestString) {
-		frameWidth = output.getFontMetrics(font).stringWidth(longestString) + 25;
+		frameWidth = textPane.getFontMetrics(font).stringWidth(longestString) + 25;
 		setSize(frameWidth, frameWidth * 2 / 3);
 		input.setSize(frameWidth - 10, input.getFontMetrics(font).getHeight());
 	}
@@ -184,91 +179,101 @@ public class GraphicalUserInterface extends JFrame {
 		input.setLocation(0, steps * input.getFontMetrics(font).getHeight());
 	}
 
-	protected void blockInput() {
+	public void blockInput() {
 		input.setEditable(false);
 		input.setFocusable(false);
 		input.setCaretColor(Color.BLACK);
 	}
 
-	protected int checkRequest(ArrayList<String> strings) throws InterruptedException {
-		int position = -1;
-		int height = input.getFontMetrics(font).getHeight();
-		Terminal.printRequest("check:");
-		if (strings.isEmpty()) {
-			Terminal.printLine("no entries");
-			waitForInput();
-			return position;
-		}
-		int current = 0;
-		input.setVisible(false);
-		outputChangeable.setBounds(0, height * requestsToWrite.size(), frameWidth - 10, height * strings.size());
-		outputChangeable.setVisible(true);
-		outputChangeable.grabFocus();
-		while (pressedKey != 10) {
-			outputChangeable.setText(formatCheckLine(strings, current));
-			synchronized (synchronizerKeyInput) {
-				synchronizerKeyInput.wait();
-			}
-			if (pressedKey == 40) {
-				current++;
-			}
-			if (pressedKey == 38) {
-				current--;
-			}
-			if (current < 0) {
-				current = 0;
-			}
-			if (current > strings.size()) {
-				current = strings.size();
-			}
-		}
-		if (current != 0) {
-			position = current - 1;
-		}
-		outputChangeable.setVisible(false);
-		outputChangeable.setText("");
-		pressedKey = 0;
-		input.setVisible(true);
-		input.grabFocus();
-		return position;
+	public int checkRequest(ArrayList<String> strings) throws InterruptedException {
+		// int position = -1;
+		// int height = input.getFontMetrics(font).getHeight();
+		// Terminal.printRequest("check:");
+		// if (strings.isEmpty()) {
+		// Terminal.printLine("no entries");
+		// waitForInput();
+		// return position;
+		// }
+		// int current = 0;
+		// input.setVisible(false);
+		// outputChangeable.setBounds(0, height * requestsToWrite.size(), frameWidth - 10, height * strings.size());
+		// outputChangeable.setVisible(true);
+		// outputChangeable.grabFocus();
+		// while (pressedKey != 10) {
+		// outputChangeable.setText(formatCheckLine(strings, current));
+		// synchronized (synchronizerKeyInput) {
+		// synchronizerKeyInput.wait();
+		// }
+		// if (pressedKey == 40) {
+		// current++;
+		// }
+		// if (pressedKey == 38) {
+		// current--;
+		// }
+		// if (current < 0) {
+		// current = 0;
+		// }
+		// if (current > strings.size()) {
+		// current = strings.size();
+		// }
+		// }
+		// if (current != 0) {
+		// position = current - 1;
+		// }
+		// outputChangeable.setVisible(false);
+		// outputChangeable.setText("");
+		// pressedKey = 0;
+		// input.setVisible(true);
+		// input.grabFocus();
+		// return position;
+		return 0;
 	}
 
-	protected void clear() {
+	public void clear() {
 		linesToWrite.clear();
 		requestsToWrite.clear();
 	}
 
-	protected void printLine(List<String> lines) {
-		linesToWrite.addAll(lines);
-		output.setText(convert(linesToWrite));
-		moveTextField(linesToWrite.size());
-	}
-
-	protected void printRequest(List<String> lines) {
-		requestsToWrite.clear();
-		requestsToWrite.addAll(linesToWrite);
-		requestsToWrite.addAll(lines);
-		output.setText(convert(requestsToWrite));
-		moveTextField(requestsToWrite.size());
-	}
-
-	protected void printSolution(List<String> lines) {
-		if (!requestsToWrite.containsAll(linesToWrite)) {
-			requestsToWrite.addAll(linesToWrite);
+	public void printLine(String line, StringStyle stringStyle, StringType stringType) throws BadLocationException {
+		System.out.println(line.contains(System.getProperty("line.separator")));
+		// if (!line.endsWith(System.getProperty("line.separator"))) {
+		// line += System.getProperty("line.separator");
+		// }
+		StyledDocument doc = textPane.getStyledDocument();
+		StyleConstants.setBold(doc.addStyle("bold", StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE)), true);
+		for (int i = stringStyle.getLineNumber() + 1; i <= doc.getLength(); i++) {
+			doc.remove(0, i);
 		}
-		requestsToWrite.addAll(lines);
-		output.setText(convert(requestsToWrite));
-		moveTextField(requestsToWrite.size());
+		doc.insertString(stringStyle.getLineNumber(), line, doc.getStyle(stringType.toString()));
+		stringStyle.setLineNumber(stringStyle.getLineNumber() + line.length());
+		moveTextField(textPane.getText().contains((System.getProperty("line.separator"))) ? (textPane.getText().split(System.getProperty("line.separator")).length) : 0);
 	}
 
-	protected void releaseInput() {
+	public void printRequest(List<String> lines) {
+		// requestsToWrite.clear();
+		// requestsToWrite.addAll(linesToWrite);
+		// requestsToWrite.addAll(lines);
+		// textPane.setText(convert(requestsToWrite));
+		// moveTextField(requestsToWrite.size());
+	}
+
+	public void printSolution(List<String> lines) {
+		// if (!requestsToWrite.containsAll(linesToWrite)) {
+		// requestsToWrite.addAll(linesToWrite);
+		// }
+		// requestsToWrite.addAll(lines);
+		// textPane.setText(convert(requestsToWrite));
+		// moveTextField(requestsToWrite.size());
+	}
+
+	public void releaseInput() {
 		input.setEditable(true);
 		input.setFocusable(true);
 		input.grabFocus();
 		input.setCaretColor(Color.WHITE);
 	}
 
-	protected void waitForInput() throws InterruptedException {
+	public void waitForInput() throws InterruptedException {
 		releaseInput();
 		input.setCaretColor(Color.BLACK);
 		synchronized (synchronizerNewInput) {

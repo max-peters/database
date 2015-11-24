@@ -2,6 +2,7 @@ package database.main;
 
 import java.io.IOException;
 import javax.swing.JOptionPane;
+import database.main.GraphicalUserInterface.GraphicalUserInterface;
 import database.plugin.event.EventPlugin;
 import database.plugin.expense.ExpenseList;
 import database.plugin.expense.ExpensePlugin;

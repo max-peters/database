@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import javax.swing.text.BadLocationException;
+import database.main.GraphicalUserInterface.GraphicalUserInterface;
+import database.main.GraphicalUserInterface.StringStyle;
+import database.main.GraphicalUserInterface.StringType;
 import database.main.date.Date;
 import database.plugin.Plugin;
 
@@ -57,11 +61,31 @@ public class Terminal {
 	}
 
 	public static void printLineMain(Object output) {
-		graphicalUserInterface.printLine(buildList(output));
+		try {
+			graphicalUserInterface.printLine(output.toString(), StringStyle.MAIN, StringType.STANDARD);
+		}
+		catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// try {
+		// graphicalUserInterface.printLine(buildList(output));
+		// }
+		// catch (BadLocationException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 
 	public static void printRequest(Object output) {
-		graphicalUserInterface.printRequest(buildList(output));
+		try {
+			graphicalUserInterface.printLine(output.toString(), StringStyle.MAIN, StringType.BOLD);
+		}
+		catch (BadLocationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// graphicalUserInterface.printRequest(buildList(output));
 	}
 
 	public static String readLine() throws InterruptedException {
