@@ -3,6 +3,7 @@ package database.plugin.expense.monthlyExpense;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
@@ -13,7 +14,7 @@ public class MonthlyExpensePlugin extends InstancePlugin {
 		super(pluginContainer, "monthlyexpense", new MonthlyExpenseList(expenseList));
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException, BadLocationException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");

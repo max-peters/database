@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.Terminal;
+import database.main.GraphicalUserInterface.StringFormat;
+import database.main.GraphicalUserInterface.StringType;
 
 public abstract class InstancePlugin extends Plugin {
 	protected InstanceList		instanceList;
@@ -51,12 +54,12 @@ public abstract class InstancePlugin extends Plugin {
 		return instanceList.getList();
 	}
 
-	@Override public String initialOutput() {
+	@Override public void initialOutput() throws BadLocationException {
 		String initialOutput = instanceList.initialOutput();
-		if (initialOutput != null && !initialOutput.isEmpty()) {
-			initialOutput = identity + ":\r\n" + initialOutput;
+		if (!initialOutput.isEmpty()) {
+			Terminal.printLine(identity + ":", StringType.MAIN, StringFormat.BOLD);
+			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
 		}
-		return initialOutput;
 	}
 
 	@Override public void readInformation(RequestInformation pair) throws IOException {
@@ -71,7 +74,7 @@ public abstract class InstancePlugin extends Plugin {
 		}
 	}
 
-	public void remove(Instance toRemove) {
+	public void remove(Instance toRemove) throws BadLocationException {
 		instanceList.remove(toRemove);
 		update();
 	}

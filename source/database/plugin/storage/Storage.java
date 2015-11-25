@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.Terminal;
 import database.plugin.Command;
@@ -41,7 +42,7 @@ public class Storage extends Plugin {
 		storage.addAll(pair.getMap().values());
 	}
 
-	@Command(tag = "store") public void storeRequest() throws InterruptedException {
+	@Command(tag = "store") public void storeRequest() throws InterruptedException, BadLocationException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("store", pluginContainer.getPluginNameTagsAsRegesx());
 		request(map);

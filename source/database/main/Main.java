@@ -51,8 +51,8 @@ public class Main {
 			}
 			Terminal.initialOutput();
 			expensePlugin.initialise();
-			graphicalUserInterface.setVisible(true);
 			graphicalUserInterface.setLocation();
+			graphicalUserInterface.setVisible(true);
 			Terminal.printCollectedLines();
 			administration.request();
 		}

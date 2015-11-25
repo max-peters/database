@@ -3,8 +3,11 @@ package database.plugin.refilling;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.Terminal;
+import database.main.GraphicalUserInterface.StringFormat;
+import database.main.GraphicalUserInterface.StringType;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.expense.ExpenseList;
@@ -14,7 +17,7 @@ public class RefillingPlugin extends InstancePlugin {
 		super(pluginContainer, "refilling", new RefillingList(expenseList));
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException, BadLocationException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("value", "[0-9]{1,13}(\\.[0-9]*)?");
@@ -25,8 +28,8 @@ public class RefillingPlugin extends InstancePlugin {
 		update();
 	}
 
-	@Command(tag = "show") public void showRequest() throws InterruptedException {
-		Terminal.printLine(instanceList.output(null));
+	@Command(tag = "show") public void showRequest() throws InterruptedException, BadLocationException {
+		Terminal.printLine(instanceList.output(null), StringType.REQUEST, StringFormat.STANDARD);
 		Terminal.waitForInput();
 	}
 }

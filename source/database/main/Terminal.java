@@ -1,12 +1,11 @@
 package database.main;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import database.main.GraphicalUserInterface.GraphicalUserInterface;
-import database.main.GraphicalUserInterface.StringStyle;
+import database.main.GraphicalUserInterface.StringFormat;
 import database.main.GraphicalUserInterface.StringType;
 import database.main.date.Date;
 import database.plugin.Plugin;
@@ -25,67 +24,48 @@ public class Terminal {
 	}
 
 	public static void collectLines(Object output) {
-		list.addAll(buildList(output));
+		list.add(output.toString());
 	}
 
-	public static void errorMessage() throws InterruptedException {
-		Terminal.printRequest("invalid input");
+	public static void errorMessage() throws InterruptedException, BadLocationException {
+		Terminal.printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
+		System.out.println("hi");
 		graphicalUserInterface.waitForInput();
 	}
 
-	public static void initialOutput() {
-		String longestString = "";
+	public static void initialOutput() throws BadLocationException {
 		for (Plugin plugin : pluginContainer.getPlugins()) {
-			if (plugin.getDisplay() && plugin.initialOutput() != null) {
-				Terminal.printLineMain(plugin.initialOutput());
-				String splitResult[] = plugin.initialOutput().split("\r\n");
-				for (int i = 0; i < splitResult.length; i++) {
-					if (splitResult[i].length() > longestString.length()) {
-						longestString = splitResult[i];
-					}
-				}
+			if (plugin.getDisplay()) {
+				plugin.initialOutput();
 			}
 		}
-		graphicalUserInterface.setBounds(longestString);;
 	}
 
-	public static void printCollectedLines() throws InterruptedException {
-		graphicalUserInterface.printRequest(list);
+	public static void printCollectedLines() throws InterruptedException, BadLocationException {
+		for (String string : list) {
+			printLine(string, StringType.REQUEST, StringFormat.STANDARD);
+		}
 		if (!list.isEmpty()) {
 			graphicalUserInterface.waitForInput();
 		}
 	}
 
-	public static void printLine(Object output) {
-		graphicalUserInterface.printSolution(buildList(output));
-	}
-
-	public static void printLineMain(Object output) {
-		try {
-			graphicalUserInterface.printLine(output.toString(), StringStyle.MAIN, StringType.STANDARD);
+	public static void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
+		if (object != null) {
+			String output = object.toString();
+			if (output.length() != 0) {
+				if (!output.endsWith(System.getProperty("line.separator"))) {
+					output += System.getProperty("line.separator");
+				}
+				if (stringType.equals(StringType.MAIN)) {
+					String[] array = output.split(System.getProperty("line.separator"));
+					for (int i = 0; i < array.length; i++) {
+						graphicalUserInterface.setBounds(array[i]);
+					}
+				}
+				graphicalUserInterface.printLine(output, stringType, stringFormat);
+			}
 		}
-		catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// try {
-		// graphicalUserInterface.printLine(buildList(output));
-		// }
-		// catch (BadLocationException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-	}
-
-	public static void printRequest(Object output) {
-		try {
-			graphicalUserInterface.printLine(output.toString(), StringStyle.MAIN, StringType.BOLD);
-		}
-		catch (BadLocationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// graphicalUserInterface.printRequest(buildList(output));
 	}
 
 	public static String readLine() throws InterruptedException {
@@ -96,12 +76,12 @@ public class Terminal {
 		graphicalUserInterface.releaseInput();
 	}
 
-	public static String request(String printOut, String regex) throws InterruptedException {
+	public static String request(String printOut, String regex) throws InterruptedException, BadLocationException, CancellationException {
 		boolean request = true;
 		String result = null;
 		String input = null;
 		while (request) {
-			Terminal.printRequest(printOut + ":");
+			Terminal.printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
 			input = Terminal.readLine();
 			if (input.equals("back")) {
 				throw new CancellationException();
@@ -121,7 +101,7 @@ public class Terminal {
 		return result;
 	}
 
-	public static void update() {
+	public static void update() throws BadLocationException {
 		graphicalUserInterface.clear();
 		Terminal.blockInput();
 		Terminal.initialOutput();
@@ -130,14 +110,6 @@ public class Terminal {
 
 	public static void waitForInput() throws InterruptedException {
 		graphicalUserInterface.waitForInput();
-	}
-
-	private static List<String> buildList(Object object) {
-		String[] splitResult = new String[0];
-		if (object != null && object.toString().length() != 0) {
-			splitResult = object.toString().split("\r\n");
-		}
-		return Arrays.asList(splitResult);
 	}
 
 	public Terminal(GraphicalUserInterface graphicalUserInterface, PluginContainer pluginContainer) {

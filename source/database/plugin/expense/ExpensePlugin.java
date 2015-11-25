@@ -3,8 +3,11 @@ package database.plugin.expense;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.Terminal;
+import database.main.GraphicalUserInterface.StringFormat;
+import database.main.GraphicalUserInterface.StringType;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.expense.monthlyExpense.MonthlyExpensePlugin;
@@ -14,7 +17,7 @@ public class ExpensePlugin extends InstancePlugin {
 		super(pluginContainer, "expense", new ExpenseList());
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException, BadLocationException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
@@ -40,11 +43,11 @@ public class ExpensePlugin extends InstancePlugin {
 		}
 	}
 
-	@Command(tag = "show") public void showRequest() throws InterruptedException {
+	@Command(tag = "show") public void showRequest() throws InterruptedException, BadLocationException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("show", "(all|current|average|month|day)");
 		request(map);
-		Terminal.printLine(instanceList.output(map));
+		Terminal.printLine(instanceList.output(map), StringType.REQUEST, StringFormat.STANDARD);
 		Terminal.waitForInput();
 	}
 }

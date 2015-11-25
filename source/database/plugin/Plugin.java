@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.swing.text.BadLocationException;
 import database.main.Terminal;
 import database.main.date.Date;
 
@@ -32,7 +33,7 @@ public abstract class Plugin {
 		}
 	}
 
-	@Command(tag = "display") public void display() throws InterruptedException {
+	@Command(tag = "display") public void display() throws InterruptedException, BadLocationException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("display", "(true|false)");
 		request(map);
@@ -73,9 +74,7 @@ public abstract class Plugin {
 		return null;
 	}
 
-	public String initialOutput() {
-		return null;
-	}
+	public void initialOutput() throws BadLocationException {}
 
 	public void readInformation(RequestInformation pair) throws IOException {}
 
@@ -87,12 +86,12 @@ public abstract class Plugin {
 		this.display = display;
 	}
 
-	public void update() {
+	public void update() throws BadLocationException {
 		Terminal.update();
 		setChanges(true);
 	}
 
-	protected void request(Map<String, String> map) throws InterruptedException {
+	protected void request(Map<String, String> map) throws InterruptedException, BadLocationException {
 		for (Entry<String, String> entry : map.entrySet()) {
 			String parameterInformation = Terminal.request(entry.getKey(), entry.getValue());
 			if (entry.getKey().equals("date")) {

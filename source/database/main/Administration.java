@@ -4,9 +4,12 @@ import java.awt.FontFormatException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CancellationException;
+import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import database.main.GraphicalUserInterface.StringFormat;
+import database.main.GraphicalUserInterface.StringType;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
@@ -20,13 +23,13 @@ public class Administration {
 	}
 
 	public void request()	throws IOException, InterruptedException, ParserConfigurationException, TransformerException, FontFormatException, GitAPIException,
-							IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+							IllegalAccessException, IllegalArgumentException, InvocationTargetException, BadLocationException {
 		while (true) {
 			inputRequestAdministration();
 		}
 	}
 
-	private void exit() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
+	private void exit() throws IOException, InterruptedException, ParserConfigurationException, TransformerException, BadLocationException {
 		if (pluginContainer.getChanges()) {
 			String command;
 			command = Terminal.request("there are unsaved changes - exit", "(y|n|s)");
@@ -44,7 +47,7 @@ public class Administration {
 	}
 
 	private void inputRequestAdministration()	throws InterruptedException, IOException, TransformerException, GitAPIException, IllegalArgumentException,
-												ParserConfigurationException, IllegalAccessException, InvocationTargetException {
+												ParserConfigurationException, IllegalAccessException, InvocationTargetException, BadLocationException {
 		String command = null;
 		try {
 			command = Terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "check|exit|save)");
@@ -73,8 +76,8 @@ public class Administration {
 				}
 			}
 		}
-		catch (InvocationTargetException e) {
-			if (e.getCause().getClass().equals(CancellationException.class)) {
+		catch (InvocationTargetException | CancellationException e) {
+			if (e.getClass().equals(CancellationException.class) || e.getCause().getClass().equals(CancellationException.class)) {
 				return;
 			}
 			else {
@@ -83,11 +86,11 @@ public class Administration {
 		}
 	}
 
-	private void save() throws IOException, InterruptedException, ParserConfigurationException, TransformerException {
+	private void save() throws IOException, InterruptedException, ParserConfigurationException, TransformerException, BadLocationException {
 		Terminal.blockInput();
-		Terminal.printRequest("saving");
+		Terminal.printLine("saving", StringType.REQUEST, StringFormat.STANDARD);
 		writerReader.write();
 		pluginContainer.setUnchanged();
-		Terminal.printRequest("saved");
+		Terminal.printLine("saved", StringType.REQUEST, StringFormat.STANDARD);
 	}
 }

@@ -3,6 +3,7 @@ package database.plugin.task;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
@@ -12,7 +13,7 @@ public class TaskPlugin extends InstancePlugin {
 		super(pluginContainer, "task", new TaskList());
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException, BadLocationException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", ".+");
 		request(map);

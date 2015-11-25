@@ -6,8 +6,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.Terminal;
+import database.main.GraphicalUserInterface.StringFormat;
+import database.main.GraphicalUserInterface.StringType;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
@@ -25,7 +28,7 @@ public class EventPlugin extends InstancePlugin {
 		initialise();
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException, BadLocationException {
 		EventPluginExtention extention = chooseType();
 		if (extention != null) {
 			extention.createRequest();
@@ -53,7 +56,7 @@ public class EventPlugin extends InstancePlugin {
 		return instances;
 	}
 
-	@Override public String initialOutput() {
+	@Override public void initialOutput() throws BadLocationException {
 		String initialOutput = "";
 		List<Event> eventList = new ArrayList<Event>();
 		for (InstancePlugin extention : extentionList) {
@@ -71,9 +74,9 @@ public class EventPlugin extends InstancePlugin {
 			initialOutput = initialOutput + event.output() + "\r\n";
 		}
 		if (!initialOutput.isEmpty()) {
-			initialOutput = "event:\r\n" + initialOutput;
+			Terminal.printLine(identity + ":", StringType.MAIN, StringFormat.BOLD);
+			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
 		}
-		return initialOutput;
 	}
 
 	@Override public void readInformation(RequestInformation pair) throws IOException {

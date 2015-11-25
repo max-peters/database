@@ -3,6 +3,7 @@ package database.plugin.event;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.InstanceList;
@@ -13,7 +14,7 @@ public class EventPluginExtention extends InstancePlugin {
 		super(pluginContainer, identity, instanceList);
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException, BadLocationException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)");
 		map.put("date", null);
