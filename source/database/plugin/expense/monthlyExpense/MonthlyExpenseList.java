@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import database.main.Terminal;
+import database.main.GraphicalUserInterface.StringFormat;
 import database.main.date.Date;
 import database.plugin.InstanceList;
 import database.plugin.expense.ExpenseList;
@@ -23,12 +24,12 @@ public class MonthlyExpenseList extends InstanceList {
 
 	private void createExpense(Map<String, String> parameter, ExpenseList expenseList) {
 		Date date = new Date(parameter.get("date"));
+		Terminal.collectLine("expense created:", StringFormat.ITALIC);
 		while (date.isPast() || date.isToday()) {
 			if (!expenseList.contains(parameter)) {
 				expenseList.add(parameter);
-				Terminal.collectLines("expense created:");
 				for (String value : parameter.values()) {
-					Terminal.collectLines(value);
+					Terminal.collectLine(value, StringFormat.STANDARD);
 				}
 			}
 			if (date.month.counter + 1 == 13) {
@@ -43,6 +44,7 @@ public class MonthlyExpenseList extends InstanceList {
 			}
 			map.replace("date", date.toString());
 			parameter = map;
+			Terminal.collectLine("", StringFormat.STANDARD);
 		}
 	}
 }

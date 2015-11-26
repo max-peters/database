@@ -12,8 +12,8 @@ import database.plugin.Plugin;
 
 public class Terminal {
 	private static GraphicalUserInterface	graphicalUserInterface;
+	private static List<Object>				list	= new ArrayList<Object>();
 	private static PluginContainer			pluginContainer;
-	private static List<String>				list	= new ArrayList<String>();
 
 	public static void blockInput() {
 		graphicalUserInterface.blockInput();
@@ -23,8 +23,8 @@ public class Terminal {
 		return graphicalUserInterface.checkRequest(strings);
 	}
 
-	public static void collectLines(Object output) {
-		list.add(output.toString());
+	public static void collectLine(Object output, StringFormat stringFormat) {
+		list.add(output);
 	}
 
 	public static void errorMessage() throws InterruptedException, BadLocationException {
@@ -41,8 +41,8 @@ public class Terminal {
 	}
 
 	public static void printCollectedLines() throws InterruptedException, BadLocationException {
-		for (String string : list) {
-			printLine(string, StringType.REQUEST, StringFormat.STANDARD);
+		for (Object object : list) {
+			printLine(object, StringType.SOLUTION, StringFormat.STANDARD);
 		}
 		if (!list.isEmpty()) {
 			graphicalUserInterface.waitForInput();
@@ -52,18 +52,16 @@ public class Terminal {
 	public static void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
 		if (object != null) {
 			String output = object.toString();
-			if (output.length() != 0) {
-				if (!output.endsWith(System.getProperty("line.separator"))) {
-					output += System.getProperty("line.separator");
-				}
-				if (stringType.equals(StringType.MAIN)) {
-					String[] array = output.split(System.getProperty("line.separator"));
-					for (int i = 0; i < array.length; i++) {
-						graphicalUserInterface.setBounds(array[i]);
-					}
-				}
-				graphicalUserInterface.printLine(output, stringType, stringFormat);
+			if (!output.endsWith(System.getProperty("line.separator"))) {
+				output += System.getProperty("line.separator");
 			}
+			if (stringType.equals(StringType.MAIN)) {
+				String[] array = output.split(System.getProperty("line.separator"));
+				for (int i = 0; i < array.length; i++) {
+					graphicalUserInterface.setBounds(array[i]);
+				}
+			}
+			graphicalUserInterface.printLine(output, stringType, stringFormat);
 		}
 	}
 

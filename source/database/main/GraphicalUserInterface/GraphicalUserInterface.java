@@ -30,21 +30,21 @@ import database.main.date.Date;
 import database.main.date.Time;
 
 public class GraphicalUserInterface extends JFrame {
+	private int				currentLineNumber			= 0;
 	private Font			font;
 	private int				frameWidth;
 	private Image			icon;
 	private JTextField		input						= new JTextField();
 	private String			inputText;
+	private JTextPane		output						= new JTextPane();
 	private JPanel			panel						= new JPanel();
-	private int				currentLineNumber			= 0;
+	private int				pressedKey					= 0;
 	private JScrollPane		scrollPane					= new JScrollPane(panel);
+	private StyledDocument	styledDocument				= output.getStyledDocument();
 	private Object			synchronizerInputConfirm	= new Object();
 	private Object			synchronizerKeyInput		= new Object();
 	private JTextField		time						= new JTextField();
 	private Timer			timer						= new Timer();
-	private JTextPane		output						= new JTextPane();
-	private StyledDocument	styledDocument				= output.getStyledDocument();
-	private int				pressedKey					= 0;
 
 	public GraphicalUserInterface() throws IOException, FontFormatException {
 		super("Database");
@@ -114,61 +114,6 @@ public class GraphicalUserInterface extends JFrame {
 		}
 	}
 
-	public String readLine() throws InterruptedException {
-		synchronized (synchronizerInputConfirm) {
-			synchronizerInputConfirm.wait();
-		}
-		return inputText;
-	}
-
-	public void setBounds(String longestString) {
-		if (longestString == null || longestString.isEmpty()) {
-			frameWidth = 800;
-		}
-		else if (output.getFontMetrics(font).stringWidth(longestString) + 25 > frameWidth) {
-			frameWidth = output.getFontMetrics(font).stringWidth(longestString) + 25;
-		}
-		setSize(frameWidth, frameWidth * 2 / 3);
-		input.setSize(frameWidth - 10, input.getFontMetrics(font).getHeight());
-	}
-
-	public void setLocation() {
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		setLocation(dim.width / 2 - getSize().width / 2, dim.height / 2 - getSize().height / 2);
-	}
-
-	public void showMessageDialog(Throwable e) {
-		String stackTrace = "";
-		for (StackTraceElement element : e.getStackTrace()) {
-			stackTrace = stackTrace + "\r\n" + element;
-		}
-		JOptionPane.showMessageDialog(this, stackTrace, e.getClass().getName(), JOptionPane.INFORMATION_MESSAGE);
-	}
-
-	public int getFrameWidth() {
-		return frameWidth;
-	}
-
-	private String formatCheckLine(ArrayList<String> strings, int currentLine) {
-		String output = "";
-		int counter = 1;
-		for (String string : strings) {
-			if (counter == currentLine) {
-				output = output + "\u2611 ";
-			}
-			else {
-				output = output + "\u2610 ";
-			}
-			output = output + string + "\r\n";
-			counter++;
-		}
-		return output;
-	}
-
-	private void moveTextField(int steps) {
-		input.setLocation(0, steps * input.getFontMetrics(font).getHeight());
-	}
-
 	public void blockInput() {
 		input.setEditable(false);
 		input.setFocusable(false);
@@ -219,15 +164,26 @@ public class GraphicalUserInterface extends JFrame {
 		currentLineNumber = 0;
 	}
 
+	public int getFrameWidth() {
+		return frameWidth;
+	}
+
 	public void printLine(String line, StringType stringType, StringFormat stringFormat) throws BadLocationException {
 		if (!stringType.equals(StringType.SOLUTION)) {
 			styledDocument.remove(currentLineNumber, styledDocument.getLength() - currentLineNumber);
 		}
 		styledDocument.insertString(styledDocument.getLength(), line, styledDocument.getStyle(stringFormat.toString()));
 		if (stringType.equals(StringType.MAIN)) {
-			currentLineNumber = (currentLineNumber + line.length());
+			currentLineNumber = currentLineNumber + line.length();
 		}
-		moveTextField(output.getText().contains((System.getProperty("line.separator"))) ? (output.getText().split(System.getProperty("line.separator")).length) : 0);
+		moveTextField(output.getText().contains(System.getProperty("line.separator")) ? output.getText().split(System.getProperty("line.separator")).length : 0);
+	}
+
+	public String readLine() throws InterruptedException {
+		synchronized (synchronizerInputConfirm) {
+			synchronizerInputConfirm.wait();
+		}
+		return inputText;
 	}
 
 	public void releaseInput() {
@@ -237,6 +193,30 @@ public class GraphicalUserInterface extends JFrame {
 		input.setCaretColor(Color.WHITE);
 	}
 
+	public void setBounds(String longestString) {
+		if (longestString == null || longestString.isEmpty()) {
+			frameWidth = 800;
+		}
+		else if (output.getFontMetrics(font).stringWidth(longestString) + 25 > frameWidth) {
+			frameWidth = output.getFontMetrics(font).stringWidth(longestString) + 25;
+		}
+		setSize(frameWidth, frameWidth * 2 / 3);
+		input.setSize(frameWidth - 10, input.getFontMetrics(font).getHeight());
+	}
+
+	public void setLocation() {
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		setLocation(dim.width / 2 - getSize().width / 2, dim.height / 2 - getSize().height / 2);
+	}
+
+	public void showMessageDialog(Throwable e) {
+		String stackTrace = "";
+		for (StackTraceElement element : e.getStackTrace()) {
+			stackTrace = stackTrace + "\r\n" + element;
+		}
+		JOptionPane.showMessageDialog(this, stackTrace, e.getClass().getName(), JOptionPane.INFORMATION_MESSAGE);
+	}
+
 	public void waitForInput() throws InterruptedException {
 		releaseInput();
 		input.setCaretColor(Color.BLACK);
@@ -244,6 +224,26 @@ public class GraphicalUserInterface extends JFrame {
 			synchronizerKeyInput.wait();
 		}
 		input.setCaretColor(Color.WHITE);
+	}
+
+	private String formatCheckLine(ArrayList<String> strings, int currentLine) {
+		String output = "";
+		int counter = 1;
+		for (String string : strings) {
+			if (counter == currentLine) {
+				output = output + "\u2611 ";
+			}
+			else {
+				output = output + "\u2610 ";
+			}
+			output = output + string + "\r\n";
+			counter++;
+		}
+		return output;
+	}
+
+	private void moveTextField(int steps) {
+		input.setLocation(0, steps * input.getFontMetrics(font).getHeight());
 	}
 }
 
