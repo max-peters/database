@@ -98,7 +98,7 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	private EventPluginExtention chooseType() throws InterruptedException {
+	private EventPluginExtention chooseType() throws InterruptedException, BadLocationException {
 		ArrayList<String> strings = new ArrayList<String>();
 		EventPluginExtention toReturn = null;
 		String pluginIdentity;

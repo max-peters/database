@@ -46,7 +46,7 @@ public class SubjectList extends InstanceList {
 		}
 		averagePercentage = sumPercentages / currentCounter;
 		averagePercentage = Math.round(100.0 * averagePercentage) / 100.0;
-		return "averagePercentage:" + averagePercentage + "%";
+		return "average percentage : " + averagePercentage + "%";
 	}
 
 	protected Subject getSubject(String tag) {

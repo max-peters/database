@@ -51,6 +51,9 @@ public class Main {
 			}
 			Terminal.initialOutput();
 			expensePlugin.initialise();
+			if (graphicalUserInterface.getFrameWidth() == 0) {
+				graphicalUserInterface.setBounds("");
+			}
 			graphicalUserInterface.setLocation();
 			graphicalUserInterface.setVisible(true);
 			Terminal.printCollectedLines();

@@ -88,9 +88,9 @@ public class Administration {
 
 	private void save() throws IOException, InterruptedException, ParserConfigurationException, TransformerException, BadLocationException {
 		Terminal.blockInput();
-		Terminal.printLine("saving", StringType.REQUEST, StringFormat.STANDARD);
+		Terminal.printLine("saving", StringType.REQUEST, StringFormat.ITALIC);
 		writerReader.write();
 		pluginContainer.setUnchanged();
-		Terminal.printLine("saved", StringType.REQUEST, StringFormat.STANDARD);
+		Terminal.printLine("saved", StringType.REQUEST, StringFormat.ITALIC);
 	}
 }

@@ -12,14 +12,14 @@ import database.plugin.Plugin;
 
 public class Terminal {
 	private static GraphicalUserInterface	graphicalUserInterface;
-	private static List<String>				list	= new ArrayList<String>();
 	private static PluginContainer			pluginContainer;
+	private static List<String>				list	= new ArrayList<String>();
 
 	public static void blockInput() {
 		graphicalUserInterface.blockInput();
 	}
 
-	public static int checkRequest(ArrayList<String> strings) throws InterruptedException {
+	public static int checkRequest(ArrayList<String> strings) throws InterruptedException, BadLocationException {
 		return graphicalUserInterface.checkRequest(strings);
 	}
 
@@ -29,7 +29,6 @@ public class Terminal {
 
 	public static void errorMessage() throws InterruptedException, BadLocationException {
 		Terminal.printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
-		System.out.println("hi");
 		graphicalUserInterface.waitForInput();
 	}
 

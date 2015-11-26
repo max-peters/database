@@ -41,7 +41,8 @@ public class SubjectPlugin extends InstancePlugin {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("show", "(average|" + ((SubjectList) instanceList).getTagsAsRegex() + ")");
 		request(map);
-		Terminal.printLine(instanceList.output(map), StringType.REQUEST, StringFormat.STANDARD);
+		Terminal.printLine(identity + " / " + map.keySet().iterator().next() + " / " + map.get("show") + ":", StringType.REQUEST, StringFormat.ITALIC);
+		Terminal.printLine(instanceList.output(map), StringType.SOLUTION, StringFormat.STANDARD);
 		Terminal.waitForInput();
 	}
 }

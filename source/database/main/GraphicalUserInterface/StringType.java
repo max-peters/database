@@ -1,5 +1,5 @@
 package database.main.GraphicalUserInterface;
 
 public enum StringType {
-	REQUEST, MAIN;
+	REQUEST, MAIN, SOLUTION;
 }

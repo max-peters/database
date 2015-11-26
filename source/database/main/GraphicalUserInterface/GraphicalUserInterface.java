@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
+import database.main.Terminal;
 import database.main.date.Date;
 import database.main.date.Time;
 
@@ -39,11 +40,11 @@ public class GraphicalUserInterface extends JFrame {
 	private JScrollPane		scrollPane					= new JScrollPane(panel);
 	private Object			synchronizerInputConfirm	= new Object();
 	private Object			synchronizerKeyInput		= new Object();
-	private Object			synchronizerNewInput		= new Object();
 	private JTextField		time						= new JTextField();
 	private Timer			timer						= new Timer();
 	private JTextPane		output						= new JTextPane();
 	private StyledDocument	styledDocument				= output.getStyledDocument();
+	private int				pressedKey					= 0;
 
 	public GraphicalUserInterface() throws IOException, FontFormatException {
 		super("Database");
@@ -64,8 +65,9 @@ public class GraphicalUserInterface extends JFrame {
 		};
 		KeyListener keyListener = new KeyListener() {
 			@Override public void keyPressed(KeyEvent arg0) {
-				synchronized (synchronizerNewInput) {
-					synchronizerNewInput.notify();
+				synchronized (synchronizerKeyInput) {
+					pressedKey = arg0.getKeyCode();
+					synchronizerKeyInput.notify();
 				}
 			}
 
@@ -73,18 +75,6 @@ public class GraphicalUserInterface extends JFrame {
 
 			@Override public void keyTyped(KeyEvent e) {}
 		};
-		// KeyListener keyListenerDetail = new KeyListener() {
-		// @Override public void keyPressed(KeyEvent arg0) {
-		// synchronized (synchronizerKeyInput) {
-		// pressedKey = arg0.getKeyCode();
-		// synchronizerKeyInput.notify();
-		// }
-		// }
-		//
-		// @Override public void keyReleased(KeyEvent e) {}
-		//
-		// @Override public void keyTyped(KeyEvent e) {}
-		// };
 		panel.setLayout(new BorderLayout(0, 0));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setIconImage(icon);
@@ -132,11 +122,14 @@ public class GraphicalUserInterface extends JFrame {
 	}
 
 	public void setBounds(String longestString) {
-		if (output.getFontMetrics(font).stringWidth(longestString) + 25 > frameWidth) {
-			frameWidth = output.getFontMetrics(font).stringWidth(longestString) + 25;
-			setSize(frameWidth, frameWidth * 2 / 3);
-			input.setSize(frameWidth - 10, input.getFontMetrics(font).getHeight());
+		if (longestString == null || longestString.isEmpty()) {
+			frameWidth = 800;
 		}
+		else if (output.getFontMetrics(font).stringWidth(longestString) + 25 > frameWidth) {
+			frameWidth = output.getFontMetrics(font).stringWidth(longestString) + 25;
+		}
+		setSize(frameWidth, frameWidth * 2 / 3);
+		input.setSize(frameWidth - 10, input.getFontMetrics(font).getHeight());
 	}
 
 	public void setLocation() {
@@ -152,21 +145,26 @@ public class GraphicalUserInterface extends JFrame {
 		JOptionPane.showMessageDialog(this, stackTrace, e.getClass().getName(), JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	// private String formatCheckLine(ArrayList<String> strings, int currentLine) {
-	// String output = "";
-	// int counter = 1;
-	// for (String string : strings) {
-	// if (counter == currentLine) {
-	// output = output + "\u2611 ";
-	// }
-	// else {
-	// output = output + "\u2610 ";
-	// }
-	// output = output + string + "\r\n";
-	// counter++;
-	// }
-	// return output;
-	// }
+	public int getFrameWidth() {
+		return frameWidth;
+	}
+
+	private String formatCheckLine(ArrayList<String> strings, int currentLine) {
+		String output = "";
+		int counter = 1;
+		for (String string : strings) {
+			if (counter == currentLine) {
+				output = output + "\u2611 ";
+			}
+			else {
+				output = output + "\u2610 ";
+			}
+			output = output + string + "\r\n";
+			counter++;
+		}
+		return output;
+	}
+
 	private void moveTextField(int steps) {
 		input.setLocation(0, steps * input.getFontMetrics(font).getHeight());
 	}
@@ -177,48 +175,43 @@ public class GraphicalUserInterface extends JFrame {
 		input.setCaretColor(Color.BLACK);
 	}
 
-	public int checkRequest(ArrayList<String> strings) throws InterruptedException {
-		// int position = -1;
-		// int height = input.getFontMetrics(font).getHeight();
-		// Terminal.printLine("check:");
-		// if (strings.isEmpty()) {
-		// Terminal.printLine("no entries");
-		// waitForInput();
-		// return position;
-		// }
-		// int current = 0;
-		// input.setVisible(false);
-		// outputChangeable.setBounds(0, height * requestsToWrite.size(), frameWidth - 10, height * strings.size());
-		// outputChangeable.setVisible(true);
-		// outputChangeable.grabFocus();
-		// while (pressedKey != 10) {
-		// outputChangeable.setText(formatCheckLine(strings, current));
-		// synchronized (synchronizerKeyInput) {
-		// synchronizerKeyInput.wait();
-		// }
-		// if (pressedKey == 40) {
-		// current++;
-		// }
-		// if (pressedKey == 38) {
-		// current--;
-		// }
-		// if (current < 0) {
-		// current = 0;
-		// }
-		// if (current > strings.size()) {
-		// current = strings.size();
-		// }
-		// }
-		// if (current != 0) {
-		// position = current - 1;
-		// }
-		// outputChangeable.setVisible(false);
-		// outputChangeable.setText("");
-		// pressedKey = 0;
-		// input.setVisible(true);
-		// input.grabFocus();
-		// return position;
-		return 0;
+	public int checkRequest(ArrayList<String> strings) throws InterruptedException, BadLocationException {
+		int position = -1;
+		int current = 0;
+		pressedKey = 0;
+		Terminal.printLine("check:", StringType.MAIN, StringFormat.ITALIC);
+		if (strings.isEmpty()) {
+			Terminal.printLine("no entries", StringType.SOLUTION, StringFormat.STANDARD);
+			waitForInput();
+			return position;
+		}
+		input.setEditable(false);
+		input.setCaretColor(Color.BLACK);
+		while (pressedKey != 10) {
+			Terminal.printLine(formatCheckLine(strings, current), StringType.REQUEST, StringFormat.STANDARD);
+			synchronized (synchronizerKeyInput) {
+				synchronizerKeyInput.wait();
+			}
+			if (pressedKey == 40) {
+				current++;
+			}
+			if (pressedKey == 38) {
+				current--;
+			}
+			if (current < 0) {
+				current = 0;
+			}
+			if (current > strings.size()) {
+				current = strings.size();
+			}
+		}
+		if (current != 0) {
+			position = current - 1;
+		}
+		Terminal.update();
+		pressedKey = 0;
+		releaseInput();
+		return position;
 	}
 
 	public void clear() {
@@ -227,8 +220,10 @@ public class GraphicalUserInterface extends JFrame {
 	}
 
 	public void printLine(String line, StringType stringType, StringFormat stringFormat) throws BadLocationException {
-		styledDocument.remove(currentLineNumber, styledDocument.getLength() - currentLineNumber);
-		styledDocument.insertString(currentLineNumber, line, styledDocument.getStyle(stringFormat.toString()));
+		if (!stringType.equals(StringType.SOLUTION)) {
+			styledDocument.remove(currentLineNumber, styledDocument.getLength() - currentLineNumber);
+		}
+		styledDocument.insertString(styledDocument.getLength(), line, styledDocument.getStyle(stringFormat.toString()));
 		if (stringType.equals(StringType.MAIN)) {
 			currentLineNumber = (currentLineNumber + line.length());
 		}
@@ -245,8 +240,8 @@ public class GraphicalUserInterface extends JFrame {
 	public void waitForInput() throws InterruptedException {
 		releaseInput();
 		input.setCaretColor(Color.BLACK);
-		synchronized (synchronizerNewInput) {
-			synchronizerNewInput.wait();
+		synchronized (synchronizerKeyInput) {
+			synchronizerKeyInput.wait();
 		}
 		input.setCaretColor(Color.WHITE);
 	}

@@ -29,7 +29,7 @@ public class RefillingPlugin extends InstancePlugin {
 	}
 
 	@Command(tag = "show") public void showRequest() throws InterruptedException, BadLocationException {
-		Terminal.printLine(instanceList.output(null), StringType.REQUEST, StringFormat.STANDARD);
+		Terminal.printLine(instanceList.output(null), StringType.SOLUTION, StringFormat.STANDARD);
 		Terminal.waitForInput();
 	}
 }

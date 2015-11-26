@@ -23,7 +23,7 @@ public class UtilityPlugin extends Plugin {
 		Date firstDate = new Date(map.get("first date"));
 		Date secondDate = new Date(map.get("second date"));
 		Terminal.printLine("day number between " + firstDate + " and " + secondDate + ":", StringType.REQUEST, StringFormat.STANDARD);
-		Terminal.printLine(Math.abs(firstDate.compareTo(secondDate)), StringType.REQUEST, StringFormat.STANDARD);
+		Terminal.printLine(Math.abs(firstDate.compareTo(secondDate)), StringType.SOLUTION, StringFormat.STANDARD);
 		Terminal.waitForInput();
 	}
 }

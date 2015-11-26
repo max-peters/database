@@ -20,7 +20,7 @@ public abstract class InstancePlugin extends Plugin {
 		this.instanceList = instanceList;
 	}
 
-	public Instance check() throws InterruptedException {
+	public Instance check() throws InterruptedException, BadLocationException {
 		int position;
 		ArrayList<String> strings = new ArrayList<String>();
 		for (Instance instance : getList()) {
