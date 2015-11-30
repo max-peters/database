@@ -1,6 +1,8 @@
 package database.plugin.expense.monthlyExpense;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import database.main.Terminal;
@@ -19,18 +21,24 @@ public class MonthlyExpenseList extends InstanceList {
 
 	@Override public void add(Map<String, String> parameter) {
 		getList().add(new MonthlyExpense(parameter));
-		createExpense(parameter, expenseList);
+		List<Map<String, String>> list = createExpense(parameter, expenseList);
+		if (!list.isEmpty()) {
+			Terminal.collectLine("expense created:", StringFormat.ITALIC);
+		}
+		for (Map<String, String> map : list) {
+			for (Entry<String, String> entry : map.entrySet()) {
+				Terminal.collectLine(entry.getValue(), StringFormat.STANDARD);
+			}
+		}
 	}
 
-	private void createExpense(Map<String, String> parameter, ExpenseList expenseList) {
+	private List<Map<String, String>> createExpense(Map<String, String> parameter, ExpenseList expenseList) {
 		Date date = new Date(parameter.get("date"));
-		Terminal.collectLine("expense created:", StringFormat.ITALIC);
+		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 		while (date.isPast() || date.isToday()) {
 			if (!expenseList.contains(parameter)) {
 				expenseList.add(parameter);
-				for (String value : parameter.values()) {
-					Terminal.collectLine(value, StringFormat.STANDARD);
-				}
+				list.add(parameter);
 			}
 			if (date.month.counter + 1 == 13) {
 				date = new Date(date.day.counter + ".01." + (date.year.counter + 1));
@@ -44,7 +52,7 @@ public class MonthlyExpenseList extends InstanceList {
 			}
 			map.replace("date", date.toString());
 			parameter = map;
-			Terminal.collectLine("", StringFormat.STANDARD);
 		}
+		return list;
 	}
 }
