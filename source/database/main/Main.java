@@ -2,7 +2,8 @@ package database.main;
 
 import java.io.IOException;
 import javax.swing.JOptionPane;
-import database.main.GraphicalUserInterface.GraphicalUserInterface;
+import database.main.userInterface.GraphicalUserInterface;
+import database.main.userInterface.Terminal;
 import database.plugin.event.EventPlugin;
 import database.plugin.expense.ExpenseList;
 import database.plugin.expense.ExpensePlugin;
@@ -16,9 +17,9 @@ import database.plugin.utility.UtilityPlugin;
 public class Main {
 	public static void main(String[] args) {
 		try {
-			GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
 			PluginContainer pluginContainer = new PluginContainer();
-			new Terminal(graphicalUserInterface, pluginContainer);
+			GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface(pluginContainer);
+			new Terminal(graphicalUserInterface);
 			WriterReader writerReader = new WriterReader(pluginContainer);
 			Administration administration = new Administration(pluginContainer, writerReader);
 			Launcher launcher = new Launcher();
@@ -47,13 +48,10 @@ public class Main {
 				writerReader.read();
 			}
 			catch (IOException e) {
-				graphicalUserInterface.showMessageDialog(e);
+				Terminal.showMessageDialog(e);
 			}
 			Terminal.initialOutput();
 			expensePlugin.initialise();
-			if (graphicalUserInterface.getFrameWidth() == 0) {
-				graphicalUserInterface.setBounds("");
-			}
 			graphicalUserInterface.setLocation();
 			graphicalUserInterface.setVisible(true);
 			Terminal.printCollectedLines();

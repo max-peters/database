@@ -1,4 +1,4 @@
-package database.main.GraphicalUserInterface;
+package database.main.userInterface;
 
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;

@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import database.main.Terminal;
-import database.main.GraphicalUserInterface.StringFormat;
 import database.main.date.Date;
+import database.main.userInterface.StringFormat;
+import database.main.userInterface.Terminal;
 import database.plugin.InstanceList;
 import database.plugin.expense.ExpenseList;
 
@@ -29,6 +29,7 @@ public class MonthlyExpenseList extends InstanceList {
 			for (Entry<String, String> entry : map.entrySet()) {
 				Terminal.collectLine(entry.getValue(), StringFormat.STANDARD);
 			}
+			Terminal.collectLine("", StringFormat.STANDARD);
 		}
 	}
 

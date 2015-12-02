@@ -8,8 +8,9 @@ import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import database.main.GraphicalUserInterface.StringFormat;
-import database.main.GraphicalUserInterface.StringType;
+import database.main.userInterface.StringFormat;
+import database.main.userInterface.StringType;
+import database.main.userInterface.Terminal;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 

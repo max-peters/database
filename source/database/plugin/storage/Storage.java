@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
-import database.main.Terminal;
+import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;

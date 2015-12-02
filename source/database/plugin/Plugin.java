@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
-import database.main.Terminal;
 import database.main.date.Date;
+import database.main.userInterface.Terminal;
 
 public abstract class Plugin {
 	private boolean		changes;

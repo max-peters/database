@@ -3,9 +3,9 @@ package database.plugin.launcher;
 import java.io.IOException;
 import javax.swing.text.BadLocationException;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import database.main.Terminal;
-import database.main.GraphicalUserInterface.StringFormat;
-import database.main.GraphicalUserInterface.StringType;
+import database.main.userInterface.StringFormat;
+import database.main.userInterface.StringType;
+import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.Plugin;
 

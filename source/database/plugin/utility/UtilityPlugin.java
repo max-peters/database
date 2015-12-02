@@ -3,10 +3,10 @@ package database.plugin.utility;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
-import database.main.Terminal;
-import database.main.GraphicalUserInterface.StringFormat;
-import database.main.GraphicalUserInterface.StringType;
 import database.main.date.Date;
+import database.main.userInterface.StringFormat;
+import database.main.userInterface.StringType;
+import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.Plugin;
 
