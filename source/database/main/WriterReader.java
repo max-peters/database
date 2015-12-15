@@ -21,21 +21,39 @@ import database.plugin.Plugin;
 import database.plugin.RequestInformation;
 
 public class WriterReader {
-	private File			file;
 	private PluginContainer	pluginContainer;
-	private String			storageDirectory;
+	private File			localStorage;
+	private File			remoteStorage;
 
 	public WriterReader(PluginContainer pluginContainer) {
 		this.pluginContainer = pluginContainer;
-		storageDirectory = "Z:/storage.xml";
-		file = new File(storageDirectory);
+		localStorage = new File("C:/Users/Max/Documents/storage.xml");
+		remoteStorage = new File("Z:/storage.xml");
 	}
 
-	public boolean checkDirectory() {
-		return file.exists();
+	public void updateStorage() throws IOException, InterruptedException, ParserConfigurationException, SAXException, TransformerException {
+		Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
+		if ((remoteStorage.exists() || connection.waitFor() == 0) && localStorage.exists()) {
+			File newestFile = remoteStorage.lastModified() < localStorage.lastModified() ? localStorage : remoteStorage;
+			readFile(newestFile);
+			writeFile(localStorage);
+			writeFile(remoteStorage);
+		}
 	}
 
-	public void read() throws IOException, ParserConfigurationException, SAXException {
+	public void read() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+		if (!localStorage.exists()) {
+			Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
+			if (remoteStorage.exists() || connection.waitFor() == 0) {
+				readFile(remoteStorage);
+			}
+		}
+		else {
+			readFile(localStorage);
+		}
+	}
+
+	private void readFile(File file) throws IOException, ParserConfigurationException, SAXException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(file);
@@ -53,11 +71,11 @@ public class WriterReader {
 		}
 	}
 
-	public void setDirectory() {
-		file = new File("storage.xml");
+	public void write() throws ParserConfigurationException, TransformerException, IOException {
+		writeFile(localStorage);
 	}
 
-	public void write() throws ParserConfigurationException, TransformerException, IOException {
+	private void writeFile(File file) throws ParserConfigurationException, TransformerException, IOException {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		Document document = documentBuilder.newDocument();

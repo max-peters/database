@@ -38,6 +38,10 @@ public class Storage extends Plugin {
 		return storage;
 	}
 
+	public void clearList() {
+		storage.clear();
+	}
+
 	@Override public void readInformation(RequestInformation pair) {
 		storage.addAll(pair.getMap().values());
 	}

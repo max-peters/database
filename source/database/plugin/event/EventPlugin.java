@@ -98,6 +98,12 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
+	@Override public void clearList() {
+		for (InstancePlugin extention : extentionList) {
+			extention.clearList();
+		}
+	}
+
 	private EventPluginExtention chooseType() throws InterruptedException, BadLocationException {
 		ArrayList<String> strings = new ArrayList<String>();
 		EventPluginExtention toReturn = null;

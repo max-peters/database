@@ -27,6 +27,15 @@ public class PluginContainer {
 		return false;
 	}
 
+	public void clearLists() {
+		for (Plugin plugin : plugins) {
+			if (plugin instanceof InstancePlugin) {
+				InstancePlugin current = (InstancePlugin) plugin;
+				current.clearList();
+			}
+		}
+	}
+
 	public Plugin getPlugin(String identity) {
 		for (Plugin plugin : plugins) {
 			if (plugin.getIdentity().equals(identity)) {

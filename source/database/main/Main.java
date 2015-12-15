@@ -1,6 +1,6 @@
 package database.main;
 
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import javax.swing.JOptionPane;
 import database.main.userInterface.GraphicalUserInterface;
 import database.main.userInterface.Terminal;
@@ -29,7 +29,7 @@ public class Main {
 			RefillingPlugin refillingPlugin = new RefillingPlugin(pluginContainer, (ExpenseList) expensePlugin.getInstanceList());
 			TaskPlugin taskPlugin = new TaskPlugin(pluginContainer);
 			EventPlugin eventPlugin = new EventPlugin(pluginContainer);
-			UtilityPlugin utilityPlugin = new UtilityPlugin();
+			UtilityPlugin utilityPlugin = new UtilityPlugin(writerReader, pluginContainer, storage);
 			pluginContainer.addPlugin(launcher);
 			pluginContainer.addPlugin(storage);
 			pluginContainer.addPlugin(subjectPlugin);
@@ -38,18 +38,7 @@ public class Main {
 			pluginContainer.addPlugin(taskPlugin);
 			pluginContainer.addPlugin(eventPlugin);
 			pluginContainer.addPlugin(utilityPlugin);
-			if (!writerReader.checkDirectory()) {
-				Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
-				if (connection.waitFor() != 0) {
-					writerReader.setDirectory();
-				}
-			}
-			try {
-				writerReader.read();
-			}
-			catch (IOException e) {
-				Terminal.showMessageDialog(e);
-			}
+			writerReader.read();
 			Terminal.initialOutput();
 			expensePlugin.initialise();
 			graphicalUserInterface.setLocation();
@@ -59,10 +48,14 @@ public class Main {
 		}
 		catch (Throwable e) {
 			String stackTrace = "";
+			if (e.getClass().equals(InvocationTargetException.class)) {
+				e = e.getCause();
+			}
 			for (StackTraceElement element : e.getStackTrace()) {
 				stackTrace = stackTrace + "\r\n" + element;
 			}
 			JOptionPane.showMessageDialog(null, stackTrace, e.getClass().getName(), JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 			System.exit(0);
 		}
 	}

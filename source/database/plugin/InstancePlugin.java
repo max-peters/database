@@ -78,4 +78,8 @@ public abstract class InstancePlugin extends Plugin {
 		instanceList.remove(toRemove);
 		update();
 	}
+
+	public void clearList() {
+		instanceList.getList().clear();
+	}
 }
