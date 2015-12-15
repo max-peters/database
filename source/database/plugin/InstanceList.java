@@ -9,7 +9,7 @@ public abstract class InstanceList {
 	private ArrayList<Instance> list;
 
 	public InstanceList() {
-		list = new ArrayList<Instance>();
+		this.list = new ArrayList<Instance>();
 	}
 
 	public abstract void add(Map<String, String> map) throws IOException;

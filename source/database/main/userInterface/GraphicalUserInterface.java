@@ -14,7 +14,8 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CancellationException;
@@ -33,25 +34,24 @@ import database.main.date.Time;
 import database.plugin.Plugin;
 
 public class GraphicalUserInterface {
-	private int					currentLineNumber			= 0;
-	private Font				font;
-	private Stack<StringFormat>	formatStack					= new Stack<StringFormat>();
-	private JFrame				frame						= new JFrame("Database");
-	private int					frameWidth;
-	private Image				icon;
-	private JTextField			input						= new JTextField();
-	private String				inputText;
-	private Stack<Object>		objectStack					= new Stack<Object>();
-	private JTextPane			output						= new JTextPane();
-	private JPanel				panel						= new JPanel();
-	private PluginContainer		pluginContainer;
-	private int					pressedKey					= 0;
-	private JScrollPane			scrollPane					= new JScrollPane(panel);
-	private StyledDocument		styledDocument				= output.getStyledDocument();
-	private Object				synchronizerInputConfirm	= new Object();
-	private Object				synchronizerKeyInput		= new Object();
-	private JTextField			time						= new JTextField();
-	private Timer				timer						= new Timer();
+	private int						currentLineNumber			= 0;
+	private Font					font;
+	private JFrame					frame						= new JFrame("Database");
+	private int						frameWidth;
+	private Image					icon;
+	private JTextField				input						= new JTextField();
+	private String					inputText;
+	private JTextPane				output						= new JTextPane();
+	private JPanel					panel						= new JPanel();
+	private PluginContainer			pluginContainer;
+	private int						pressedKey					= 0;
+	private JScrollPane				scrollPane					= new JScrollPane(panel);
+	private StyledDocument			styledDocument				= output.getStyledDocument();
+	private Object					synchronizerInputConfirm	= new Object();
+	private Object					synchronizerKeyInput		= new Object();
+	private JTextField				time						= new JTextField();
+	private Timer					timer						= new Timer();
+	private List<OutputInformation>	collectedLines				= new ArrayList<OutputInformation>();
 
 	public GraphicalUserInterface(PluginContainer pluginContainer) throws IOException, FontFormatException {
 		this.pluginContainer = pluginContainer;
@@ -215,8 +215,7 @@ public class GraphicalUserInterface {
 	}
 
 	protected void collectLine(Object output, StringFormat stringFormat) {
-		objectStack.push(output);
-		formatStack.push(stringFormat);
+		collectedLines.add(new OutputInformation(output, StringType.SOLUTION, stringFormat));
 	}
 
 	protected void errorMessage() throws InterruptedException, BadLocationException {
@@ -233,12 +232,16 @@ public class GraphicalUserInterface {
 	}
 
 	protected void printCollectedLines() throws InterruptedException, BadLocationException {
-		if (objectStack.size() == formatStack.size() && objectStack.size() != 0) {
-			for (int i = 0; i < objectStack.size(); i++) {
-				printLine(objectStack.pop(), StringType.SOLUTION, formatStack.pop());
+		if (!collectedLines.isEmpty()) {
+			for (OutputInformation output : collectedLines) {
+				printLine(output);
 			}
 			waitForInput();
 		}
+	}
+
+	protected void printLine(OutputInformation output) throws BadLocationException {
+		printLine(output.getOutput(), output.getStringType(), output.getStringFormat());
 	}
 
 	protected void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
@@ -261,6 +264,25 @@ public class GraphicalUserInterface {
 				currentLineNumber = currentLineNumber + outputString.length();
 			}
 			moveTextField(output.getText().contains(System.getProperty("line.separator")) ? output.getText().split(System.getProperty("line.separator")).length : 0);
+		}
+	}
+
+	protected void refresh(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
+		if (object != null) {
+			String outputString = object.toString();
+			if (!outputString.endsWith(System.getProperty("line.separator"))) {
+				outputString += System.getProperty("line.separator");
+			}
+			String text = styledDocument.getText(0, styledDocument.getLength());
+			String[] linesOnScreen = text.split(System.getProperty("line.separator"));
+			List<String> linesToPrint = Arrays.asList(outputString.split(System.getProperty("line.separator")));
+			for (int i = 0; i < linesOnScreen.length; i++) {
+				if (linesOnScreen[i].equals(linesToPrint.get(0))) {
+					for (int j = 1; j < linesToPrint.size(); j++) {
+						if (!linesOnScreen[i++].equals(linesToPrint.get(j))) {}
+					}
+				}
+			}
 		}
 	}
 
