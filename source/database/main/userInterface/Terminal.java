@@ -7,6 +7,10 @@ import javax.swing.text.BadLocationException;
 public class Terminal {
 	private static GraphicalUserInterface graphicalUserInterface;
 
+	public Terminal(GraphicalUserInterface graphicalUserInterface) {
+		Terminal.graphicalUserInterface = graphicalUserInterface;
+	}
+
 	public static void blockInput() {
 		graphicalUserInterface.blockInput();
 	}
@@ -57,9 +61,5 @@ public class Terminal {
 
 	public static void waitForInput() throws InterruptedException {
 		graphicalUserInterface.waitForInput();
-	}
-
-	public Terminal(GraphicalUserInterface graphicalUserInterface) {
-		Terminal.graphicalUserInterface = graphicalUserInterface;
 	}
 }

@@ -28,6 +28,12 @@ public class EventPlugin extends InstancePlugin {
 		initialise();
 	}
 
+	@Override public void clearList() {
+		for (InstancePlugin extention : extentionList) {
+			extention.clearList();
+		}
+	}
+
 	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException, BadLocationException {
 		EventPluginExtention extention = chooseType();
 		if (extention != null) {
@@ -95,12 +101,6 @@ public class EventPlugin extends InstancePlugin {
 	@Override public void remove(Instance toRemove) {
 		for (InstancePlugin extention : extentionList) {
 			extention.getList().remove(toRemove);
-		}
-	}
-
-	@Override public void clearList() {
-		for (InstancePlugin extention : extentionList) {
-			extention.clearList();
 		}
 	}
 

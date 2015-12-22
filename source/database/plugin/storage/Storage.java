@@ -24,6 +24,10 @@ public class Storage extends Plugin {
 		storage = new ArrayList<String>();
 	}
 
+	public void clearList() {
+		storage.clear();
+	}
+
 	@Override public List<RequestInformation> getInformationList() {
 		List<RequestInformation> list = new ArrayList<RequestInformation>();
 		for (String string : storage) {
@@ -36,10 +40,6 @@ public class Storage extends Plugin {
 
 	public ArrayList<String> getStorage() {
 		return storage;
-	}
-
-	public void clearList() {
-		storage.clear();
 	}
 
 	@Override public void readInformation(RequestInformation pair) {

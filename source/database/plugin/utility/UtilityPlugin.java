@@ -18,9 +18,9 @@ import database.plugin.Plugin;
 import database.plugin.storage.Storage;
 
 public class UtilityPlugin extends Plugin {
-	WriterReader	writerReader;
 	PluginContainer	pluginContainer;
 	Storage			storage;
+	WriterReader	writerReader;
 
 	public UtilityPlugin(WriterReader writerReader, PluginContainer pluginContainer, Storage storage) {
 		super("utility");

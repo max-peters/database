@@ -21,24 +21,14 @@ import database.plugin.Plugin;
 import database.plugin.RequestInformation;
 
 public class WriterReader {
-	private PluginContainer	pluginContainer;
 	private File			localStorage;
+	private PluginContainer	pluginContainer;
 	private File			remoteStorage;
 
 	public WriterReader(PluginContainer pluginContainer) {
 		this.pluginContainer = pluginContainer;
 		localStorage = new File("C:/Users/Max/Documents/storage.xml");
 		remoteStorage = new File("Z:/storage.xml");
-	}
-
-	public void updateStorage() throws IOException, InterruptedException, ParserConfigurationException, SAXException, TransformerException {
-		Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
-		if ((remoteStorage.exists() || connection.waitFor() == 0) && localStorage.exists()) {
-			File newestFile = remoteStorage.lastModified() < localStorage.lastModified() ? localStorage : remoteStorage;
-			readFile(newestFile);
-			writeFile(localStorage);
-			writeFile(remoteStorage);
-		}
 	}
 
 	public void read() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
@@ -51,6 +41,20 @@ public class WriterReader {
 		else {
 			readFile(localStorage);
 		}
+	}
+
+	public void updateStorage() throws IOException, InterruptedException, ParserConfigurationException, SAXException, TransformerException {
+		Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
+		if ((remoteStorage.exists() || connection.waitFor() == 0) && localStorage.exists()) {
+			File newestFile = remoteStorage.lastModified() < localStorage.lastModified() ? localStorage : remoteStorage;
+			readFile(newestFile);
+			writeFile(localStorage);
+			writeFile(remoteStorage);
+		}
+	}
+
+	public void write() throws ParserConfigurationException, TransformerException, IOException {
+		writeFile(localStorage);
 	}
 
 	private void readFile(File file) throws IOException, ParserConfigurationException, SAXException {
@@ -69,10 +73,6 @@ public class WriterReader {
 				plugin.readInformation(pair);
 			}
 		}
-	}
-
-	public void write() throws ParserConfigurationException, TransformerException, IOException {
-		writeFile(localStorage);
 	}
 
 	private void writeFile(File file) throws ParserConfigurationException, TransformerException, IOException {

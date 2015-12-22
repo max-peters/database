@@ -5,33 +5,12 @@ import java.util.Calendar;
 import java.util.regex.Pattern;
 
 public class Date implements Comparable<Date> {
-	public static Date getCurrentDate() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.getTime();
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-		return new Date(format.format(calendar.getTime()));
-	}
-
-	public static String getDateAsString() {
-		Calendar calendar = Calendar.getInstance();
-		calendar.getTime();
-		SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
-		return format.format(calendar.getTime());
-	}
-
-	public static boolean testDateString(String dateInformation) {
-		try {
-			new Date(dateInformation);
-		}
-		catch (Throwable e) {
-			return false;
-		}
-		return true;
-	}
-
-	public Day		day;
-	public Month	month;
-	public Year		year;
+	public Day						day;
+	public Month					month;
+	public Year						year;
+	private static Calendar			calendar;
+	private static SimpleDateFormat	dateFormat	= new SimpleDateFormat("dd.MM.yyyy");
+	private static SimpleDateFormat	timeFormat	= new SimpleDateFormat("HH:mm:ss");
 
 	public Date(String date) {
 		Calendar calendar = Calendar.getInstance();
@@ -100,5 +79,25 @@ public class Date implements Comparable<Date> {
 			sum = currentYear.getDayCount() + sum;
 		}
 		return sum;
+	}
+
+	public static Date getCurrentDate() {
+		calendar = Calendar.getInstance();
+		return new Date(dateFormat.format(calendar.getTime()));
+	}
+
+	public static String getCurrentTime() {
+		calendar = Calendar.getInstance();
+		return timeFormat.format(calendar.getTime());
+	}
+
+	public static boolean testDateString(String dateInformation) {
+		try {
+			new Date(dateInformation);
+		}
+		catch (Throwable e) {
+			return false;
+		}
+		return true;
 	}
 }

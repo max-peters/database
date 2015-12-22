@@ -33,6 +33,10 @@ public abstract class InstancePlugin extends Plugin {
 		return null;
 	}
 
+	public void clearList() {
+		instanceList.getList().clear();
+	}
+
 	public void create(Map<String, String> map) throws IOException {
 		instanceList.add(map);
 	}
@@ -77,9 +81,5 @@ public abstract class InstancePlugin extends Plugin {
 	public void remove(Instance toRemove) throws BadLocationException {
 		instanceList.remove(toRemove);
 		update();
-	}
-
-	public void clearList() {
-		instanceList.getList().clear();
 	}
 }

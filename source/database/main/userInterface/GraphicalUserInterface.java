@@ -30,10 +30,10 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import database.main.PluginContainer;
 import database.main.date.Date;
-import database.main.date.Time;
 import database.plugin.Plugin;
 
 public class GraphicalUserInterface {
+	private List<OutputInformation>	collectedLines				= new ArrayList<OutputInformation>();
 	private int						currentLineNumber			= 0;
 	private Font					font;
 	private JFrame					frame						= new JFrame("Database");
@@ -51,7 +51,6 @@ public class GraphicalUserInterface {
 	private Object					synchronizerKeyInput		= new Object();
 	private JTextField				time						= new JTextField();
 	private Timer					timer						= new Timer();
-	private List<OutputInformation>	collectedLines				= new ArrayList<OutputInformation>();
 
 	public GraphicalUserInterface(PluginContainer pluginContainer) throws IOException, FontFormatException {
 		this.pluginContainer = pluginContainer;
@@ -240,10 +239,6 @@ public class GraphicalUserInterface {
 		}
 	}
 
-	protected void printLine(OutputInformation output) throws BadLocationException {
-		printLine(output.getOutput(), output.getStringType(), output.getStringFormat());
-	}
-
 	protected void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
 		if (object != null) {
 			String outputString = object.toString();
@@ -267,6 +262,17 @@ public class GraphicalUserInterface {
 		}
 	}
 
+	protected void printLine(OutputInformation output) throws BadLocationException {
+		printLine(output.getOutput(), output.getStringType(), output.getStringFormat());
+	}
+
+	protected String readLine() throws InterruptedException {
+		synchronized (synchronizerInputConfirm) {
+			synchronizerInputConfirm.wait();
+		}
+		return inputText;
+	}
+
 	protected void refresh(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
 		if (object != null) {
 			String outputString = object.toString();
@@ -284,13 +290,6 @@ public class GraphicalUserInterface {
 				}
 			}
 		}
-	}
-
-	protected String readLine() throws InterruptedException {
-		synchronized (synchronizerInputConfirm) {
-			synchronizerInputConfirm.wait();
-		}
-		return inputText;
 	}
 
 	protected void releaseInput() {
@@ -358,6 +357,6 @@ class UpdateTime extends TimerTask {
 	}
 
 	@Override public void run() {
-		timeTextfield.setText(Date.getDateAsString() + " " + Time.getTime());
+		timeTextfield.setText(Date.getCurrentDate() + " " + Date.getCurrentTime());
 	}
 }
