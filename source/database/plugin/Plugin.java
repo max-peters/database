@@ -13,9 +13,9 @@ import database.main.date.Date;
 import database.main.userInterface.Terminal;
 
 public abstract class Plugin {
-	private boolean		changes;
 	protected boolean	display;
 	protected String	identity;
+	private boolean		changes;
 
 	public Plugin(String identity) {
 		this.identity = identity;

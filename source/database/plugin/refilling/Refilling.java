@@ -22,15 +22,6 @@ public class Refilling extends Instance {
 		return Integer.valueOf(getParameter("count"));
 	}
 
-	private void createExpense(ExpenseList expenseList) {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("name", "Tankstelle");
-		map.put("category", "Fahrtkosten");
-		map.put("value", getParameter("value"));
-		map.put("date", getParameter("date"));
-		expenseList.add(map);
-	}
-
 	protected Date getDate() {
 		return new Date(getParameter("date"));
 	}
@@ -45,5 +36,14 @@ public class Refilling extends Instance {
 
 	protected Double getValue() {
 		return Double.valueOf(getParameter("value"));
+	}
+
+	private void createExpense(ExpenseList expenseList) {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("name", "Tankstelle");
+		map.put("category", "Fahrtkosten");
+		map.put("value", getParameter("value"));
+		map.put("date", getParameter("date"));
+		expenseList.add(map);
 	}
 }

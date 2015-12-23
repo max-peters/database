@@ -9,10 +9,6 @@ public class Birthday extends Event {
 		super(parameter);
 	}
 
-	private int getAge() {
-		return Date.getCurrentDate().year.counter - getDate().year.counter;
-	}
-
 	@Override protected String output() {
 		// int nameLength = 0;
 		// int ageLength = 0;
@@ -33,5 +29,9 @@ public class Birthday extends Event {
 		// String.format("%" + ageLength + "s", getAge()).replace(' ', '0') +
 		// "]";
 		return updateYear().toString() + " - " + getName() + " [" + getAge() + "]";
+	}
+
+	private int getAge() {
+		return Date.getCurrentDate().year.counter - getDate().year.counter;
 	}
 }

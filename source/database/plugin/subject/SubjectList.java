@@ -35,20 +35,6 @@ public class SubjectList extends InstanceList {
 		return returnValue;
 	}
 
-	private String getAverage() {
-		double sumPercentages = 0;
-		double averagePercentage;
-		int currentCounter = 0;
-		for (Instance instance : getList()) {
-			Subject subject = (Subject) instance;
-			sumPercentages += subject.calcPercent();
-			currentCounter++;
-		}
-		averagePercentage = sumPercentages / currentCounter;
-		averagePercentage = Math.round(100.0 * averagePercentage) / 100.0;
-		return "average percentage : " + averagePercentage + "%";
-	}
-
 	protected Subject getSubject(String tag) {
 		Subject wanted = null;
 		for (Instance instance : getList()) {
@@ -70,5 +56,19 @@ public class SubjectList extends InstanceList {
 			}
 		}
 		return regex + ")";
+	}
+
+	private String getAverage() {
+		double sumPercentages = 0;
+		double averagePercentage;
+		int currentCounter = 0;
+		for (Instance instance : getList()) {
+			Subject subject = (Subject) instance;
+			sumPercentages += subject.calcPercent();
+			currentCounter++;
+		}
+		averagePercentage = sumPercentages / currentCounter;
+		averagePercentage = Math.round(100.0 * averagePercentage) / 100.0;
+		return "average percentage : " + averagePercentage + "%";
 	}
 }

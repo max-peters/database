@@ -13,38 +13,6 @@ public class Subject extends Instance {
 		parameter.putIfAbsent("counter", "0");
 	}
 
-	private Integer getCounter() {
-		return Integer.valueOf(getParameter("counter"));
-	}
-
-	private int getCounterStringLength() {
-		return String.valueOf(getCounter()).length();
-	}
-
-	private Double getMaxPoints() {
-		return Double.valueOf(getParameter("maxPoints"));
-	}
-
-	private String getName() {
-		return getParameter("name");
-	}
-
-	private Double getScore() {
-		return Double.valueOf(getParameter("score"));
-	}
-
-	private void setCounter(int counter) {
-		setParameter("counter", String.valueOf(counter));
-	}
-
-	private void setMaxPoints(double maxPoints) {
-		setParameter("maxPoints", String.valueOf(maxPoints));
-	}
-
-	private void setScore(double score) {
-		setParameter("score", String.valueOf(score));
-	}
-
 	protected double calcPercent() {
 		return getScore() / getMaxPoints() * 100;
 	}
@@ -97,5 +65,37 @@ public class Subject extends Instance {
 		setCounter(getCounter() + 1);
 		setMaxPoints(getMaxPoints() + newMaxPoint);
 		setScore(getScore() + newScore);
+	}
+
+	private Integer getCounter() {
+		return Integer.valueOf(getParameter("counter"));
+	}
+
+	private int getCounterStringLength() {
+		return String.valueOf(getCounter()).length();
+	}
+
+	private Double getMaxPoints() {
+		return Double.valueOf(getParameter("maxPoints"));
+	}
+
+	private String getName() {
+		return getParameter("name");
+	}
+
+	private Double getScore() {
+		return Double.valueOf(getParameter("score"));
+	}
+
+	private void setCounter(int counter) {
+		setParameter("counter", String.valueOf(counter));
+	}
+
+	private void setMaxPoints(double maxPoints) {
+		setParameter("maxPoints", String.valueOf(maxPoints));
+	}
+
+	private void setScore(double score) {
+		setParameter("score", String.valueOf(score));
 	}
 }

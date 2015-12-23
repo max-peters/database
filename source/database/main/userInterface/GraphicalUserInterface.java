@@ -132,42 +132,6 @@ public class GraphicalUserInterface {
 		frame.setVisible(visible);
 	}
 
-	private void clear() {
-		output.setText("");
-		currentLineNumber = 0;
-	}
-
-	private String formatCheckLine(ArrayList<String> strings, int currentLine) {
-		String output = "";
-		int counter = 1;
-		for (String string : strings) {
-			if (counter == currentLine) {
-				output = output + "\u2611 ";
-			}
-			else {
-				output = output + "\u2610 ";
-			}
-			output = output + string + "\r\n";
-			counter++;
-		}
-		return output;
-	}
-
-	private void moveTextField(int steps) {
-		input.setLocation(0, steps * input.getFontMetrics(font).getHeight());
-	}
-
-	private void setBounds(String longestString) {
-		if (longestString == null || longestString.isEmpty()) {
-			frameWidth = 800;
-		}
-		else if (output.getFontMetrics(font).stringWidth(longestString) + 25 > frameWidth) {
-			frameWidth = output.getFontMetrics(font).stringWidth(longestString) + 25;
-		}
-		frame.setSize(frameWidth, frameWidth * 2 / 3);
-		input.setSize(frameWidth - 10, input.getFontMetrics(font).getHeight());
-	}
-
 	protected void blockInput() {
 		input.setEditable(false);
 		input.setFocusable(false);
@@ -346,6 +310,42 @@ public class GraphicalUserInterface {
 			synchronizerKeyInput.wait();
 		}
 		input.setCaretColor(Color.WHITE);
+	}
+
+	private void clear() {
+		output.setText("");
+		currentLineNumber = 0;
+	}
+
+	private String formatCheckLine(ArrayList<String> strings, int currentLine) {
+		String output = "";
+		int counter = 1;
+		for (String string : strings) {
+			if (counter == currentLine) {
+				output = output + "\u2611 ";
+			}
+			else {
+				output = output + "\u2610 ";
+			}
+			output = output + string + "\r\n";
+			counter++;
+		}
+		return output;
+	}
+
+	private void moveTextField(int steps) {
+		input.setLocation(0, steps * input.getFontMetrics(font).getHeight());
+	}
+
+	private void setBounds(String longestString) {
+		if (longestString == null || longestString.isEmpty()) {
+			frameWidth = 800;
+		}
+		else if (output.getFontMetrics(font).stringWidth(longestString) + 25 > frameWidth) {
+			frameWidth = output.getFontMetrics(font).stringWidth(longestString) + 25;
+		}
+		frame.setSize(frameWidth, frameWidth * 2 / 3);
+		input.setSize(frameWidth - 10, input.getFontMetrics(font).getHeight());
 	}
 }
 
