@@ -20,6 +20,9 @@ public class HolidayList extends EventList {
 
 	@Override public void add(Map<String, String> parameter) throws IOException {
 		url = new URL("http://www.schulferien.org/Feiertage/Feiertage_Baden_Wuerttemberg.html");
+		if (testURL() || lines.isEmpty()) {
+			prepareList();
+		}
 		if (new Date(parameter.get("date")).isPast() && testURL()) {
 			getHolidays();
 		}
@@ -38,16 +41,17 @@ public class HolidayList extends EventList {
 		}
 	}
 
-	public void getHolidays() throws IOException {
+	private void prepareList() throws IOException {
 		String line;
-		Map<String, String> map;
-		if (lines.isEmpty()) {
-			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			while ((line = in.readLine()) != null) {
-				lines.add(line);
-			}
-			in.close();
+		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		while ((line = in.readLine()) != null) {
+			lines.add(line);
 		}
+		in.close();
+	}
+
+	public void getHolidays() throws IOException {
+		Map<String, String> map;
 		for (int i = 0; i < lines.size(); i++) {
 			if (lines.get(i).matches(".*<a href=\"/Feiertage/feiertag_.*.html\" class=\"dash\">.*")) {
 				map = new HashMap<String, String>();
