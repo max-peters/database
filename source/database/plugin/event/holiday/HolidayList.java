@@ -20,13 +20,18 @@ public class HolidayList extends EventList {
 
 	@Override public void add(Map<String, String> parameter) throws IOException {
 		url = new URL("http://www.schulferien.org/Feiertage/Feiertage_Baden_Wuerttemberg.html");
-		if (testURL() || lines.isEmpty()) {
+		if (testURL() && lines.isEmpty()) {
 			prepareList();
 		}
-		if (new Date(parameter.get("date")).isPast() && testURL()) {
-			getHolidays();
+		if (new Date(parameter.get("date")).isPast()) {
+			if (!lines.isEmpty()) {
+				getHolidays();
+			}
+			else {
+				sortedAdd(new Holiday(parameter));
+			}
 		}
-		if ((new Date(parameter.get("date")).isPast() && !testURL()) || !contains(parameter)) {
+		else if (!contains(parameter)) {
 			sortedAdd(new Holiday(parameter));
 		}
 	}
@@ -43,6 +48,7 @@ public class HolidayList extends EventList {
 
 	private void prepareList() throws IOException {
 		String line;
+		lines.clear();
 		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		while ((line = in.readLine()) != null) {
 			lines.add(line);
