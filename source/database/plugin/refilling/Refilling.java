@@ -40,7 +40,7 @@ public class Refilling extends Instance {
 
 	private void createExpense(ExpenseList expenseList) {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("name", "Tankstelle");
+		map.put("name", "Auto - Tankstelle");
 		map.put("category", "Fahrtkosten");
 		map.put("value", getParameter("value"));
 		map.put("date", getParameter("date"));
