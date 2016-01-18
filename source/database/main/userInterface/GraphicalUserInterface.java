@@ -226,6 +226,10 @@ public class GraphicalUserInterface {
 		}
 	}
 
+	protected int getMaximumAmountOfCharactersPerLine(char character) {
+		return frameWidth / output.getFontMetrics(font).charWidth(character);
+	}
+
 	protected void printLine(OutputInformation output) throws BadLocationException {
 		printLine(output.getOutput(), output.getStringType(), output.getStringFormat());
 	}

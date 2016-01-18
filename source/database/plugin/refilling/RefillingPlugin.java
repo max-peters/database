@@ -29,6 +29,11 @@ public class RefillingPlugin extends InstancePlugin {
 	}
 
 	@Command(tag = "show") public void showRequest() throws InterruptedException, BadLocationException {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < Terminal.getMaximumAmountOfCharactersPerLine('-'); i++) {
+			builder.append("-");
+		}
+		Terminal.printLine(builder.toString(), StringType.REQUEST, StringFormat.STANDARD);
 		Terminal.printLine(instanceList.output(null), StringType.SOLUTION, StringFormat.STANDARD);
 		Terminal.waitForInput();
 	}

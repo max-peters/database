@@ -62,4 +62,8 @@ public class Terminal {
 	public static void waitForInput() throws InterruptedException {
 		graphicalUserInterface.waitForInput();
 	}
+
+	public static int getMaximumAmountOfCharactersPerLine(char character) {
+		return graphicalUserInterface.getMaximumAmountOfCharactersPerLine(character);
+	}
 }

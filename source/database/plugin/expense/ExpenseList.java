@@ -3,7 +3,12 @@ package database.plugin.expense;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.stream.Stream;
 import database.main.date.Date;
 import database.main.date.Month;
 import database.plugin.Instance;
@@ -48,8 +53,77 @@ public class ExpenseList extends InstanceList {
 			case "day":
 				print = outputAverageDay();
 				break;
+			case "category":
+				print = outputCategory();
 		}
 		return print;
+	}
+
+	private String outputCategory() {
+		StringBuilder builder = new StringBuilder();
+		DecimalFormat formatValue = new DecimalFormat("#0.00");
+		DecimalFormat formatPercent = new DecimalFormat("00.00");
+		double totalSum = 0;
+		int longestName = 0;
+		int longestValue = 0;
+		int longestLine = 0;
+		String name = null;
+		Map<String, Double> categories = new TreeMap<String, Double>();
+		for (Instance instance : getList()) {
+			Expense expense = (Expense) instance;
+			if (expense.checkValidity(null) && !categories.containsKey(expense.getCategory())) {
+				categories.put(expense.getCategory(), 0.0);
+			}
+			totalSum += expense.getValue();
+		}
+		for (String current : categories.keySet()) {
+			if (current.length() > longestName) {
+				longestName = current.length();
+			}
+			for (Instance instance : getList()) {
+				Expense expense = (Expense) instance;
+				if (expense.getCategory().equals(current)) {
+					categories.put(current, categories.get(current) + expense.getValue());
+				}
+			}
+		}
+		Map<String, Double> sortedMap = new LinkedHashMap<>();
+		Stream<Entry<String, Double>> st = categories.entrySet().stream();
+		st.sorted(Comparator.comparing(e -> e.getValue())).forEachOrdered(e -> sortedMap.put(e.getKey(), e.getValue()));
+		categories = sortedMap;
+		for (Double current : categories.values()) {
+			if (formatValue.format(current).length() > longestValue) {
+				longestValue = formatValue.format(current).length();
+			}
+		}
+		for (Entry<String, Double> current : categories.entrySet()) {
+			String value = formatPercent.format(current.getValue() / totalSum * 100);
+			String line;
+			name = " - " + current.getKey();
+			while (name.length() < longestName + 7 + longestValue - formatValue.format(current.getValue()).length()) {
+				name += " ";
+			}
+			if (value.startsWith("0")) {
+				value = value.replaceFirst("0", " (");
+			}
+			else {
+				value = "(" + value;
+			}
+			line = name + formatValue.format(current.getValue()) + "€  " + value + "%)";
+			if (line.length() > longestLine) {
+				longestLine = line.length();
+			}
+			builder.append(line + "\r\n");
+		}
+		for (int i = 0; i < longestLine; i++) {
+			builder.append("-");
+		}
+		builder.append("\r\n");
+		for (int i = 0; i < name.length(); i++) {
+			builder.append(" ");
+		}
+		builder.append(formatValue.format(totalSum) + "€");
+		return builder.toString();
 	}
 
 	private ArrayList<Month> getMonths() {

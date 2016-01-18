@@ -45,9 +45,13 @@ public class ExpensePlugin extends InstancePlugin {
 
 	@Command(tag = "show") public void showRequest() throws InterruptedException, BadLocationException {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("show", "(all|current|average|month|day)");
+		map.put("show", "(all|current|average|month|day|category)");
 		request(map);
-		Terminal.printLine(identity + " / " + map.keySet().iterator().next() + " / " + map.get("show") + ":", StringType.REQUEST, StringFormat.ITALIC);
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < Terminal.getMaximumAmountOfCharactersPerLine('-'); i++) {
+			builder.append("-");
+		}
+		Terminal.printLine(builder.toString(), StringType.REQUEST, StringFormat.STANDARD);
 		Terminal.printLine(instanceList.output(map), StringType.SOLUTION, StringFormat.STANDARD);
 		Terminal.waitForInput();
 	}
