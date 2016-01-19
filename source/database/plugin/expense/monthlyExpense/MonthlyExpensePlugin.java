@@ -8,13 +8,14 @@ import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.expense.ExpenseList;
+import database.plugin.storage.Storage;
 
 public class MonthlyExpensePlugin extends InstancePlugin {
-	public MonthlyExpensePlugin(PluginContainer pluginContainer, ExpenseList expenseList) {
-		super(pluginContainer, "monthlyexpense", new MonthlyExpenseList(expenseList));
+	public MonthlyExpensePlugin(PluginContainer pluginContainer, ExpenseList expenseList, Storage storage) {
+		super(pluginContainer, "monthlyexpense", new MonthlyExpenseList(expenseList), storage);
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException, BadLocationException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");

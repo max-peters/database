@@ -1,31 +1,20 @@
 package database.plugin.storage;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
-import database.main.PluginContainer;
-import database.main.userInterface.Terminal;
-import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 import database.plugin.RequestInformation;
 
 public class Storage extends Plugin {
-	private PluginContainer		pluginContainer;
-	private ArrayList<String>	storage;
+	private ArrayList<String> storage;
 
-	public Storage(PluginContainer pluginContainer) {
+	public Storage() {
 		super("storage");
-		this.pluginContainer = pluginContainer;
 		storage = new ArrayList<String>();
-	}
-
-	public void clearList() {
-		storage.clear();
 	}
 
 	@Override public List<RequestInformation> getInformationList() {
@@ -46,28 +35,24 @@ public class Storage extends Plugin {
 		storage.addAll(pair.getMap().values());
 	}
 
-	@Command(tag = "store") public void storeRequest() throws BadLocationException, InterruptedException {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("store", pluginContainer.getPluginNameTagsAsRegesx());
-		request(map);
-		Plugin plugin = pluginContainer.getPlugin(map.get("store"));
-		InstancePlugin instancePlugin;
-		String parameterString;
-		if (plugin != null && plugin instanceof InstancePlugin) {
-			instancePlugin = (InstancePlugin) plugin;
-		}
-		else {
-			Terminal.errorMessage();
-			return;
-		}
+	public void store(InstancePlugin instancePlugin) throws BadLocationException, InterruptedException {
+		String line;
 		for (Instance instance : instancePlugin.getList()) {
-			parameterString = "";
+			line = "";
 			for (Entry<String, String> entry : instance.getParameter().entrySet()) {
-				parameterString = parameterString + entry.getKey() + ": " + entry.getValue() + ", ";
+				line += entry.getKey() + ": " + entry.getValue() + ", ";
 			}
-			storage.add(parameterString.substring(0, parameterString.lastIndexOf(',')));
+			storage.add(line.substring(0, line.lastIndexOf(",")));
 		}
-		instancePlugin.getList().clear();
+		instancePlugin.clearList();;
 		instancePlugin.update();
+	}
+
+	public void clearList() {
+		storage.clear();
+	}
+
+	public void display() {
+		// nothing to display
 	}
 }

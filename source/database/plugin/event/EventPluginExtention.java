@@ -8,10 +8,11 @@ import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.InstanceList;
 import database.plugin.InstancePlugin;
+import database.plugin.storage.Storage;
 
 public class EventPluginExtention extends InstancePlugin {
-	public EventPluginExtention(PluginContainer pluginContainer, String identity, InstanceList instanceList) {
-		super(pluginContainer, identity, instanceList);
+	public EventPluginExtention(PluginContainer pluginContainer, String identity, InstanceList instanceList, Storage storage) {
+		super(pluginContainer, identity, instanceList, storage);
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {

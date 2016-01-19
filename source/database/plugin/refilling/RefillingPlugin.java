@@ -8,10 +8,11 @@ import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.expense.ExpenseList;
+import database.plugin.storage.Storage;
 
 public class RefillingPlugin extends InstancePlugin {
-	public RefillingPlugin(PluginContainer pluginContainer, ExpenseList expenseList) {
-		super(pluginContainer, "refilling", new RefillingList(expenseList));
+	public RefillingPlugin(PluginContainer pluginContainer, ExpenseList expenseList, Storage storage) {
+		super(pluginContainer, "refilling", new RefillingList(expenseList), storage);
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {

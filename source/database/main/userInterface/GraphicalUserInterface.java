@@ -271,6 +271,10 @@ public class GraphicalUserInterface {
 		boolean request = true;
 		String result = null;
 		String input = null;
+		if (regex.equals("()")) {
+			errorMessage();
+			throw new CancellationException();
+		}
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
 			input = readLine();

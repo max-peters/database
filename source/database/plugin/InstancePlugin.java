@@ -11,15 +11,18 @@ import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
+import database.plugin.storage.Storage;
 
 public abstract class InstancePlugin extends Plugin {
 	protected InstanceList		instanceList;
 	protected PluginContainer	pluginContainer;
+	protected Storage			storage;
 
-	public InstancePlugin(PluginContainer pluginContainer, String identity, InstanceList instanceList) {
+	public InstancePlugin(PluginContainer pluginContainer, String identity, InstanceList instanceList, Storage storage) {
 		super(identity);
 		this.pluginContainer = pluginContainer;
 		this.instanceList = instanceList;
+		this.storage = storage;
 	}
 
 	public Instance check() throws InterruptedException, BadLocationException {
@@ -83,14 +86,18 @@ public abstract class InstancePlugin extends Plugin {
 	}
 
 	@Command(tag = "show") public void show() throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		String command = Terminal.request("show", getCommandTags(getInstanceList().getClass()));
-		for (Method method : getInstanceList().getClass().getMethods()) {
+		String command = Terminal.request("show", getCommandTags(instanceList.getClass()));
+		for (Method method : instanceList.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
 				Terminal.getLineOfCharacters('-');
-				Terminal.printLine(method.invoke(getInstanceList(), (Object[]) method.getParameterTypes()), StringType.SOLUTION, StringFormat.STANDARD);
+				Terminal.printLine(method.invoke(instanceList, (Object[]) method.getParameterTypes()), StringType.SOLUTION, StringFormat.STANDARD);
 				Terminal.waitForInput();
 				return;
 			}
 		}
+	}
+
+	@Command(tag = "store") public void store() throws BadLocationException, InterruptedException {
+		storage.store(this);
 	}
 }

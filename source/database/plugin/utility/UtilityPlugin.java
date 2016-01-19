@@ -18,15 +18,17 @@ import database.plugin.Plugin;
 import database.plugin.storage.Storage;
 
 public class UtilityPlugin extends Plugin {
-	PluginContainer	pluginContainer;
-	Storage			storage;
-	WriterReader	writerReader;
+	private PluginContainer	pluginContainer;
+	private Storage			storage;
+	private WriterReader	writerReader;
+	private News			news;
 
-	public UtilityPlugin(WriterReader writerReader, PluginContainer pluginContainer, Storage storage) {
+	public UtilityPlugin(WriterReader writerReader, PluginContainer pluginContainer, Storage storage) throws IOException {
 		super("utility");
 		this.writerReader = writerReader;
 		this.pluginContainer = pluginContainer;
 		this.storage = storage;
+		this.news = new News();
 	}
 
 	@Command(tag = "days") public void calculateDayNumber() throws BadLocationException, InterruptedException {
@@ -41,13 +43,17 @@ public class UtilityPlugin extends Plugin {
 		Terminal.waitForInput();
 	}
 
-	@Command(tag = "update") public void updateStorage()	throws BadLocationException, InterruptedException, IOException, ParserConfigurationException, SAXException,
-															TransformerException {
+	@Command(tag = "update") public void updateStorage()	throws BadLocationException, InterruptedException, ParserConfigurationException, SAXException, TransformerException,
+															IOException {
 		Terminal.printLine("updating...", StringType.REQUEST, StringFormat.ITALIC);
 		Terminal.blockInput();
 		pluginContainer.clearLists();
 		storage.clearList();
 		writerReader.updateStorage();
 		Terminal.update();
+	}
+
+	@Override public void initialOutput() throws BadLocationException {
+		Terminal.printLine(news.getCurrentRank(), StringType.MAIN, StringFormat.STANDARD);
 	}
 }

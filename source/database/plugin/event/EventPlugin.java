@@ -18,12 +18,13 @@ import database.plugin.RequestInformation;
 import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
+import database.plugin.storage.Storage;
 
 public class EventPlugin extends InstancePlugin {
 	private ArrayList<InstancePlugin> extentionList;
 
-	public EventPlugin(PluginContainer pluginContainer) {
-		super(pluginContainer, "event", null);
+	public EventPlugin(PluginContainer pluginContainer, Storage storage) {
+		super(pluginContainer, "event", null, storage);
 		extentionList = new ArrayList<InstancePlugin>();
 		initialise();
 	}
@@ -130,8 +131,8 @@ public class EventPlugin extends InstancePlugin {
 	}
 
 	private void initialise() {
-		extentionList.add(new AllDayEventPlugin(pluginContainer));
-		extentionList.add(new BirthdayPlugin(pluginContainer));
-		extentionList.add(new HolidayPlugin(pluginContainer));
+		extentionList.add(new AllDayEventPlugin(pluginContainer, storage));
+		extentionList.add(new BirthdayPlugin(pluginContainer, storage));
+		extentionList.add(new HolidayPlugin(pluginContainer, storage));
 	}
 }

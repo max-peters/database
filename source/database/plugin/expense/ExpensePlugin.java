@@ -5,29 +5,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.plugin.Command;
-import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.RequestInformation;
 import database.plugin.expense.monthlyExpense.MonthlyExpensePlugin;
+import database.plugin.storage.Storage;
 
 public class ExpensePlugin extends InstancePlugin {
 	private MonthlyExpensePlugin monthlyExpensePlugin;
 
-	public ExpensePlugin(PluginContainer pluginContainer) {
-		super(pluginContainer, "expense", new ExpenseList());
-		monthlyExpensePlugin = new MonthlyExpensePlugin(pluginContainer, (ExpenseList) getInstanceList());
-	}
-
-	@Command(tag = "bla") public void bla() {
-		for (Instance tt : monthlyExpensePlugin.getList()) {
-			for (Entry<String, String> ii : tt.getParameter().entrySet()) {
-				System.out.println(ii.getKey() + " - " + ii.getValue());
-			}
-		}
+	public ExpensePlugin(PluginContainer pluginContainer, Storage storage) {
+		super(pluginContainer, "expense", new ExpenseList(), storage);
+		monthlyExpensePlugin = new MonthlyExpensePlugin(pluginContainer, (ExpenseList) getInstanceList(), storage);
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {

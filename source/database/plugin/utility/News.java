@@ -1,4 +1,4 @@
-package database.plugin.launcher;
+package database.plugin.utility;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,8 +7,13 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class News {
-	public String getCurrentRank() throws IOException {
-		String rank = null;
+	private String rank;
+
+	public News() throws IOException {
+		setRank();
+	}
+
+	private void setRank() throws IOException {
 		String line;
 		URL url = new URL("http://www.lolking.net/summoner/euw/37588528");
 		URLConnection conn = url.openConnection();
@@ -18,11 +23,14 @@ public class News {
 				rank = line.substring(line.indexOf('>') + 1, line.indexOf('<', line.indexOf('>')));
 			}
 			if (line.matches(".*League Points.*")) {
-				rank = rank + " - " + line.substring(line.indexOf('>') + 1, line.indexOf('<', line.indexOf('>')));
+				rank += " - " + line.substring(line.indexOf('>') + 1, line.indexOf('<', line.indexOf('>')));
 				break;
 			}
 		}
 		in.close();
+	}
+
+	public String getCurrentRank() {
 		return rank;
 	}
 }

@@ -31,7 +31,7 @@ public class WriterReader {
 		remoteStorage = new File("Z:/storage.xml");
 	}
 
-	public void read() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+	public void read() throws InterruptedException, ParserConfigurationException, SAXException, IOException {
 		if (!localStorage.exists()) {
 			if (remoteStorage.exists() || connect() == 0) {
 				readFile(remoteStorage);
@@ -47,7 +47,7 @@ public class WriterReader {
 		return connection.waitFor();
 	}
 
-	public void updateStorage() throws InterruptedException, IOException, ParserConfigurationException, SAXException, TransformerException {
+	public void updateStorage() throws InterruptedException, ParserConfigurationException, SAXException, TransformerException, IOException {
 		if ((remoteStorage.exists() || connect() == 0) && localStorage.exists()) {
 			File newestFile = remoteStorage.lastModified() < localStorage.lastModified() ? localStorage : remoteStorage;
 			readFile(newestFile);

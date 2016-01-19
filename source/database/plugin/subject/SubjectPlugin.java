@@ -7,10 +7,11 @@ import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
+import database.plugin.storage.Storage;
 
 public class SubjectPlugin extends InstancePlugin {
-	public SubjectPlugin(PluginContainer pluginContainer) {
-		super(pluginContainer, "subject", new SubjectList());
+	public SubjectPlugin(PluginContainer pluginContainer, Storage storage) {
+		super(pluginContainer, "subject", new SubjectList(), storage);
 	}
 
 	@Command(tag = "add") public void addRequest() throws InterruptedException, BadLocationException {
