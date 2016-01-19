@@ -8,7 +8,6 @@ import javax.xml.transform.TransformerException;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
-import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
 public class Administration {
@@ -46,22 +45,14 @@ public class Administration {
 	private void inputRequestAdministration() throws Exception {
 		String command = null;
 		try {
-			command = Terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "check|exit|save)");
+			command = Terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "exit|save)");
 			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx())) {
 				Plugin plugin = pluginContainer.getPlugin(command);
 				command = Terminal.request(command, plugin.getCommandTags(plugin.getClass()));
 				plugin.conduct(command);
 			}
-			else if (command.matches("(check|exit|save)")) {
+			else if (command.matches("(exit|save)")) {
 				switch (command) {
-					case "check":
-						InstancePlugin taskPlugin = (InstancePlugin) pluginContainer.getPlugin("task");
-						boolean taskDisplay = taskPlugin.getDisplay();
-						taskPlugin.setDisplay(false);
-						Terminal.update();
-						taskPlugin.setDisplay(taskDisplay);
-						taskPlugin.remove(((InstancePlugin) pluginContainer.getPlugin("task")).check());
-						break;
 					case "save":
 						save();
 						Terminal.waitForInput();

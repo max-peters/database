@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
+import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.storage.Storage;
@@ -20,5 +21,17 @@ public class TaskPlugin extends InstancePlugin {
 		request(map);
 		create(map);
 		update();
+	}
+
+	@Command(tag = "check") public void checkRequest() throws InterruptedException, BadLocationException, IOException {
+		boolean display = getDisplay();
+		setDisplay(false);
+		Terminal.update();
+		remove(check());
+		setDisplay(display);
+	}
+
+	@Override public void show() {
+		// nothing to show here
 	}
 }

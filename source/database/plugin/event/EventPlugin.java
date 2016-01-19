@@ -109,6 +109,10 @@ public class EventPlugin extends InstancePlugin {
 		// nothing to show here
 	}
 
+	@Override public void display() {
+		// nothing to display here
+	}
+
 	private EventPluginExtention chooseType() throws InterruptedException, BadLocationException {
 		ArrayList<String> strings = new ArrayList<String>();
 		EventPluginExtention toReturn = null;
