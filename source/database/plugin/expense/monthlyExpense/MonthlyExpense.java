@@ -7,4 +7,8 @@ public class MonthlyExpense extends Expense {
 	public MonthlyExpense(Map<String, String> parameter) {
 		super(parameter);
 	}
+
+	public ExecutionDay getExecutionDay() {
+		return ExecutionDay.getExecutionDay(getParameter("executionday"));
+	}
 }

@@ -29,7 +29,7 @@ public class UtilityPlugin extends Plugin {
 		this.storage = storage;
 	}
 
-	@Command(tag = "days") public void calculateDayNumber() throws InterruptedException, BadLocationException {
+	@Command(tag = "days") public void calculateDayNumber() throws BadLocationException, InterruptedException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("first date", null);
 		map.put("second date", null);
@@ -41,7 +41,7 @@ public class UtilityPlugin extends Plugin {
 		Terminal.waitForInput();
 	}
 
-	@Command(tag = "update") public void updateStorage()	throws IOException, InterruptedException, ParserConfigurationException, SAXException, BadLocationException,
+	@Command(tag = "update") public void updateStorage()	throws BadLocationException, InterruptedException, IOException, ParserConfigurationException, SAXException,
 															TransformerException {
 		Terminal.printLine("updating...", StringType.REQUEST, StringFormat.ITALIC);
 		Terminal.blockInput();

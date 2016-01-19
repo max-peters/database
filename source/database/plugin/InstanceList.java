@@ -14,7 +14,7 @@ public abstract class InstanceList {
 
 	public abstract void add(Map<String, String> map) throws IOException;
 
-	public boolean contains(Map<String, String> parameter) {
+	public boolean containsEquals(Map<String, String> parameter) {
 		boolean contains = false;
 		for (Instance instance : list) {
 			contains = false;
@@ -25,6 +25,28 @@ public abstract class InstanceList {
 				else {
 					contains = false;
 					break;
+				}
+			}
+			if (contains && instance.getParameter().size() == parameter.size()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean containsParts(Map<String, String> parameter) {
+		boolean contains = false;
+		for (Instance instance : list) {
+			contains = false;
+			for (Entry<String, String> entry : parameter.entrySet()) {
+				if (instance.getParameter().containsKey(entry.getKey())) {
+					if (instance.getParameter(entry.getKey()).equals(entry.getValue())) {
+						contains = true;
+					}
+					else {
+						contains = false;
+						break;
+					}
 				}
 			}
 			if (contains) {

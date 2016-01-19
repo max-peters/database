@@ -1,13 +1,10 @@
 package database.main;
 
-import java.awt.FontFormatException;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
@@ -18,19 +15,18 @@ public class Administration {
 	private PluginContainer	pluginContainer;
 	private WriterReader	writerReader;
 
-	public Administration(PluginContainer pluginContainer, WriterReader writerReader) throws IOException, InterruptedException {
+	public Administration(PluginContainer pluginContainer, WriterReader writerReader) {
 		this.pluginContainer = pluginContainer;
 		this.writerReader = writerReader;
 	}
 
-	public void request()	throws IOException, InterruptedException, ParserConfigurationException, TransformerException, FontFormatException, GitAPIException,
-							IllegalAccessException, IllegalArgumentException, InvocationTargetException, BadLocationException {
+	public void request() throws Exception {
 		while (true) {
 			inputRequestAdministration();
 		}
 	}
 
-	private void exit() throws IOException, InterruptedException, ParserConfigurationException, TransformerException, BadLocationException {
+	private void exit() throws InterruptedException, BadLocationException, ParserConfigurationException, TransformerException {
 		if (pluginContainer.getChanges()) {
 			String command;
 			command = Terminal.request("there are unsaved changes - exit", "(y|n|s)");
@@ -47,8 +43,7 @@ public class Administration {
 		}
 	}
 
-	private void inputRequestAdministration()	throws InterruptedException, IOException, TransformerException, GitAPIException, IllegalArgumentException,
-												ParserConfigurationException, IllegalAccessException, InvocationTargetException, BadLocationException {
+	private void inputRequestAdministration() throws Exception {
 		String command = null;
 		try {
 			command = Terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "check|exit|save)");
@@ -87,7 +82,7 @@ public class Administration {
 		}
 	}
 
-	private void save() throws IOException, InterruptedException, ParserConfigurationException, TransformerException, BadLocationException {
+	private void save() throws BadLocationException, ParserConfigurationException, TransformerException {
 		Terminal.blockInput();
 		Terminal.printLine("saving", StringType.REQUEST, StringFormat.ITALIC);
 		writerReader.write();

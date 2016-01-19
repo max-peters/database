@@ -46,7 +46,7 @@ public class Storage extends Plugin {
 		storage.addAll(pair.getMap().values());
 	}
 
-	@Command(tag = "store") public void storeRequest() throws InterruptedException, BadLocationException {
+	@Command(tag = "store") public void storeRequest() throws BadLocationException, InterruptedException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("store", pluginContainer.getPluginNameTagsAsRegesx());
 		request(map);

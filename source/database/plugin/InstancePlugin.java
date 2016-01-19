@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
@@ -76,9 +75,6 @@ public abstract class InstancePlugin extends Plugin {
 		else if (pair.getName().equals("display")) {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}
-		else {
-			throw new IOException();
-		}
 	}
 
 	public void remove(Instance toRemove) throws BadLocationException {
@@ -86,8 +82,7 @@ public abstract class InstancePlugin extends Plugin {
 		update();
 	}
 
-	@Command(tag = "show") public void show()	throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, CancellationException, InterruptedException,
-												BadLocationException {
+	@Command(tag = "show") public void show() throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		String command = Terminal.request("show", getCommandTags(getInstanceList().getClass()));
 		for (Method method : getInstanceList().getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {

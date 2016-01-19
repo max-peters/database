@@ -14,7 +14,7 @@ public class EventPluginExtention extends InstancePlugin {
 		super(pluginContainer, identity, instanceList);
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException, BadLocationException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)");
 		map.put("date", null);

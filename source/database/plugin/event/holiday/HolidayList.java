@@ -31,12 +31,12 @@ public class HolidayList extends EventList {
 				sortedAdd(new Holiday(parameter));
 			}
 		}
-		else if (!contains(parameter)) {
+		else if (!containsEquals(parameter)) {
 			sortedAdd(new Holiday(parameter));
 		}
 	}
 
-	public void getHolidays() throws IOException {
+	public void getHolidays() {
 		Map<String, String> map;
 		for (int i = 0; i < lines.size(); i++) {
 			if (lines.get(i).matches(".*<a href=\"/Feiertage/feiertag_.*.html\" class=\"dash\">.*")) {

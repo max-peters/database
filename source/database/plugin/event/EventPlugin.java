@@ -22,7 +22,7 @@ import database.plugin.event.holiday.HolidayPlugin;
 public class EventPlugin extends InstancePlugin {
 	private ArrayList<InstancePlugin> extentionList;
 
-	public EventPlugin(PluginContainer pluginContainer) throws IOException {
+	public EventPlugin(PluginContainer pluginContainer) {
 		super(pluginContainer, "event", null);
 		extentionList = new ArrayList<InstancePlugin>();
 		initialise();
@@ -34,7 +34,7 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException, BadLocationException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {
 		EventPluginExtention extention = chooseType();
 		if (extention != null) {
 			extention.createRequest();
@@ -105,7 +105,7 @@ public class EventPlugin extends InstancePlugin {
 	}
 
 	@Override public void show() {
-		System.out.println("hi");
+		// nothing to show here
 	}
 
 	private EventPluginExtention chooseType() throws InterruptedException, BadLocationException {
@@ -129,7 +129,7 @@ public class EventPlugin extends InstancePlugin {
 		return toReturn;
 	}
 
-	private void initialise() throws IOException {
+	private void initialise() {
 		extentionList.add(new AllDayEventPlugin(pluginContainer));
 		extentionList.add(new BirthdayPlugin(pluginContainer));
 		extentionList.add(new HolidayPlugin(pluginContainer));

@@ -40,7 +40,6 @@ public class Main {
 			pluginContainer.addPlugin(utilityPlugin);
 			writerReader.read();
 			Terminal.initialOutput();
-			expensePlugin.initialise();
 			graphicalUserInterface.setLocation();
 			graphicalUserInterface.setVisible(true);
 			Terminal.printCollectedLines();

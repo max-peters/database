@@ -1,7 +1,6 @@
 package database.main.userInterface;
 
 import java.util.ArrayList;
-import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 
 public class Terminal {
@@ -23,7 +22,7 @@ public class Terminal {
 		graphicalUserInterface.collectLine(output, stringFormat);
 	}
 
-	public static void errorMessage() throws InterruptedException, BadLocationException {
+	public static void errorMessage() throws BadLocationException, InterruptedException {
 		graphicalUserInterface.errorMessage();
 	}
 
@@ -40,6 +39,7 @@ public class Terminal {
 	}
 
 	public static void printCollectedLines() throws InterruptedException, BadLocationException {
+		Terminal.getLineOfCharacters('-');
 		graphicalUserInterface.printCollectedLines();
 	}
 
@@ -55,7 +55,7 @@ public class Terminal {
 		graphicalUserInterface.releaseInput();
 	}
 
-	public static String request(String printOut, String regex) throws InterruptedException, BadLocationException, CancellationException {
+	public static String request(String printOut, String regex) throws InterruptedException, BadLocationException {
 		return graphicalUserInterface.request(printOut, regex);
 	}
 

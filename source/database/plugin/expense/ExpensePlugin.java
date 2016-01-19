@@ -1,20 +1,36 @@
 package database.plugin.expense;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.plugin.Command;
+import database.plugin.Instance;
 import database.plugin.InstancePlugin;
+import database.plugin.RequestInformation;
 import database.plugin.expense.monthlyExpense.MonthlyExpensePlugin;
 
 public class ExpensePlugin extends InstancePlugin {
-	public ExpensePlugin(PluginContainer pluginContainer) throws IOException {
+	private MonthlyExpensePlugin monthlyExpensePlugin;
+
+	public ExpensePlugin(PluginContainer pluginContainer) {
 		super(pluginContainer, "expense", new ExpenseList());
+		monthlyExpensePlugin = new MonthlyExpensePlugin(pluginContainer, (ExpenseList) getInstanceList());
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, IOException, BadLocationException {
+	@Command(tag = "bla") public void bla() {
+		for (Instance tt : monthlyExpensePlugin.getList()) {
+			for (Entry<String, String> ii : tt.getParameter().entrySet()) {
+				System.out.println(ii.getKey() + " - " + ii.getValue());
+			}
+		}
+	}
+
+	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
@@ -25,30 +41,27 @@ public class ExpensePlugin extends InstancePlugin {
 		update();
 	}
 
-	public void initialise() {
-		MonthlyExpensePlugin monthlyExpensePlugin = new MonthlyExpensePlugin(pluginContainer, (ExpenseList) getInstanceList());
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("name", "Miete");
-		map.put("category", "Wohnung");
-		map.put("value", "350");
-		map.put("date", "01.05.2015");
-		try {
-			monthlyExpensePlugin.create(map);
+	@Override public List<RequestInformation> getInformationList() {
+		List<RequestInformation> list = new ArrayList<RequestInformation>();
+		for (int i = 0; i < getList().size(); i++) {
+			list.add(new RequestInformation("expense", getList().get(i).getParameter()));
 		}
-		catch (IOException e) {
-			e.printStackTrace();
+		for (int i = 0; i < monthlyExpensePlugin.getList().size(); i++) {
+			list.add(new RequestInformation("monthlyexpense", monthlyExpensePlugin.getList().get(i).getParameter()));
+		}
+		list.add(new RequestInformation("display", "boolean", String.valueOf(getDisplay())));
+		return list;
+	}
+
+	@Override public void readInformation(RequestInformation pair) throws IOException {
+		if (pair.getName().equals("display")) {
+			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
+		}
+		else if (pair.getName().equals("expense")) {
+			create(pair.getMap());
+		}
+		else if (pair.getName().equals("monthlyexpense")) {
+			monthlyExpensePlugin.create(pair.getMap());
 		}
 	}
-	// @Command(tag = "show") public void showRequest() throws InterruptedException, BadLocationException {
-	// Map<String, String> map = new HashMap<String, String>();
-	// map.put("show", "(all|current|average|month|day|category)");
-	// request(map);
-	// StringBuilder builder = new StringBuilder();
-	// for (int i = 0; i < Terminal.getMaximumAmountOfCharactersPerLine('-'); i++) {
-	// builder.append("-");
-	// }
-	// Terminal.printLine(builder.toString(), StringType.REQUEST, StringFormat.STANDARD);
-	// Terminal.printLine(instanceList.output(map), StringType.SOLUTION, StringFormat.STANDARD);
-	// Terminal.waitForInput();
-	// }
 }

@@ -6,7 +6,7 @@ public class Month {
 	public Year		year;
 
 	public Month(int counter, Year year) {
-		int dayCount;
+		int dayCount = 0;
 		if (counter == 1) {
 			dayCount = 31;
 			this.counter = 1;
@@ -59,9 +59,6 @@ public class Month {
 		else if (counter == 12) {
 			dayCount = 31;
 			this.counter = 12;
-		}
-		else {
-			throw new IllegalArgumentException();
 		}
 		days = new Day[dayCount];
 		for (int i = 0; i < dayCount; i++) {

@@ -31,10 +31,9 @@ public class WriterReader {
 		remoteStorage = new File("Z:/storage.xml");
 	}
 
-	public void read() throws IOException, ParserConfigurationException, SAXException, InterruptedException {
+	public void read() throws IOException, InterruptedException, ParserConfigurationException, SAXException {
 		if (!localStorage.exists()) {
-			Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
-			if (remoteStorage.exists() || connection.waitFor() == 0) {
+			if (remoteStorage.exists() || connect() == 0) {
 				readFile(remoteStorage);
 			}
 		}
@@ -43,9 +42,13 @@ public class WriterReader {
 		}
 	}
 
-	public void updateStorage() throws IOException, InterruptedException, ParserConfigurationException, SAXException, TransformerException {
+	private int connect() throws InterruptedException, IOException {
 		Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
-		if ((remoteStorage.exists() || connection.waitFor() == 0) && localStorage.exists()) {
+		return connection.waitFor();
+	}
+
+	public void updateStorage() throws InterruptedException, IOException, ParserConfigurationException, SAXException, TransformerException {
+		if ((remoteStorage.exists() || connect() == 0) && localStorage.exists()) {
 			File newestFile = remoteStorage.lastModified() < localStorage.lastModified() ? localStorage : remoteStorage;
 			readFile(newestFile);
 			writeFile(localStorage);
@@ -53,11 +56,11 @@ public class WriterReader {
 		}
 	}
 
-	public void write() throws ParserConfigurationException, TransformerException, IOException {
+	public void write() throws ParserConfigurationException, TransformerException {
 		writeFile(localStorage);
 	}
 
-	private void readFile(File file) throws IOException, ParserConfigurationException, SAXException {
+	private void readFile(File file) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(file);
@@ -75,7 +78,7 @@ public class WriterReader {
 		}
 	}
 
-	private void writeFile(File file) throws ParserConfigurationException, TransformerException, IOException {
+	private void writeFile(File file) throws ParserConfigurationException, TransformerException {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		Document document = documentBuilder.newDocument();

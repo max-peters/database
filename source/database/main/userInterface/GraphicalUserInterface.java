@@ -52,7 +52,7 @@ public class GraphicalUserInterface {
 	private JTextField				time						= new JTextField();
 	private Timer					timer						= new Timer();
 
-	public GraphicalUserInterface(PluginContainer pluginContainer) throws IOException, FontFormatException {
+	public GraphicalUserInterface(PluginContainer pluginContainer) throws FontFormatException, IOException {
 		this.pluginContainer = pluginContainer;
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		InputStream inputStream = classLoader.getResourceAsStream("DejaVuSansMono.ttf");
@@ -181,7 +181,7 @@ public class GraphicalUserInterface {
 		collectedLines.add(new OutputInformation(output, StringType.SOLUTION, stringFormat));
 	}
 
-	protected void errorMessage() throws InterruptedException, BadLocationException {
+	protected void errorMessage() throws BadLocationException, InterruptedException {
 		printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
 		waitForInput();
 	}
@@ -267,7 +267,7 @@ public class GraphicalUserInterface {
 		input.setCaretColor(Color.WHITE);
 	}
 
-	protected String request(String printOut, String regex) throws InterruptedException, BadLocationException, CancellationException {
+	protected String request(String printOut, String regex) throws InterruptedException, BadLocationException {
 		boolean request = true;
 		String result = null;
 		String input = null;
@@ -295,7 +295,7 @@ public class GraphicalUserInterface {
 	protected void showMessageDialog(Throwable e) {
 		String stackTrace = "";
 		for (StackTraceElement element : e.getStackTrace()) {
-			stackTrace = stackTrace + System.getProperty("line.separator") + element;
+			stackTrace += System.getProperty("line.separator") + element;
 		}
 		JOptionPane.showMessageDialog(frame, stackTrace, e.getClass().getName(), JOptionPane.INFORMATION_MESSAGE);
 	}
@@ -326,12 +326,12 @@ public class GraphicalUserInterface {
 		int counter = 1;
 		for (String string : strings) {
 			if (counter == currentLine) {
-				output = output + "\u2611 ";
+				output += "\u2611 ";
 			}
 			else {
-				output = output + "\u2610 ";
+				output += "\u2610 ";
 			}
-			output = output + string + System.getProperty("line.separator");
+			output += string + System.getProperty("line.separator");
 			counter++;
 		}
 		return output;
