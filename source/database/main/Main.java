@@ -52,7 +52,7 @@ public class Main {
 				e = e.getCause();
 			}
 			for (StackTraceElement element : e.getStackTrace()) {
-				stackTrace = stackTrace + "\r\n" + element;
+				stackTrace = stackTrace + System.getProperty("line.separator") + element;
 			}
 			JOptionPane.showMessageDialog(null, stackTrace, e.getClass().getName(), JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();

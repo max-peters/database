@@ -77,7 +77,7 @@ public class EventPlugin extends InstancePlugin {
 			}
 		});
 		for (Event event : eventList) {
-			initialOutput = initialOutput + event.output() + "\r\n";
+			initialOutput = initialOutput + event.output() + System.getProperty("line.separator");
 		}
 		if (!initialOutput.isEmpty()) {
 			Terminal.printLine(identity + ":", StringType.MAIN, StringFormat.BOLD);
@@ -102,6 +102,10 @@ public class EventPlugin extends InstancePlugin {
 		for (InstancePlugin extention : extentionList) {
 			extention.getList().remove(toRemove);
 		}
+	}
+
+	@Override public void show() {
+		System.out.println("hi");
 	}
 
 	private EventPluginExtention chooseType() throws InterruptedException, BadLocationException {

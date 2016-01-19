@@ -1,6 +1,7 @@
 package database.plugin.refilling;
 
 import java.util.Map;
+import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstanceList;
 import database.plugin.expense.ExpenseList;
@@ -14,30 +15,39 @@ public class RefillingList extends InstanceList {
 	}
 
 	@Override public void add(Map<String, String> parameter) {
-		getList().add(new Refilling(parameter, getList().size(), expenseList));
+		getList().add(new Refilling(parameter, expenseList));
 	}
 
 	@Override public String initialOutput() {
 		String output = "";
-		if (!getList().isEmpty()) {
+		if (getList().isEmpty()) {
+			output = "no entries";
+		}
+		else {
 			output = "["+ getList().size() + "] " + "distance: " + "[" + getDistanceTotal() + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal() + " l" + "] "
 						+ "averageConsumption: " + "[" + getAverageConsumptionTotal() + " l/km" + "]";
 		}
 		return output;
 	}
 
-	@Override public String output(Map<String, String> map) {
-		String print = "";
+	@Command(tag = "all") public String outputAll() {
+		StringBuilder builder = new StringBuilder();
 		if (getList().isEmpty()) {
-			print = "no entries";
+			builder.append("no entries");
 		}
 		else {
 			for (Instance instance : getList()) {
 				Refilling refilling = (Refilling) instance;
-				print = print + singleOutput(refilling) + "\r\n";
+				builder.append("[" + String.format("%" + String.valueOf(getList().size()).length() + "s", getList().indexOf(instance)).replace(' ', '0'));
+				builder.append("] distance: [" + String.format("%" + String.valueOf(getHighestDistance()).length() + "s", refilling.getDistance()) + " km] refuelAmount: [");
+				builder.append(String.format("%"+ String.valueOf(String.format("%.1f", getHighestRefuelAmount())).length() + "s",
+												String.format("%.1f", refilling.getRefuelAmount()))
+										.replace(",", "."));
+				builder.append(" l] averageConsumption: ["+ String.format("%" + String.valueOf(getHighestAverageConsumption()).length() + "s", refilling.calcAverageConsumption())
+								+ " l/km]" + System.getProperty("line.separator"));
 			}
 		}
-		return print;
+		return builder.toString();
 	}
 
 	protected double getHighestAverageConsumption() {
@@ -95,15 +105,5 @@ public class RefillingList extends InstanceList {
 			refuelAmountTotal = refuelAmountTotal + refilling.getRefuelAmount();
 		}
 		return Math.round(10.0 * refuelAmountTotal) / 10.0;
-	}
-
-	private String singleOutput(Refilling refilling) {
-		return "["+ String.format("%" + String.valueOf(getList().size()).length() + "s", refilling.getCount()).replace(' ', '0')
-				+ "] distance: [" + String.format("%"+ String.valueOf(getHighestDistance()).length() + "s",
-													refilling.getDistance())
-				+ " km] refuelAmount: ["
-				+ String.format("%" + String.valueOf(String.format("%.1f", getHighestRefuelAmount())).length() + "s", String.format("%.1f", refilling.getRefuelAmount()))
-						.replace(",", ".")
-				+ " l] averageConsumption: [" + String.format("%" + String.valueOf(getHighestAverageConsumption()).length() + "s", refilling.calcAverageConsumption()) + " l/km]";
 	}
 }

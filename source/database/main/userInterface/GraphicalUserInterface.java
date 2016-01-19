@@ -186,6 +186,10 @@ public class GraphicalUserInterface {
 		waitForInput();
 	}
 
+	protected int getMaximumAmountOfCharactersPerLine(char character) {
+		return frameWidth / output.getFontMetrics(font).charWidth(character);
+	}
+
 	protected void initialOutput() throws BadLocationException {
 		for (Plugin plugin : pluginContainer.getPlugins()) {
 			if (plugin.getDisplay()) {
@@ -224,10 +228,6 @@ public class GraphicalUserInterface {
 			}
 			moveTextField(output.getText().contains(System.getProperty("line.separator")) ? output.getText().split(System.getProperty("line.separator")).length : 0);
 		}
-	}
-
-	protected int getMaximumAmountOfCharactersPerLine(char character) {
-		return frameWidth / output.getFontMetrics(font).charWidth(character);
 	}
 
 	protected void printLine(OutputInformation output) throws BadLocationException {
@@ -295,7 +295,7 @@ public class GraphicalUserInterface {
 	protected void showMessageDialog(Throwable e) {
 		String stackTrace = "";
 		for (StackTraceElement element : e.getStackTrace()) {
-			stackTrace = stackTrace + "\r\n" + element;
+			stackTrace = stackTrace + System.getProperty("line.separator") + element;
 		}
 		JOptionPane.showMessageDialog(frame, stackTrace, e.getClass().getName(), JOptionPane.INFORMATION_MESSAGE);
 	}
@@ -331,7 +331,7 @@ public class GraphicalUserInterface {
 			else {
 				output = output + "\u2610 ";
 			}
-			output = output + string + "\r\n";
+			output = output + string + System.getProperty("line.separator");
 			counter++;
 		}
 		return output;

@@ -54,7 +54,7 @@ public class Administration {
 			command = Terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "check|exit|save)");
 			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx())) {
 				Plugin plugin = pluginContainer.getPlugin(command);
-				command = Terminal.request(command, plugin.getCommandTags());
+				command = Terminal.request(command, plugin.getCommandTags(plugin.getClass()));
 				plugin.conduct(command);
 			}
 			else if (command.matches("(check|exit|save)")) {

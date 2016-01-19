@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import java.util.stream.Stream;
 import database.main.date.Date;
 import database.main.date.Month;
+import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstanceList;
 
@@ -29,37 +30,27 @@ public class ExpenseList extends InstanceList {
 		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month)) + "€";
 	}
 
-	@Override public String output(Map<String, String> map) {
-		String print = null;
-		switch (map.get("show")) {
-			case "all":
-				print = outputIntervall(null);
-				if (print.length() == 0) {
-					print = "no entries";
-				}
-				break;
-			case "current":
-				print = outputIntervall(Date.getCurrentDate().month);
-				if (print.length() == 0) {
-					print = "no entries";
-				}
-				break;
-			case "average":
-				print = outputAverageMonth();
-				break;
-			case "month":
-				print = outputMonth();
-				break;
-			case "day":
-				print = outputAverageDay();
-				break;
-			case "category":
-				print = outputCategory();
+	@Command(tag = "day") public String outputAveragePerDay() {
+		DecimalFormat format = new DecimalFormat("#0.00");
+		double value = 0;
+		int dayCounter = 0;
+		for (Month month : getMonths()) {
+			value = value + value(month);
+			dayCounter = dayCounter + month.getDayCount();
 		}
-		return print;
+		return "average value per day: " + format.format(value / dayCounter) + "€";
 	}
 
-	private String outputCategory() {
+	@Command(tag = "average") public String outputAveragePerMonth() {
+		DecimalFormat format = new DecimalFormat("#0.00");
+		double value = 0;
+		for (Month month : getMonths()) {
+			value = value + value(month);
+		}
+		return "average value per month: " + format.format(value / getMonths().size()) + "€";
+	}
+
+	@Command(tag = "category") public String outputCategory() {
 		StringBuilder builder = new StringBuilder();
 		DecimalFormat formatValue = new DecimalFormat("#0.00");
 		DecimalFormat formatPercent = new DecimalFormat("00.00");
@@ -113,17 +104,43 @@ public class ExpenseList extends InstanceList {
 			if (line.length() > longestLine) {
 				longestLine = line.length();
 			}
-			builder.append(line + "\r\n");
+			builder.append(line + System.getProperty("line.separator"));
 		}
 		for (int i = 0; i < longestLine; i++) {
 			builder.append("-");
 		}
-		builder.append("\r\n");
+		builder.append(System.getProperty("line.separator"));
 		for (int i = 0; i < name.length(); i++) {
 			builder.append(" ");
 		}
 		builder.append(formatValue.format(totalSum) + "€");
 		return builder.toString();
+	}
+
+	@Command(tag = "month") public String outputMonth() {
+		DecimalFormat format = new DecimalFormat("#0.00");
+		String output = "";
+		for (Month month : getMonths()) {
+			output = output+ String.format("%2s", month.counter).replace(" ", "0") + "/" + month.year.counter + " : " + format.format(value(month)) + "€"
+						+ System.getProperty("line.separator");
+		}
+		return output;
+	}
+
+	@Command(tag = "all") public String printAll() {
+		String print = outputIntervall(null);
+		if (print.length() == 0) {
+			print = "no entries";
+		}
+		return print;
+	}
+
+	@Command(tag = "current") public String printCurrent() {
+		String print = outputIntervall(Date.getCurrentDate().month);
+		if (print.length() == 0) {
+			print = "no entries";
+		}
+		return print;
 	}
 
 	private ArrayList<Month> getMonths() {
@@ -135,26 +152,6 @@ public class ExpenseList extends InstanceList {
 			}
 		}
 		return months;
-	}
-
-	private String outputAverageDay() {
-		DecimalFormat format = new DecimalFormat("#0.00");
-		double value = 0;
-		int dayCounter = 0;
-		for (Month month : getMonths()) {
-			value = value + value(month);
-			dayCounter = dayCounter + month.getDayCount();
-		}
-		return "average value per day: " + format.format(value / dayCounter) + "€";
-	}
-
-	private String outputAverageMonth() {
-		DecimalFormat format = new DecimalFormat("#0.00");
-		double value = 0;
-		for (Month month : getMonths()) {
-			value = value + value(month);
-		}
-		return "average value per month: " + format.format(value / getMonths().size()) + "€";
 	}
 
 	private String outputIntervall(Month month) {
@@ -181,7 +178,7 @@ public class ExpenseList extends InstanceList {
 		}
 		// Collections.sort(categories); nach wichtigkeit ordnen
 		for (String current : categories) {
-			toReturn = toReturn + current + ":\r\n";
+			toReturn = toReturn + current + ":" + System.getProperty("line.separator");
 			names = new ArrayList<String>();
 			for (Instance instance : getList()) {
 				Expense expense = (Expense) instance;
@@ -204,19 +201,10 @@ public class ExpenseList extends InstanceList {
 				for (int i = 0; i < blankCounter; i++) {
 					blanks = blanks + " ";
 				}
-				toReturn = toReturn + blanks + "  " + format.format(value) + "€" + "\r\n";
+				toReturn = toReturn + blanks + "  " + format.format(value) + "€" + System.getProperty("line.separator");
 			}
 		}
 		return toReturn;
-	}
-
-	private String outputMonth() {
-		DecimalFormat format = new DecimalFormat("#0.00");
-		String output = "";
-		for (Month month : getMonths()) {
-			output = output + String.format("%2s", month.counter).replace(" ", "0") + "/" + month.year.counter + " : " + format.format(value(month)) + "€" + "\r\n";
-		}
-		return output;
 	}
 
 	private double value(Month month) {

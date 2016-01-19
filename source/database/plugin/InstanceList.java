@@ -42,10 +42,6 @@ public abstract class InstanceList {
 		return null;
 	}
 
-	public String output(Map<String, String> parameter) {
-		return null;
-	}
-
 	public void remove(Instance toRemove) {
 		list.remove(toRemove);
 	}

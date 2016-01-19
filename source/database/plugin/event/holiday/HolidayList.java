@@ -14,9 +14,9 @@ import database.plugin.Instance;
 import database.plugin.event.EventList;
 
 public class HolidayList extends EventList {
-	URL				url;
 	URLConnection	connection;
 	List<String>	lines	= new ArrayList<String>();
+	URL				url;
 
 	@Override public void add(Map<String, String> parameter) throws IOException {
 		url = new URL("http://www.schulferien.org/Feiertage/Feiertage_Baden_Wuerttemberg.html");
@@ -34,26 +34,6 @@ public class HolidayList extends EventList {
 		else if (!contains(parameter)) {
 			sortedAdd(new Holiday(parameter));
 		}
-	}
-
-	private boolean testURL() {
-		try {
-			connection = url.openConnection();
-			return true;
-		}
-		catch (Throwable e) {
-			return false;
-		}
-	}
-
-	private void prepareList() throws IOException {
-		String line;
-		lines.clear();
-		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		while ((line = in.readLine()) != null) {
-			lines.add(line);
-		}
-		in.close();
 	}
 
 	public void getHolidays() throws IOException {
@@ -88,6 +68,26 @@ public class HolidayList extends EventList {
 					}
 				}
 			}
+		}
+	}
+
+	private void prepareList() throws IOException {
+		String line;
+		lines.clear();
+		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		while ((line = in.readLine()) != null) {
+			lines.add(line);
+		}
+		in.close();
+	}
+
+	private boolean testURL() {
+		try {
+			connection = url.openConnection();
+			return true;
+		}
+		catch (Throwable e) {
+			return false;
 		}
 	}
 }

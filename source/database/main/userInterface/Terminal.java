@@ -27,6 +27,14 @@ public class Terminal {
 		graphicalUserInterface.errorMessage();
 	}
 
+	public static void getLineOfCharacters(char character) throws BadLocationException {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < graphicalUserInterface.getMaximumAmountOfCharactersPerLine(character); i++) {
+			builder.append("-");
+		}
+		printLine(builder.toString(), StringType.REQUEST, StringFormat.STANDARD);
+	}
+
 	public static void initialOutput() throws BadLocationException {
 		graphicalUserInterface.initialOutput();
 	}
@@ -61,9 +69,5 @@ public class Terminal {
 
 	public static void waitForInput() throws InterruptedException {
 		graphicalUserInterface.waitForInput();
-	}
-
-	public static int getMaximumAmountOfCharactersPerLine(char character) {
-		return graphicalUserInterface.getMaximumAmountOfCharactersPerLine(character);
 	}
 }

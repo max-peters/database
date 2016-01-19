@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
-import database.main.userInterface.StringFormat;
-import database.main.userInterface.StringType;
-import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.expense.monthlyExpense.MonthlyExpensePlugin;
@@ -42,17 +39,16 @@ public class ExpensePlugin extends InstancePlugin {
 			e.printStackTrace();
 		}
 	}
-
-	@Command(tag = "show") public void showRequest() throws InterruptedException, BadLocationException {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("show", "(all|current|average|month|day|category)");
-		request(map);
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < Terminal.getMaximumAmountOfCharactersPerLine('-'); i++) {
-			builder.append("-");
-		}
-		Terminal.printLine(builder.toString(), StringType.REQUEST, StringFormat.STANDARD);
-		Terminal.printLine(instanceList.output(map), StringType.SOLUTION, StringFormat.STANDARD);
-		Terminal.waitForInput();
-	}
+	// @Command(tag = "show") public void showRequest() throws InterruptedException, BadLocationException {
+	// Map<String, String> map = new HashMap<String, String>();
+	// map.put("show", "(all|current|average|month|day|category)");
+	// request(map);
+	// StringBuilder builder = new StringBuilder();
+	// for (int i = 0; i < Terminal.getMaximumAmountOfCharactersPerLine('-'); i++) {
+	// builder.append("-");
+	// }
+	// Terminal.printLine(builder.toString(), StringType.REQUEST, StringFormat.STANDARD);
+	// Terminal.printLine(instanceList.output(map), StringType.SOLUTION, StringFormat.STANDARD);
+	// Terminal.waitForInput();
+	// }
 }

@@ -45,10 +45,10 @@ public abstract class Plugin {
 		return changes;
 	}
 
-	public String getCommandTags() {
+	public String getCommandTags(Class<?> classWithMethods) {
 		String regex = "(";
 		ArrayList<String> strings = new ArrayList<String>();
-		for (Method method : this.getClass().getMethods()) {
+		for (Method method : classWithMethods.getMethods()) {
 			if (method.isAnnotationPresent(Command.class)) {
 				strings.add(method.getAnnotation(Command.class).tag());
 			}

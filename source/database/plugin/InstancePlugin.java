@@ -1,9 +1,12 @@
 package database.plugin;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
@@ -81,5 +84,18 @@ public abstract class InstancePlugin extends Plugin {
 	public void remove(Instance toRemove) throws BadLocationException {
 		instanceList.remove(toRemove);
 		update();
+	}
+
+	@Command(tag = "show") public void show()	throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, CancellationException, InterruptedException,
+												BadLocationException {
+		String command = Terminal.request("show", getCommandTags(getInstanceList().getClass()));
+		for (Method method : getInstanceList().getClass().getMethods()) {
+			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
+				Terminal.getLineOfCharacters('-');
+				Terminal.printLine(method.invoke(getInstanceList(), (Object[]) method.getParameterTypes()), StringType.SOLUTION, StringFormat.STANDARD);
+				Terminal.waitForInput();
+				return;
+			}
+		}
 	}
 }
