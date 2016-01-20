@@ -89,6 +89,15 @@ public class RefillingList extends InstanceList {
 		return Math.round(10.0 * highestRefuelAmount) / 10.0;
 	}
 
+	private void createExpense(Refilling refilling, ExpensePlugin expensePlugin) throws IOException {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("name", "Auto - Tankstelle");
+		map.put("category", "Fahrtkosten");
+		map.put("value", refilling.getParameter("value"));
+		map.put("date", refilling.getParameter("date"));
+		expensePlugin.create(map);
+	}
+
 	private double getAverageConsumptionTotal() {
 		return Math.round(getRefuelAmountTotal() / getDistanceTotal() * 1000.0) / 10.0;
 	}
@@ -109,14 +118,5 @@ public class RefillingList extends InstanceList {
 			refuelAmountTotal = refuelAmountTotal + refilling.getRefuelAmount();
 		}
 		return Math.round(10.0 * refuelAmountTotal) / 10.0;
-	}
-
-	private void createExpense(Refilling refilling, ExpensePlugin expensePlugin) throws IOException {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("name", "Auto - Tankstelle");
-		map.put("category", "Fahrtkosten");
-		map.put("value", refilling.getParameter("value"));
-		map.put("date", refilling.getParameter("date"));
-		expensePlugin.create(map);
 	}
 }

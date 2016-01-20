@@ -21,8 +21,8 @@ public class HolidayPlugin extends EventPluginExtention {
 		super("holiday", new HolidayList(), storage);
 	}
 
-	public void create(Map<String, String> map) throws IOException {
-		EventList list = ((EventList) getInstanceList());
+	@Override public void create(Map<String, String> map) throws IOException {
+		EventList list = (EventList) getInstanceList();
 		if (lines.isEmpty()) {
 			prepareList();
 		}
@@ -41,7 +41,7 @@ public class HolidayPlugin extends EventPluginExtention {
 
 	private void getHolidays() throws IOException {
 		Map<String, String> map;
-		EventList list = ((EventList) getInstanceList());
+		EventList list = (EventList) getInstanceList();
 		for (int i = 0; i < lines.size(); i++) {
 			if (lines.get(i).matches(".*<a href=\"/Feiertage/feiertag_.*.html\" class=\"dash\">.*")) {
 				map = new HashMap<String, String>();

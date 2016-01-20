@@ -25,6 +25,10 @@ public class Storage extends Plugin {
 		// nothing to display
 	}
 
+	public ArrayList<String> getStorage() {
+		return storage;
+	}
+
 	@Override public List<PrintInformation> print() {
 		List<PrintInformation> list = new ArrayList<PrintInformation>();
 		for (String string : storage) {
@@ -33,10 +37,6 @@ public class Storage extends Plugin {
 			list.add(pair);
 		}
 		return list;
-	}
-
-	public ArrayList<String> getStorage() {
-		return storage;
 	}
 
 	@Override public void read(PrintInformation pair) {

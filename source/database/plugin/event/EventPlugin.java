@@ -23,7 +23,7 @@ public class EventPlugin extends InstancePlugin {
 
 	public EventPlugin(Storage storage) {
 		super("event", null, storage);
-		this.extentionList = new ArrayList<EventPluginExtention>();
+		extentionList = new ArrayList<EventPluginExtention>();
 		extentionList.add(new AllDayEventPlugin(storage));
 		extentionList.add(new BirthdayPlugin(storage));
 		extentionList.add(new HolidayPlugin(storage));
@@ -47,15 +47,6 @@ public class EventPlugin extends InstancePlugin {
 		// nothing to display here
 	}
 
-	@Override public List<PrintInformation> print() {
-		List<PrintInformation> list = new ArrayList<PrintInformation>();
-		for (InstancePlugin extention : extentionList) {
-			list.addAll(extention.print());
-		}
-		list.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
-		return list;
-	}
-
 	@Override public void initialOutput() throws BadLocationException {
 		String initialOutput = "";
 		List<Event> eventList = new ArrayList<Event>();
@@ -77,6 +68,15 @@ public class EventPlugin extends InstancePlugin {
 			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
 			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
 		}
+	}
+
+	@Override public List<PrintInformation> print() {
+		List<PrintInformation> list = new ArrayList<PrintInformation>();
+		for (InstancePlugin extention : extentionList) {
+			list.addAll(extention.print());
+		}
+		list.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
+		return list;
 	}
 
 	@Override public void read(PrintInformation pair) throws IOException {

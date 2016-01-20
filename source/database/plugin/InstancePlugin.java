@@ -22,8 +22,24 @@ public abstract class InstancePlugin extends Plugin {
 		this.storage = storage;
 	}
 
+	public void clearList() {
+		instanceList.clear();
+	}
+
 	public void create(Map<String, String> map) throws IOException {
 		instanceList.add(map);
+	}
+
+	public InstanceList getInstanceList() {
+		return instanceList;
+	}
+
+	@Override public void initialOutput() throws BadLocationException {
+		String initialOutput = instanceList.initialOutput();
+		if (!initialOutput.isEmpty()) {
+			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
+			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
+		}
 	}
 
 	@Override public List<PrintInformation> print() {
@@ -33,22 +49,6 @@ public abstract class InstancePlugin extends Plugin {
 		}
 		list.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
 		return list;
-	}
-
-	public InstanceList getInstanceList() {
-		return instanceList;
-	}
-
-	public void clearList() {
-		instanceList.clear();
-	}
-
-	@Override public void initialOutput() throws BadLocationException {
-		String initialOutput = instanceList.initialOutput();
-		if (!initialOutput.isEmpty()) {
-			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
-			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
-		}
 	}
 
 	@Override public void read(PrintInformation pair) throws IOException {

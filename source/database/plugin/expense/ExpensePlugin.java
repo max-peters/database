@@ -21,6 +21,11 @@ public class ExpensePlugin extends InstancePlugin {
 		monthlyExpensePlugin = new MonthlyExpensePlugin(this, storage);
 	}
 
+	@Override public void clearList() {
+		super.clearList();
+		monthlyExpensePlugin.clearList();
+	}
+
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
@@ -54,10 +59,5 @@ public class ExpensePlugin extends InstancePlugin {
 		else if (pair.getName().equals("monthlyexpense")) {
 			monthlyExpensePlugin.create(pair.getMap());
 		}
-	}
-
-	@Override public void clearList() {
-		super.clearList();
-		monthlyExpensePlugin.clearList();
 	}
 }

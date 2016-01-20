@@ -54,6 +54,28 @@ public class MonthlyExpenseList extends InstanceList {
 		return date;
 	}
 
+	private boolean containsParts(Map<String, String> parameter, Iterable<Instance> iterable) {
+		boolean contains = false;
+		for (Instance instance : iterable) {
+			contains = false;
+			for (Entry<String, String> entry : parameter.entrySet()) {
+				if (instance.getParameter().containsKey(entry.getKey())) {
+					if (instance.getParameter(entry.getKey()).equals(entry.getValue())) {
+						contains = true;
+					}
+					else {
+						contains = false;
+						break;
+					}
+				}
+			}
+			if (contains) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private List<Map<String, String>> createExpense(Map<String, String> parameter, ExpensePlugin expensePlugin, ExecutionDay executionDay) throws IOException {
 		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 		Date date = new Date(parameter.get("date"));
@@ -81,27 +103,5 @@ public class MonthlyExpenseList extends InstanceList {
 			parameter = map;
 		}
 		return list;
-	}
-
-	private boolean containsParts(Map<String, String> parameter, Iterable<Instance> iterable) {
-		boolean contains = false;
-		for (Instance instance : iterable) {
-			contains = false;
-			for (Entry<String, String> entry : parameter.entrySet()) {
-				if (instance.getParameter().containsKey(entry.getKey())) {
-					if (instance.getParameter(entry.getKey()).equals(entry.getValue())) {
-						contains = true;
-					}
-					else {
-						contains = false;
-						break;
-					}
-				}
-			}
-			if (contains) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

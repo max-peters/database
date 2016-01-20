@@ -13,9 +13,9 @@ import database.main.date.Date;
 import database.main.userInterface.Terminal;
 
 public abstract class Plugin {
+	private boolean	changes;
 	private boolean	display;
 	private String	identity;
-	private boolean	changes;
 
 	public Plugin(String identity) {
 		this.identity = identity;
@@ -67,11 +67,11 @@ public abstract class Plugin {
 		return identity;
 	}
 
+	public void initialOutput() throws BadLocationException {}
+
 	public List<PrintInformation> print() {
 		return null;
 	}
-
-	public void initialOutput() throws BadLocationException {}
 
 	public void read(PrintInformation pair) throws IOException {}
 

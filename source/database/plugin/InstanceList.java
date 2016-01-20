@@ -14,6 +14,10 @@ public abstract class InstanceList {
 
 	public abstract void add(Map<String, String> map) throws IOException;
 
+	public void clear() {
+		list.clear();
+	}
+
 	public boolean contains(Map<String, String> parameter) {
 		boolean contains = false;
 		for (Instance instance : list) {
@@ -34,6 +38,10 @@ public abstract class InstanceList {
 		return false;
 	}
 
+	public Instance get(int index) {
+		return list.get(index);
+	}
+
 	public Iterable<Instance> getIterable() {
 		Iterable<Instance> iterable = list;
 		return iterable;
@@ -43,19 +51,11 @@ public abstract class InstanceList {
 		return null;
 	}
 
-	public void remove(Instance toRemove) {
-		list.remove(toRemove);
-	}
-
-	public void clear() {
-		list.clear();
-	}
-
 	public boolean isEmpty() {
 		return list.isEmpty();
 	}
 
-	public Instance get(int index) {
-		return list.get(index);
+	public void remove(Instance toRemove) {
+		list.remove(toRemove);
 	}
 }
