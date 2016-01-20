@@ -1,6 +1,6 @@
 package database.main.userInterface;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import javax.swing.text.BadLocationException;
 
 public class Terminal {
@@ -14,8 +14,8 @@ public class Terminal {
 		graphicalUserInterface.blockInput();
 	}
 
-	public static int checkRequest(ArrayList<String> strings) throws InterruptedException, BadLocationException {
-		return graphicalUserInterface.checkRequest(strings);
+	public static int checkRequest(Collection<String> collection) throws InterruptedException, BadLocationException {
+		return graphicalUserInterface.checkRequest(collection);
 	}
 
 	public static void collectLine(Object output, StringFormat stringFormat) {
@@ -43,7 +43,7 @@ public class Terminal {
 		graphicalUserInterface.printCollectedLines();
 	}
 
-	public static void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
+	public static synchronized void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 

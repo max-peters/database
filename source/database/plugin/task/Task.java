@@ -8,10 +8,6 @@ public class Task extends Instance {
 		super(parameter);
 	}
 
-	@Override public String getIdentity() {
-		return getTask();
-	}
-
 	protected String getTask() {
 		return getParameter("name");
 	}

@@ -1,5 +1,6 @@
 package database.plugin.expense.monthlyExpense;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,23 +11,24 @@ import database.main.date.Month;
 import database.main.date.Year;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.Terminal;
+import database.plugin.Instance;
 import database.plugin.InstanceList;
-import database.plugin.expense.ExpenseList;
+import database.plugin.expense.ExpensePlugin;
 
 public class MonthlyExpenseList extends InstanceList {
-	private ExpenseList expenseList;
+	private ExpensePlugin expensePlugin;
 
-	public MonthlyExpenseList(ExpenseList expenseList) {
+	public MonthlyExpenseList(ExpensePlugin expensePlugin) {
 		super();
-		this.expenseList = expenseList;
+		this.expensePlugin = expensePlugin;
 	}
 
-	@Override public void add(Map<String, String> parameter) {
+	@Override public void add(Map<String, String> parameter) throws IOException {
 		StringBuilder builder = new StringBuilder();
-		getList().add(new MonthlyExpense(parameter));
+		list.add(new MonthlyExpense(parameter));
 		Map<String, String> parameterCopy = new HashMap<String, String>();
 		parameterCopy.putAll(parameter);
-		List<Map<String, String>> list = createExpense(parameterCopy, expenseList, ExecutionDay.getExecutionDay(parameterCopy.remove("executionday")));
+		List<Map<String, String>> list = createExpense(parameterCopy, expensePlugin, ExecutionDay.getExecutionDay(parameterCopy.remove("executionday")));
 		for (Map<String, String> map : list) {
 			builder.append(" - " + map.get("date") + "  " + map.get("name") + " (" + map.get("category") + ")  " + map.get("value") + "€");
 			builder.append(System.getProperty("line.separator"));
@@ -52,7 +54,7 @@ public class MonthlyExpenseList extends InstanceList {
 		return date;
 	}
 
-	private List<Map<String, String>> createExpense(Map<String, String> parameter, ExpenseList expenseList, ExecutionDay executionDay) {
+	private List<Map<String, String>> createExpense(Map<String, String> parameter, ExpensePlugin expensePlugin, ExecutionDay executionDay) throws IOException {
 		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
 		Date date = new Date(parameter.get("date"));
 		date = adjustDate(date.month.counter, date.year.counter, executionDay);
@@ -61,8 +63,8 @@ public class MonthlyExpenseList extends InstanceList {
 			Map<String, String> parameterCopy = new HashMap<String, String>();
 			parameterCopy.putAll(parameter);
 			parameterCopy.remove("value");
-			if (!expenseList.containsParts(parameterCopy)) {
-				expenseList.add(parameter);
+			if (!containsParts(parameterCopy, expensePlugin.getInstanceList().getIterable())) {
+				expensePlugin.create(parameter);
 				list.add(parameter);
 			}
 			if (date.month.counter == 12) {
@@ -79,5 +81,27 @@ public class MonthlyExpenseList extends InstanceList {
 			parameter = map;
 		}
 		return list;
+	}
+
+	private boolean containsParts(Map<String, String> parameter, Iterable<Instance> iterable) {
+		boolean contains = false;
+		for (Instance instance : iterable) {
+			contains = false;
+			for (Entry<String, String> entry : parameter.entrySet()) {
+				if (instance.getParameter().containsKey(entry.getKey())) {
+					if (instance.getParameter(entry.getKey()).equals(entry.getValue())) {
+						contains = true;
+					}
+					else {
+						contains = false;
+						break;
+					}
+				}
+			}
+			if (contains) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

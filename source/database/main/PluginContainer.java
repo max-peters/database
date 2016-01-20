@@ -15,16 +15,7 @@ public class PluginContainer {
 		plugins.add(plugin);
 	}
 
-	public void clearLists() {
-		for (Plugin plugin : plugins) {
-			if (plugin instanceof InstancePlugin) {
-				InstancePlugin current = (InstancePlugin) plugin;
-				current.clearList();
-			}
-		}
-	}
-
-	public boolean getChanges() {
+	public boolean changes() {
 		for (Plugin plugin : plugins) {
 			if (plugin instanceof InstancePlugin) {
 				InstancePlugin current = (InstancePlugin) plugin;
@@ -48,12 +39,9 @@ public class PluginContainer {
 	public String getPluginNameTagsAsRegesx() {
 		String regex = "(";
 		for (Plugin plugin : plugins) {
-			regex = regex + plugin.getIdentity();
-			if (!(plugins.indexOf(plugin) == plugins.size() - 1)) {
-				regex = regex + "|";
-			}
+			regex += plugin.getIdentity() + "|";
 		}
-		return regex + ")";
+		return regex.substring(0, regex.lastIndexOf("|")) + ")";
 	}
 
 	public ArrayList<Plugin> getPlugins() {

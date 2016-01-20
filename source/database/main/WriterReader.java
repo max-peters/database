@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import database.plugin.Plugin;
-import database.plugin.RequestInformation;
+import database.plugin.PrintInformation;
 
 public class WriterReader {
 	private File			localStorage;
@@ -42,11 +42,6 @@ public class WriterReader {
 		}
 	}
 
-	private int connect() throws InterruptedException, IOException {
-		Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
-		return connection.waitFor();
-	}
-
 	public void updateStorage() throws InterruptedException, ParserConfigurationException, SAXException, TransformerException, IOException {
 		if ((remoteStorage.exists() || connect() == 0) && localStorage.exists()) {
 			File newestFile = remoteStorage.lastModified() < localStorage.lastModified() ? localStorage : remoteStorage;
@@ -60,6 +55,11 @@ public class WriterReader {
 		writeFile(localStorage);
 	}
 
+	private int connect() throws InterruptedException, IOException {
+		Process connection = Runtime.getRuntime().exec("cmd.exe /c net use Z: https://webdav.hidrive.strato.com/users/maxptrs/Server /user:maxptrs ***REMOVED*** /persistent:no");
+		return connection.waitFor();
+	}
+
 	private void readFile(File file) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -69,11 +69,11 @@ public class WriterReader {
 		for (int i = 0; i < nList.getLength(); i++) {
 			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
 			if (plugin != null) {
-				RequestInformation pair = new RequestInformation(nList.item(i).getNodeName());
+				PrintInformation pair = new PrintInformation(nList.item(i).getNodeName());
 				for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
 					pair.put(nList.item(i).getAttributes().item(j).getNodeName(), nList.item(i).getAttributes().item(j).getNodeValue());
 				}
-				plugin.readInformation(pair);
+				plugin.read(pair);
 			}
 		}
 	}
@@ -85,10 +85,10 @@ public class WriterReader {
 		Element database = document.createElement("database");
 		document.appendChild(database);
 		for (Plugin currentPlugin : pluginContainer.getPlugins()) {
-			List<RequestInformation> list = currentPlugin.getInformationList();
+			List<PrintInformation> list = currentPlugin.print();
 			if (list != null && !list.isEmpty()) {
 				Element element = document.createElement(currentPlugin.getIdentity());
-				for (RequestInformation pair : list) {
+				for (PrintInformation pair : list) {
 					Element entryElement = document.createElement(pair.getName());
 					for (Entry<String, String> entry : pair.getMap().entrySet()) {
 						entryElement.setAttribute(entry.getKey(), entry.getValue());

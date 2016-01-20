@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
-import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
-import database.plugin.expense.ExpenseList;
+import database.plugin.expense.ExpensePlugin;
 import database.plugin.storage.Storage;
 
 public class MonthlyExpensePlugin extends InstancePlugin {
-	public MonthlyExpensePlugin(PluginContainer pluginContainer, ExpenseList expenseList, Storage storage) {
-		super(pluginContainer, "monthlyexpense", new MonthlyExpenseList(expenseList), storage);
+	public MonthlyExpensePlugin(ExpensePlugin expensePlugin, Storage storage) {
+		super("monthlyexpense", new MonthlyExpenseList(expensePlugin), storage);
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {

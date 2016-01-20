@@ -13,9 +13,9 @@ import database.main.date.Date;
 import database.main.userInterface.Terminal;
 
 public abstract class Plugin {
-	protected boolean	display;
-	protected String	identity;
-	private boolean		changes;
+	private boolean	display;
+	private String	identity;
+	private boolean	changes;
 
 	public Plugin(String identity) {
 		this.identity = identity;
@@ -54,12 +54,9 @@ public abstract class Plugin {
 			}
 		}
 		for (String string : strings) {
-			regex = regex + string;
-			if (!(strings.indexOf(string) == strings.size() - 1)) {
-				regex = regex + "|";
-			}
+			regex += string + "|";
 		}
-		return regex + ")";
+		return regex.substring(0, regex.lastIndexOf("|")) + ")";
 	}
 
 	public boolean getDisplay() {
@@ -70,13 +67,13 @@ public abstract class Plugin {
 		return identity;
 	}
 
-	public List<RequestInformation> getInformationList() {
+	public List<PrintInformation> print() {
 		return null;
 	}
 
 	public void initialOutput() throws BadLocationException {}
 
-	public void readInformation(RequestInformation pair) throws IOException {}
+	public void read(PrintInformation pair) throws IOException {}
 
 	public void setChanges(boolean changes) {
 		this.changes = changes;

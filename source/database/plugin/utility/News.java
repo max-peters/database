@@ -13,6 +13,10 @@ public class News {
 		setRank();
 	}
 
+	public String getCurrentRank() {
+		return rank;
+	}
+
 	private void setRank() throws IOException {
 		String line;
 		URL url = new URL("http://www.lolking.net/summoner/euw/37588528");
@@ -28,9 +32,5 @@ public class News {
 			}
 		}
 		in.close();
-	}
-
-	public String getCurrentRank() {
-		return rank;
 	}
 }

@@ -5,33 +5,33 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import javax.swing.text.BadLocationException;
-import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
-import database.plugin.RequestInformation;
+import database.plugin.PrintInformation;
 import database.plugin.event.allDayEvent.AllDayEventPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
 import database.plugin.storage.Storage;
 
 public class EventPlugin extends InstancePlugin {
-	private ArrayList<InstancePlugin> extentionList;
+	private ArrayList<EventPluginExtention> extentionList;
 
-	public EventPlugin(PluginContainer pluginContainer, Storage storage) {
-		super(pluginContainer, "event", null, storage);
-		extentionList = new ArrayList<InstancePlugin>();
-		initialise();
+	public EventPlugin(Storage storage) {
+		super("event", null, storage);
+		this.extentionList = new ArrayList<EventPluginExtention>();
+		extentionList.add(new AllDayEventPlugin(storage));
+		extentionList.add(new BirthdayPlugin(storage));
+		extentionList.add(new HolidayPlugin(storage));
 	}
 
 	@Override public void clearList() {
 		for (InstancePlugin extention : extentionList) {
-			extention.clearList();
+			extention.getInstanceList().clear();
 		}
 	}
 
@@ -43,24 +43,17 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	@Override public List<RequestInformation> getInformationList() {
-		List<RequestInformation> list = new ArrayList<RequestInformation>();
-		for (InstancePlugin extention : extentionList) {
-			for (Instance instance : extention.getList()) {
-				Map<String, String> map = instance.getParameter();
-				list.add(new RequestInformation(extention.getIdentity(), map));
-			}
-		}
-		list.add(new RequestInformation("display", "boolean", String.valueOf(getDisplay())));
-		return list;
+	@Override public void display() {
+		// nothing to display here
 	}
 
-	@Override public ArrayList<Instance> getList() {
-		ArrayList<Instance> instances = new ArrayList<Instance>();
+	@Override public List<PrintInformation> print() {
+		List<PrintInformation> list = new ArrayList<PrintInformation>();
 		for (InstancePlugin extention : extentionList) {
-			instances.addAll(extention.getList());
+			list.addAll(extention.print());
 		}
-		return instances;
+		list.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
+		return list;
 	}
 
 	@Override public void initialOutput() throws BadLocationException {
@@ -78,15 +71,15 @@ public class EventPlugin extends InstancePlugin {
 			}
 		});
 		for (Event event : eventList) {
-			initialOutput = initialOutput + event.output() + System.getProperty("line.separator");
+			initialOutput += event.output() + System.getProperty("line.separator");
 		}
 		if (!initialOutput.isEmpty()) {
-			Terminal.printLine(identity + ":", StringType.MAIN, StringFormat.BOLD);
+			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
 			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
 		}
 	}
 
-	@Override public void readInformation(RequestInformation pair) throws IOException {
+	@Override public void read(PrintInformation pair) throws IOException {
 		if (pair.getName().equals("display")) {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}
@@ -99,18 +92,14 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	@Override public void remove(Instance toRemove) {
+	@Override public void remove(Instance toRemove) throws BadLocationException {
 		for (InstancePlugin extention : extentionList) {
-			extention.getList().remove(toRemove);
+			extention.remove(toRemove);
 		}
 	}
 
 	@Override public void show() {
 		// nothing to show here
-	}
-
-	@Override public void display() {
-		// nothing to display here
 	}
 
 	private EventPluginExtention chooseType() throws InterruptedException, BadLocationException {
@@ -132,11 +121,5 @@ public class EventPlugin extends InstancePlugin {
 			}
 		}
 		return toReturn;
-	}
-
-	private void initialise() {
-		extentionList.add(new AllDayEventPlugin(pluginContainer, storage));
-		extentionList.add(new BirthdayPlugin(pluginContainer, storage));
-		extentionList.add(new HolidayPlugin(pluginContainer, storage));
 	}
 }

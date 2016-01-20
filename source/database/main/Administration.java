@@ -26,7 +26,7 @@ public class Administration {
 	}
 
 	private void exit() throws InterruptedException, BadLocationException, ParserConfigurationException, TransformerException {
-		if (pluginContainer.getChanges()) {
+		if (pluginContainer.changes()) {
 			String command;
 			command = Terminal.request("there are unsaved changes - exit", "(y|n|s)");
 			switch (command) {

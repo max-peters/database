@@ -9,10 +9,6 @@ public abstract class Instance {
 		this.parameter = parameter;
 	}
 
-	public String getIdentity() {
-		return toString();
-	}
-
 	public Map<String, String> getParameter() {
 		return parameter;
 	}

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -138,12 +139,12 @@ public class GraphicalUserInterface {
 		input.setCaretColor(Color.BLACK);
 	}
 
-	protected int checkRequest(ArrayList<String> strings) throws InterruptedException, BadLocationException {
+	protected int checkRequest(Collection<String> collection) throws InterruptedException, BadLocationException {
 		int position = -1;
 		int current = 0;
 		pressedKey = 0;
 		printLine("check:", StringType.MAIN, StringFormat.ITALIC);
-		if (strings.isEmpty()) {
+		if (collection.isEmpty()) {
 			printLine("no entries", StringType.SOLUTION, StringFormat.STANDARD);
 			waitForInput();
 			return position;
@@ -151,7 +152,7 @@ public class GraphicalUserInterface {
 		input.setEditable(false);
 		input.setCaretColor(Color.BLACK);
 		while (pressedKey != 10) {
-			printLine(formatCheckLine(strings, current), StringType.REQUEST, StringFormat.STANDARD);
+			printLine(formatCheckLine(collection, current), StringType.REQUEST, StringFormat.STANDARD);
 			synchronized (synchronizerKeyInput) {
 				synchronizerKeyInput.wait();
 			}
@@ -164,8 +165,8 @@ public class GraphicalUserInterface {
 			if (current < 0) {
 				current = 0;
 			}
-			if (current > strings.size()) {
-				current = strings.size();
+			if (current > collection.size()) {
+				current = collection.size();
 			}
 		}
 		if (current != 0) {
@@ -325,10 +326,10 @@ public class GraphicalUserInterface {
 		currentLineNumber = 0;
 	}
 
-	private String formatCheckLine(ArrayList<String> strings, int currentLine) {
+	private String formatCheckLine(Collection<String> collection, int currentLine) {
 		String output = "";
 		int counter = 1;
-		for (String string : strings) {
+		for (String string : collection) {
 			if (counter == currentLine) {
 				output += "\u2611 ";
 			}

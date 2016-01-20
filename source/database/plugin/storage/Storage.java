@@ -7,7 +7,7 @@ import javax.swing.text.BadLocationException;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
-import database.plugin.RequestInformation;
+import database.plugin.PrintInformation;
 
 public class Storage extends Plugin {
 	private ArrayList<String> storage;
@@ -17,10 +17,18 @@ public class Storage extends Plugin {
 		storage = new ArrayList<String>();
 	}
 
-	@Override public List<RequestInformation> getInformationList() {
-		List<RequestInformation> list = new ArrayList<RequestInformation>();
+	public void clearList() {
+		storage.clear();
+	}
+
+	@Override public void display() {
+		// nothing to display
+	}
+
+	@Override public List<PrintInformation> print() {
+		List<PrintInformation> list = new ArrayList<PrintInformation>();
 		for (String string : storage) {
-			RequestInformation pair = new RequestInformation("entry");
+			PrintInformation pair = new PrintInformation("entry");
 			pair.put("string", string);
 			list.add(pair);
 		}
@@ -31,28 +39,20 @@ public class Storage extends Plugin {
 		return storage;
 	}
 
-	@Override public void readInformation(RequestInformation pair) {
+	@Override public void read(PrintInformation pair) {
 		storage.addAll(pair.getMap().values());
 	}
 
 	public void store(InstancePlugin instancePlugin) throws BadLocationException, InterruptedException {
 		String line;
-		for (Instance instance : instancePlugin.getList()) {
+		for (Instance instance : instancePlugin.getInstanceList().getIterable()) {
 			line = "";
 			for (Entry<String, String> entry : instance.getParameter().entrySet()) {
 				line += entry.getKey() + ": " + entry.getValue() + ", ";
 			}
 			storage.add(line.substring(0, line.lastIndexOf(",")));
 		}
-		instancePlugin.clearList();;
+		instancePlugin.clearList();
 		instancePlugin.update();
-	}
-
-	public void clearList() {
-		storage.clear();
-	}
-
-	public void display() {
-		// nothing to display
 	}
 }

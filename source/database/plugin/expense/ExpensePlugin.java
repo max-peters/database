@@ -6,19 +6,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
-import database.main.PluginContainer;
 import database.plugin.Command;
+import database.plugin.Instance;
 import database.plugin.InstancePlugin;
-import database.plugin.RequestInformation;
+import database.plugin.PrintInformation;
 import database.plugin.expense.monthlyExpense.MonthlyExpensePlugin;
 import database.plugin.storage.Storage;
 
 public class ExpensePlugin extends InstancePlugin {
 	private MonthlyExpensePlugin monthlyExpensePlugin;
 
-	public ExpensePlugin(PluginContainer pluginContainer, Storage storage) {
-		super(pluginContainer, "expense", new ExpenseList(), storage);
-		monthlyExpensePlugin = new MonthlyExpensePlugin(pluginContainer, (ExpenseList) getInstanceList(), storage);
+	public ExpensePlugin(Storage storage) {
+		super("expense", new ExpenseList(), storage);
+		monthlyExpensePlugin = new MonthlyExpensePlugin(this, storage);
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {
@@ -32,19 +32,19 @@ public class ExpensePlugin extends InstancePlugin {
 		update();
 	}
 
-	@Override public List<RequestInformation> getInformationList() {
-		List<RequestInformation> list = new ArrayList<RequestInformation>();
-		for (int i = 0; i < getList().size(); i++) {
-			list.add(new RequestInformation("expense", getList().get(i).getParameter()));
+	@Override public List<PrintInformation> print() {
+		List<PrintInformation> list = new ArrayList<PrintInformation>();
+		for (Instance instance : getInstanceList().getIterable()) {
+			list.add(new PrintInformation("expense", instance.getParameter()));
 		}
-		for (int i = 0; i < monthlyExpensePlugin.getList().size(); i++) {
-			list.add(new RequestInformation("monthlyexpense", monthlyExpensePlugin.getList().get(i).getParameter()));
+		for (Instance instance : monthlyExpensePlugin.getInstanceList().getIterable()) {
+			list.add(new PrintInformation("monthlyexpense", instance.getParameter()));
 		}
-		list.add(new RequestInformation("display", "boolean", String.valueOf(getDisplay())));
+		list.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
 		return list;
 	}
 
-	@Override public void readInformation(RequestInformation pair) throws IOException {
+	@Override public void read(PrintInformation pair) throws IOException {
 		if (pair.getName().equals("display")) {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}
@@ -54,5 +54,10 @@ public class ExpensePlugin extends InstancePlugin {
 		else if (pair.getName().equals("monthlyexpense")) {
 			monthlyExpensePlugin.create(pair.getMap());
 		}
+	}
+
+	@Override public void clearList() {
+		super.clearList();
+		monthlyExpensePlugin.clearList();
 	}
 }

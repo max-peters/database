@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
-import database.main.PluginContainer;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
-import database.plugin.expense.ExpenseList;
+import database.plugin.expense.ExpensePlugin;
 import database.plugin.storage.Storage;
 
 public class RefillingPlugin extends InstancePlugin {
-	public RefillingPlugin(PluginContainer pluginContainer, ExpenseList expenseList, Storage storage) {
-		super(pluginContainer, "refilling", new RefillingList(expenseList), storage);
+	public RefillingPlugin(ExpensePlugin expensePlugin, Storage storage) {
+		super("refilling", new RefillingList(expensePlugin), storage);
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {

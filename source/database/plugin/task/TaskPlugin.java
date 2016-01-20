@@ -1,18 +1,35 @@
 package database.plugin.task;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
-import database.main.PluginContainer;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
+import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.storage.Storage;
 
 public class TaskPlugin extends InstancePlugin {
-	public TaskPlugin(PluginContainer pluginContainer, Storage storage) {
-		super(pluginContainer, "task", new TaskList(), storage);
+	public TaskPlugin(Storage storage) {
+		super("task", new TaskList(), storage);
+	}
+
+	@Command(tag = "check") public void checkRequest() throws InterruptedException, BadLocationException, IOException {
+		boolean display = getDisplay();
+		int position;
+		setDisplay(false);
+		Terminal.update();
+		ArrayList<String> strings = new ArrayList<String>();
+		for (Instance instance : getInstanceList().getIterable()) {
+			strings.add(instance.getParameter().get("name"));
+		}
+		position = Terminal.checkRequest(strings);
+		if (position != -1) {
+			remove(getInstanceList().get(position));
+		}
+		setDisplay(display);
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {
@@ -21,14 +38,6 @@ public class TaskPlugin extends InstancePlugin {
 		request(map);
 		create(map);
 		update();
-	}
-
-	@Command(tag = "check") public void checkRequest() throws InterruptedException, BadLocationException, IOException {
-		boolean display = getDisplay();
-		setDisplay(false);
-		Terminal.update();
-		remove(check());
-		setDisplay(display);
 	}
 
 	@Override public void show() {
