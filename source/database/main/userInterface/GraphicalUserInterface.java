@@ -271,7 +271,7 @@ public class GraphicalUserInterface {
 		boolean request = true;
 		String result = null;
 		String input = null;
-		if (regex.equals("()")) {
+		if (regex != null && regex.equals("()")) {
 			errorMessage();
 			throw new CancellationException();
 		}
