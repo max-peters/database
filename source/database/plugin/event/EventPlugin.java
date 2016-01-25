@@ -13,8 +13,9 @@ import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.PrintInformation;
-import database.plugin.event.allDayEvent.AllDayEventPlugin;
+import database.plugin.event.appointment.AppointmentPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
+import database.plugin.event.day.DayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
 import database.plugin.storage.Storage;
 
@@ -24,9 +25,10 @@ public class EventPlugin extends InstancePlugin {
 	public EventPlugin(Storage storage) {
 		super("event", null, storage);
 		extentionList = new ArrayList<EventPluginExtention>();
-		extentionList.add(new AllDayEventPlugin(storage));
+		extentionList.add(new DayPlugin(storage));
 		extentionList.add(new BirthdayPlugin(storage));
 		extentionList.add(new HolidayPlugin(storage));
+		extentionList.add(new AppointmentPlugin(storage));
 	}
 
 	@Override public void clearList() {

@@ -1,10 +1,10 @@
-package database.plugin.event.allDayEvent;
+package database.plugin.event.day;
 
 import java.util.Map;
 import database.plugin.event.Event;
 
-public class AllDayEvent extends Event {
-	public AllDayEvent(Map<String, String> parameter) {
+public class Day extends Event {
+	public Day(Map<String, String> parameter) {
 		super(parameter);
 	}
 
