@@ -1,6 +1,7 @@
 package database.plugin.subject;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
@@ -25,7 +26,8 @@ public class SubjectPlugin extends InstancePlugin {
 		update();
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {
+	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
+														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜ].*");
 		map.put("tag", "[a-zöäüß]*");

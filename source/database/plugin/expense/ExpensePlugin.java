@@ -1,6 +1,7 @@
 package database.plugin.expense;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,8 @@ public class ExpensePlugin extends InstancePlugin {
 		monthlyExpensePlugin.clearList();
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {
+	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
+														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
@@ -49,7 +51,8 @@ public class ExpensePlugin extends InstancePlugin {
 		return list;
 	}
 
-	@Override public void read(PrintInformation pair) throws IOException {
+	@Override public void read(PrintInformation pair)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+														NoSuchMethodException, SecurityException {
 		if (pair.getName().equals("display")) {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}

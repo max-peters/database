@@ -26,7 +26,8 @@ public abstract class InstancePlugin extends Plugin {
 		instanceList.clear();
 	}
 
-	public void create(Map<String, String> map) throws IOException {
+	public void create(Map<String, String> map)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+												NoSuchMethodException, SecurityException {
 		instanceList.add(map);
 	}
 
@@ -51,7 +52,8 @@ public abstract class InstancePlugin extends Plugin {
 		return list;
 	}
 
-	@Override public void read(PrintInformation pair) throws IOException {
+	@Override public void read(PrintInformation pair)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+														NoSuchMethodException, SecurityException {
 		if (pair.getName().equals("entry")) {
 			create(pair.getMap());
 		}

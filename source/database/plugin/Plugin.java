@@ -73,7 +73,8 @@ public abstract class Plugin {
 		return null;
 	}
 
-	public void read(PrintInformation pair) throws IOException {}
+	public void read(PrintInformation pair)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+											NoSuchMethodException, SecurityException {}
 
 	public void setChanges(boolean changes) {
 		this.changes = changes;

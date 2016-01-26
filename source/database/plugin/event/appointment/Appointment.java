@@ -10,10 +10,10 @@ public class Appointment extends Event {
 	}
 
 	@Override protected String output() {
-		return getDate() + " - " + getName();
+		return date + " - " + name;
 	}
 
 	@Override protected Date updateYear() {
-		return getDate();
+		return date;
 	}
 }

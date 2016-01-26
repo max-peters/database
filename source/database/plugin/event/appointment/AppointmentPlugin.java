@@ -1,6 +1,7 @@
 package database.plugin.event.appointment;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
@@ -12,7 +13,8 @@ public class AppointmentPlugin extends EventPluginExtention {
 		super("appointment", new AppointmentList(), storage);
 	}
 
-	public void createRequest() throws InterruptedException, BadLocationException, IOException {
+	public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+								InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", ".*");
 		map.put("date", null);

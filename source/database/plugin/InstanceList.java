@@ -1,9 +1,9 @@
 package database.plugin;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Map.Entry;
 
 public abstract class InstanceList {
 	protected ArrayList<Instance> list;
@@ -12,26 +12,26 @@ public abstract class InstanceList {
 		list = new ArrayList<Instance>();
 	}
 
-	public abstract void add(Map<String, String> map) throws IOException;
+	public abstract void add(Map<String, String> map)	throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+														NoSuchMethodException, SecurityException, IOException;
 
 	public void clear() {
 		list.clear();
 	}
 
-	public boolean contains(Map<String, String> parameter) {
+	public boolean contains(Map<String, String> parameter)	throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+															NoSuchMethodException, SecurityException {
 		boolean contains = false;
 		for (Instance instance : list) {
 			contains = false;
-			for (Entry<String, String> entry : parameter.entrySet()) {
-				if (instance.getParameter().containsKey(entry.getKey()) && instance.getParameter(entry.getKey()).equals(entry.getValue())) {
-					contains = true;
-				}
-				else {
-					contains = false;
-					break;
-				}
+			if (instance.equals(parameter)) {
+				contains = true;
 			}
-			if (contains && instance.getParameter().size() == parameter.size()) {
+			else {
+				contains = false;
+				break;
+			}
+			if (contains) {
 				return true;
 			}
 		}

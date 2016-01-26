@@ -10,10 +10,10 @@ public class Birthday extends Event {
 	}
 
 	@Override protected String output() {
-		return updateYear().toString() + " - " + getName() + " [" + getAge() + "]";
+		return updateYear().toString() + " - " + name + " [" + getAge() + "]";
 	}
 
 	private int getAge() {
-		return Date.getCurrentDate().year.counter - getDate().year.counter;
+		return Date.getCurrentDate().year.counter - date.year.counter;
 	}
 }

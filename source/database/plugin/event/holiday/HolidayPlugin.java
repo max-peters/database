@@ -3,6 +3,7 @@ package database.plugin.event.holiday;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +22,8 @@ public class HolidayPlugin extends EventPluginExtention {
 		super("holiday", new HolidayList(), storage);
 	}
 
-	@Override public void create(Map<String, String> map) throws IOException {
+	@Override public void create(Map<String, String> map)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+															NoSuchMethodException, SecurityException {
 		EventList list = (EventList) getInstanceList();
 		if (lines.isEmpty()) {
 			prepareList();
@@ -39,7 +41,8 @@ public class HolidayPlugin extends EventPluginExtention {
 		}
 	}
 
-	private void getHolidays() throws IOException {
+	private void getHolidays()	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
+								SecurityException {
 		Map<String, String> map;
 		EventList list = (EventList) getInstanceList();
 		for (int i = 0; i < lines.size(); i++) {
@@ -59,9 +62,9 @@ public class HolidayPlugin extends EventPluginExtention {
 					boolean contains = false;
 					for (Instance instance : list.getIterable()) {
 						Holiday holiday = (Holiday) instance;
-						if (holiday.getName().equals(name)) {
+						if (holiday.name.equals(name)) {
 							contains = true;
-							if (holiday.getDate().compareTo(newDate) < 0 && holiday.getDate().isPast()) {
+							if (holiday.date.compareTo(newDate) < 0 && holiday.date.isPast()) {
 								holiday.getParameter().replace("date", date);
 								return;
 							}

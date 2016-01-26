@@ -51,6 +51,17 @@ public class Date implements Comparable<Date> {
 		return calculateDaySum(this, startYear) - calculateDaySum(date, startYear);
 	}
 
+	@Override public boolean equals(Object object) {
+		Date date;
+		if (object != null && object.getClass().equals(this.getClass())) {
+			date = (Date) object;
+			if (compareTo(date) == 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean isPast() {
 		return getCurrentDate().compareTo(this) > 0;
 	}

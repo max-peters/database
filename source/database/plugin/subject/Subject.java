@@ -1,59 +1,53 @@
 package database.plugin.subject;
 
+import java.util.HashMap;
 import java.util.Map;
 import database.plugin.Instance;
 
 public class Subject extends Instance {
+	public int		worksheetCounter;
+	public Double	maxPoints;
+	public Double	score;
+	public String	name;
+	public String	tag;
+
 	public Subject(Map<String, String> parameter) {
-		super(parameter);
-		parameter.putIfAbsent("score", "0");
-		parameter.putIfAbsent("maxPoints", "0");
-		parameter.putIfAbsent("counter", "0");
-	}
-
-	public Integer getCounter() {
-		return Integer.valueOf(getParameter("counter"));
-	}
-
-	public int getCounterStringLength() {
-		return String.valueOf(getCounter()).length();
-	}
-
-	public Double getMaxPoints() {
-		return Double.valueOf(getParameter("maxPoints"));
-	}
-
-	public String getName() {
-		return getParameter("name");
-	}
-
-	public Double getScore() {
-		return Double.valueOf(getParameter("score"));
+		this.maxPoints = Double.valueOf(parameter.get("maxPoints"));
+		this.name = parameter.get("name");
+		this.score = Double.valueOf(parameter.get("score"));
+		this.worksheetCounter = Integer.valueOf(parameter.get("counter"));
+		this.tag = parameter.get("tag");
 	}
 
 	protected double calcPercent() {
-		return getScore() / getMaxPoints() * 100;
-	}
-
-	protected String getTag() {
-		return getParameter("tag");
+		return score / maxPoints * 100;
 	}
 
 	protected void setGrade(double newScore, double newMaxPoint) {
-		setCounter(getCounter() + 1);
-		setMaxPoints(getMaxPoints() + newMaxPoint);
-		setScore(getScore() + newScore);
+		worksheetCounter++;
+		maxPoints += newMaxPoint;
+		score += newScore;
 	}
 
-	private void setCounter(int counter) {
-		setParameter("counter", String.valueOf(counter));
+	@Override public Map<String, String> getParameter() {
+		Map<String, String> parameter = new HashMap<String, String>();
+		parameter.put("counter", String.valueOf(worksheetCounter));
+		parameter.put("name", name);
+		parameter.put("tag", tag);
+		parameter.put("score", score.toString());
+		parameter.put("maxPoints", maxPoints.toString());
+		return parameter;
 	}
 
-	private void setMaxPoints(double maxPoints) {
-		setParameter("maxPoints", String.valueOf(maxPoints));
-	}
-
-	private void setScore(double score) {
-		setParameter("score", String.valueOf(score));
+	@Override public boolean equals(Object object) {
+		Subject subject;
+		if (object != null && object.getClass().equals(this.getClass())) {
+			subject = (Subject) object;
+			if (worksheetCounter == subject.worksheetCounter&& name.equals(subject.name) && tag.equals(subject.tag) && score.equals(subject.score)
+				&& maxPoints.equals(subject.maxPoints)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -1,6 +1,7 @@
 package database.plugin.refilling;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import database.plugin.Command;
@@ -12,11 +13,11 @@ public class RefillingList extends InstanceList {
 	private ExpensePlugin expensePlugin;
 
 	public RefillingList(ExpensePlugin expensePlugin) {
-		super();
 		this.expensePlugin = expensePlugin;
 	}
 
-	@Override public void add(Map<String, String> parameter) throws IOException {
+	@Override public void add(Map<String, String> parameter)	throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+																NoSuchMethodException, SecurityException, IOException {
 		Refilling refilling = new Refilling(parameter);
 		list.add(refilling);
 		createExpense(refilling, expensePlugin);
@@ -43,9 +44,8 @@ public class RefillingList extends InstanceList {
 			for (Instance instance : getIterable()) {
 				Refilling refilling = (Refilling) instance;
 				builder.append("[" + String.format("%" + String.valueOf(list.size()).length() + "s", list.indexOf(instance)).replace(' ', '0'));
-				builder.append("] distance: [" + String.format("%" + String.valueOf(getHighestDistance()).length() + "s", refilling.getDistance()) + " km] refuelAmount: [");
-				builder.append(String.format("%"+ String.valueOf(String.format("%.1f", getHighestRefuelAmount())).length() + "s",
-												String.format("%.1f", refilling.getRefuelAmount()))
+				builder.append("] distance: [" + String.format("%" + String.valueOf(getHighestDistance()).length() + "s", refilling.distance) + " km] refuelAmount: [");
+				builder.append(String	.format("%" + String.valueOf(String.format("%.1f", getHighestRefuelAmount())).length() + "s", String.format("%.1f", refilling.refuelAmount))
 										.replace(",", "."));
 				builder.append(" l] averageConsumption: ["+ String.format("%" + String.valueOf(getHighestAverageConsumption()).length() + "s", refilling.calcAverageConsumption())
 								+ " l/km]" + System.getProperty("line.separator"));
@@ -59,7 +59,7 @@ public class RefillingList extends InstanceList {
 		double currentConsumption;
 		for (Instance instance : getIterable()) {
 			Refilling refilling = (Refilling) instance;
-			currentConsumption = Math.round(refilling.getRefuelAmount() / refilling.getDistance() * 1000.0) / 10.0;
+			currentConsumption = Math.round(refilling.refuelAmount / refilling.distance * 1000.0) / 10.0;
 			if (currentConsumption > highestConsumption) {
 				highestConsumption = currentConsumption;
 			}
@@ -71,8 +71,8 @@ public class RefillingList extends InstanceList {
 		double highestDistance = 0;
 		for (Instance instance : getIterable()) {
 			Refilling refilling = (Refilling) instance;
-			if (refilling.getDistance() > highestDistance) {
-				highestDistance = refilling.getDistance();
+			if (refilling.distance > highestDistance) {
+				highestDistance = refilling.distance;
 			}
 		}
 		return Math.round(10.0 * highestDistance) / 10.0;
@@ -82,19 +82,20 @@ public class RefillingList extends InstanceList {
 		double highestRefuelAmount = 0;
 		for (Instance instance : getIterable()) {
 			Refilling refilling = (Refilling) instance;
-			if (refilling.getRefuelAmount() > highestRefuelAmount) {
-				highestRefuelAmount = refilling.getRefuelAmount();
+			if (refilling.refuelAmount > highestRefuelAmount) {
+				highestRefuelAmount = refilling.refuelAmount;
 			}
 		}
 		return Math.round(10.0 * highestRefuelAmount) / 10.0;
 	}
 
-	private void createExpense(Refilling refilling, ExpensePlugin expensePlugin) throws IOException {
+	private void createExpense(Refilling refilling, ExpensePlugin expensePlugin)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+																					InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "Auto - Tankstelle");
 		map.put("category", "Fahrtkosten");
-		map.put("value", refilling.getParameter("value"));
-		map.put("date", refilling.getParameter("date"));
+		map.put("value", refilling.cost.toString());
+		map.put("date", refilling.date.toString());
 		expensePlugin.create(map);
 	}
 
@@ -106,7 +107,7 @@ public class RefillingList extends InstanceList {
 		double distanceTotal = 0;
 		for (Instance instance : getIterable()) {
 			Refilling refilling = (Refilling) instance;
-			distanceTotal = distanceTotal + refilling.getDistance();
+			distanceTotal = distanceTotal + refilling.distance;
 		}
 		return Math.round(10.0 * distanceTotal) / 10.0;
 	}
@@ -115,7 +116,7 @@ public class RefillingList extends InstanceList {
 		double refuelAmountTotal = 0;
 		for (Instance instance : getIterable()) {
 			Refilling refilling = (Refilling) instance;
-			refuelAmountTotal = refuelAmountTotal + refilling.getRefuelAmount();
+			refuelAmountTotal = refuelAmountTotal + refilling.refuelAmount;
 		}
 		return Math.round(10.0 * refuelAmountTotal) / 10.0;
 	}

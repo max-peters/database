@@ -1,6 +1,7 @@
 package database.plugin.event;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,7 +38,8 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {
+	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
+														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		EventPluginExtention extention = chooseType();
 		if (extention != null) {
 			extention.createRequest();
@@ -81,7 +83,8 @@ public class EventPlugin extends InstancePlugin {
 		return list;
 	}
 
-	@Override public void read(PrintInformation pair) throws IOException {
+	@Override public void read(PrintInformation pair)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+														NoSuchMethodException, SecurityException {
 		if (pair.getName().equals("display")) {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}

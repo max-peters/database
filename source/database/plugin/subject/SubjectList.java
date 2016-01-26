@@ -7,10 +7,6 @@ import database.plugin.Instance;
 import database.plugin.InstanceList;
 
 public class SubjectList extends InstanceList {
-	@Override public void add(Map<String, String> parameter) {
-		list.add(new Subject(parameter));
-	}
-
 	@Command(tag = "average") public String getAverage() {
 		double sumPercentages = 0;
 		double averagePercentage;
@@ -44,24 +40,25 @@ public class SubjectList extends InstanceList {
 		else {
 			for (Instance instance : getIterable()) {
 				Subject current = (Subject) instance;
-				allGradesLength = oneDecimalPlace.format(current.getScore()).length() > allGradesLength ? oneDecimalPlace.format(current.getScore()).length() : allGradesLength;
-				allGradesTotalLength = oneDecimalPlace.format(current.getMaxPoints()).length() > allGradesTotalLength	? oneDecimalPlace.format(current.getMaxPoints()).length()
-																														: allGradesTotalLength;
+				int currentWorksheetCounterStringLength = String.valueOf(current.worksheetCounter).length();
+				allGradesLength = oneDecimalPlace.format(current.score).length() > allGradesLength ? oneDecimalPlace.format(current.score).length() : allGradesLength;
+				allGradesTotalLength = oneDecimalPlace.format(current.maxPoints).length() > allGradesTotalLength	? oneDecimalPlace.format(current.maxPoints).length()
+																													: allGradesTotalLength;
 				percentLength = twoDecimalPlace.format(current.calcPercent()).length() > percentLength ? twoDecimalPlace.format(current.calcPercent()).length() : percentLength;
-				counterLength = current.getCounterStringLength() > counterLength ? current.getCounterStringLength() : counterLength;
-				nameLength = current.getName().length() > nameLength ? current.getName().length() : nameLength;
+				counterLength = currentWorksheetCounterStringLength > counterLength ? currentWorksheetCounterStringLength : counterLength;
+				nameLength = current.name.length() > nameLength ? current.name.length() : nameLength;
 			}
 			for (Instance currentInstance : getIterable()) {
 				Subject subject = (Subject) currentInstance;
-				builder.append(subject.getName());
-				for (int i = subject.getName().length(); i < nameLength + 4; i++) {
+				builder.append(subject.name);
+				for (int i = subject.name.length(); i < nameLength + 4; i++) {
 					builder.append(" ");
 				}
-				builder.append("["+ String.format("%" + allGradesLength + "s", oneDecimalPlace.format(subject.getScore())) + "/"
-								+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(subject.getMaxPoints())) + " - "
+				builder.append("["+ String.format("%" + allGradesLength + "s", oneDecimalPlace.format(subject.score)) + "/"
+								+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(subject.maxPoints)) + " - "
 								+ String.format("%" + percentLength + "s", twoDecimalPlace.format(subject.calcPercent())) + "%" + "]" + " in ["
-								+ String.format("%" + counterLength + "s", subject.getCounter()).replace(' ', '0') + "] ");
-				if (subject.getCounter() == 1) {
+								+ String.format("%" + counterLength + "s", subject.worksheetCounter).replace(' ', '0') + "] ");
+				if (subject.worksheetCounter == 1) {
 					builder.append("Blatt");
 				}
 				else {
@@ -77,7 +74,7 @@ public class SubjectList extends InstanceList {
 		Subject wanted = null;
 		for (Instance instance : getIterable()) {
 			Subject subject = (Subject) instance;
-			if (subject.getTag().equals(tag)) {
+			if (subject.tag.equals(tag)) {
 				wanted = subject;
 			}
 		}
@@ -88,8 +85,12 @@ public class SubjectList extends InstanceList {
 		String regex = "(";
 		for (Instance instance : getIterable()) {
 			Subject subject = (Subject) instance;
-			regex += subject.getTag() + "|";
+			regex += subject.tag + "|";
 		}
 		return regex.substring(0, regex.lastIndexOf("|")) + ")";
+	}
+
+	@Override public void add(Map<String, String> map) {
+		list.add(new Subject(map));
 	}
 }

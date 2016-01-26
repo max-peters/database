@@ -22,7 +22,7 @@ public abstract class EventList extends InstanceList {
 
 	protected void sortedAdd(Event event) {
 		int i = list.size();
-		while (i > 0 && ((Event) list.get(i - 1)).getDate().compareTo(event.getDate()) > 0) {
+		while (i > 0 && ((Event) list.get(i - 1)).date.compareTo(event.date) > 0) {
 			i--;
 		}
 		list.add(i, event);

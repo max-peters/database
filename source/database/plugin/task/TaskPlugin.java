@@ -1,6 +1,7 @@
 package database.plugin.task;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +24,8 @@ public class TaskPlugin extends InstancePlugin {
 		Terminal.update();
 		ArrayList<String> strings = new ArrayList<String>();
 		for (Instance instance : getInstanceList().getIterable()) {
-			strings.add(instance.getParameter().get("name"));
+			Task task = (Task) instance;
+			strings.add(task.name);
 		}
 		position = Terminal.checkRequest(strings);
 		if (position != -1) {
@@ -32,7 +34,8 @@ public class TaskPlugin extends InstancePlugin {
 		setDisplay(display);
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, IOException {
+	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
+														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", ".+");
 		request(map);

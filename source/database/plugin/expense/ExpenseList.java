@@ -19,7 +19,7 @@ public class ExpenseList extends InstanceList {
 	@Override public void add(Map<String, String> parameter) {
 		Expense expense = new Expense(parameter);
 		int i = list.size();
-		while (i > 0 && ((Expense) list.get(i - 1)).getDate().compareTo(expense.getDate()) > 0) {
+		while (i > 0 && ((Expense) list.get(i - 1)).date.compareTo(expense.date) > 0) {
 			i--;
 		}
 		list.add(i, expense);
@@ -62,10 +62,10 @@ public class ExpenseList extends InstanceList {
 		Map<String, Double> categories = new TreeMap<String, Double>();
 		for (Instance instance : getIterable()) {
 			Expense expense = (Expense) instance;
-			if (expense.checkValidity(null) && !categories.containsKey(expense.getCategory())) {
-				categories.put(expense.getCategory(), 0.0);
+			if (expense.checkValidity(null) && !categories.containsKey(expense.category)) {
+				categories.put(expense.category, 0.0);
 			}
-			totalSum += expense.getValue();
+			totalSum += expense.value;
 		}
 		for (String current : categories.keySet()) {
 			if (current.length() > longestName) {
@@ -73,8 +73,8 @@ public class ExpenseList extends InstanceList {
 			}
 			for (Instance instance : getIterable()) {
 				Expense expense = (Expense) instance;
-				if (expense.getCategory().equals(current)) {
-					categories.put(current, categories.get(current) + expense.getValue());
+				if (expense.category.equals(current)) {
+					categories.put(current, categories.get(current) + expense.value);
 				}
 			}
 		}
@@ -147,8 +147,8 @@ public class ExpenseList extends InstanceList {
 		ArrayList<Month> months = new ArrayList<Month>();
 		for (Instance instance : getIterable()) {
 			Expense expense = (Expense) instance;
-			if (!months.contains(expense.getDate().month)) {
-				months.add(expense.getDate().month);
+			if (!months.contains(expense.date.month)) {
+				months.add(expense.date.month);
 			}
 		}
 		return months;
@@ -166,14 +166,14 @@ public class ExpenseList extends InstanceList {
 		ArrayList<String> names;
 		for (Instance instance : getIterable()) {
 			Expense expense = (Expense) instance;
-			if (expense.checkValidity(month) && !categories.contains(expense.getCategory())) {
-				categories.add(expense.getCategory());
+			if (expense.checkValidity(month) && !categories.contains(expense.category)) {
+				categories.add(expense.category);
 			}
-			if (expense.checkValidity(month) && expense.getName().length() > nameLength) {
-				nameLength = expense.getName().length();
+			if (expense.checkValidity(month) && expense.name.length() > nameLength) {
+				nameLength = expense.name.length();
 			}
-			if (expense.checkValidity(month) && format.format(expense.getValue()).length() > valueLength) {
-				valueLength = format.format(expense.getValue()).length();
+			if (expense.checkValidity(month) && format.format(expense.value).length() > valueLength) {
+				valueLength = format.format(expense.value).length();
 			}
 		}
 		// Collections.sort(categories); nach wichtigkeit ordnen
@@ -182,8 +182,8 @@ public class ExpenseList extends InstanceList {
 			names = new ArrayList<String>();
 			for (Instance instance : getIterable()) {
 				Expense expense = (Expense) instance;
-				if (expense.checkValidity(month) && expense.getCategory().equals(current) && !names.contains(expense.getName())) {
-					names.add(expense.getName());
+				if (expense.checkValidity(month) && expense.category.equals(current) && !names.contains(expense.name)) {
+					names.add(expense.name);
 				}
 			}
 			Collections.sort(names);
@@ -193,8 +193,8 @@ public class ExpenseList extends InstanceList {
 				toReturn = toReturn + "  - " + name;
 				for (Instance instance : getIterable()) {
 					Expense expense = (Expense) instance;
-					if (expense.checkValidity(month) && expense.getCategory().equals(current) && expense.getName().equals(name)) {
-						value = value + expense.getValue();
+					if (expense.checkValidity(month) && expense.category.equals(current) && expense.name.equals(name)) {
+						value = value + expense.value;
 					}
 				}
 				blankCounter = nameLength - name.length() + 1 + valueLength - format.format(value).length();
@@ -212,7 +212,7 @@ public class ExpenseList extends InstanceList {
 		for (Instance instance : getIterable()) {
 			Expense expense = (Expense) instance;
 			if (expense.checkValidity(month)) {
-				value = value + expense.getValue();
+				value = value + expense.value;
 			}
 		}
 		return value;

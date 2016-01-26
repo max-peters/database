@@ -1,6 +1,7 @@
 package database.plugin.event;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,8 @@ public class EventPluginExtention extends InstancePlugin {
 		super(identity, instanceList, storage);
 	}
 
-	public void createRequest() throws InterruptedException, BadLocationException, IOException {
+	public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+								InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)");
 		map.put("date", null);

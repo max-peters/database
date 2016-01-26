@@ -2,6 +2,7 @@ package database.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map.Entry;
 import javax.xml.parsers.DocumentBuilder;
@@ -31,7 +32,8 @@ public class WriterReader {
 		remoteStorage = new File("Z:/storage.xml");
 	}
 
-	public void read() throws InterruptedException, ParserConfigurationException, SAXException, IOException {
+	public void read()	throws InterruptedException, ParserConfigurationException, SAXException, IOException, InstantiationException, IllegalAccessException,
+						IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		if (!localStorage.exists()) {
 			if (remoteStorage.exists() || connect() == 0) {
 				readFile(remoteStorage);
@@ -42,7 +44,8 @@ public class WriterReader {
 		}
 	}
 
-	public void updateStorage() throws InterruptedException, ParserConfigurationException, SAXException, TransformerException, IOException {
+	public void updateStorage()	throws InterruptedException, ParserConfigurationException, SAXException, TransformerException, IOException, InstantiationException,
+								IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		if ((remoteStorage.exists() || connect() == 0) && localStorage.exists()) {
 			File newestFile = remoteStorage.lastModified() < localStorage.lastModified() ? localStorage : remoteStorage;
 			readFile(newestFile);
@@ -60,7 +63,8 @@ public class WriterReader {
 		return connection.waitFor();
 	}
 
-	private void readFile(File file) throws ParserConfigurationException, SAXException, IOException {
+	private void readFile(File file)	throws ParserConfigurationException, SAXException, IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+										InvocationTargetException, NoSuchMethodException, SecurityException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(file);
