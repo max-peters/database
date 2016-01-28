@@ -9,13 +9,7 @@ public class Task extends Instance {
 	public String name;
 
 	public Task(Map<String, String> parameter) {
-		this.name = parameter.get("name");
-	}
-
-	@Override public Map<String, String> getParameter() {
-		Map<String, String> parameter = new HashMap<String, String>();
-		parameter.put("name", name);
-		return parameter;
+		name = parameter.get("name");
 	}
 
 	@Override public boolean equals(Object object) {
@@ -27,5 +21,11 @@ public class Task extends Instance {
 			}
 		}
 		return false;
+	}
+
+	@Override public Map<String, String> getParameter() {
+		Map<String, String> parameter = new HashMap<String, String>();
+		parameter.put("name", name);
+		return parameter;
 	}
 }

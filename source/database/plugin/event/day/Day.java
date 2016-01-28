@@ -8,7 +8,7 @@ public class Day extends Event {
 		super(parameter);
 	}
 
-	@Override protected String output() {
-		return updateYear().toString() + " - " + name + " (" + date.year + ")";
+	@Override protected String appendToOutput() {
+		return "(" + date.year + ")";
 	}
 }

@@ -32,6 +32,7 @@ public class TaskPlugin extends InstancePlugin {
 			remove(getInstanceList().get(position));
 		}
 		setDisplay(display);
+		Terminal.update();
 	}
 
 	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,

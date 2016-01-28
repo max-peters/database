@@ -6,29 +6,20 @@ import database.main.date.Date;
 import database.plugin.Instance;
 
 public class Refilling extends Instance {
+	public Double	cost;
 	public Date		date;
 	public Double	distance;
 	public Double	refuelAmount;
-	public Double	cost;
 
 	public Refilling(Map<String, String> parameter) {
-		this.date = new Date(parameter.get("date"));
-		this.distance = Double.valueOf(parameter.get("distance"));
-		this.refuelAmount = Double.valueOf(parameter.get("refuelAmount"));
-		this.cost = Double.valueOf(parameter.get("cost"));
+		date = new Date(parameter.get("date"));
+		distance = Double.valueOf(parameter.get("distance"));
+		refuelAmount = Double.valueOf(parameter.get("refuelAmount"));
+		cost = Double.valueOf(parameter.get("cost"));
 	}
 
 	public double calcAverageConsumption() {
 		return Math.round(refuelAmount / distance * 1000) / 10.0;
-	}
-
-	@Override public Map<String, String> getParameter() {
-		Map<String, String> parameter = new HashMap<String, String>();
-		parameter.put("distance", distance.toString());
-		parameter.put("refuelAmount", refuelAmount.toString());
-		parameter.put("cost", cost.toString());
-		parameter.put("date", date.toString());
-		return parameter;
 	}
 
 	@Override public boolean equals(Object object) {
@@ -40,5 +31,14 @@ public class Refilling extends Instance {
 			}
 		}
 		return false;
+	}
+
+	@Override public Map<String, String> getParameter() {
+		Map<String, String> parameter = new HashMap<String, String>();
+		parameter.put("distance", distance.toString());
+		parameter.put("refuelAmount", refuelAmount.toString());
+		parameter.put("cost", cost.toString());
+		parameter.put("date", date.toString());
+		return parameter;
 	}
 }

@@ -16,8 +16,8 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			PluginContainer pluginContainer = new PluginContainer();
-			GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface(pluginContainer);
-			new Terminal(graphicalUserInterface);
+			GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
+			new Terminal(graphicalUserInterface, pluginContainer);
 			WriterReader writerReader = new WriterReader(pluginContainer);
 			Administration administration = new Administration(pluginContainer, writerReader);
 			Storage storage = new Storage();
@@ -35,9 +35,8 @@ public class Main {
 			pluginContainer.addPlugin(eventPlugin);
 			pluginContainer.addPlugin(storage);
 			writerReader.read();
-			Terminal.initialOutput();
-			graphicalUserInterface.setLocation();
 			graphicalUserInterface.setVisible(true);
+			Terminal.initialOutput();
 			Terminal.printCollectedLines();
 			administration.request();
 		}

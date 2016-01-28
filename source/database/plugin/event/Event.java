@@ -10,22 +10,8 @@ public abstract class Event extends Instance {
 	public String	name;
 
 	public Event(Map<String, String> parameter) {
-		this.date = new Date(parameter.get("date"));
-		this.name = parameter.get("name");
-	}
-
-	protected abstract String output();
-
-	protected Date updateYear() {
-		Date localDate = null;
-		Date currentDate = Date.getCurrentDate();
-		if (currentDate.month.counter > date.month.counter || currentDate.month.counter == date.month.counter && currentDate.day.counter > date.day.counter) {
-			localDate = new Date(date.day.counter + "." + date.month.counter + "." + String.valueOf(currentDate.year.counter + 1));
-		}
-		else {
-			localDate = new Date(date.day.counter + "." + date.month.counter + "." + currentDate.year.counter);
-		}
-		return localDate;
+		date = new Date(parameter.get("date"));
+		name = parameter.get("name");
 	}
 
 	@Override public boolean equals(Object object) {
@@ -45,4 +31,18 @@ public abstract class Event extends Instance {
 		parameter.put("date", date.toString());
 		return parameter;
 	}
+
+	public Date updateYear() {
+		Date localDate = null;
+		Date currentDate = Date.getCurrentDate();
+		if (currentDate.month.counter > date.month.counter || currentDate.month.counter == date.month.counter && currentDate.day.counter > date.day.counter) {
+			localDate = new Date(date.day.counter + "." + date.month.counter + "." + String.valueOf(currentDate.year.counter + 1));
+		}
+		else {
+			localDate = new Date(date.day.counter + "." + date.month.counter + "." + currentDate.year.counter);
+		}
+		return localDate;
+	}
+
+	protected abstract String appendToOutput();
 }

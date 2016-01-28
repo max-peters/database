@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import javax.swing.text.BadLocationException;
+import database.main.date.Date;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
@@ -52,7 +53,7 @@ public class EventPlugin extends InstancePlugin {
 	}
 
 	@Override public void initialOutput() throws BadLocationException {
-		String initialOutput = "";
+		String initialOutput;
 		List<Event> eventList = new ArrayList<Event>();
 		for (InstancePlugin extention : extentionList) {
 			EventList currentEventList = (EventList) extention.getInstanceList();
@@ -60,14 +61,7 @@ public class EventPlugin extends InstancePlugin {
 				eventList.add(event);
 			}
 		}
-		Collections.sort(eventList, new Comparator<Instance>() {
-			@Override public int compare(Instance arg0, Instance arg1) {
-				return ((Event) arg0).updateYear().compareTo(((Event) arg1).updateYear());
-			}
-		});
-		for (Event event : eventList) {
-			initialOutput += event.output() + System.getProperty("line.separator");
-		}
+		initialOutput = sortedAndFormattedOutput(eventList);
 		if (!initialOutput.isEmpty()) {
 			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
 			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
@@ -103,8 +97,22 @@ public class EventPlugin extends InstancePlugin {
 		}
 	}
 
-	@Override public void show() {
-		// nothing to show here
+	@Override @Command(tag = "show") public void show() throws BadLocationException, InterruptedException {
+		boolean display = getDisplay();
+		Terminal.request("show", "(all)");
+		setDisplay(false);
+		Terminal.update();
+		List<Event> list = new ArrayList<Event>();
+		for (InstancePlugin extention : extentionList) {
+			for (Instance instance : extention.getInstanceList().getIterable()) {
+				list.add((Event) instance);
+			}
+		}
+		Terminal.getLineOfCharacters('-');
+		Terminal.printLine(sortedAndFormattedOutput(list), StringType.SOLUTION, StringFormat.STANDARD);
+		Terminal.waitForInput();
+		setDisplay(display);
+		Terminal.update();
 	}
 
 	private EventPluginExtention chooseType() throws InterruptedException, BadLocationException {
@@ -126,5 +134,32 @@ public class EventPlugin extends InstancePlugin {
 			}
 		}
 		return toReturn;
+	}
+
+	private String sortedAndFormattedOutput(List<Event> list) {
+		String lines = "";
+		int longestNameLength = 0;
+		Collections.sort(list, new Comparator<Instance>() {
+			@Override public int compare(Instance arg0, Instance arg1) {
+				return ((Event) arg0).updateYear().compareTo(((Event) arg1).updateYear());
+			}
+		});
+		for (Event event : list) {
+			if (event.updateYear().year.counter == Date.getCurrentDate().year.counter) {
+				if ((event.updateYear() + " - " + event.name).length() > longestNameLength) {
+					longestNameLength = (event.updateYear() + " - " + event.name).length();
+				}
+			}
+		}
+		for (Event event : list) {
+			if (event.updateYear().year.counter == Date.getCurrentDate().year.counter) {
+				String line = event.updateYear() + " - " + event.name;
+				for (int i = line.length(); i < longestNameLength + 3; i++) {
+					line += " ";
+				}
+				lines += line + event.appendToOutput() + System.getProperty("line.separator");
+			}
+		}
+		return lines;
 	}
 }

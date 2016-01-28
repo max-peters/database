@@ -9,7 +9,7 @@ public class MonthlyExpense extends Expense {
 
 	public MonthlyExpense(Map<String, String> parameter) {
 		super(parameter);
-		this.executionDay = ExecutionDay.getExecutionDay(parameter.get("executionday"));
+		executionDay = ExecutionDay.getExecutionDay(parameter.get("executionday"));
 	}
 
 	@Override public Map<String, String> getParameter() {

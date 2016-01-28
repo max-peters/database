@@ -9,11 +9,11 @@ public class Holiday extends Event {
 		super(parameter);
 	}
 
-	@Override protected String output() {
-		return date + " - " + name;
+	@Override public Date updateYear() {
+		return date;
 	}
 
-	@Override protected Date updateYear() {
-		return date;
+	@Override protected String appendToOutput() {
+		return "";
 	}
 }

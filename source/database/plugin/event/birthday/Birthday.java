@@ -9,8 +9,8 @@ public class Birthday extends Event {
 		super(parameter);
 	}
 
-	@Override protected String output() {
-		return updateYear().toString() + " - " + name + " [" + getAge() + "]";
+	@Override protected String appendToOutput() {
+		return "[" + getAge() + "]";
 	}
 
 	private int getAge() {

@@ -13,10 +13,11 @@ public class AppointmentPlugin extends EventPluginExtention {
 		super("appointment", new AppointmentList(), storage);
 	}
 
-	public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
-								InvocationTargetException, NoSuchMethodException, SecurityException {
+	@Override public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+											InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("name", ".*");
+		map.put("attribute", ".*");
 		map.put("date", null);
 		request(map);
 		getInstanceList().add(map);

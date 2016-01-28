@@ -13,13 +13,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CancellationException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -29,32 +25,28 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
-import database.main.PluginContainer;
 import database.main.date.Date;
-import database.plugin.Plugin;
 
 public class GraphicalUserInterface {
-	private List<OutputInformation>	collectedLines				= new ArrayList<OutputInformation>();
-	private int						currentLineNumber			= 0;
-	private Font					font;
-	private JFrame					frame						= new JFrame("Database");
-	private int						frameWidth;
-	private Image					icon;
-	private JTextField				input						= new JTextField();
-	private String					inputText;
-	private JTextPane				output						= new JTextPane();
-	private JPanel					panel						= new JPanel();
-	private PluginContainer			pluginContainer;
-	private int						pressedKey					= 0;
-	private JScrollPane				scrollPane					= new JScrollPane(panel);
-	private StyledDocument			styledDocument				= output.getStyledDocument();
-	private Object					synchronizerInputConfirm	= new Object();
-	private Object					synchronizerKeyInput		= new Object();
-	private JTextField				time						= new JTextField();
-	private Timer					timer						= new Timer();
+	private int				currentLineNumber			= 0;
+	private Font			font;
+	private JFrame			frame						= new JFrame("Database");
+	// private int frameWidth;
+	private Image			icon;
+	private JTextField		input						= new JTextField();
+	private String			inputText;
+	private JTextPane		output						= new JTextPane();
+	private JPanel			panel						= new JPanel();
+	private int				pressedKey					= 0;
+	private JScrollPane		scrollPane					= new JScrollPane(panel);
+	private StyledDocument	styledDocument				= output.getStyledDocument();
+	private Object			synchronizerInputConfirm	= new Object();
+	private Object			synchronizerKeyInput		= new Object();
+	private JTextField		time						= new JTextField();
+	private Timer			timer						= new Timer();
 
-	public GraphicalUserInterface(PluginContainer pluginContainer) throws FontFormatException, IOException {
-		this.pluginContainer = pluginContainer;
+	public GraphicalUserInterface() throws FontFormatException, IOException {
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		InputStream inputStream = classLoader.getResourceAsStream("DejaVuSansMono.ttf");
 		font = Font.createFont(Font.TRUETYPE_FONT, inputStream);
@@ -119,13 +111,8 @@ public class GraphicalUserInterface {
 		for (StringFormat format : StringFormat.values()) {
 			format.initialise(styledDocument);
 		}
-	}
-
-	public void setLocation() {
-		if (frameWidth == 0) {
-			setBounds("");
-		}
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		frame.setSize(780, 520);
+		input.setSize(770, input.getFontMetrics(font).getHeight());
 		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 	}
 
@@ -178,57 +165,31 @@ public class GraphicalUserInterface {
 		return position;
 	}
 
-	protected void collectLine(Object output, StringFormat stringFormat) {
-		collectedLines.add(new OutputInformation(output, StringType.SOLUTION, stringFormat));
-	}
-
-	protected void errorMessage() throws BadLocationException, InterruptedException {
-		printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
-		waitForInput();
-	}
-
-	protected int getMaximumAmountOfCharactersPerLine(char character) {
-		return frameWidth / output.getFontMetrics(font).charWidth(character);
-	}
-
-	protected void initialOutput() throws BadLocationException {
-		for (Plugin plugin : pluginContainer.getPlugins()) {
-			if (plugin.getDisplay()) {
-				plugin.initialOutput();
-			}
+	protected void getLineOfCharacters(char character) throws BadLocationException {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < frame.getWidth() / output.getFontMetrics(font).charWidth(character); i++) {
+			builder.append(character);
 		}
-	}
-
-	protected void printCollectedLines() throws InterruptedException, BadLocationException {
-		if (!collectedLines.isEmpty()) {
-			for (OutputInformation output : collectedLines) {
-				printLine(output);
-			}
-			waitForInput();
-		}
+		printLine(builder.toString(), StringType.REQUEST, StringFormat.STANDARD);
 	}
 
 	protected void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
-		if (object != null) {
-			String outputString = object.toString();
-			if (!outputString.endsWith(System.getProperty("line.separator"))) {
-				outputString += System.getProperty("line.separator");
-			}
-			if (stringType.equals(StringType.MAIN)) {
-				String[] array = outputString.split(System.getProperty("line.separator"));
-				for (int i = 0; i < array.length; i++) {
-					setBounds(array[i]);
-				}
-			}
-			if (!stringType.equals(StringType.SOLUTION)) {
-				styledDocument.remove(currentLineNumber, styledDocument.getLength() - currentLineNumber);
-			}
-			styledDocument.insertString(styledDocument.getLength(), outputString, styledDocument.getStyle(stringFormat.toString()));
-			if (stringType.equals(StringType.MAIN)) {
-				currentLineNumber = currentLineNumber + outputString.length();
-			}
-			moveTextField(output.getText().contains(System.getProperty("line.separator")) ? output.getText().split(System.getProperty("line.separator")).length : 0);
+		String outputString;
+		if (object == null) {
+			return;
 		}
+		outputString = object.toString();
+		if (!outputString.endsWith(System.getProperty("line.separator"))) {
+			outputString += System.getProperty("line.separator");
+		}
+		if (!stringType.equals(StringType.SOLUTION)) {
+			styledDocument.remove(currentLineNumber, styledDocument.getLength() - currentLineNumber);
+		}
+		styledDocument.insertString(styledDocument.getLength(), outputString, styledDocument.getStyle(stringFormat.toString()));
+		if (stringType.equals(StringType.MAIN)) {
+			currentLineNumber = currentLineNumber + outputString.length();
+		}
+		moveTextField(output.getText().contains(System.getProperty("line.separator")) ? output.getText().split(System.getProperty("line.separator")).length : 0);
 	}
 
 	protected void printLine(OutputInformation output) throws BadLocationException {
@@ -242,59 +203,11 @@ public class GraphicalUserInterface {
 		return inputText;
 	}
 
-	protected void refresh(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
-		if (object != null) {
-			String outputString = object.toString();
-			if (!outputString.endsWith(System.getProperty("line.separator"))) {
-				outputString += System.getProperty("line.separator");
-			}
-			String text = styledDocument.getText(0, styledDocument.getLength());
-			String[] linesOnScreen = text.split(System.getProperty("line.separator"));
-			List<String> linesToPrint = Arrays.asList(outputString.split(System.getProperty("line.separator")));
-			for (int i = 0; i < linesOnScreen.length; i++) {
-				if (linesOnScreen[i].equals(linesToPrint.get(0))) {
-					for (int j = 1; j < linesToPrint.size(); j++) {
-						if (!linesOnScreen[i++].equals(linesToPrint.get(j))) {}
-					}
-				}
-			}
-		}
-	}
-
 	protected void releaseInput() {
 		input.setEditable(true);
 		input.setFocusable(true);
 		input.grabFocus();
 		input.setCaretColor(Color.WHITE);
-	}
-
-	protected String request(String printOut, String regex) throws InterruptedException, BadLocationException {
-		boolean request = true;
-		String result = null;
-		String input = null;
-		if (regex != null && regex.equals("()")) {
-			errorMessage();
-			throw new CancellationException();
-		}
-		while (request) {
-			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
-			input = readLine();
-			if (input.equals("back")) {
-				throw new CancellationException();
-			}
-			else if (regex != null && input.matches(regex)) {
-				result = input;
-				request = false;
-			}
-			else if (regex == null && Date.testDateString(input)) {
-				result = input;
-				request = false;
-			}
-			else {
-				errorMessage();
-			}
-		}
-		return result;
 	}
 
 	protected void showMessageDialog(Throwable e) {
@@ -306,9 +219,10 @@ public class GraphicalUserInterface {
 	}
 
 	protected void update() throws BadLocationException {
-		clear();
+		output.setText("");
+		currentLineNumber = 0;
 		blockInput();
-		initialOutput();
+		Terminal.initialOutput();
 		releaseInput();
 	}
 
@@ -319,11 +233,6 @@ public class GraphicalUserInterface {
 			synchronizerKeyInput.wait();
 		}
 		input.setCaretColor(Color.WHITE);
-	}
-
-	private void clear() {
-		output.setText("");
-		currentLineNumber = 0;
 	}
 
 	private String formatCheckLine(Collection<String> collection, int currentLine) {
@@ -344,17 +253,6 @@ public class GraphicalUserInterface {
 
 	private void moveTextField(int steps) {
 		input.setLocation(0, steps * input.getFontMetrics(font).getHeight());
-	}
-
-	private void setBounds(String longestString) {
-		if (longestString == null || longestString.isEmpty()) {
-			frameWidth = 800;
-		}
-		else if (output.getFontMetrics(font).stringWidth(longestString) + 25 > frameWidth) {
-			frameWidth = output.getFontMetrics(font).stringWidth(longestString) + 25;
-		}
-		frame.setSize(frameWidth, frameWidth * 2 / 3);
-		input.setSize(frameWidth - 10, input.getFontMetrics(font).getHeight());
 	}
 }
 

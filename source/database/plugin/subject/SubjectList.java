@@ -7,6 +7,10 @@ import database.plugin.Instance;
 import database.plugin.InstanceList;
 
 public class SubjectList extends InstanceList {
+	@Override public void add(Map<String, String> map) {
+		list.add(new Subject(map));
+	}
+
 	@Command(tag = "average") public String getAverage() {
 		double sumPercentages = 0;
 		double averagePercentage;
@@ -88,9 +92,5 @@ public class SubjectList extends InstanceList {
 			regex += subject.tag + "|";
 		}
 		return regex.substring(0, regex.lastIndexOf("|")) + ")";
-	}
-
-	@Override public void add(Map<String, String> map) {
-		list.add(new Subject(map));
 	}
 }
