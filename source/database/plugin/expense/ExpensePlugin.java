@@ -3,10 +3,11 @@ package database.plugin.expense;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
@@ -29,7 +30,7 @@ public class ExpensePlugin extends InstancePlugin {
 
 	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
 														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("value", "[0-9]{1,13}(\\.[0-9]{0,2})?");
@@ -37,6 +38,11 @@ public class ExpensePlugin extends InstancePlugin {
 		request(map);
 		create(map);
 		update();
+	}
+
+	@Command(tag = "monthly") public void monthlyRequest()	throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, InterruptedException,
+															BadLocationException {
+		monthlyExpensePlugin.conduct(Terminal.request("monthly expense", monthlyExpensePlugin.getCommandTags(monthlyExpensePlugin.getClass())));
 	}
 
 	@Override public List<PrintInformation> print() {

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -34,7 +34,7 @@ public abstract class Plugin {
 	}
 
 	@Command(tag = "display") public void display() throws InterruptedException, BadLocationException {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("display", "(true|false)");
 		request(map);
 		display = Boolean.valueOf(map.get("display"));

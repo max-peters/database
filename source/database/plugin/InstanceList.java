@@ -39,6 +39,9 @@ public abstract class InstanceList {
 	}
 
 	public Instance get(int index) {
+		if (index < 0 || index > list.size() - 1) {
+			return null;
+		}
 		return list.get(index);
 	}
 

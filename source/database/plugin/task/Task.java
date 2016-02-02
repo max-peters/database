@@ -3,7 +3,6 @@ package database.plugin.task;
 import java.util.HashMap;
 import java.util.Map;
 import database.plugin.Instance;
-import database.plugin.subject.Subject;
 
 public class Task extends Instance {
 	public String name;
@@ -13,10 +12,10 @@ public class Task extends Instance {
 	}
 
 	@Override public boolean equals(Object object) {
-		Subject subject;
+		Task task;
 		if (object != null && object.getClass().equals(this.getClass())) {
-			subject = (Subject) object;
-			if (name.equals(subject.name)) {
+			task = (Task) object;
+			if (name.equals(task.name)) {
 				return true;
 			}
 		}

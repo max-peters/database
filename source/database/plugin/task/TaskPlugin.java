@@ -3,7 +3,7 @@ package database.plugin.task;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
 import database.main.userInterface.Terminal;
@@ -17,7 +17,34 @@ public class TaskPlugin extends InstancePlugin {
 		super("task", new TaskList(), storage);
 	}
 
+	@Command(tag = "edit") public void changeRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
+														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		Task task = getTaskByCheckRequest();
+		Map<String, String> map = new LinkedHashMap<String, String>();
+		map.put("new name", ".+");
+		request(map);
+		task.name = map.get("new name");
+		update();
+	}
+
 	@Command(tag = "check") public void checkRequest() throws InterruptedException, BadLocationException, IOException {
+		remove(getTaskByCheckRequest());
+	}
+
+	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
+														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		Map<String, String> map = new LinkedHashMap<String, String>();
+		map.put("name", ".+");
+		request(map);
+		create(map);
+		update();
+	}
+
+	@Override public void show() {
+		// nothing to show here
+	}
+
+	private Task getTaskByCheckRequest() throws InterruptedException, BadLocationException {
 		boolean display = getDisplay();
 		int position;
 		setDisplay(false);
@@ -28,23 +55,11 @@ public class TaskPlugin extends InstancePlugin {
 			strings.add(task.name);
 		}
 		position = Terminal.checkRequest(strings);
-		if (position != -1) {
-			remove(getInstanceList().get(position));
-		}
 		setDisplay(display);
 		Terminal.update();
-	}
-
-	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
-														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("name", ".+");
-		request(map);
-		create(map);
-		update();
-	}
-
-	@Override public void show() {
-		// nothing to show here
+		if (position != -1) {
+			return (Task) getInstanceList().get(position);
+		}
+		return null;
 	}
 }

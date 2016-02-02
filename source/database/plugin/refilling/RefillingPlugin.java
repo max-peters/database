@@ -2,7 +2,7 @@ package database.plugin.refilling;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
 import database.plugin.Command;
@@ -17,7 +17,7 @@ public class RefillingPlugin extends InstancePlugin {
 
 	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
 														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("value", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("distance", "[0-9]{1,13}(\\.[0-9]*)?");

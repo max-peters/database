@@ -2,7 +2,7 @@ package database.plugin.subject;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
 import database.plugin.Command;
@@ -15,7 +15,7 @@ public class SubjectPlugin extends InstancePlugin {
 	}
 
 	@Command(tag = "add") public void addRequest() throws InterruptedException, BadLocationException {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("add", ((SubjectList) getInstanceList()).getTagsAsRegex());
 		map.put("score", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("maximum points", "[0-9]{1,13}(\\.[0-9]*)?");
@@ -28,7 +28,7 @@ public class SubjectPlugin extends InstancePlugin {
 
 	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
 														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜ].*");
 		map.put("tag", "[a-zöäüß]*");
 		request(map);

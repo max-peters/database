@@ -91,12 +91,12 @@ public class RefillingList extends InstanceList {
 
 	private void createExpense(Refilling refilling, ExpensePlugin expensePlugin)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
 																					InvocationTargetException, NoSuchMethodException, SecurityException {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("name", "Auto - Tankstelle");
-		map.put("category", "Fahrtkosten");
-		map.put("value", refilling.cost.toString());
-		map.put("date", refilling.date.toString());
-		expensePlugin.create(map);
+		Map<String, String> parameter = new HashMap<String, String>();
+		parameter.put("name", "Auto - Tankstelle");
+		parameter.put("category", "Fahrtkosten");
+		parameter.put("value", refilling.cost.toString());
+		parameter.put("date", refilling.date.toString());
+		expensePlugin.create(parameter);
 	}
 
 	private double getAverageConsumptionTotal() {
