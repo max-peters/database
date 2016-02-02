@@ -37,6 +37,10 @@ public class Terminal {
 		waitForInput();
 	}
 
+	public static List<OutputInformation> getCollectedLines() {
+		return collectedLines;
+	}
+
 	public static void getLineOfCharacters(char character) throws BadLocationException {
 		graphicalUserInterface.getLineOfCharacters(character);
 	}

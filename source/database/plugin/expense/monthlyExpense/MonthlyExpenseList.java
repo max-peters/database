@@ -2,13 +2,13 @@ package database.plugin.expense.monthlyExpense;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import database.main.date.Date;
 import database.main.date.Month;
 import database.main.date.Year;
+import database.main.userInterface.OutputInformation;
 import database.main.userInterface.StringFormat;
+import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
 import database.plugin.Instance;
 import database.plugin.InstanceList;
@@ -24,16 +24,8 @@ public class MonthlyExpenseList extends InstanceList {
 
 	@Override public void add(Map<String, String> parameter)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
 																InvocationTargetException, NoSuchMethodException, SecurityException {
-		StringBuilder builder = new StringBuilder();
 		list.add(new MonthlyExpense(parameter));
-		List<Expense> list = createExpense(new Expense(parameter), expensePlugin, ExecutionDay.getExecutionDay(parameter.get("executionday")));
-		for (Expense expense : list) {
-			builder.append(" - " + expense.date + " " + expense.name + " (" + expense.category + ") " + expense.value + "€");
-			builder.append(System.getProperty("line.separator"));
-		}
-		if (!list.isEmpty()) {
-			Terminal.collectLine(builder.toString(), StringFormat.STANDARD);
-		}
+		createExpense(new Expense(parameter), expensePlugin, ExecutionDay.getExecutionDay(parameter.get("executionday")));
 	}
 
 	private Date adjustDate(int month, int year, ExecutionDay executionDay) {
@@ -62,15 +54,17 @@ public class MonthlyExpenseList extends InstanceList {
 		return false;
 	}
 
-	private List<Expense> createExpense(Expense expense, ExpensePlugin expensePlugin, ExecutionDay executionDay)	throws IOException, InstantiationException, IllegalAccessException,
-																													IllegalArgumentException, InvocationTargetException,
-																													NoSuchMethodException, SecurityException {
-		List<Expense> list = new ArrayList<Expense>();
+	private void createExpense(Expense expense, ExpensePlugin expensePlugin, ExecutionDay executionDay)	throws IOException, InstantiationException, IllegalAccessException,
+																										IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
+																										SecurityException {
 		expense.date = adjustDate(expense.date.month.counter, expense.date.year.counter, executionDay);
 		while (expense.date.isPast() || expense.date.isToday()) {
 			if (!containsExceptValue(expensePlugin.getInstanceList().getIterable(), expense)) {
 				expensePlugin.create(expense.getParameter());
-				list.add(new Expense(expense.getParameter()));
+				if (!Terminal.getCollectedLines().contains(new OutputInformation("expense created:", StringType.SOLUTION, StringFormat.STANDARD))) {
+					Terminal.collectLine("expense created:", StringFormat.STANDARD);
+				}
+				Terminal.collectLine(" - " + expense.date + " " + expense.name + " (" + expense.category + ") " + expense.value + "€", StringFormat.STANDARD);
 			}
 			if (expense.date.month.counter == 12) {
 				expense.date = adjustDate(1, expense.date.year.counter + 1, executionDay);
@@ -79,6 +73,5 @@ public class MonthlyExpenseList extends InstanceList {
 				expense.date = adjustDate(expense.date.month.counter + 1, expense.date.year.counter, executionDay);
 			}
 		}
-		return list;
 	}
 }
