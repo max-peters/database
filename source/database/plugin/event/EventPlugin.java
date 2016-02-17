@@ -153,7 +153,7 @@ public class EventPlugin extends InstancePlugin {
 		}
 		for (Event event : list) {
 			if (event.updateYear().year.counter == Date.getCurrentDate().year.counter) {
-				String line = event.updateYear() + " - " + event.name;
+				String line = event.updateYear().isToday() ? "TODAY      - " + event.name : event.updateYear() + " - " + event.name;
 				for (int i = line.length(); i < longestNameLength + 3; i++) {
 					line += " ";
 				}
