@@ -22,13 +22,13 @@ import database.plugin.Plugin;
 import database.plugin.PrintInformation;
 
 public class WriterReader {
-	private File			localStorage;
+	private final File		localStorage;
 	private PluginContainer	pluginContainer;
-	private File			remoteStorage;
+	private final File		remoteStorage;
 
 	public WriterReader(PluginContainer pluginContainer) {
 		this.pluginContainer = pluginContainer;
-		localStorage = new File("C:/Users/Max/Documents/storage.xml");
+		localStorage = new File(System.getProperty("user.home") + "/Documents/storage.xml");
 		remoteStorage = new File("Z:/storage.xml");
 	}
 

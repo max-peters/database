@@ -56,7 +56,7 @@ public abstract class Plugin {
 		for (String string : strings) {
 			regex += string + "|";
 		}
-		return regex.substring(0, regex.lastIndexOf("|")) + ")";
+		return regex.endsWith("|") ? regex.substring(0, regex.lastIndexOf("|")) + ")" : "()";
 	}
 
 	public boolean getDisplay() {

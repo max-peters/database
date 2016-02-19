@@ -1,6 +1,8 @@
 package database.main;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
@@ -39,9 +41,17 @@ public class PluginContainer {
 	public String getPluginNameTagsAsRegesx() {
 		String regex = "(";
 		for (Plugin plugin : plugins) {
-			regex += plugin.getIdentity() + "|";
+			boolean isAnnotationPresent = false;
+			for (Method method : plugin.getClass().getMethods()) {
+				if (method.isAnnotationPresent(Command.class)) {
+					isAnnotationPresent = true;
+				}
+			}
+			if (isAnnotationPresent) {
+				regex += plugin.getIdentity() + "|";
+			}
 		}
-		return regex.substring(0, regex.lastIndexOf("|")) + ")";
+		return regex.endsWith("|") ? regex.substring(0, regex.lastIndexOf("|")) + ")" : "()";
 	}
 
 	public ArrayList<Plugin> getPlugins() {
