@@ -9,16 +9,22 @@ import java.net.URLConnection;
 public class News {
 	private String rank;
 
-	public News() throws IOException {
-		setRank();
+	public News() {
+		try {
+			rank = getRank();
+		}
+		catch (IOException e) {
+			rank = "404 page not found";
+		}
 	}
 
 	public String getCurrentRank() {
 		return rank;
 	}
 
-	private void setRank() throws IOException {
+	private String getRank() throws IOException {
 		String line;
+		String rank = "";
 		URL url = new URL("http://www.lolking.net/summoner/euw/37588528");
 		URLConnection conn = url.openConnection();
 		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -32,5 +38,6 @@ public class News {
 			}
 		}
 		in.close();
+		return rank;
 	}
 }
