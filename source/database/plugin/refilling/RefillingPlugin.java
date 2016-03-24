@@ -19,7 +19,7 @@ public class RefillingPlugin extends InstancePlugin {
 														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?");
-		map.put("value", "[0-9]{1,13}(\\.[0-9]*)?");
+		map.put("cost", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("distance", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("date", null);
 		request(map);

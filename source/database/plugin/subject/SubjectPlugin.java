@@ -32,6 +32,9 @@ public class SubjectPlugin extends InstancePlugin {
 		map.put("name", "[A-ZÖÄÜ].*");
 		map.put("tag", "[a-zöäüß]*");
 		request(map);
+		map.put("maxPoints", "0");
+		map.put("score", "0");
+		map.put("counter", "0");
 		create(map);
 		update();
 	}
