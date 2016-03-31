@@ -20,7 +20,7 @@ public class PluginContainer {
 	public boolean changes() {
 		for (Plugin plugin : plugins) {
 			if (plugin instanceof InstancePlugin) {
-				InstancePlugin current = (InstancePlugin) plugin;
+				InstancePlugin<?> current = (InstancePlugin<?>) plugin;
 				if (current.getChanges()) {
 					return true;
 				}
@@ -61,7 +61,7 @@ public class PluginContainer {
 	public void setUnchanged() {
 		for (Plugin plugin : plugins) {
 			if (plugin instanceof InstancePlugin) {
-				InstancePlugin current = (InstancePlugin) plugin;
+				InstancePlugin<?> current = (InstancePlugin<?>) plugin;
 				current.setChanges(false);
 			}
 		}

@@ -15,14 +15,14 @@ import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstanceList;
 
-public class ExpenseList extends InstanceList {
-	@Override public void add(Map<String, String> parameter) {
-		Expense expense = new Expense(parameter);
-		int i = list.size();
-		while (i > 0 && ((Expense) list.get(i - 1)).date.compareTo(expense.date) > 0) {
+public class ExpenseList extends InstanceList<Expense> {
+	@Override public boolean add(Expense expense) {
+		int i = size();
+		while (i > 0 && get(i - 1).date.compareTo(expense.date) > 0) {
 			i--;
 		}
-		list.add(i, expense);
+		add(i, expense);
+		return true;
 	}
 
 	@Override public String initialOutput() {
@@ -60,7 +60,7 @@ public class ExpenseList extends InstanceList {
 		int longestLine = 0;
 		String name = null;
 		Map<String, Double> categories = new TreeMap<String, Double>();
-		for (Instance instance : getIterable()) {
+		for (Instance instance : this) {
 			Expense expense = (Expense) instance;
 			if (expense.checkValidity(null) && !categories.containsKey(expense.category)) {
 				categories.put(expense.category, 0.0);
@@ -71,7 +71,7 @@ public class ExpenseList extends InstanceList {
 			if (current.length() > longestName) {
 				longestName = current.length();
 			}
-			for (Instance instance : getIterable()) {
+			for (Instance instance : this) {
 				Expense expense = (Expense) instance;
 				if (expense.category.equals(current)) {
 					categories.put(current, categories.get(current) + expense.value);
@@ -145,7 +145,7 @@ public class ExpenseList extends InstanceList {
 
 	private ArrayList<Month> getMonths() {
 		ArrayList<Month> months = new ArrayList<Month>();
-		for (Instance instance : getIterable()) {
+		for (Instance instance : this) {
 			Expense expense = (Expense) instance;
 			if (!months.contains(expense.date.month)) {
 				months.add(expense.date.month);
@@ -164,7 +164,7 @@ public class ExpenseList extends InstanceList {
 		String toReturn = "";
 		ArrayList<String> categories = new ArrayList<String>();
 		ArrayList<String> names;
-		for (Instance instance : getIterable()) {
+		for (Instance instance : this) {
 			Expense expense = (Expense) instance;
 			if (expense.checkValidity(month) && !categories.contains(expense.category)) {
 				categories.add(expense.category);
@@ -180,7 +180,7 @@ public class ExpenseList extends InstanceList {
 		for (String current : categories) {
 			toReturn = toReturn + current + ":" + System.getProperty("line.separator");
 			names = new ArrayList<String>();
-			for (Instance instance : getIterable()) {
+			for (Instance instance : this) {
 				Expense expense = (Expense) instance;
 				if (expense.checkValidity(month) && expense.category.equals(current) && !names.contains(expense.name)) {
 					names.add(expense.name);
@@ -191,7 +191,7 @@ public class ExpenseList extends InstanceList {
 				value = 0;
 				blanks = "      ";
 				toReturn = toReturn + "  - " + name;
-				for (Instance instance : getIterable()) {
+				for (Instance instance : this) {
 					Expense expense = (Expense) instance;
 					if (expense.checkValidity(month) && expense.category.equals(current) && expense.name.equals(name)) {
 						value = value + expense.value;
@@ -209,7 +209,7 @@ public class ExpenseList extends InstanceList {
 
 	private double value(Month month) {
 		double value = 0;
-		for (Instance instance : getIterable()) {
+		for (Instance instance : this) {
 			Expense expense = (Expense) instance;
 			if (expense.checkValidity(month)) {
 				value = value + expense.value;

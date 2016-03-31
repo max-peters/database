@@ -12,11 +12,11 @@ import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
 import database.plugin.storage.Storage;
 
-public abstract class InstancePlugin extends Plugin {
-	private InstanceList	instanceList;
-	private Storage			storage;
+public abstract class InstancePlugin<T extends Instance> extends Plugin {
+	protected InstanceList<T>	instanceList;
+	private Storage				storage;
 
-	public InstancePlugin(String identity, InstanceList instanceList, Storage storage) {
+	public InstancePlugin(String identity, InstanceList<T> instanceList, Storage storage) {
 		super(identity);
 		this.instanceList = instanceList;
 		this.storage = storage;
@@ -26,12 +26,15 @@ public abstract class InstancePlugin extends Plugin {
 		instanceList.clear();
 	}
 
-	public void create(Map<String, String> map)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-												NoSuchMethodException, SecurityException {
-		instanceList.add(map);
+	public abstract T create(Map<String, String> map)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+														NoSuchMethodException, SecurityException;
+
+	public void createAndAdd(Map<String, String> map)	throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+														NoSuchMethodException, SecurityException, IOException {
+		instanceList.add(create(map));
 	}
 
-	public InstanceList getInstanceList() {
+	public InstanceList<T> getInstanceList() {
 		return instanceList;
 	}
 
@@ -45,7 +48,7 @@ public abstract class InstancePlugin extends Plugin {
 
 	@Override public List<PrintInformation> print() {
 		List<PrintInformation> list = new ArrayList<PrintInformation>();
-		for (Instance instance : instanceList.getIterable()) {
+		for (Instance instance : instanceList) {
 			list.add(new PrintInformation("entry", instance.getParameter()));
 		}
 		list.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
@@ -55,7 +58,7 @@ public abstract class InstancePlugin extends Plugin {
 	@Override public void read(PrintInformation pair)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
 														NoSuchMethodException, SecurityException {
 		if (pair.getName().equals("entry")) {
-			create(pair.getMap());
+			createAndAdd(pair.getMap());
 		}
 		else if (pair.getName().equals("display")) {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));

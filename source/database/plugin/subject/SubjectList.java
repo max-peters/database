@@ -1,21 +1,16 @@
 package database.plugin.subject;
 
 import java.text.DecimalFormat;
-import java.util.Map;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstanceList;
 
-public class SubjectList extends InstanceList {
-	@Override public void add(Map<String, String> map) {
-		list.add(new Subject(map));
-	}
-
+public class SubjectList extends InstanceList<Subject> {
 	@Command(tag = "average") public String getAverage() {
 		double sumPercentages = 0;
 		double averagePercentage;
 		int currentCounter = 0;
-		for (Instance instance : getIterable()) {
+		for (Instance instance : this) {
 			Subject subject = (Subject) instance;
 			sumPercentages += subject.calcPercent();
 			currentCounter++;
@@ -42,7 +37,7 @@ public class SubjectList extends InstanceList {
 			builder.append("keine Blätter");
 		}
 		else {
-			for (Instance instance : getIterable()) {
+			for (Instance instance : this) {
 				Subject current = (Subject) instance;
 				int currentWorksheetCounterStringLength = String.valueOf(current.worksheetCounter).length();
 				allGradesLength = oneDecimalPlace.format(current.score).length() > allGradesLength ? oneDecimalPlace.format(current.score).length() : allGradesLength;
@@ -52,7 +47,7 @@ public class SubjectList extends InstanceList {
 				counterLength = currentWorksheetCounterStringLength > counterLength ? currentWorksheetCounterStringLength : counterLength;
 				nameLength = current.name.length() > nameLength ? current.name.length() : nameLength;
 			}
-			for (Instance currentInstance : getIterable()) {
+			for (Instance currentInstance : this) {
 				Subject subject = (Subject) currentInstance;
 				builder.append(subject.name);
 				for (int i = subject.name.length(); i < nameLength + 4; i++) {
@@ -76,7 +71,7 @@ public class SubjectList extends InstanceList {
 
 	protected Subject getSubject(String tag) {
 		Subject wanted = null;
-		for (Instance instance : getIterable()) {
+		for (Instance instance : this) {
 			Subject subject = (Subject) instance;
 			if (subject.tag.equals(tag)) {
 				wanted = subject;
@@ -87,7 +82,7 @@ public class SubjectList extends InstanceList {
 
 	protected String getTagsAsRegex() {
 		String regex = "(";
-		for (Instance instance : getIterable()) {
+		for (Instance instance : this) {
 			Subject subject = (Subject) instance;
 			regex += subject.tag + "|";
 		}

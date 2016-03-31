@@ -15,7 +15,7 @@ import database.plugin.PrintInformation;
 import database.plugin.expense.monthlyExpense.MonthlyExpensePlugin;
 import database.plugin.storage.Storage;
 
-public class ExpensePlugin extends InstancePlugin {
+public class ExpensePlugin extends InstancePlugin<Expense> {
 	private MonthlyExpensePlugin monthlyExpensePlugin;
 
 	public ExpensePlugin(Storage storage) {
@@ -28,6 +28,10 @@ public class ExpensePlugin extends InstancePlugin {
 		monthlyExpensePlugin.clearList();
 	}
 
+	@Override public Expense create(Map<String, String> map) {
+		return new Expense(map);
+	}
+
 	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
 														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
@@ -36,7 +40,7 @@ public class ExpensePlugin extends InstancePlugin {
 		map.put("value", "[0-9]{1,13}(\\.[0-9]{0,2})?");
 		map.put("date", null);
 		request(map);
-		create(map);
+		createAndAdd(map);
 		update();
 	}
 
@@ -47,10 +51,10 @@ public class ExpensePlugin extends InstancePlugin {
 
 	@Override public List<PrintInformation> print() {
 		List<PrintInformation> list = new ArrayList<PrintInformation>();
-		for (Instance instance : getInstanceList().getIterable()) {
+		for (Instance instance : getInstanceList()) {
 			list.add(new PrintInformation("expense", instance.getParameter()));
 		}
-		for (Instance instance : monthlyExpensePlugin.getInstanceList().getIterable()) {
+		for (Instance instance : monthlyExpensePlugin.getInstanceList()) {
 			list.add(new PrintInformation("monthlyexpense", instance.getParameter()));
 		}
 		list.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
@@ -63,10 +67,10 @@ public class ExpensePlugin extends InstancePlugin {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}
 		else if (pair.getName().equals("expense")) {
-			create(pair.getMap());
+			createAndAdd(pair.getMap());
 		}
 		else if (pair.getName().equals("monthlyexpense")) {
-			monthlyExpensePlugin.create(pair.getMap());
+			monthlyExpensePlugin.createAndAdd(pair.getMap());
 		}
 	}
 }

@@ -8,16 +8,26 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import database.main.date.Date;
+import database.main.date.Month;
+import database.main.date.Year;
+import database.main.userInterface.OutputInformation;
+import database.main.userInterface.StringFormat;
+import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
+import database.plugin.expense.Expense;
 import database.plugin.expense.ExpensePlugin;
 import database.plugin.storage.Storage;
 
-public class MonthlyExpensePlugin extends InstancePlugin {
+public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
+	private ExpensePlugin expensePlugin;
+
 	public MonthlyExpensePlugin(ExpensePlugin expensePlugin, Storage storage) {
-		super("monthlyexpense", new MonthlyExpenseList(expensePlugin), storage);
+		super("monthlyexpense", new MonthlyExpenseList(), storage);
+		this.expensePlugin = expensePlugin;
 	}
 
 	@Command(tag = "edit") public void changeRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
@@ -27,12 +37,12 @@ public class MonthlyExpensePlugin extends InstancePlugin {
 		MonthlyExpense monthlyExpense = null;
 		String change = null;
 		int position;
-		for (Instance instance : getInstanceList().getIterable()) {
+		for (Instance instance : getInstanceList()) {
 			strings.add(((MonthlyExpense) instance).name + " - " + ((MonthlyExpense) instance).category);
 		}
 		position = Terminal.checkRequest(strings);
 		if (position != -1) {
-			monthlyExpense = (MonthlyExpense) getInstanceList().get(position);
+			monthlyExpense = getInstanceList().get(position);
 		}
 		else {
 			return;
@@ -71,6 +81,16 @@ public class MonthlyExpensePlugin extends InstancePlugin {
 		update();
 	}
 
+	@Override public MonthlyExpense create(Map<String, String> map) {
+		return new MonthlyExpense(map);
+	}
+
+	@Override public void createAndAdd(Map<String, String> map)	throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+																NoSuchMethodException, SecurityException, IOException {
+		super.createAndAdd(map);
+		createExpense(new Expense(map), expensePlugin, ExecutionDay.getExecutionDay(map.get("executionday")));
+	}
+
 	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
 														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
@@ -80,7 +100,7 @@ public class MonthlyExpensePlugin extends InstancePlugin {
 		map.put("date", null);
 		map.put("executionday", "(first|mid|last)");
 		request(map);
-		create(map);
+		createAndAdd(map);
 		update();
 		Terminal.printCollectedLines();
 	}
@@ -95,7 +115,7 @@ public class MonthlyExpensePlugin extends InstancePlugin {
 
 	@Command(tag = "stop") public void stopRequest() throws InterruptedException, BadLocationException {
 		List<String> strings = new ArrayList<String>();
-		for (Instance instance : getInstanceList().getIterable()) {
+		for (Instance instance : getInstanceList()) {
 			strings.add(((MonthlyExpense) instance).name + " - " + ((MonthlyExpense) instance).category);
 		}
 		getInstanceList().remove(getInstanceList().get(Terminal.checkRequest(strings)));
@@ -103,5 +123,52 @@ public class MonthlyExpensePlugin extends InstancePlugin {
 
 	@Override public void store() {
 		// nothing to store here
+	}
+
+	private Date adjustDate(int month, int year, ExecutionDay executionDay) {
+		Date date = null;
+		switch (executionDay) {
+			case FIRST:
+				date = new Date("01." + month + "." + year);
+				break;
+			case LAST:
+				date = new Date(new Month(month, new Year(year)).getDayCount() + "." + month + "." + year);
+				break;
+			case MID:
+				date = new Date(new Month(month, new Year(year)).getDayCount() / 2 + "." + month + "." + year);
+				break;
+		}
+		return date;
+	}
+
+	private boolean containsExceptValue(Iterable<? extends Instance> iterable, Expense expense) {
+		for (Instance instance : iterable) {
+			Expense currentExpense = (Expense) instance;
+			if (currentExpense.name.equals(expense.name) && currentExpense.category.equals(expense.category) && currentExpense.date.equals(expense.date)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void createExpense(Expense expense, ExpensePlugin expensePlugin, ExecutionDay executionDay)	throws IOException, InstantiationException, IllegalAccessException,
+																										IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
+																										SecurityException {
+		expense.date = adjustDate(expense.date.month.counter, expense.date.year.counter, executionDay);
+		while (expense.date.isPast() || expense.date.isToday()) {
+			if (!containsExceptValue(expensePlugin.getInstanceList(), expense)) {
+				expensePlugin.createAndAdd(expense.getParameter());
+				if (!Terminal.getCollectedLines().contains(new OutputInformation("expense created:", StringType.SOLUTION, StringFormat.STANDARD))) {
+					Terminal.collectLine("expense created:", StringFormat.STANDARD);
+				}
+				Terminal.collectLine(" - " + expense.date + " " + expense.name + " (" + expense.category + ") " + expense.value + "€", StringFormat.STANDARD);
+			}
+			if (expense.date.month.counter == 12) {
+				expense.date = adjustDate(1, expense.date.year.counter + 1, executionDay);
+			}
+			else {
+				expense.date = adjustDate(expense.date.month.counter + 1, expense.date.year.counter, executionDay);
+			}
+		}
 	}
 }

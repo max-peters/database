@@ -43,9 +43,9 @@ public class Storage extends Plugin {
 		storage.addAll(pair.getMap().values());
 	}
 
-	public void store(InstancePlugin instancePlugin) throws BadLocationException, InterruptedException {
+	public void store(InstancePlugin<? extends Instance> instancePlugin) throws BadLocationException, InterruptedException {
 		String line;
-		for (Instance instance : instancePlugin.getInstanceList().getIterable()) {
+		for (Instance instance : instancePlugin.getInstanceList()) {
 			line = "";
 			for (Entry<String, String> entry : instance.getParameter().entrySet()) {
 				line += entry.getKey() + ": " + entry.getValue() + ", ";

@@ -9,7 +9,7 @@ import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.storage.Storage;
 
-public class SubjectPlugin extends InstancePlugin {
+public class SubjectPlugin extends InstancePlugin<Subject> {
 	public SubjectPlugin(Storage storage) {
 		super("subject", new SubjectList(), storage);
 	}
@@ -26,6 +26,10 @@ public class SubjectPlugin extends InstancePlugin {
 		update();
 	}
 
+	@Override public Subject create(Map<String, String> map) {
+		return new Subject(map);
+	}
+
 	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
 														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
@@ -35,7 +39,7 @@ public class SubjectPlugin extends InstancePlugin {
 		map.put("maxPoints", "0");
 		map.put("score", "0");
 		map.put("counter", "0");
-		create(map);
+		instanceList.add(new Subject(map));
 		update();
 	}
 }

@@ -12,37 +12,39 @@ import java.util.Map;
 import database.main.date.Date;
 import database.plugin.Instance;
 import database.plugin.event.EventList;
-import database.plugin.event.EventPluginExtention;
+import database.plugin.event.EventPluginExtension;
 import database.plugin.storage.Storage;
 
-public class HolidayPlugin extends EventPluginExtention {
+public class HolidayPlugin extends EventPluginExtension<Holiday> {
 	private List<String> lines = new ArrayList<String>();
 
 	public HolidayPlugin(Storage storage) {
 		super("holiday", new HolidayList(), storage);
 	}
 
-	@Override public void create(Map<String, String> map)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-															NoSuchMethodException, SecurityException {
-		EventList list = (EventList) getInstanceList();
+	@Override public Holiday create(Map<String, String> map)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+																InvocationTargetException, NoSuchMethodException, SecurityException {
+		if (lines.isEmpty()) {
+			prepareList();
+		}
 		if (new Date(map.get("date")).isPast()) {
-			if (lines.isEmpty()) {
-				prepareList();
+			if (!lines.isEmpty()) {
 				getHolidays();
 			}
 			else {
-				list.add(map);
+				return new Holiday(map);
 			}
 		}
-		else if (!list.contains(map)) {
-			list.add(map);
+		else if (!getInstanceList().contains(map)) {
+			return new Holiday(map);
 		}
+		return null;
 	}
 
 	private void getHolidays()	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
 								SecurityException {
 		Map<String, String> map;
-		EventList list = (EventList) getInstanceList();
+		EventList<Holiday> list = (EventList<Holiday>) getInstanceList();
 		for (int i = 0; i < lines.size(); i++) {
 			if (lines.get(i).matches(".*<a href=\"/Feiertage/feiertag_.*.html\" class=\"dash\">.*")) {
 				map = new HashMap<String, String>();
@@ -54,11 +56,11 @@ public class HolidayPlugin extends EventPluginExtention {
 				map.put("name", name);
 				map.put("date", date);
 				if (list.isEmpty() && !newDate.isPast()) {
-					list.add(map);
+					list.add(new Holiday(map));
 				}
 				else {
 					boolean contains = false;
-					for (Instance instance : list.getIterable()) {
+					for (Instance instance : list) {
 						Holiday holiday = (Holiday) instance;
 						if (holiday.name.equals(name)) {
 							contains = true;
@@ -69,7 +71,7 @@ public class HolidayPlugin extends EventPluginExtention {
 						}
 					}
 					if (!contains && !newDate.isPast()) {
-						list.add(map);
+						list.add(new Holiday(map));
 					}
 				}
 			}

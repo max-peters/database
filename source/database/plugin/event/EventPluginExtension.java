@@ -13,8 +13,8 @@ import database.plugin.InstancePlugin;
 import database.plugin.PrintInformation;
 import database.plugin.storage.Storage;
 
-public class EventPluginExtention extends InstancePlugin {
-	public EventPluginExtention(String identity, InstanceList instanceList, Storage storage) {
+public abstract class EventPluginExtension<T extends Event> extends InstancePlugin<T> {
+	public EventPluginExtension(String identity, InstanceList<T> instanceList, Storage storage) {
 		super(identity, instanceList, storage);
 	}
 
@@ -24,13 +24,13 @@ public class EventPluginExtention extends InstancePlugin {
 		map.put("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)");
 		map.put("date", null);
 		request(map);
-		getInstanceList().add(map);
+		createAndAdd(map);
 		update();
 	}
 
 	@Override public List<PrintInformation> print() {
 		List<PrintInformation> list = new ArrayList<PrintInformation>();
-		for (Instance instance : getInstanceList().getIterable()) {
+		for (Instance instance : getInstanceList()) {
 			list.add(new PrintInformation(getIdentity(), instance.getParameter()));
 		}
 		return list;

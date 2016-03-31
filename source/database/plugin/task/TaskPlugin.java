@@ -12,7 +12,7 @@ import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.storage.Storage;
 
-public class TaskPlugin extends InstancePlugin {
+public class TaskPlugin extends InstancePlugin<Task> {
 	public TaskPlugin(Storage storage) {
 		super("task", new TaskList(), storage);
 	}
@@ -31,12 +31,16 @@ public class TaskPlugin extends InstancePlugin {
 		remove(getTaskByCheckRequest());
 	}
 
+	@Override public Task create(Map<String, String> map) {
+		return new Task(map);
+	}
+
 	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
 														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("name", ".+");
 		request(map);
-		create(map);
+		createAndAdd(map);
 		update();
 	}
 
@@ -50,7 +54,7 @@ public class TaskPlugin extends InstancePlugin {
 		setDisplay(false);
 		Terminal.update();
 		ArrayList<String> strings = new ArrayList<String>();
-		for (Instance instance : getInstanceList().getIterable()) {
+		for (Instance instance : getInstanceList()) {
 			Task task = (Task) instance;
 			strings.add(task.name);
 		}
@@ -58,7 +62,7 @@ public class TaskPlugin extends InstancePlugin {
 		setDisplay(display);
 		Terminal.update();
 		if (position != -1) {
-			return (Task) getInstanceList().get(position);
+			return getInstanceList().get(position);
 		}
 		return null;
 	}

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import javax.swing.text.BadLocationException;
 import database.main.date.Date;
 import database.main.userInterface.StringFormat;
@@ -21,29 +22,34 @@ import database.plugin.event.day.DayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
 import database.plugin.storage.Storage;
 
-public class EventPlugin extends InstancePlugin {
-	private ArrayList<EventPluginExtention> extentionList;
+public class EventPlugin extends InstancePlugin<Event> {
+	private ArrayList<EventPluginExtension<?>> extensionList;
 
 	public EventPlugin(Storage storage) {
 		super("event", null, storage);
-		extentionList = new ArrayList<EventPluginExtention>();
-		extentionList.add(new DayPlugin(storage));
-		extentionList.add(new BirthdayPlugin(storage));
-		extentionList.add(new HolidayPlugin(storage));
-		extentionList.add(new AppointmentPlugin(storage));
+		extensionList = new ArrayList<EventPluginExtension<?>>();
+		extensionList.add(new DayPlugin(storage));
+		extensionList.add(new BirthdayPlugin(storage));
+		extensionList.add(new HolidayPlugin(storage));
+		extensionList.add(new AppointmentPlugin(storage));
 	}
 
 	@Override public void clearList() {
-		for (InstancePlugin extention : extentionList) {
-			extention.getInstanceList().clear();
+		for (EventPluginExtension<?> extension : extensionList) {
+			extension.getInstanceList().clear();
 		}
+	}
+
+	@Override public Event create(Map<String, String> map)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+															NoSuchMethodException, SecurityException {
+		throw new RuntimeException("no event instatioationdasfda");
 	}
 
 	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
 														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-		EventPluginExtention extention = chooseType();
-		if (extention != null) {
-			extention.createRequest();
+		EventPluginExtension<?> extension = chooseType();
+		if (extension != null) {
+			extension.createRequest();
 			update();
 		}
 	}
@@ -55,8 +61,8 @@ public class EventPlugin extends InstancePlugin {
 	@Override public void initialOutput() throws BadLocationException {
 		String initialOutput;
 		List<Event> eventList = new ArrayList<Event>();
-		for (InstancePlugin extention : extentionList) {
-			EventList currentEventList = (EventList) extention.getInstanceList();
+		for (EventPluginExtension<?> extension : extensionList) {
+			EventList<?> currentEventList = (EventList<?>) extension.getInstanceList();
 			for (Event event : currentEventList.getNearEvents()) {
 				eventList.add(event);
 			}
@@ -70,8 +76,8 @@ public class EventPlugin extends InstancePlugin {
 
 	@Override public List<PrintInformation> print() {
 		List<PrintInformation> list = new ArrayList<PrintInformation>();
-		for (InstancePlugin extention : extentionList) {
-			list.addAll(extention.print());
+		for (EventPluginExtension<?> extension : extensionList) {
+			list.addAll(extension.print());
 		}
 		list.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
 		return list;
@@ -83,17 +89,17 @@ public class EventPlugin extends InstancePlugin {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}
 		else {
-			for (InstancePlugin extention : extentionList) {
-				if (pair.getName().equals(extention.getIdentity())) {
-					extention.create(pair.getMap());
+			for (EventPluginExtension<?> extension : extensionList) {
+				if (pair.getName().equals(extension.getIdentity())) {
+					extension.createAndAdd(pair.getMap());
 				}
 			}
 		}
 	}
 
 	@Override public void remove(Instance toRemove) throws BadLocationException {
-		for (InstancePlugin extention : extentionList) {
-			extention.remove(toRemove);
+		for (EventPluginExtension<?> extension : extensionList) {
+			extension.remove(toRemove);
 		}
 	}
 
@@ -103,8 +109,8 @@ public class EventPlugin extends InstancePlugin {
 		setDisplay(false);
 		Terminal.update();
 		List<Event> list = new ArrayList<Event>();
-		for (InstancePlugin extention : extentionList) {
-			for (Instance instance : extention.getInstanceList().getIterable()) {
+		for (EventPluginExtension<?> extension : extensionList) {
+			for (Instance instance : extension.getInstanceList()) {
 				list.add((Event) instance);
 			}
 		}
@@ -115,21 +121,29 @@ public class EventPlugin extends InstancePlugin {
 		Terminal.update();
 	}
 
-	private EventPluginExtention chooseType() throws InterruptedException, BadLocationException {
+	protected List<PrintInformation> extensionPrint() {
+		List<PrintInformation> list = new ArrayList<PrintInformation>();
+		for (Instance instance : getInstanceList()) {
+			list.add(new PrintInformation(getIdentity(), instance.getParameter()));
+		}
+		return list;
+	}
+
+	private EventPluginExtension<?> chooseType() throws InterruptedException, BadLocationException {
 		ArrayList<String> strings = new ArrayList<String>();
-		EventPluginExtention toReturn = null;
+		EventPluginExtension<?> toReturn = null;
 		String pluginIdentity;
 		int position;
-		for (InstancePlugin extention : extentionList) {
-			strings.add(extention.getIdentity());
+		for (EventPluginExtension<?> extension : extensionList) {
+			strings.add(extension.getIdentity());
 		}
 		strings.remove(2);
 		position = Terminal.checkRequest(strings);
 		if (position != -1) {
 			pluginIdentity = strings.get(position);
-			for (InstancePlugin extention : extentionList) {
-				if (pluginIdentity.equals(extention.getIdentity())) {
-					toReturn = (EventPluginExtention) extention;
+			for (EventPluginExtension<?> extension : extensionList) {
+				if (pluginIdentity.equals(extension.getIdentity())) {
+					toReturn = extension;
 				}
 			}
 		}

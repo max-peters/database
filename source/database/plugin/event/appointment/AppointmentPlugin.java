@@ -5,12 +5,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
-import database.plugin.event.EventPluginExtention;
+import database.plugin.event.EventPluginExtension;
 import database.plugin.storage.Storage;
 
-public class AppointmentPlugin extends EventPluginExtention {
+public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 	public AppointmentPlugin(Storage storage) {
 		super("appointment", new AppointmentList(), storage);
+	}
+
+	@Override public Appointment create(Map<String, String> map)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+																	InvocationTargetException, NoSuchMethodException, SecurityException {
+		return new Appointment(map);
 	}
 
 	@Override public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
@@ -20,7 +25,7 @@ public class AppointmentPlugin extends EventPluginExtention {
 		map.put("attribute", ".*");
 		map.put("date", null);
 		request(map);
-		getInstanceList().add(map);
+		createAndAdd(map);
 		update();
 	}
 }
