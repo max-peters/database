@@ -1,24 +1,21 @@
 package database.plugin.task;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
-import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.storage.Storage;
 
 public class TaskPlugin extends InstancePlugin<Task> {
 	public TaskPlugin(Storage storage) {
-		super("task", new TaskList(), storage);
+		super("task", storage, new TaskOutputFormatter());
 	}
 
-	@Command(tag = "edit") public void changeRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
-														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException {
 		Task task = getTaskByCheckRequest();
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("new name", ".+");
@@ -35,8 +32,7 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		return new Task(map);
 	}
 
-	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
-														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("name", ".+");
 		request(map);
@@ -54,15 +50,14 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		setDisplay(false);
 		Terminal.update();
 		ArrayList<String> strings = new ArrayList<String>();
-		for (Instance instance : getInstanceList()) {
-			Task task = (Task) instance;
+		for (Task task : getIterable()) {
 			strings.add(task.name);
 		}
 		position = Terminal.checkRequest(strings);
 		setDisplay(display);
 		Terminal.update();
 		if (position != -1) {
-			return getInstanceList().get(position);
+			return list.get(position);
 		}
 		return null;
 	}

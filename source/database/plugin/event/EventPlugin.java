@@ -1,16 +1,10 @@
 package database.plugin.event;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
-import database.main.date.Date;
-import database.main.userInterface.StringFormat;
-import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.Instance;
@@ -26,27 +20,22 @@ public class EventPlugin extends InstancePlugin<Event> {
 	private ArrayList<EventPluginExtension<?>> extensionList;
 
 	public EventPlugin(Storage storage) {
-		super("event", null, storage);
+		super("event", storage, new EventOutputFormatter());
 		extensionList = new ArrayList<EventPluginExtension<?>>();
 		extensionList.add(new DayPlugin(storage));
 		extensionList.add(new BirthdayPlugin(storage));
 		extensionList.add(new HolidayPlugin(storage));
 		extensionList.add(new AppointmentPlugin(storage));
+		((EventOutputFormatter) formatter).setExtensionList(extensionList);
 	}
 
 	@Override public void clearList() {
 		for (EventPluginExtension<?> extension : extensionList) {
-			extension.getInstanceList().clear();
+			extension.clearList();
 		}
 	}
 
-	@Override public Event create(Map<String, String> map)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-															NoSuchMethodException, SecurityException {
-		throw new RuntimeException("no event instatioationdasfda");
-	}
-
-	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
-														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
 		EventPluginExtension<?> extension = chooseType();
 		if (extension != null) {
 			extension.createRequest();
@@ -58,19 +47,11 @@ public class EventPlugin extends InstancePlugin<Event> {
 		// nothing to display here
 	}
 
-	@Override public void initialOutput() throws BadLocationException {
-		String initialOutput;
-		List<Event> eventList = new ArrayList<Event>();
+	public void updateHolidays() throws IOException {
 		for (EventPluginExtension<?> extension : extensionList) {
-			EventList<?> currentEventList = (EventList<?>) extension.getInstanceList();
-			for (Event event : currentEventList.getNearEvents()) {
-				eventList.add(event);
+			if (extension instanceof HolidayPlugin) {
+				((HolidayPlugin) extension).updateHolidays();
 			}
-		}
-		initialOutput = sortedAndFormattedOutput(eventList);
-		if (!initialOutput.isEmpty()) {
-			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
-			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
 		}
 	}
 
@@ -83,8 +64,7 @@ public class EventPlugin extends InstancePlugin<Event> {
 		return list;
 	}
 
-	@Override public void read(PrintInformation pair)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-														NoSuchMethodException, SecurityException {
+	@Override public void read(PrintInformation pair) {
 		if (pair.getName().equals("display")) {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}
@@ -101,32 +81,6 @@ public class EventPlugin extends InstancePlugin<Event> {
 		for (EventPluginExtension<?> extension : extensionList) {
 			extension.remove(toRemove);
 		}
-	}
-
-	@Override @Command(tag = "show") public void show() throws BadLocationException, InterruptedException {
-		boolean display = getDisplay();
-		Terminal.request("show", "(all)");
-		setDisplay(false);
-		Terminal.update();
-		List<Event> list = new ArrayList<Event>();
-		for (EventPluginExtension<?> extension : extensionList) {
-			for (Instance instance : extension.getInstanceList()) {
-				list.add((Event) instance);
-			}
-		}
-		Terminal.getLineOfCharacters('-');
-		Terminal.printLine(sortedAndFormattedOutput(list), StringType.SOLUTION, StringFormat.STANDARD);
-		Terminal.waitForInput();
-		setDisplay(display);
-		Terminal.update();
-	}
-
-	protected List<PrintInformation> extensionPrint() {
-		List<PrintInformation> list = new ArrayList<PrintInformation>();
-		for (Instance instance : getInstanceList()) {
-			list.add(new PrintInformation(getIdentity(), instance.getParameter()));
-		}
-		return list;
 	}
 
 	private EventPluginExtension<?> chooseType() throws InterruptedException, BadLocationException {
@@ -150,30 +104,15 @@ public class EventPlugin extends InstancePlugin<Event> {
 		return toReturn;
 	}
 
-	private String sortedAndFormattedOutput(List<Event> list) {
-		String lines = "";
-		int longestNameLength = 0;
-		Collections.sort(list, new Comparator<Instance>() {
-			@Override public int compare(Instance arg0, Instance arg1) {
-				return ((Event) arg0).updateYear().compareTo(((Event) arg1).updateYear());
-			}
-		});
-		for (Event event : list) {
-			if (event.updateYear().year.counter == Date.getCurrentDate().year.counter) {
-				if ((event.updateYear() + " - " + event.name).length() > longestNameLength) {
-					longestNameLength = (event.updateYear() + " - " + event.name).length();
-				}
-			}
-		}
-		for (Event event : list) {
-			if (event.updateYear().year.counter == Date.getCurrentDate().year.counter) {
-				String line = event.updateYear().isToday() ? "TODAY      - " + event.name : event.updateYear() + " - " + event.name;
-				for (int i = line.length(); i < longestNameLength + 3; i++) {
-					line += " ";
-				}
-				lines += line + event.appendToOutput() + System.getProperty("line.separator");
-			}
-		}
-		return lines;
+	@Override public Event create(Map<String, String> map) {
+		throw new RuntimeException("event plugin create attempt");
+	}
+
+	@Override public Iterable<Event> getIterable() {
+		throw new RuntimeException("event plugin getIterable attempt");
+	}
+
+	@Override public void add(Event instance) {
+		throw new RuntimeException("event plugin add attempt");
 	}
 }

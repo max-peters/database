@@ -1,7 +1,5 @@
 package database.plugin.subject;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
@@ -11,16 +9,16 @@ import database.plugin.storage.Storage;
 
 public class SubjectPlugin extends InstancePlugin<Subject> {
 	public SubjectPlugin(Storage storage) {
-		super("subject", new SubjectList(), storage);
+		super("subject", storage, new SubjectOutputFormatter());
 	}
 
 	@Command(tag = "add") public void addRequest() throws InterruptedException, BadLocationException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("add", ((SubjectList) getInstanceList()).getTagsAsRegex());
+		map.put("add", getTagsAsRegex());
 		map.put("score", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("maximum points", "[0-9]{1,13}(\\.[0-9]*)?");
 		request(map);
-		Subject toChange = ((SubjectList) getInstanceList()).getSubject(map.get("add"));
+		Subject toChange = getSubject(map.get("add"));
 		toChange.setGrade(Double.parseDouble(map.get("score")), Double.parseDouble(map.get("maximum points")));
 		toChange.calcPercent();
 		update();
@@ -30,8 +28,7 @@ public class SubjectPlugin extends InstancePlugin<Subject> {
 		return new Subject(map);
 	}
 
-	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
-														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜ].*");
 		map.put("tag", "[a-zöäüß]*");
@@ -39,7 +36,25 @@ public class SubjectPlugin extends InstancePlugin<Subject> {
 		map.put("maxPoints", "0");
 		map.put("score", "0");
 		map.put("counter", "0");
-		instanceList.add(new Subject(map));
+		add(create(map));
 		update();
+	}
+
+	private Subject getSubject(String tag) {
+		Subject wanted = null;
+		for (Subject subject : getIterable()) {
+			if (subject.tag.equals(tag)) {
+				wanted = subject;
+			}
+		}
+		return wanted;
+	}
+
+	private String getTagsAsRegex() {
+		String regex = "(";
+		for (Subject subject : getIterable()) {
+			regex += subject.tag + "|";
+		}
+		return regex.substring(0, regex.lastIndexOf("|")) + ")";
 	}
 }

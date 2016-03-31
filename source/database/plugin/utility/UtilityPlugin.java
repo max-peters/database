@@ -1,7 +1,6 @@
 package database.plugin.utility;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
@@ -49,9 +48,8 @@ public class UtilityPlugin extends Plugin {
 		Terminal.printLine(news.getCurrentRank(), StringType.MAIN, StringFormat.STANDARD);
 	}
 
-	@Command(tag = "update") public void updateStorage()	throws BadLocationException, InterruptedException, ParserConfigurationException, SAXException, TransformerException,
-															IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-															NoSuchMethodException, SecurityException {
+	@Command(tag = "update") public void updateStorage()	throws BadLocationException, InterruptedException, IOException, ParserConfigurationException, SAXException,
+															TransformerException {
 		Terminal.printLine("updating...", StringType.REQUEST, StringFormat.ITALIC);
 		Terminal.blockInput();
 		for (Plugin plugin : pluginContainer.getPlugins()) {

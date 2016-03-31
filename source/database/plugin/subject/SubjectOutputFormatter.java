@@ -1,17 +1,16 @@
 package database.plugin.subject;
 
 import java.text.DecimalFormat;
+import java.util.LinkedList;
 import database.plugin.Command;
-import database.plugin.Instance;
-import database.plugin.InstanceList;
+import database.plugin.OutputFormatter;
 
-public class SubjectList extends InstanceList<Subject> {
-	@Command(tag = "average") public String getAverage() {
+public class SubjectOutputFormatter extends OutputFormatter<Subject> {
+	@Command(tag = "average") public String getAverage(LinkedList<Subject> list) {
 		double sumPercentages = 0;
 		double averagePercentage;
 		int currentCounter = 0;
-		for (Instance instance : this) {
-			Subject subject = (Subject) instance;
+		for (Subject subject : list) {
 			sumPercentages += subject.calcPercent();
 			currentCounter++;
 		}
@@ -20,11 +19,7 @@ public class SubjectList extends InstanceList<Subject> {
 		return "average percentage : " + averagePercentage + "%";
 	}
 
-	@Override public String initialOutput() {
-		return outputAll();
-	}
-
-	@Command(tag = "all") public String outputAll() {
+	@Command(tag = "all") public String outputAll(LinkedList<Subject> list) {
 		DecimalFormat oneDecimalPlace = new DecimalFormat("#0.0");
 		DecimalFormat twoDecimalPlace = new DecimalFormat("#0.00");
 		StringBuilder builder = new StringBuilder();
@@ -33,22 +28,20 @@ public class SubjectList extends InstanceList<Subject> {
 		int percentLength = 0;
 		int counterLength = 0;
 		int nameLength = 0;
-		if (isEmpty()) {
+		if (list.isEmpty()) {
 			builder.append("keine Blätter");
 		}
 		else {
-			for (Instance instance : this) {
-				Subject current = (Subject) instance;
-				int currentWorksheetCounterStringLength = String.valueOf(current.worksheetCounter).length();
-				allGradesLength = oneDecimalPlace.format(current.score).length() > allGradesLength ? oneDecimalPlace.format(current.score).length() : allGradesLength;
-				allGradesTotalLength = oneDecimalPlace.format(current.maxPoints).length() > allGradesTotalLength	? oneDecimalPlace.format(current.maxPoints).length()
+			for (Subject subject : list) {
+				int currentWorksheetCounterStringLength = String.valueOf(subject.worksheetCounter).length();
+				allGradesLength = oneDecimalPlace.format(subject.score).length() > allGradesLength ? oneDecimalPlace.format(subject.score).length() : allGradesLength;
+				allGradesTotalLength = oneDecimalPlace.format(subject.maxPoints).length() > allGradesTotalLength	? oneDecimalPlace.format(subject.maxPoints).length()
 																													: allGradesTotalLength;
-				percentLength = twoDecimalPlace.format(current.calcPercent()).length() > percentLength ? twoDecimalPlace.format(current.calcPercent()).length() : percentLength;
+				percentLength = twoDecimalPlace.format(subject.calcPercent()).length() > percentLength ? twoDecimalPlace.format(subject.calcPercent()).length() : percentLength;
 				counterLength = currentWorksheetCounterStringLength > counterLength ? currentWorksheetCounterStringLength : counterLength;
-				nameLength = current.name.length() > nameLength ? current.name.length() : nameLength;
+				nameLength = subject.name.length() > nameLength ? subject.name.length() : nameLength;
 			}
-			for (Instance currentInstance : this) {
-				Subject subject = (Subject) currentInstance;
+			for (Subject subject : list) {
 				builder.append(subject.name);
 				for (int i = subject.name.length(); i < nameLength + 4; i++) {
 					builder.append(" ");
@@ -69,23 +62,7 @@ public class SubjectList extends InstanceList<Subject> {
 		return builder.toString();
 	}
 
-	protected Subject getSubject(String tag) {
-		Subject wanted = null;
-		for (Instance instance : this) {
-			Subject subject = (Subject) instance;
-			if (subject.tag.equals(tag)) {
-				wanted = subject;
-			}
-		}
-		return wanted;
-	}
-
-	protected String getTagsAsRegex() {
-		String regex = "(";
-		for (Instance instance : this) {
-			Subject subject = (Subject) instance;
-			regex += subject.tag + "|";
-		}
-		return regex.substring(0, regex.lastIndexOf("|")) + ")";
+	@Override protected String getInitialOutput(LinkedList<Subject> list) {
+		return outputAll(list);
 	}
 }

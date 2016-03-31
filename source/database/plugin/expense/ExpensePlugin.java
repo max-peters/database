@@ -1,6 +1,5 @@
 package database.plugin.expense;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -9,7 +8,6 @@ import java.util.Map;
 import javax.swing.text.BadLocationException;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
-import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.PrintInformation;
 import database.plugin.expense.monthlyExpense.MonthlyExpensePlugin;
@@ -19,7 +17,7 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 	private MonthlyExpensePlugin monthlyExpensePlugin;
 
 	public ExpensePlugin(Storage storage) {
-		super("expense", new ExpenseList(), storage);
+		super("expense", storage, new ExpenseOutputFormatter());
 		monthlyExpensePlugin = new MonthlyExpensePlugin(this, storage);
 	}
 
@@ -32,8 +30,7 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 		return new Expense(map);
 	}
 
-	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
-														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
@@ -50,19 +47,18 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 	}
 
 	@Override public List<PrintInformation> print() {
-		List<PrintInformation> list = new ArrayList<PrintInformation>();
-		for (Instance instance : getInstanceList()) {
-			list.add(new PrintInformation("expense", instance.getParameter()));
+		List<PrintInformation> printInformationList = new ArrayList<PrintInformation>();
+		for (Expense expense : getIterable()) {
+			printInformationList.add(new PrintInformation("expense", expense.getParameter()));
 		}
-		for (Instance instance : monthlyExpensePlugin.getInstanceList()) {
-			list.add(new PrintInformation("monthlyexpense", instance.getParameter()));
+		for (Expense expense : monthlyExpensePlugin.getIterable()) {
+			printInformationList.add(new PrintInformation("monthlyexpense", expense.getParameter()));
 		}
-		list.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
-		return list;
+		printInformationList.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
+		return printInformationList;
 	}
 
-	@Override public void read(PrintInformation pair)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-														NoSuchMethodException, SecurityException {
+	@Override public void read(PrintInformation pair) {
 		if (pair.getName().equals("display")) {
 			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
 		}
@@ -72,5 +68,13 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 		else if (pair.getName().equals("monthlyexpense")) {
 			monthlyExpensePlugin.createAndAdd(pair.getMap());
 		}
+	}
+
+	@Override public void add(Expense expense) {
+		int i = list.size();
+		while (i > 0 && list.get(i - 1).date.compareTo(expense.date) > 0) {
+			i--;
+		}
+		list.add(i, expense);
 	}
 }

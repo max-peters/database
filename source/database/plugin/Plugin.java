@@ -1,6 +1,5 @@
 package database.plugin;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -73,8 +72,7 @@ public abstract class Plugin {
 		return null;
 	}
 
-	public void read(PrintInformation pair)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-											NoSuchMethodException, SecurityException {}
+	public void read(PrintInformation pair) {}
 
 	public void setChanges(boolean changes) {
 		this.changes = changes;

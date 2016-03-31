@@ -1,7 +1,5 @@
 package database.plugin.expense.monthlyExpense;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -16,7 +14,6 @@ import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
-import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.expense.Expense;
 import database.plugin.expense.ExpensePlugin;
@@ -26,23 +23,22 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 	private ExpensePlugin expensePlugin;
 
 	public MonthlyExpensePlugin(ExpensePlugin expensePlugin, Storage storage) {
-		super("monthlyexpense", new MonthlyExpenseList(), storage);
+		super("monthlyexpense", storage, null);
 		this.expensePlugin = expensePlugin;
 	}
 
-	@Command(tag = "edit") public void changeRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
-														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException {
 		List<String> strings = new ArrayList<String>();
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		MonthlyExpense monthlyExpense = null;
 		String change = null;
 		int position;
-		for (Instance instance : getInstanceList()) {
-			strings.add(((MonthlyExpense) instance).name + " - " + ((MonthlyExpense) instance).category);
+		for (Expense expense : getIterable()) {
+			strings.add(expense.name + " - " + expense.category);
 		}
 		position = Terminal.checkRequest(strings);
 		if (position != -1) {
-			monthlyExpense = getInstanceList().get(position);
+			monthlyExpense = list.get(position);
 		}
 		else {
 			return;
@@ -85,14 +81,12 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		return new MonthlyExpense(map);
 	}
 
-	@Override public void createAndAdd(Map<String, String> map)	throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-																NoSuchMethodException, SecurityException, IOException {
+	@Override public void createAndAdd(Map<String, String> map) {
 		super.createAndAdd(map);
 		createExpense(new Expense(map), expensePlugin, ExecutionDay.getExecutionDay(map.get("executionday")));
 	}
 
-	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
-														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
@@ -115,10 +109,10 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 
 	@Command(tag = "stop") public void stopRequest() throws InterruptedException, BadLocationException {
 		List<String> strings = new ArrayList<String>();
-		for (Instance instance : getInstanceList()) {
-			strings.add(((MonthlyExpense) instance).name + " - " + ((MonthlyExpense) instance).category);
+		for (Expense expense : getIterable()) {
+			strings.add(expense.name + " - " + expense.category);
 		}
-		getInstanceList().remove(getInstanceList().get(Terminal.checkRequest(strings)));
+		remove(list.get(Terminal.checkRequest(strings)));
 	}
 
 	@Override public void store() {
@@ -141,9 +135,8 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		return date;
 	}
 
-	private boolean containsExceptValue(Iterable<? extends Instance> iterable, Expense expense) {
-		for (Instance instance : iterable) {
-			Expense currentExpense = (Expense) instance;
+	private boolean containsExceptValue(Iterable<Expense> iterable, Expense expense) {
+		for (Expense currentExpense : iterable) {
 			if (currentExpense.name.equals(expense.name) && currentExpense.category.equals(expense.category) && currentExpense.date.equals(expense.date)) {
 				return true;
 			}
@@ -151,12 +144,10 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		return false;
 	}
 
-	private void createExpense(Expense expense, ExpensePlugin expensePlugin, ExecutionDay executionDay)	throws IOException, InstantiationException, IllegalAccessException,
-																										IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
-																										SecurityException {
+	private void createExpense(Expense expense, ExpensePlugin expensePlugin, ExecutionDay executionDay) {
 		expense.date = adjustDate(expense.date.month.counter, expense.date.year.counter, executionDay);
 		while (expense.date.isPast() || expense.date.isToday()) {
-			if (!containsExceptValue(expensePlugin.getInstanceList(), expense)) {
+			if (!containsExceptValue(expensePlugin.getIterable(), expense)) {
 				expensePlugin.createAndAdd(expense.getParameter());
 				if (!Terminal.getCollectedLines().contains(new OutputInformation("expense created:", StringType.SOLUTION, StringFormat.STANDARD))) {
 					Terminal.collectLine("expense created:", StringFormat.STANDARD);

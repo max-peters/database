@@ -1,7 +1,5 @@
 package database.plugin.refilling;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -15,7 +13,7 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 	private ExpensePlugin expensePlugin;
 
 	public RefillingPlugin(ExpensePlugin expensePlugin, Storage storage) {
-		super("refilling", new RefillingList(), storage);
+		super("refilling", storage, new RefillingOutputFormatter());
 		this.expensePlugin = expensePlugin;
 	}
 
@@ -23,8 +21,7 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 		return new Refilling(map);
 	}
 
-	@Override public void createAndAdd(Map<String, String> map)	throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-																NoSuchMethodException, SecurityException, IOException {
+	@Override public void createAndAdd(Map<String, String> map) {
 		super.createAndAdd(map);
 		Map<String, String> parameter = new HashMap<String, String>();
 		parameter.put("name", "Auto - Tankstelle");
@@ -34,15 +31,14 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 		expensePlugin.createAndAdd(parameter);
 	}
 
-	@Command(tag = "new") public void createRequest()	throws InterruptedException, BadLocationException, IOException, InstantiationException, IllegalAccessException,
-														IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("cost", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("distance", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("date", null);
 		request(map);
-		instanceList.add(new Refilling(map));
+		createAndAdd(map);
 		update();
 	}
 }

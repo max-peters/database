@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -13,44 +14,30 @@ import database.main.date.Date;
 import database.main.date.Month;
 import database.plugin.Command;
 import database.plugin.Instance;
-import database.plugin.InstanceList;
+import database.plugin.OutputFormatter;
 
-public class ExpenseList extends InstanceList<Expense> {
-	@Override public boolean add(Expense expense) {
-		int i = size();
-		while (i > 0 && get(i - 1).date.compareTo(expense.date) > 0) {
-			i--;
-		}
-		add(i, expense);
-		return true;
-	}
-
-	@Override public String initialOutput() {
-		DecimalFormat format = new DecimalFormat("#0.00");
-		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month)) + "€";
-	}
-
-	@Command(tag = "day") public String outputAveragePerDay() {
+public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
+	@Command(tag = "day") public String outputAveragePerDay(LinkedList<Expense> list) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		double value = 0;
 		int dayCounter = 0;
-		for (Month month : getMonths()) {
-			value = value + value(month);
+		for (Month month : getMonths(list)) {
+			value = value + value(month, list);
 			dayCounter = dayCounter + month.getDayCount();
 		}
 		return "average value per day: " + format.format(value / dayCounter) + "€";
 	}
 
-	@Command(tag = "average") public String outputAveragePerMonth() {
+	@Command(tag = "average") public String outputAveragePerMonth(LinkedList<Expense> list) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		double value = 0;
-		for (Month month : getMonths()) {
-			value = value + value(month);
+		for (Month month : getMonths(list)) {
+			value = value + value(month, list);
 		}
-		return "average value per month: " + format.format(value / getMonths().size()) + "€";
+		return "average value per month: " + format.format(value / getMonths(list).size()) + "€";
 	}
 
-	@Command(tag = "category") public String outputCategory() {
+	@Command(tag = "category") public String outputCategory(LinkedList<Expense> list) {
 		StringBuilder builder = new StringBuilder();
 		DecimalFormat formatValue = new DecimalFormat("#0.00");
 		DecimalFormat formatPercent = new DecimalFormat("00.00");
@@ -60,7 +47,7 @@ public class ExpenseList extends InstanceList<Expense> {
 		int longestLine = 0;
 		String name = null;
 		Map<String, Double> categories = new TreeMap<String, Double>();
-		for (Instance instance : this) {
+		for (Instance instance : list) {
 			Expense expense = (Expense) instance;
 			if (expense.checkValidity(null) && !categories.containsKey(expense.category)) {
 				categories.put(expense.category, 0.0);
@@ -71,7 +58,7 @@ public class ExpenseList extends InstanceList<Expense> {
 			if (current.length() > longestName) {
 				longestName = current.length();
 			}
-			for (Instance instance : this) {
+			for (Instance instance : list) {
 				Expense expense = (Expense) instance;
 				if (expense.category.equals(current)) {
 					categories.put(current, categories.get(current) + expense.value);
@@ -117,35 +104,35 @@ public class ExpenseList extends InstanceList<Expense> {
 		return builder.toString();
 	}
 
-	@Command(tag = "month") public String outputMonth() {
+	@Command(tag = "month") public String outputMonth(LinkedList<Expense> list) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		String output = "";
-		for (Month month : getMonths()) {
-			output = output+ String.format("%2s", month.counter).replace(" ", "0") + "/" + month.year.counter + " : " + format.format(value(month)) + "€"
+		for (Month month : getMonths(list)) {
+			output = output+ String.format("%2s", month.counter).replace(" ", "0") + "/" + month.year.counter + " : " + format.format(value(month, list)) + "€"
 						+ System.getProperty("line.separator");
 		}
 		return output;
 	}
 
-	@Command(tag = "all") public String printAll() {
-		String print = outputIntervall(null);
+	@Command(tag = "all") public String printAll(LinkedList<Expense> list) {
+		String print = outputIntervall(null, list);
 		if (print.length() == 0) {
 			print = "no entries";
 		}
 		return print;
 	}
 
-	@Command(tag = "current") public String printCurrent() {
-		String print = outputIntervall(Date.getCurrentDate().month);
+	@Command(tag = "current") public String printCurrent(LinkedList<Expense> list) {
+		String print = outputIntervall(Date.getCurrentDate().month, list);
 		if (print.length() == 0) {
 			print = "no entries";
 		}
 		return print;
 	}
 
-	private ArrayList<Month> getMonths() {
+	private ArrayList<Month> getMonths(LinkedList<Expense> list) {
 		ArrayList<Month> months = new ArrayList<Month>();
-		for (Instance instance : this) {
+		for (Instance instance : list) {
 			Expense expense = (Expense) instance;
 			if (!months.contains(expense.date.month)) {
 				months.add(expense.date.month);
@@ -154,7 +141,7 @@ public class ExpenseList extends InstanceList<Expense> {
 		return months;
 	}
 
-	private String outputIntervall(Month month) {
+	private String outputIntervall(Month month, LinkedList<Expense> list) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		int nameLength = 0;
 		int valueLength = 0;
@@ -164,7 +151,7 @@ public class ExpenseList extends InstanceList<Expense> {
 		String toReturn = "";
 		ArrayList<String> categories = new ArrayList<String>();
 		ArrayList<String> names;
-		for (Instance instance : this) {
+		for (Instance instance : list) {
 			Expense expense = (Expense) instance;
 			if (expense.checkValidity(month) && !categories.contains(expense.category)) {
 				categories.add(expense.category);
@@ -180,7 +167,7 @@ public class ExpenseList extends InstanceList<Expense> {
 		for (String current : categories) {
 			toReturn = toReturn + current + ":" + System.getProperty("line.separator");
 			names = new ArrayList<String>();
-			for (Instance instance : this) {
+			for (Instance instance : list) {
 				Expense expense = (Expense) instance;
 				if (expense.checkValidity(month) && expense.category.equals(current) && !names.contains(expense.name)) {
 					names.add(expense.name);
@@ -191,7 +178,7 @@ public class ExpenseList extends InstanceList<Expense> {
 				value = 0;
 				blanks = "      ";
 				toReturn = toReturn + "  - " + name;
-				for (Instance instance : this) {
+				for (Instance instance : list) {
 					Expense expense = (Expense) instance;
 					if (expense.checkValidity(month) && expense.category.equals(current) && expense.name.equals(name)) {
 						value = value + expense.value;
@@ -207,14 +194,19 @@ public class ExpenseList extends InstanceList<Expense> {
 		return toReturn;
 	}
 
-	private double value(Month month) {
+	private double value(Month month, LinkedList<Expense> list) {
 		double value = 0;
-		for (Instance instance : this) {
+		for (Instance instance : list) {
 			Expense expense = (Expense) instance;
 			if (expense.checkValidity(month)) {
 				value = value + expense.value;
 			}
 		}
 		return value;
+	}
+
+	@Override protected String getInitialOutput(LinkedList<Expense> list) {
+		DecimalFormat format = new DecimalFormat("#0.00");
+		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month, list)) + "€";
 	}
 }

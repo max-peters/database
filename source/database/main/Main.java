@@ -35,6 +35,7 @@ public class Main {
 			pluginContainer.addPlugin(eventPlugin);
 			pluginContainer.addPlugin(storage);
 			writerReader.read();
+			eventPlugin.updateHolidays();
 			graphicalUserInterface.setVisible(true);
 			Terminal.initialOutput();
 			Terminal.printCollectedLines();
