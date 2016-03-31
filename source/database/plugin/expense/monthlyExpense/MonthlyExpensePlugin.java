@@ -77,13 +77,14 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		update();
 	}
 
-	@Override public MonthlyExpense create(Map<String, String> map) {
-		return new MonthlyExpense(map);
+	@Override public MonthlyExpense create(Map<String, String> parameter) {
+		return new MonthlyExpense(	parameter.get("name"), parameter.get("category"), Double.valueOf(parameter.get("value")), new Date(parameter.get("date")),
+									ExecutionDay.getExecutionDay(parameter.get("executionday")));
 	}
 
-	@Override public void createAndAdd(Map<String, String> map) {
-		super.createAndAdd(map);
-		createExpense(new Expense(map), expensePlugin, ExecutionDay.getExecutionDay(map.get("executionday")));
+	@Override public void createAndAdd(Map<String, String> parameter) {
+		super.createAndAdd(parameter);
+		createExpense(expensePlugin.create(parameter), expensePlugin, ExecutionDay.getExecutionDay(parameter.get("executionday")));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
@@ -148,7 +149,7 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		expense.date = adjustDate(expense.date.month.counter, expense.date.year.counter, executionDay);
 		while (expense.date.isPast() || expense.date.isToday()) {
 			if (!containsExceptValue(expensePlugin.getIterable(), expense)) {
-				expensePlugin.createAndAdd(expense.getParameter());
+				expensePlugin.add(expense);
 				if (!Terminal.getCollectedLines().contains(new OutputInformation("expense created:", StringType.SOLUTION, StringFormat.STANDARD))) {
 					Terminal.collectLine("expense created:", StringFormat.STANDARD);
 				}

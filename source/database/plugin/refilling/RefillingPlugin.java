@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import database.main.date.Date;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.expense.ExpensePlugin;
@@ -17,18 +18,19 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 		this.expensePlugin = expensePlugin;
 	}
 
-	@Override public Refilling create(Map<String, String> map) {
-		return new Refilling(map);
+	@Override public Refilling create(Map<String, String> parameter) {
+		return new Refilling(	Double.valueOf(parameter.get("distance")), Double.valueOf(parameter.get("refuelAmount")), Double.valueOf(parameter.get("cost")),
+								new Date(parameter.get("date")));
 	}
 
-	@Override public void createAndAdd(Map<String, String> map) {
-		super.createAndAdd(map);
-		Map<String, String> parameter = new HashMap<String, String>();
-		parameter.put("name", "Auto - Tankstelle");
-		parameter.put("category", "Fahrtkosten");
-		parameter.put("value", map.get("cost"));
-		parameter.put("date", map.get("date"));
-		expensePlugin.createAndAdd(parameter);
+	@Override public void createAndAdd(Map<String, String> refillingParameter) {
+		super.createAndAdd(refillingParameter);
+		Map<String, String> expenseParameter = new HashMap<String, String>();
+		expenseParameter.put("name", "Auto - Tankstelle");
+		expenseParameter.put("category", "Fahrtkosten");
+		expenseParameter.put("value", refillingParameter.get("cost"));
+		expenseParameter.put("date", refillingParameter.get("date"));
+		expensePlugin.createAndAdd(expenseParameter);
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {

@@ -2,29 +2,29 @@ package database.plugin.subject;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.w3c.dom.Element;
 import database.plugin.Instance;
 
 public class Subject extends Instance {
+	public int		counter;
 	public Double	maxPoints;
 	public String	name;
 	public Double	score;
 	public String	tag;
-	public int		worksheetCounter;
 
-	public Subject(Map<String, String> parameter) {
-		maxPoints = Double.valueOf(parameter.get("maxPoints"));
-		name = parameter.get("name");
-		score = Double.valueOf(parameter.get("score"));
-		worksheetCounter = Integer.valueOf(parameter.get("counter"));
-		tag = parameter.get("tag");
+	public Subject(String name, String tag, Double score, Double maxPoints, int counter) {
+		this.name = name;
+		this.tag = tag;
+		this.score = score;
+		this.maxPoints = maxPoints;
+		this.counter = counter;
 	}
 
 	@Override public boolean equals(Object object) {
 		Subject subject;
 		if (object != null && object.getClass().equals(this.getClass())) {
 			subject = (Subject) object;
-			if (worksheetCounter == subject.worksheetCounter&& name.equals(subject.name) && tag.equals(subject.tag) && score.equals(subject.score)
-				&& maxPoints.equals(subject.maxPoints)) {
+			if (counter == subject.counter && name.equals(subject.name) && tag.equals(subject.tag) && score.equals(subject.score) && maxPoints.equals(subject.maxPoints)) {
 				return true;
 			}
 		}
@@ -33,7 +33,7 @@ public class Subject extends Instance {
 
 	@Override public Map<String, String> getParameter() {
 		Map<String, String> parameter = new HashMap<String, String>();
-		parameter.put("counter", String.valueOf(worksheetCounter));
+		parameter.put("counter", String.valueOf(counter));
 		parameter.put("name", name);
 		parameter.put("tag", tag);
 		parameter.put("score", score.toString());
@@ -41,12 +41,20 @@ public class Subject extends Instance {
 		return parameter;
 	}
 
+	@Override public void insertParameter(Element element) {
+		element.setAttribute("counter", String.valueOf(counter));
+		element.setAttribute("name", name);
+		element.setAttribute("tag", tag);
+		element.setAttribute("score", score.toString());
+		element.setAttribute("maxPoints", maxPoints.toString());
+	}
+
 	protected double calcPercent() {
 		return score / maxPoints * 100;
 	}
 
 	protected void setGrade(double newScore, double newMaxPoint) {
-		worksheetCounter++;
+		counter++;
 		maxPoints += newMaxPoint;
 		score += newScore;
 	}

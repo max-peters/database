@@ -33,7 +33,7 @@ public class SubjectOutputFormatter extends OutputFormatter<Subject> {
 		}
 		else {
 			for (Subject subject : list) {
-				int currentWorksheetCounterStringLength = String.valueOf(subject.worksheetCounter).length();
+				int currentWorksheetCounterStringLength = String.valueOf(subject.counter).length();
 				allGradesLength = oneDecimalPlace.format(subject.score).length() > allGradesLength ? oneDecimalPlace.format(subject.score).length() : allGradesLength;
 				allGradesTotalLength = oneDecimalPlace.format(subject.maxPoints).length() > allGradesTotalLength	? oneDecimalPlace.format(subject.maxPoints).length()
 																													: allGradesTotalLength;
@@ -49,8 +49,8 @@ public class SubjectOutputFormatter extends OutputFormatter<Subject> {
 				builder.append("["+ String.format("%" + allGradesLength + "s", oneDecimalPlace.format(subject.score)) + "/"
 								+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(subject.maxPoints)) + " - "
 								+ String.format("%" + percentLength + "s", twoDecimalPlace.format(subject.calcPercent())) + "%" + "]" + " in ["
-								+ String.format("%" + counterLength + "s", subject.worksheetCounter).replace(' ', '0') + "] ");
-				if (subject.worksheetCounter == 1) {
+								+ String.format("%" + counterLength + "s", subject.counter).replace(' ', '0') + "] ");
+				if (subject.counter == 1) {
 					builder.append("Blatt");
 				}
 				else {

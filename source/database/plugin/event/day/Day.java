@@ -1,11 +1,11 @@
 package database.plugin.event.day;
 
-import java.util.Map;
+import database.main.date.Date;
 import database.plugin.event.Event;
 
 public class Day extends Event {
-	public Day(Map<String, String> parameter) {
-		super(parameter);
+	public Day(String name, Date date) {
+		super(name, date);
 	}
 
 	@Override protected String appendToOutput() {

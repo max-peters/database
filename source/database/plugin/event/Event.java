@@ -2,6 +2,7 @@ package database.plugin.event;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.w3c.dom.Element;
 import database.main.date.Date;
 import database.plugin.Instance;
 
@@ -9,9 +10,9 @@ public abstract class Event extends Instance {
 	public Date		date;
 	public String	name;
 
-	public Event(Map<String, String> parameter) {
-		date = new Date(parameter.get("date"));
-		name = parameter.get("name");
+	public Event(String name, Date date) {
+		this.name = name;
+		this.date = date;
 	}
 
 	@Override public boolean equals(Object object) {
@@ -30,6 +31,11 @@ public abstract class Event extends Instance {
 		parameter.put("name", name);
 		parameter.put("date", date.toString());
 		return parameter;
+	}
+
+	@Override public void insertParameter(Element element) {
+		element.setAttribute("name", name);
+		element.setAttribute("date", date.toString());
 	}
 
 	public Date updateYear() {

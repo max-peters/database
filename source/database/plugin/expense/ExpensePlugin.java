@@ -1,15 +1,15 @@
 package database.plugin.expense;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import database.main.date.Date;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
-import database.plugin.PrintInformation;
 import database.plugin.expense.monthlyExpense.MonthlyExpensePlugin;
 import database.plugin.storage.Storage;
 
@@ -35,7 +35,7 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 	}
 
 	@Override public Expense create(Map<String, String> map) {
-		return new Expense(map);
+		return new Expense(map.get("name"), map.get("category"), Double.valueOf(map.get("value")), new Date(map.get("date")));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
@@ -54,27 +54,31 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 		monthlyExpensePlugin.conduct(Terminal.request("monthly expense", monthlyExpensePlugin.getCommandTags(monthlyExpensePlugin.getClass())));
 	}
 
-	@Override public List<PrintInformation> print() {
-		List<PrintInformation> printInformationList = new ArrayList<PrintInformation>();
+	@Override public void print(Document document, Element element) {
 		for (Expense expense : getIterable()) {
-			printInformationList.add(new PrintInformation("expense", expense.getParameter()));
+			Element entryElement = document.createElement("expense");
+			expense.insertParameter(entryElement);
+			element.appendChild(entryElement);
 		}
 		for (Expense expense : monthlyExpensePlugin.getIterable()) {
-			printInformationList.add(new PrintInformation("monthlyexpense", expense.getParameter()));
+			Element entryElement = document.createElement("monthlyexpense");
+			expense.insertParameter(entryElement);
+			element.appendChild(entryElement);
 		}
-		printInformationList.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
-		return printInformationList;
+		Element entryElement = document.createElement("display");
+		entryElement.setAttribute("boolean", String.valueOf(getDisplay()));
+		element.appendChild(entryElement);
 	}
 
-	@Override public void read(PrintInformation pair) {
-		if (pair.getName().equals("display")) {
-			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
+	@Override public void read(String nodeName, Map<String, String> parameter) {
+		if (nodeName.equals("display")) {
+			setDisplay(Boolean.valueOf(parameter.get("boolean")));
 		}
-		else if (pair.getName().equals("expense")) {
-			createAndAdd(pair.getMap());
+		else if (nodeName.equals("expense")) {
+			createAndAdd(parameter);
 		}
-		else if (pair.getName().equals("monthlyexpense")) {
-			monthlyExpensePlugin.createAndAdd(pair.getMap());
+		else if (nodeName.equals("monthlyexpense")) {
+			monthlyExpensePlugin.createAndAdd(parameter);
 		}
 	}
 }

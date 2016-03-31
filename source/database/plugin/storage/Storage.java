@@ -1,13 +1,14 @@
 package database.plugin.storage;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
-import database.plugin.PrintInformation;
 
 public class Storage extends Plugin {
 	private ArrayList<String> storage;
@@ -29,18 +30,16 @@ public class Storage extends Plugin {
 		return storage;
 	}
 
-	@Override public List<PrintInformation> print() {
-		List<PrintInformation> list = new ArrayList<PrintInformation>();
+	@Override public void print(Document document, Element element) {
 		for (String string : storage) {
-			PrintInformation pair = new PrintInformation("entry");
-			pair.put("string", string);
-			list.add(pair);
+			Element entryElement = document.createElement("entry");
+			entryElement.setAttribute("string", string);
+			element.appendChild(entryElement);
 		}
-		return list;
 	}
 
-	@Override public void read(PrintInformation pair) {
-		storage.addAll(pair.getMap().values());
+	@Override public void read(String nodeName, Map<String, String> parameter) {
+		storage.addAll(parameter.values());
 	}
 
 	public void store(InstancePlugin<? extends Instance> instancePlugin) throws BadLocationException, InterruptedException {

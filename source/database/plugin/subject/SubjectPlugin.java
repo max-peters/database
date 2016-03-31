@@ -20,12 +20,12 @@ public class SubjectPlugin extends InstancePlugin<Subject> {
 		request(map);
 		Subject toChange = getSubject(map.get("add"));
 		toChange.setGrade(Double.parseDouble(map.get("score")), Double.parseDouble(map.get("maximum points")));
-		toChange.calcPercent();
 		update();
 	}
 
-	@Override public Subject create(Map<String, String> map) {
-		return new Subject(map);
+	@Override public Subject create(Map<String, String> parameter) {
+		return new Subject(	parameter.get("name"), parameter.get("tag"), Double.valueOf(parameter.get("score")), Double.valueOf(parameter.get("maxPoints")),
+							Integer.valueOf(parameter.get("counter")));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {

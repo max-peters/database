@@ -1,12 +1,11 @@
 package database.plugin.event;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import database.plugin.InstancePlugin;
-import database.plugin.PrintInformation;
 import database.plugin.storage.Storage;
 
 public abstract class EventPluginExtension<T extends Event> extends InstancePlugin<T> {
@@ -31,11 +30,11 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 		update();
 	}
 
-	@Override public List<PrintInformation> print() {
-		List<PrintInformation> printInformationList = new ArrayList<PrintInformation>();
+	@Override public void print(Document document, Element element) {
 		for (Event event : getIterable()) {
-			printInformationList.add(new PrintInformation(getIdentity(), event.getParameter()));
+			Element entryElement = document.createElement(getIdentity());
+			event.insertParameter(entryElement);
+			element.appendChild(entryElement);
 		}
-		return printInformationList;
 	}
 }

@@ -2,14 +2,14 @@ package database.plugin.event;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
-import database.plugin.PrintInformation;
 import database.plugin.event.appointment.AppointmentPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.event.day.DayPlugin;
@@ -39,7 +39,7 @@ public class EventPlugin extends InstancePlugin<Event> {
 		}
 	}
 
-	@Override public Event create(Map<String, String> map) {
+	@Override public Event create(Map<String, String> parameter) {
 		throw new RuntimeException("event plugin create attempt");
 	}
 
@@ -59,23 +59,23 @@ public class EventPlugin extends InstancePlugin<Event> {
 		throw new RuntimeException("event plugin getIterable attempt");
 	}
 
-	@Override public List<PrintInformation> print() {
-		List<PrintInformation> list = new ArrayList<PrintInformation>();
+	@Override public void print(Document document, Element element) {
 		for (EventPluginExtension<?> extension : extensionList) {
-			list.addAll(extension.print());
+			extension.print(document, element);
 		}
-		list.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
-		return list;
+		Element entryElement = document.createElement("display");
+		entryElement.setAttribute("boolean", String.valueOf(getDisplay()));
+		element.appendChild(entryElement);
 	}
 
-	@Override public void read(PrintInformation pair) {
-		if (pair.getName().equals("display")) {
-			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
+	@Override public void read(String nodeName, Map<String, String> parameter) {
+		if (nodeName.equals("display")) {
+			setDisplay(Boolean.valueOf(parameter.get("boolean")));
 		}
 		else {
 			for (EventPluginExtension<?> extension : extensionList) {
-				if (pair.getName().equals(extension.getIdentity())) {
-					extension.createAndAdd(pair.getMap());
+				if (nodeName.equals(extension.getIdentity())) {
+					extension.createAndAdd(parameter);
 				}
 			}
 		}

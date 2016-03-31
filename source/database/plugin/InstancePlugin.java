@@ -2,11 +2,11 @@ package database.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
@@ -32,10 +32,10 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		list.clear();
 	}
 
-	public abstract T create(Map<String, String> map);
+	public abstract T create(Map<String, String> parameter);
 
-	public void createAndAdd(Map<String, String> map) {
-		add(create(map));
+	public void createAndAdd(Map<String, String> parameter) {
+		add(create(parameter));
 	}
 
 	public Iterable<T> getIterable() {
@@ -50,21 +50,23 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		}
 	}
 
-	@Override public List<PrintInformation> print() {
-		List<PrintInformation> printInformationList = new ArrayList<PrintInformation>();
+	@Override public void print(Document document, Element element) {
 		for (T instance : list) {
-			printInformationList.add(new PrintInformation("entry", instance.getParameter()));
+			Element entryElement = document.createElement("entry");
+			instance.insertParameter(entryElement);
+			element.appendChild(entryElement);
 		}
-		printInformationList.add(new PrintInformation("display", "boolean", String.valueOf(getDisplay())));
-		return printInformationList;
+		Element entryElement = document.createElement("display");
+		entryElement.setAttribute("boolean", String.valueOf(getDisplay()));
+		element.appendChild(entryElement);
 	}
 
-	@Override public void read(PrintInformation pair) {
-		if (pair.getName().equals("entry")) {
-			createAndAdd(pair.getMap());
+	@Override public void read(String nodeName, Map<String, String> parameter) {
+		if (nodeName.equals("entry")) {
+			createAndAdd(parameter);
 		}
-		else if (pair.getName().equals("display")) {
-			setDisplay(Boolean.valueOf(pair.getMap().get("boolean")));
+		else if (nodeName.equals("display")) {
+			setDisplay(Boolean.valueOf(parameter.get("boolean")));
 		}
 	}
 

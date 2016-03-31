@@ -1,12 +1,11 @@
 package database.plugin.event.holiday;
 
-import java.util.Map;
 import database.main.date.Date;
 import database.plugin.event.Event;
 
 public class Holiday extends Event {
-	public Holiday(Map<String, String> parameter) {
-		super(parameter);
+	public Holiday(String name, Date date) {
+		super(name, date);
 	}
 
 	@Override public Date updateYear() {

@@ -1,12 +1,11 @@
 package database.plugin.event.birthday;
 
-import java.util.Map;
 import database.main.date.Date;
 import database.plugin.event.Event;
 
 public class Birthday extends Event {
-	public Birthday(Map<String, String> parameter) {
-		super(parameter);
+	public Birthday(String name, Date date) {
+		super(name, date);
 	}
 
 	@Override protected String appendToOutput() {

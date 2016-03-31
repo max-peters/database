@@ -4,10 +4,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import database.main.date.Date;
 import database.main.userInterface.Terminal;
 
@@ -68,11 +69,9 @@ public abstract class Plugin {
 
 	public void initialOutput() throws BadLocationException {}
 
-	public List<PrintInformation> print() {
-		return null;
-	}
+	public void print(Document document, Element element) {}
 
-	public void read(PrintInformation pair) {}
+	public void read(String nodeName, Map<String, String> map) {}
 
 	public void setChanges(boolean changes) {
 		this.changes = changes;

@@ -2,6 +2,7 @@ package database.plugin.expense;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.w3c.dom.Element;
 import database.main.date.Date;
 import database.main.date.Month;
 import database.plugin.Instance;
@@ -12,11 +13,11 @@ public class Expense extends Instance {
 	public String	name;
 	public Double	value;
 
-	public Expense(Map<String, String> parameter) {
-		category = parameter.get("category");
-		name = parameter.get("name");
-		date = new Date(parameter.get("date"));
-		value = Double.valueOf(parameter.get("value"));
+	public Expense(String name, String category, Double value, Date date) {
+		this.name = name;
+		this.category = category;
+		this.value = value;
+		this.date = date;
 	}
 
 	@Override public boolean equals(Object object) {
@@ -37,6 +38,13 @@ public class Expense extends Instance {
 		parameter.put("value", value.toString());
 		parameter.put("date", date.toString());
 		return parameter;
+	}
+
+	@Override public void insertParameter(Element element) {
+		element.setAttribute("name", name);
+		element.setAttribute("category", category);
+		element.setAttribute("value", value.toString());
+		element.setAttribute("date", date.toString());
 	}
 
 	protected boolean checkValidity(Month month) {

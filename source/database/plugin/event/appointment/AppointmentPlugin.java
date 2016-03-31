@@ -3,6 +3,7 @@ package database.plugin.event.appointment;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import database.main.date.Date;
 import database.plugin.event.EventPluginExtension;
 import database.plugin.storage.Storage;
 
@@ -17,8 +18,8 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 		}
 	}
 
-	@Override public Appointment create(Map<String, String> map) {
-		return new Appointment(map);
+	@Override public Appointment create(Map<String, String> parameter) {
+		return new Appointment(parameter.get("name"), new Date(parameter.get("date")), parameter.get("attribute"));
 	}
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {

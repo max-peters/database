@@ -2,8 +2,8 @@ package database.main;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map.Entry;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -18,7 +18,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import database.plugin.Plugin;
-import database.plugin.PrintInformation;
 
 public class WriterReader {
 	private final File		localStorage;
@@ -69,11 +68,11 @@ public class WriterReader {
 		for (int i = 0; i < nList.getLength(); i++) {
 			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
 			if (plugin != null) {
-				PrintInformation pair = new PrintInformation(nList.item(i).getNodeName());
+				Map<String, String> map = new HashMap<String, String>();
 				for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
-					pair.put(nList.item(i).getAttributes().item(j).getNodeName(), nList.item(i).getAttributes().item(j).getNodeValue());
+					map.put(nList.item(i).getAttributes().item(j).getNodeName(), nList.item(i).getAttributes().item(j).getNodeValue());
 				}
-				plugin.read(pair);
+				plugin.read(nList.item(i).getNodeName(), map);
 			}
 		}
 	}
@@ -85,18 +84,9 @@ public class WriterReader {
 		Element database = document.createElement("database");
 		document.appendChild(database);
 		for (Plugin currentPlugin : pluginContainer.getPlugins()) {
-			List<PrintInformation> list = currentPlugin.print();
-			if (list != null && !list.isEmpty()) {
-				Element element = document.createElement(currentPlugin.getIdentity());
-				for (PrintInformation pair : list) {
-					Element entryElement = document.createElement(pair.getName());
-					for (Entry<String, String> entry : pair.getMap().entrySet()) {
-						entryElement.setAttribute(entry.getKey(), entry.getValue());
-						element.appendChild(entryElement);
-					}
-				}
-				database.appendChild(element);
-			}
+			Element element = document.createElement(currentPlugin.getIdentity());
+			currentPlugin.print(document, element);
+			database.appendChild(element);
 		}
 		DOMSource domSource = new DOMSource(document);
 		StreamResult streamResult = new StreamResult(file);

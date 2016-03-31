@@ -2,6 +2,7 @@ package database.plugin.task;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.w3c.dom.Element;
 import database.plugin.Instance;
 
 public class Task extends Instance {
@@ -26,5 +27,9 @@ public class Task extends Instance {
 		Map<String, String> parameter = new HashMap<String, String>();
 		parameter.put("name", name);
 		return parameter;
+	}
+
+	@Override public void insertParameter(Element element) {
+		element.setAttribute("name", name);
 	}
 }

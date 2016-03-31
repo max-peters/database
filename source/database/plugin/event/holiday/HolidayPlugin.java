@@ -17,8 +17,8 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 		super("holiday", storage);
 	}
 
-	@Override public Holiday create(Map<String, String> map) {
-		return new Holiday(map);
+	@Override public Holiday create(Map<String, String> parameter) {
+		return new Holiday(parameter.get("name"), new Date(parameter.get("date")));
 	}
 
 	public void updateHolidays() throws IOException {

@@ -2,6 +2,7 @@ package database.plugin.refilling;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.w3c.dom.Element;
 import database.main.date.Date;
 import database.plugin.Instance;
 
@@ -11,11 +12,11 @@ public class Refilling extends Instance {
 	public Double	distance;
 	public Double	refuelAmount;
 
-	public Refilling(Map<String, String> parameter) {
-		date = new Date(parameter.get("date"));
-		distance = Double.valueOf(parameter.get("distance"));
-		refuelAmount = Double.valueOf(parameter.get("refuelAmount"));
-		cost = Double.valueOf(parameter.get("cost"));
+	public Refilling(Double distance, Double refuelAmount, Double cost, Date date) {
+		this.distance = distance;
+		this.refuelAmount = refuelAmount;
+		this.cost = cost;
+		this.date = date;
 	}
 
 	public double calcAverageConsumption() {
@@ -40,5 +41,12 @@ public class Refilling extends Instance {
 		parameter.put("cost", cost.toString());
 		parameter.put("date", date.toString());
 		return parameter;
+	}
+
+	@Override public void insertParameter(Element element) {
+		element.setAttribute("distance", distance.toString());
+		element.setAttribute("refuelAmount", refuelAmount.toString());
+		element.setAttribute("cost", cost.toString());
+		element.setAttribute("date", date.toString());
 	}
 }

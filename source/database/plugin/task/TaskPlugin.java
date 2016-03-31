@@ -28,8 +28,8 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		remove(getTaskByCheckRequest());
 	}
 
-	@Override public Task create(Map<String, String> map) {
-		return new Task(map.get("name"));
+	@Override public Task create(Map<String, String> parameter) {
+		return new Task(parameter.get("name"));
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
