@@ -25,11 +25,9 @@ public class HolidayPlugin extends EventPluginExtention {
 	@Override public void create(Map<String, String> map)	throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
 															NoSuchMethodException, SecurityException {
 		EventList list = (EventList) getInstanceList();
-		if (lines.isEmpty()) {
-			prepareList();
-		}
 		if (new Date(map.get("date")).isPast()) {
-			if (!lines.isEmpty()) {
+			if (lines.isEmpty()) {
+				prepareList();
 				getHolidays();
 			}
 			else {
@@ -65,7 +63,7 @@ public class HolidayPlugin extends EventPluginExtention {
 						if (holiday.name.equals(name)) {
 							contains = true;
 							if (holiday.date.compareTo(newDate) < 0 && holiday.date.isPast()) {
-								holiday.getParameter().replace("date", date);
+								holiday.date = newDate;
 								return;
 							}
 						}

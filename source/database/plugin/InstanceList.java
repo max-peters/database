@@ -21,17 +21,9 @@ public abstract class InstanceList {
 
 	public boolean contains(Map<String, String> parameter)	throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException,
 															NoSuchMethodException, SecurityException {
-		boolean contains = false;
 		for (Instance instance : list) {
-			contains = false;
+			
 			if (instance.equals(parameter)) {
-				contains = true;
-			}
-			else {
-				contains = false;
-				break;
-			}
-			if (contains) {
 				return true;
 			}
 		}
