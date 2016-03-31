@@ -57,6 +57,18 @@ public class RefillingOutputFormatter extends OutputFormatter<Refilling> {
 		return Math.round(10.0 * highestRefuelAmount) / 10.0;
 	}
 
+	@Override protected String getInitialOutput(LinkedList<Refilling> list) {
+		String output = "";
+		if (list.isEmpty()) {
+			output = "no entries";
+		}
+		else {
+			output = "["+ list.size() + "] " + "distance: " + "[" + getDistanceTotal(list) + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal(list) + " l" + "] "
+						+ "averageConsumption: " + "[" + getAverageConsumptionTotal(list) + " l/km" + "]";
+		}
+		return output;
+	}
+
 	private double getAverageConsumptionTotal(LinkedList<Refilling> list) {
 		return Math.round(getRefuelAmountTotal(list) / getDistanceTotal(list) * 1000.0) / 10.0;
 	}
@@ -75,17 +87,5 @@ public class RefillingOutputFormatter extends OutputFormatter<Refilling> {
 			refuelAmountTotal = refuelAmountTotal + refilling.refuelAmount;
 		}
 		return Math.round(10.0 * refuelAmountTotal) / 10.0;
-	}
-
-	@Override protected String getInitialOutput(LinkedList<Refilling> list) {
-		String output = "";
-		if (list.isEmpty()) {
-			output = "no entries";
-		}
-		else {
-			output = "["+ list.size() + "] " + "distance: " + "[" + getDistanceTotal(list) + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal(list) + " l" + "] "
-						+ "averageConsumption: " + "[" + getAverageConsumptionTotal(list) + " l/km" + "]";
-		}
-		return output;
 	}
 }

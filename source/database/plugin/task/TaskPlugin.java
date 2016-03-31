@@ -29,7 +29,7 @@ public class TaskPlugin extends InstancePlugin<Task> {
 	}
 
 	@Override public Task create(Map<String, String> map) {
-		return new Task(map);
+		return new Task(map.get("name"));
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {

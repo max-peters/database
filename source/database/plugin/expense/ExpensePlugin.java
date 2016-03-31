@@ -21,6 +21,14 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 		monthlyExpensePlugin = new MonthlyExpensePlugin(this, storage);
 	}
 
+	@Override public void add(Expense expense) {
+		int i = list.size();
+		while (i > 0 && list.get(i - 1).date.compareTo(expense.date) > 0) {
+			i--;
+		}
+		list.add(i, expense);
+	}
+
 	@Override public void clearList() {
 		super.clearList();
 		monthlyExpensePlugin.clearList();
@@ -68,13 +76,5 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 		else if (pair.getName().equals("monthlyexpense")) {
 			monthlyExpensePlugin.createAndAdd(pair.getMap());
 		}
-	}
-
-	@Override public void add(Expense expense) {
-		int i = list.size();
-		while (i > 0 && list.get(i - 1).date.compareTo(expense.date) > 0) {
-			i--;
-		}
-		list.add(i, expense);
 	}
 }

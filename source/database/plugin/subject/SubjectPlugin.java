@@ -36,7 +36,7 @@ public class SubjectPlugin extends InstancePlugin<Subject> {
 		map.put("maxPoints", "0");
 		map.put("score", "0");
 		map.put("counter", "0");
-		add(create(map));
+		createAndAdd(map);
 		update();
 	}
 

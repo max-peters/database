@@ -14,10 +14,6 @@ import database.plugin.OutputFormatter;
 public class EventOutputFormatter extends OutputFormatter<Event> {
 	private ArrayList<EventPluginExtension<?>> extensionList;
 
-	public void setExtensionList(ArrayList<EventPluginExtension<?>> extensionList) {
-		this.extensionList = extensionList;
-	}
-
 	@Command(tag = "all") public String printAll(LinkedList<Event> list) throws BadLocationException {
 		List<Event> outputList = new ArrayList<Event>();
 		for (EventPluginExtension<?> extension : extensionList) {
@@ -26,6 +22,10 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 			}
 		}
 		return sortedAndFormattedOutput(outputList);
+	}
+
+	public void setExtensionList(ArrayList<EventPluginExtension<?>> extensionList) {
+		this.extensionList = extensionList;
 	}
 
 	@Override protected String getInitialOutput(LinkedList<Event> list) {

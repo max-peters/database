@@ -43,7 +43,7 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 				map.put("name", name);
 				map.put("date", date);
 				if (list.isEmpty() && !newDate.isPast()) {
-					add(new Holiday(map));
+					createAndAdd(map);
 				}
 				else {
 					boolean contains = false;
@@ -57,7 +57,7 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 						}
 					}
 					if (!contains && !newDate.isPast()) {
-						add(new Holiday(map));
+						createAndAdd(map);
 					}
 				}
 			}

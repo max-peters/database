@@ -11,6 +11,12 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 		super("appointment", storage);
 	}
 
+	@Override public void add(Appointment appointment) {
+		if (!appointment.date.isPast()) {
+			super.add(appointment);
+		}
+	}
+
 	@Override public Appointment create(Map<String, String> map) {
 		return new Appointment(map);
 	}
@@ -23,11 +29,5 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 		request(map);
 		createAndAdd(map);
 		update();
-	}
-
-	@Override public void add(Appointment appointment) {
-		if (!appointment.date.isPast()) {
-			super.add(appointment);
-		}
 	}
 }

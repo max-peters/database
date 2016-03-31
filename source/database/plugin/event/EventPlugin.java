@@ -29,10 +29,18 @@ public class EventPlugin extends InstancePlugin<Event> {
 		((EventOutputFormatter) formatter).setExtensionList(extensionList);
 	}
 
+	@Override public void add(Event event) {
+		throw new RuntimeException("event plugin add attempt");
+	}
+
 	@Override public void clearList() {
 		for (EventPluginExtension<?> extension : extensionList) {
 			extension.clearList();
 		}
+	}
+
+	@Override public Event create(Map<String, String> map) {
+		throw new RuntimeException("event plugin create attempt");
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
@@ -47,12 +55,8 @@ public class EventPlugin extends InstancePlugin<Event> {
 		// nothing to display here
 	}
 
-	public void updateHolidays() throws IOException {
-		for (EventPluginExtension<?> extension : extensionList) {
-			if (extension instanceof HolidayPlugin) {
-				((HolidayPlugin) extension).updateHolidays();
-			}
-		}
+	@Override public Iterable<Event> getIterable() {
+		throw new RuntimeException("event plugin getIterable attempt");
 	}
 
 	@Override public List<PrintInformation> print() {
@@ -83,6 +87,14 @@ public class EventPlugin extends InstancePlugin<Event> {
 		}
 	}
 
+	public void updateHolidays() throws IOException {
+		for (EventPluginExtension<?> extension : extensionList) {
+			if (extension instanceof HolidayPlugin) {
+				((HolidayPlugin) extension).updateHolidays();
+			}
+		}
+	}
+
 	private EventPluginExtension<?> chooseType() throws InterruptedException, BadLocationException {
 		ArrayList<String> strings = new ArrayList<String>();
 		EventPluginExtension<?> toReturn = null;
@@ -102,17 +114,5 @@ public class EventPlugin extends InstancePlugin<Event> {
 			}
 		}
 		return toReturn;
-	}
-
-	@Override public Event create(Map<String, String> map) {
-		throw new RuntimeException("event plugin create attempt");
-	}
-
-	@Override public Iterable<Event> getIterable() {
-		throw new RuntimeException("event plugin getIterable attempt");
-	}
-
-	@Override public void add(Event instance) {
-		throw new RuntimeException("event plugin add attempt");
 	}
 }

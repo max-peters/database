@@ -13,8 +13,8 @@ import database.main.userInterface.Terminal;
 import database.plugin.storage.Storage;
 
 public abstract class InstancePlugin<T extends Instance> extends Plugin {
-	protected LinkedList<T>			list;
 	protected OutputFormatter<T>	formatter;
+	protected LinkedList<T>			list;
 	private Storage					storage;
 
 	public InstancePlugin(String identity, Storage storage, OutputFormatter<T> formatter) {
@@ -24,22 +24,22 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		this.formatter = formatter;
 	}
 
-	public void clearList() {
-		list.clear();
-	}
-
-	public Iterable<T> getIterable() {
-		return list;
-	}
-
-	public abstract T create(Map<String, String> map);
-
 	public void add(T instance) {
 		list.add(instance);
 	}
 
+	public void clearList() {
+		list.clear();
+	}
+
+	public abstract T create(Map<String, String> map);
+
 	public void createAndAdd(Map<String, String> map) {
 		add(create(map));
+	}
+
+	public Iterable<T> getIterable() {
+		return list;
 	}
 
 	@Override public void initialOutput() throws BadLocationException {
