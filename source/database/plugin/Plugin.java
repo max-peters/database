@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
 import database.main.userInterface.Terminal;
 
@@ -71,7 +72,7 @@ public abstract class Plugin {
 
 	public void print(Document document, Element element) {}
 
-	public void read(String nodeName, Map<String, String> map) {}
+	public void read(String nodeName, NamedNodeMap nodeMap) {}
 
 	public void setChanges(boolean changes) {
 		this.changes = changes;

@@ -1,4 +1,4 @@
-package database.plugin.expense.monthlyExpense;
+package database.plugin.monthlyExpense;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
 import database.main.date.Month;
 import database.main.date.Year;
@@ -13,6 +14,7 @@ import database.main.userInterface.OutputInformation;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
+import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.expense.Expense;
@@ -22,14 +24,18 @@ import database.plugin.storage.Storage;
 public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 	private ExpensePlugin expensePlugin;
 
-	public MonthlyExpensePlugin(ExpensePlugin expensePlugin, Storage storage) {
-		super("monthlyexpense", storage, null);
+	public MonthlyExpensePlugin(ExpensePlugin expensePlugin, Storage storage, Backup backup) {
+		super("monthlyexpense", storage, null, backup);
 		this.expensePlugin = expensePlugin;
+	}
+
+	@Override public void add(MonthlyExpense instance) {
+		list.add(instance);
+		createExpense(expensePlugin.create(instance.getParameter()), expensePlugin, instance.executionDay);
 	}
 
 	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException {
 		List<String> strings = new ArrayList<String>();
-		Map<String, String> map = new LinkedHashMap<String, String>();
 		MonthlyExpense monthlyExpense = null;
 		String change = null;
 		int position;
@@ -51,29 +57,19 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		else {
 			return;
 		}
+		backup.backupChangeBefor(monthlyExpense, this);
 		switch (change) {
 			case "name":
-				map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
+				monthlyExpense.name = Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", monthlyExpense.name);
 				break;
 			case "category":
-				map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
+				monthlyExpense.category = Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+", monthlyExpense.category);
 				break;
 			case "value":
-				map.put("value", "[0-9]{1,13}(\\.[0-9]*)?");
+				monthlyExpense.value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]*)?", String.valueOf(monthlyExpense.value)));
 				break;
 		}
-		request(map);
-		switch (change) {
-			case "name":
-				monthlyExpense.name = map.get("name");
-				break;
-			case "category":
-				monthlyExpense.category = map.get("category");
-				break;
-			case "value":
-				monthlyExpense.value = Double.valueOf(map.get("category"));
-				break;
-		}
+		backup.backupChangeAfter(monthlyExpense, this);
 		update();
 	}
 
@@ -82,9 +78,10 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 									ExecutionDay.getExecutionDay(parameter.get("executionday")));
 	}
 
-	@Override public void createAndAdd(Map<String, String> parameter) {
-		super.createAndAdd(parameter);
-		createExpense(expensePlugin.create(parameter), expensePlugin, ExecutionDay.getExecutionDay(parameter.get("executionday")));
+	@Override public MonthlyExpense create(NamedNodeMap nodeMap) {
+		return new MonthlyExpense(	nodeMap.getNamedItem("name").getNodeValue(), nodeMap.getNamedItem("category").getNodeValue(),
+									Double.valueOf(nodeMap.getNamedItem("value").getNodeValue()), new Date(nodeMap.getNamedItem("date").getNodeValue()),
+									ExecutionDay.getExecutionDay(nodeMap.getNamedItem("executionday").getNodeValue()));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
@@ -105,7 +102,7 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 	}
 
 	@Override public void show() {
-		// nothing to store here
+		// nothing to show here
 	}
 
 	@Command(tag = "stop") public void stopRequest() throws InterruptedException, BadLocationException {
@@ -149,7 +146,7 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		expense.date = adjustDate(expense.date.month.counter, expense.date.year.counter, executionDay);
 		while (expense.date.isPast() || expense.date.isToday()) {
 			if (!containsExceptValue(expensePlugin.getIterable(), expense)) {
-				expensePlugin.add(expense);
+				expensePlugin.createAndAdd(expense.getParameter());
 				if (!Terminal.getCollectedLines().contains(new OutputInformation("expense created:", StringType.SOLUTION, StringFormat.STANDARD))) {
 					Terminal.collectLine("expense created:", StringFormat.STANDARD);
 				}

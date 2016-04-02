@@ -1,11 +1,11 @@
 package database.plugin.storage;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
@@ -38,8 +38,8 @@ public class Storage extends Plugin {
 		}
 	}
 
-	@Override public void read(String nodeName, Map<String, String> parameter) {
-		storage.addAll(parameter.values());
+	@Override public void read(String nodeName, NamedNodeMap nodeMap) {
+		storage.add(nodeMap.getNamedItem("string").getNodeValue());
 	}
 
 	public void store(InstancePlugin<? extends Instance> instancePlugin) throws BadLocationException, InterruptedException {

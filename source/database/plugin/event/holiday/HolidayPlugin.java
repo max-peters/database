@@ -8,17 +8,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
+import database.plugin.Backup;
 import database.plugin.event.EventPluginExtension;
 import database.plugin.storage.Storage;
 
 public class HolidayPlugin extends EventPluginExtension<Holiday> {
-	public HolidayPlugin(Storage storage) {
-		super("holiday", storage);
+	public HolidayPlugin(Storage storage, Backup backup) {
+		super("holiday", storage, backup);
 	}
 
 	@Override public Holiday create(Map<String, String> parameter) {
 		return new Holiday(parameter.get("name"), new Date(parameter.get("date")));
+	}
+
+	@Override public Holiday create(NamedNodeMap nodeMap) {
+		return new Holiday(nodeMap.getNamedItem("name").getNodeValue(), new Date(nodeMap.getNamedItem("date").getNodeValue()));
 	}
 
 	public void updateHolidays() throws IOException {

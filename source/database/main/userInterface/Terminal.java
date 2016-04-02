@@ -24,6 +24,10 @@ public class Terminal {
 		graphicalUserInterface.blockInput();
 	}
 
+	public static void setInputText(String string) {
+		graphicalUserInterface.setInputText(string);
+	}
+
 	public static int checkRequest(Collection<String> collection) throws InterruptedException, BadLocationException {
 		return graphicalUserInterface.checkRequest(collection);
 	}
@@ -76,6 +80,10 @@ public class Terminal {
 	}
 
 	public static String request(String printOut, String regex) throws InterruptedException, BadLocationException {
+		return request(printOut, regex, "");
+	}
+
+	public static String request(String printOut, String regex, String inputText) throws InterruptedException, BadLocationException {
 		boolean request = true;
 		String result = null;
 		String input = null;
@@ -85,6 +93,7 @@ public class Terminal {
 		}
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
+			setInputText(inputText);
 			input = readLine();
 			if (input.equals("back")) {
 				throw new CancellationException();

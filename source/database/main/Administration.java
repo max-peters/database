@@ -8,15 +8,18 @@ import javax.xml.transform.TransformerException;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
+import database.plugin.Backup;
 import database.plugin.Plugin;
 
 public class Administration {
+	private Backup			backup;
 	private PluginContainer	pluginContainer;
 	private WriterReader	writerReader;
 
-	public Administration(PluginContainer pluginContainer, WriterReader writerReader) {
+	public Administration(PluginContainer pluginContainer, WriterReader writerReader, Backup backup) {
 		this.pluginContainer = pluginContainer;
 		this.writerReader = writerReader;
+		this.backup = backup;
 	}
 
 	public void request() throws Exception {
@@ -45,13 +48,13 @@ public class Administration {
 	private void inputRequestAdministration() throws Exception {
 		String command = null;
 		try {
-			command = Terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "exit|save)");
+			command = Terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "cancel|exit|save)");
 			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx())) {
 				Plugin plugin = pluginContainer.getPlugin(command);
 				command = Terminal.request(command, plugin.getCommandTags(plugin.getClass()));
 				plugin.conduct(command);
 			}
-			else if (command.matches("(exit|save)")) {
+			else if (command.matches("(exit|cancel|save)")) {
 				switch (command) {
 					case "save":
 						save();
@@ -59,6 +62,9 @@ public class Administration {
 						break;
 					case "exit":
 						exit();
+						break;
+					case "cancel":
+						backup.cancel();
 						break;
 				}
 			}

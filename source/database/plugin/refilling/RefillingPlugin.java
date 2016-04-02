@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
+import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.expense.ExpensePlugin;
@@ -13,14 +15,19 @@ import database.plugin.storage.Storage;
 public class RefillingPlugin extends InstancePlugin<Refilling> {
 	private ExpensePlugin expensePlugin;
 
-	public RefillingPlugin(ExpensePlugin expensePlugin, Storage storage) {
-		super("refilling", storage, new RefillingOutputFormatter());
+	public RefillingPlugin(ExpensePlugin expensePlugin, Storage storage, Backup backup) {
+		super("refilling", storage, new RefillingOutputFormatter(), backup);
 		this.expensePlugin = expensePlugin;
 	}
 
 	@Override public Refilling create(Map<String, String> parameter) {
 		return new Refilling(	Double.valueOf(parameter.get("distance")), Double.valueOf(parameter.get("refuelAmount")), Double.valueOf(parameter.get("cost")),
 								new Date(parameter.get("date")));
+	}
+
+	@Override public Refilling create(NamedNodeMap nodeMap) {
+		return new Refilling(	Double.valueOf(nodeMap.getNamedItem("distance").getNodeValue()), Double.valueOf(nodeMap.getNamedItem("refuelAmount").getNodeValue()),
+								Double.valueOf(nodeMap.getNamedItem("cost").getNodeValue()), new Date(nodeMap.getNamedItem("date").getNodeValue()));
 	}
 
 	@Override public void createAndAdd(Map<String, String> refillingParameter) {

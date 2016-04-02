@@ -1,4 +1,4 @@
-package database.plugin.expense.monthlyExpense;
+package database.plugin.monthlyExpense;
 
 import java.util.HashMap;
 import java.util.Map;

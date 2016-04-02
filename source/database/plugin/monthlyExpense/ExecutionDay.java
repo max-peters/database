@@ -1,4 +1,4 @@
-package database.plugin.expense.monthlyExpense;
+package database.plugin.monthlyExpense;
 
 public enum ExecutionDay {
 	FIRST, LAST, MID;

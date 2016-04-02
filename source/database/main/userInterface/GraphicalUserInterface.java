@@ -203,6 +203,15 @@ public class GraphicalUserInterface {
 		return inputText;
 	}
 
+	protected void setInputText(String string) {
+		input.setText(string);
+		input.setCaretPosition(string.length());
+		input.setSelectionStart(0);
+		input.setSelectionEnd(string.length());
+		input.setSelectedTextColor(Color.BLACK);
+		input.setSelectionColor(Color.WHITE);
+	}
+
 	protected void releaseInput() {
 		input.setEditable(true);
 		input.setFocusable(true);

@@ -54,8 +54,7 @@ public class UtilityPlugin extends Plugin {
 		Terminal.blockInput();
 		for (Plugin plugin : pluginContainer.getPlugins()) {
 			if (plugin instanceof InstancePlugin) {
-				InstancePlugin<?> current = (InstancePlugin<?>) plugin;
-				current.clearList();
+				((InstancePlugin<?>) plugin).clearList();
 			}
 		}
 		storage.clearList();

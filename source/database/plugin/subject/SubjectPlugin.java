@@ -3,13 +3,15 @@ package database.plugin.subject;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import org.w3c.dom.NamedNodeMap;
+import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.storage.Storage;
 
 public class SubjectPlugin extends InstancePlugin<Subject> {
-	public SubjectPlugin(Storage storage) {
-		super("subject", storage, new SubjectOutputFormatter());
+	public SubjectPlugin(Storage storage, Backup backup) {
+		super("subject", storage, new SubjectOutputFormatter(), backup);
 	}
 
 	@Command(tag = "add") public void addRequest() throws InterruptedException, BadLocationException {
@@ -19,13 +21,20 @@ public class SubjectPlugin extends InstancePlugin<Subject> {
 		map.put("maximum points", "[0-9]{1,13}(\\.[0-9]*)?");
 		request(map);
 		Subject toChange = getSubject(map.get("add"));
+		backup.backupChangeBefor(toChange, this);
 		toChange.setGrade(Double.parseDouble(map.get("score")), Double.parseDouble(map.get("maximum points")));
+		backup.backupChangeAfter(toChange, this);
 		update();
 	}
 
 	@Override public Subject create(Map<String, String> parameter) {
 		return new Subject(	parameter.get("name"), parameter.get("tag"), Double.valueOf(parameter.get("score")), Double.valueOf(parameter.get("maxPoints")),
 							Integer.valueOf(parameter.get("counter")));
+	}
+
+	@Override public Subject create(NamedNodeMap nodeMap) {
+		return new Subject(	nodeMap.getNamedItem("name").getNodeValue(), nodeMap.getNamedItem("tag").getNodeValue(), Double.valueOf(nodeMap.getNamedItem("score").getNodeValue()),
+							Double.valueOf(nodeMap.getNamedItem("maxPoints").getNodeValue()), Integer.valueOf(nodeMap.getNamedItem("counter").getNodeValue()));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {

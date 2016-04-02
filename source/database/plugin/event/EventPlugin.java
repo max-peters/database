@@ -2,11 +2,16 @@ package database.plugin.event;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
+import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
@@ -19,13 +24,13 @@ import database.plugin.storage.Storage;
 public class EventPlugin extends InstancePlugin<Event> {
 	private ArrayList<EventPluginExtension<?>> extensionList;
 
-	public EventPlugin(Storage storage) {
-		super("event", storage, new EventOutputFormatter());
+	public EventPlugin(Storage storage, Backup backup) {
+		super("event", storage, new EventOutputFormatter(), backup);
 		extensionList = new ArrayList<EventPluginExtension<?>>();
-		extensionList.add(new DayPlugin(storage));
-		extensionList.add(new BirthdayPlugin(storage));
-		extensionList.add(new HolidayPlugin(storage));
-		extensionList.add(new AppointmentPlugin(storage));
+		extensionList.add(new DayPlugin(storage, backup));
+		extensionList.add(new BirthdayPlugin(storage, backup));
+		extensionList.add(new HolidayPlugin(storage, backup));
+		extensionList.add(new AppointmentPlugin(storage, backup));
 		((EventOutputFormatter) formatter).setExtensionList(extensionList);
 	}
 
@@ -43,6 +48,10 @@ public class EventPlugin extends InstancePlugin<Event> {
 		throw new RuntimeException("event plugin create attempt");
 	}
 
+	@Override public Event create(NamedNodeMap nodeMap) {
+		throw new RuntimeException("event plugin create attempt");
+	}
+
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
 		EventPluginExtension<?> extension = chooseType();
 		if (extension != null) {
@@ -56,7 +65,11 @@ public class EventPlugin extends InstancePlugin<Event> {
 	}
 
 	@Override public Iterable<Event> getIterable() {
-		throw new RuntimeException("event plugin getIterable attempt");
+		List<Event> list = new LinkedList<Event>();
+		for (EventPluginExtension<?> extension : extensionList) {
+			list.addAll((Collection<? extends Event>) extension.getIterable());
+		}
+		return list;
 	}
 
 	@Override public void print(Document document, Element element) {
@@ -68,14 +81,14 @@ public class EventPlugin extends InstancePlugin<Event> {
 		element.appendChild(entryElement);
 	}
 
-	@Override public void read(String nodeName, Map<String, String> parameter) {
+	@Override public void read(String nodeName, NamedNodeMap nodeMap) {
 		if (nodeName.equals("display")) {
-			setDisplay(Boolean.valueOf(parameter.get("boolean")));
+			setDisplay(Boolean.valueOf(nodeMap.getNamedItem("boolean").getNodeValue()));
 		}
 		else {
-			for (EventPluginExtension<?> extension : extensionList) {
+			for (EventPluginExtension<? extends Event> extension : extensionList) {
 				if (nodeName.equals(extension.getIdentity())) {
-					extension.createAndAdd(parameter);
+					extension.createAndAdd(nodeMap);
 				}
 			}
 		}

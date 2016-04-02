@@ -2,8 +2,6 @@ package database.main;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -68,11 +66,7 @@ public class WriterReader {
 		for (int i = 0; i < nList.getLength(); i++) {
 			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
 			if (plugin != null) {
-				Map<String, String> map = new HashMap<String, String>();
-				for (int j = 0; j < nList.item(i).getAttributes().getLength(); j++) {
-					map.put(nList.item(i).getAttributes().item(j).getNodeName(), nList.item(i).getAttributes().item(j).getNodeValue());
-				}
-				plugin.read(nList.item(i).getNodeName(), map);
+				plugin.read(nList.item(i).getNodeName(), nList.item(i).getAttributes());
 			}
 		}
 	}

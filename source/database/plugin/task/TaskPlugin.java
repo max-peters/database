@@ -5,31 +5,37 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
+import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
+import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.storage.Storage;
 
 public class TaskPlugin extends InstancePlugin<Task> {
-	public TaskPlugin(Storage storage) {
-		super("task", storage, new TaskOutputFormatter());
+	public TaskPlugin(Storage storage, Backup backup) {
+		super("task", storage, new TaskOutputFormatter(), backup);
 	}
 
 	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException {
 		Task task = getTaskByCheckRequest();
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("new name", ".+");
-		request(map);
-		task.name = map.get("new name");
+		backup.backupChangeBefor(task, this);
+		task.name = Terminal.request("new name", ".+", task.name);
+		backup.backupChangeAfter(task, this);
 		update();
 	}
 
 	@Command(tag = "check") public void checkRequest() throws InterruptedException, BadLocationException, IOException {
 		remove(getTaskByCheckRequest());
+		update();
 	}
 
 	@Override public Task create(Map<String, String> parameter) {
 		return new Task(parameter.get("name"));
+	}
+
+	@Override public Task create(NamedNodeMap nodeMap) {
+		return new Task(nodeMap.getNamedItem("name").getNodeValue());
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
