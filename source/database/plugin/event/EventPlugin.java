@@ -1,81 +1,67 @@
 package database.plugin.event;
 
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import database.main.userInterface.StringFormat;
+import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
 import database.plugin.Backup;
 import database.plugin.Command;
-import database.plugin.Instance;
 import database.plugin.InstancePlugin;
+import database.plugin.Plugin;
 import database.plugin.event.appointment.AppointmentPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.event.day.DayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
 import database.plugin.storage.Storage;
 
-public class EventPlugin extends InstancePlugin<Event> {
-	private ArrayList<EventPluginExtension<?>> extensionList;
+public class EventPlugin extends Plugin {
+	private ArrayList<EventPluginExtension<? extends Event>>	extensionList	= new ArrayList<EventPluginExtension<? extends Event>>();
+	private EventOutputFormatter								formatter		= new EventOutputFormatter();
 
-	public EventPlugin(Storage storage, Backup backup) {
-		super("event", storage, new EventOutputFormatter(), backup);
-		extensionList = new ArrayList<EventPluginExtension<?>>();
-		extensionList.add(new DayPlugin(storage, backup));
-		extensionList.add(new BirthdayPlugin(storage, backup));
-		extensionList.add(new HolidayPlugin(storage, backup));
-		extensionList.add(new AppointmentPlugin(storage, backup));
-		((EventOutputFormatter) formatter).setExtensionList(extensionList);
+	public EventPlugin(Storage storage, Backup backup, DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin) {
+		super("event");
+		extensionList.add(dayPlugin);
+		extensionList.add(birthdayPlugin);
+		extensionList.add(holidayPlugin);
+		extensionList.add(appointmentPlugin);
 	}
 
-	@Override public void add(Event event) {
-		throw new RuntimeException("event plugin add attempt");
-	}
-
-	@Override public void clearList() {
-		for (EventPluginExtension<?> extension : extensionList) {
-			extension.clearList();
+	@Override public void initialOutput() throws BadLocationException {
+		String initialOutput = formatter.getInitialOutput(getIterable());
+		if (!initialOutput.isEmpty()) {
+			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
+			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
 		}
 	}
 
-	@Override public Event create(Map<String, String> parameter) {
-		throw new RuntimeException("event plugin create attempt");
-	}
-
-	@Override public Event create(NamedNodeMap nodeMap) {
-		throw new RuntimeException("event plugin create attempt");
-	}
-
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
-		EventPluginExtension<?> extension = chooseType();
+		EventPluginExtension<? extends Event> extension = chooseType();
 		if (extension != null) {
 			extension.createRequest();
 			update();
 		}
 	}
 
-	@Override public void display() {
-		// nothing to display here
-	}
-
-	@Override public Iterable<Event> getIterable() {
+	public Iterable<Event> getIterable() {
 		List<Event> list = new LinkedList<Event>();
-		for (EventPluginExtension<?> extension : extensionList) {
-			list.addAll((Collection<? extends Event>) extension.getIterable());
+		for (InstancePlugin<? extends Event> extension : extensionList) {
+			if (extension.getDisplay()) {
+				list.addAll((Collection<? extends Event>) extension.getIterable());
+			}
 		}
 		return list;
 	}
 
 	@Override public void print(Document document, Element element) {
-		for (EventPluginExtension<?> extension : extensionList) {
-			extension.print(document, element);
-		}
 		Element entryElement = document.createElement("display");
 		entryElement.setAttribute("boolean", String.valueOf(getDisplay()));
 		element.appendChild(entryElement);
@@ -85,42 +71,33 @@ public class EventPlugin extends InstancePlugin<Event> {
 		if (nodeName.equals("display")) {
 			setDisplay(Boolean.valueOf(nodeMap.getNamedItem("boolean").getNodeValue()));
 		}
-		else {
-			for (EventPluginExtension<? extends Event> extension : extensionList) {
-				if (nodeName.equals(extension.getIdentity())) {
-					extension.createAndAdd(nodeMap);
-				}
+	}
+
+	@Command(tag = "show") public void show() throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		String command = Terminal.request("show", getCommandTags(formatter.getClass()));
+		for (Method method : formatter.getClass().getMethods()) {
+			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
+				Object output = method.invoke(formatter, getIterable());
+				Terminal.getLineOfCharacters('-');
+				Terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
+				Terminal.waitForInput();
 			}
 		}
 	}
 
-	@Override public void remove(Instance toRemove) throws BadLocationException {
-		for (EventPluginExtension<?> extension : extensionList) {
-			extension.remove(toRemove);
-		}
-	}
-
-	public void updateHolidays() throws IOException {
-		for (EventPluginExtension<?> extension : extensionList) {
-			if (extension instanceof HolidayPlugin) {
-				((HolidayPlugin) extension).updateHolidays();
-			}
-		}
-	}
-
-	private EventPluginExtension<?> chooseType() throws InterruptedException, BadLocationException {
+	private EventPluginExtension<? extends Event> chooseType() throws InterruptedException, BadLocationException {
 		ArrayList<String> strings = new ArrayList<String>();
-		EventPluginExtension<?> toReturn = null;
+		EventPluginExtension<? extends Event> toReturn = null;
 		String pluginIdentity;
 		int position;
-		for (EventPluginExtension<?> extension : extensionList) {
+		for (EventPluginExtension<? extends Event> extension : extensionList) {
 			strings.add(extension.getIdentity());
 		}
 		strings.remove(2);
 		position = Terminal.checkRequest(strings);
 		if (position != -1) {
 			pluginIdentity = strings.get(position);
-			for (EventPluginExtension<?> extension : extensionList) {
+			for (EventPluginExtension<? extends Event> extension : extensionList) {
 				if (pluginIdentity.equals(extension.getIdentity())) {
 					toReturn = extension;
 				}

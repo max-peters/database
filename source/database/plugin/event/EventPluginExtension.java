@@ -3,8 +3,6 @@ package database.plugin.event;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import database.plugin.Backup;
 import database.plugin.InstancePlugin;
 import database.plugin.storage.Storage;
@@ -31,11 +29,11 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 		update();
 	}
 
-	@Override public void print(Document document, Element element) {
-		for (Event event : getIterable()) {
-			Element entryElement = document.createElement(getIdentity());
-			event.insertParameter(entryElement);
-			element.appendChild(entryElement);
-		}
+	@Override public void initialOutput() throws BadLocationException {
+		// no initial output here
+	}
+
+	@Override public void show() {
+		// nothing to show here
 	}
 }

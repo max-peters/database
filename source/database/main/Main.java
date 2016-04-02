@@ -6,6 +6,10 @@ import database.main.userInterface.GraphicalUserInterface;
 import database.main.userInterface.Terminal;
 import database.plugin.Backup;
 import database.plugin.event.EventPlugin;
+import database.plugin.event.appointment.AppointmentPlugin;
+import database.plugin.event.birthday.BirthdayPlugin;
+import database.plugin.event.day.DayPlugin;
+import database.plugin.event.holiday.HolidayPlugin;
 import database.plugin.expense.ExpensePlugin;
 import database.plugin.monthlyExpense.MonthlyExpensePlugin;
 import database.plugin.refilling.RefillingPlugin;
@@ -29,7 +33,11 @@ public class Main {
 			MonthlyExpensePlugin monthlyExpensePlugin = new MonthlyExpensePlugin(expensePlugin, storage, backup);
 			RefillingPlugin refillingPlugin = new RefillingPlugin(expensePlugin, storage, backup);
 			TaskPlugin taskPlugin = new TaskPlugin(storage, backup);
-			EventPlugin eventPlugin = new EventPlugin(storage, backup);
+			DayPlugin dayPlugin = new DayPlugin(storage, backup);
+			BirthdayPlugin birthdayPlugin = new BirthdayPlugin(storage, backup);
+			HolidayPlugin holidayPlugin = new HolidayPlugin(storage, backup);
+			AppointmentPlugin appointmentPlugin = new AppointmentPlugin(storage, backup);
+			EventPlugin eventPlugin = new EventPlugin(storage, backup, dayPlugin, birthdayPlugin, holidayPlugin, appointmentPlugin);
 			UtilityPlugin utilityPlugin = new UtilityPlugin(writerReader, pluginContainer, storage);
 			pluginContainer.addPlugin(utilityPlugin);
 			pluginContainer.addPlugin(subjectPlugin);
@@ -38,9 +46,13 @@ public class Main {
 			pluginContainer.addPlugin(refillingPlugin);
 			pluginContainer.addPlugin(taskPlugin);
 			pluginContainer.addPlugin(eventPlugin);
+			pluginContainer.addPlugin(dayPlugin);
+			pluginContainer.addPlugin(birthdayPlugin);
+			pluginContainer.addPlugin(holidayPlugin);
+			pluginContainer.addPlugin(appointmentPlugin);
 			pluginContainer.addPlugin(storage);
 			writerReader.read();
-			eventPlugin.updateHolidays();
+			holidayPlugin.updateHolidays();
 			graphicalUserInterface.setVisible(true);
 			Terminal.initialOutput();
 			Terminal.printCollectedLines();
@@ -48,7 +60,7 @@ public class Main {
 		}
 		catch (Throwable e) {
 			String stackTrace = "";
-			if (e.getClass().equals(InvocationTargetException.class)) {
+			if (e instanceof InvocationTargetException) {
 				e = e.getCause();
 			}
 			for (StackTraceElement element : e.getStackTrace()) {

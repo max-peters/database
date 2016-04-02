@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -16,27 +15,27 @@ import database.plugin.Command;
 import database.plugin.OutputFormatter;
 
 public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
-	@Command(tag = "day") public String outputAveragePerDay(LinkedList<Expense> list) {
+	@Command(tag = "day") public String outputAveragePerDay(Iterable<Expense> iterable) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		double value = 0;
 		int dayCounter = 0;
-		for (Month month : getMonths(list)) {
-			value = value + value(month, list);
+		for (Month month : getMonths(iterable)) {
+			value = value + value(month, iterable);
 			dayCounter = dayCounter + month.getDayCount();
 		}
 		return "average value per day: " + format.format(value / dayCounter) + "€";
 	}
 
-	@Command(tag = "average") public String outputAveragePerMonth(LinkedList<Expense> list) {
+	@Command(tag = "average") public String outputAveragePerMonth(Iterable<Expense> iterable) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		double value = 0;
-		for (Month month : getMonths(list)) {
-			value = value + value(month, list);
+		for (Month month : getMonths(iterable)) {
+			value = value + value(month, iterable);
 		}
-		return "average value per month: " + format.format(value / getMonths(list).size()) + "€";
+		return "average value per month: " + format.format(value / getMonths(iterable).size()) + "€";
 	}
 
-	@Command(tag = "category") public String outputCategory(LinkedList<Expense> list) {
+	@Command(tag = "category") public String outputCategory(Iterable<Expense> iterable) {
 		StringBuilder builder = new StringBuilder();
 		DecimalFormat formatValue = new DecimalFormat("#0.00");
 		DecimalFormat formatPercent = new DecimalFormat("00.00");
@@ -46,7 +45,7 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		int longestLine = 0;
 		String name = null;
 		Map<String, Double> categories = new TreeMap<String, Double>();
-		for (Expense expense : list) {
+		for (Expense expense : iterable) {
 			if (expense.checkValidity(null) && !categories.containsKey(expense.category)) {
 				categories.put(expense.category, 0.0);
 			}
@@ -56,7 +55,7 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 			if (current.length() > longestName) {
 				longestName = current.length();
 			}
-			for (Expense expense : list) {
+			for (Expense expense : iterable) {
 				if (expense.category.equals(current)) {
 					categories.put(current, categories.get(current) + expense.value);
 				}
@@ -101,40 +100,40 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		return builder.toString();
 	}
 
-	@Command(tag = "month") public String outputMonth(LinkedList<Expense> list) {
+	@Command(tag = "month") public String outputMonth(Iterable<Expense> iterable) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		String output = "";
-		for (Month month : getMonths(list)) {
-			output = output+ String.format("%2s", month.counter).replace(" ", "0") + "/" + month.year.counter + " : " + format.format(value(month, list)) + "€"
+		for (Month month : getMonths(iterable)) {
+			output = output+ String.format("%2s", month.counter).replace(" ", "0") + "/" + month.year.counter + " : " + format.format(value(month, iterable)) + "€"
 						+ System.getProperty("line.separator");
 		}
 		return output;
 	}
 
-	@Command(tag = "all") public String printAll(LinkedList<Expense> list) {
-		String print = outputIntervall(null, list);
+	@Command(tag = "all") public String printAll(Iterable<Expense> iterable) {
+		String print = outputIntervall(null, iterable);
 		if (print.length() == 0) {
 			print = "no entries";
 		}
 		return print;
 	}
 
-	@Command(tag = "current") public String printCurrent(LinkedList<Expense> list) {
-		String print = outputIntervall(Date.getCurrentDate().month, list);
+	@Command(tag = "current") public String printCurrent(Iterable<Expense> iterable) {
+		String print = outputIntervall(Date.getCurrentDate().month, iterable);
 		if (print.length() == 0) {
 			print = "no entries";
 		}
 		return print;
 	}
 
-	@Override protected String getInitialOutput(LinkedList<Expense> list) {
+	@Override protected String getInitialOutput(Iterable<Expense> iterable) {
 		DecimalFormat format = new DecimalFormat("#0.00");
-		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month, list)) + "€";
+		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month, iterable)) + "€";
 	}
 
-	private ArrayList<Month> getMonths(LinkedList<Expense> list) {
+	private ArrayList<Month> getMonths(Iterable<Expense> iterable) {
 		ArrayList<Month> months = new ArrayList<Month>();
-		for (Expense expense : list) {
+		for (Expense expense : iterable) {
 			if (!months.contains(expense.date.month)) {
 				months.add(expense.date.month);
 			}
@@ -142,7 +141,7 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		return months;
 	}
 
-	private String outputIntervall(Month month, LinkedList<Expense> list) {
+	private String outputIntervall(Month month, Iterable<Expense> iterable) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		int nameLength = 0;
 		int valueLength = 0;
@@ -152,7 +151,7 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		String toReturn = "";
 		ArrayList<String> categories = new ArrayList<String>();
 		ArrayList<String> names;
-		for (Expense expense : list) {
+		for (Expense expense : iterable) {
 			if (expense.checkValidity(month) && !categories.contains(expense.category)) {
 				categories.add(expense.category);
 			}
@@ -167,7 +166,7 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		for (String current : categories) {
 			toReturn = toReturn + current + ":" + System.getProperty("line.separator");
 			names = new ArrayList<String>();
-			for (Expense expense : list) {
+			for (Expense expense : iterable) {
 				if (expense.checkValidity(month) && expense.category.equals(current) && !names.contains(expense.name)) {
 					names.add(expense.name);
 				}
@@ -177,7 +176,7 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 				value = 0;
 				blanks = "      ";
 				toReturn = toReturn + "  - " + name;
-				for (Expense expense : list) {
+				for (Expense expense : iterable) {
 					if (expense.checkValidity(month) && expense.category.equals(current) && expense.name.equals(name)) {
 						value = value + expense.value;
 					}
@@ -192,9 +191,9 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		return toReturn;
 	}
 
-	private double value(Month month, LinkedList<Expense> list) {
+	private double value(Month month, Iterable<Expense> iterable) {
 		double value = 0;
-		for (Expense expense : list) {
+		for (Expense expense : iterable) {
 			if (expense.checkValidity(month)) {
 				value = value + expense.value;
 			}

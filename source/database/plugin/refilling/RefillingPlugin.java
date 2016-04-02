@@ -20,6 +20,14 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 		this.expensePlugin = expensePlugin;
 	}
 
+	@Override public void add(Refilling refilling) {
+		int i = list.size();
+		while (i > 0 && list.get(i - 1).date.compareTo(refilling.date) > 0) {
+			i--;
+		}
+		list.add(i, refilling);
+	}
+
 	@Override public Refilling create(Map<String, String> parameter) {
 		return new Refilling(	Double.valueOf(parameter.get("distance")), Double.valueOf(parameter.get("refuelAmount")), Double.valueOf(parameter.get("cost")),
 								new Date(parameter.get("date")));

@@ -54,7 +54,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	}
 
 	@Override public void initialOutput() throws BadLocationException {
-		String initialOutput = formatter.getInitialOutput(list);
+		String initialOutput = formatter.getInitialOutput(getIterable());
 		if (!initialOutput.isEmpty()) {
 			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
 			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
@@ -91,7 +91,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		String command = Terminal.request("show", getCommandTags(formatter.getClass()));
 		for (Method method : formatter.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
-				Object output = method.invoke(formatter, list);
+				Object output = method.invoke(formatter, getIterable());
 				Terminal.getLineOfCharacters('-');
 				Terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
 				Terminal.waitForInput();

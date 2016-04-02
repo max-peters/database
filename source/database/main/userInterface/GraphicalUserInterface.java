@@ -17,12 +17,16 @@ import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import database.main.date.Date;
@@ -31,7 +35,6 @@ public class GraphicalUserInterface {
 	private int				currentLineNumber			= 0;
 	private Font			font;
 	private JFrame			frame						= new JFrame("Database");
-	// private int frameWidth;
 	private Image			icon;
 	private JTextField		input						= new JTextField();
 	private String			inputText;
@@ -101,11 +104,17 @@ public class GraphicalUserInterface {
 		input.addKeyListener(keyListener);
 		output.add(input, BorderLayout.AFTER_LAST_LINE);
 		timer.scheduleAtFixedRate(new UpdateTime(time), 0, 500);
-		scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
-		scrollPane.getViewport().setBorder(null);
 		scrollPane.setViewportBorder(null);
 		scrollPane.setBorder(null);
-		scrollPane.getVerticalScrollBar().setUnitIncrement(10);
+		JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
+		verticalScrollBar.setPreferredSize(new Dimension(0, 0));
+		verticalScrollBar.setUnitIncrement(10);
+		InputMap imVertical = verticalScrollBar.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+		imVertical.put(KeyStroke.getKeyStroke("DOWN"), "positiveUnitIncrement");
+		imVertical.put(KeyStroke.getKeyStroke("UP"), "negativeUnitIncrement");
+		JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
+		horizontalScrollBar.setPreferredSize(new Dimension(0, 0));
+		horizontalScrollBar.setUnitIncrement(10);
 		frame.setContentPane(scrollPane);
 		panel.add(output);
 		for (StringFormat format : StringFormat.values()) {
@@ -238,9 +247,12 @@ public class GraphicalUserInterface {
 	protected void waitForInput() throws InterruptedException {
 		releaseInput();
 		input.setCaretColor(Color.BLACK);
-		synchronized (synchronizerKeyInput) {
-			synchronizerKeyInput.wait();
+		do {
+			synchronized (synchronizerKeyInput) {
+				synchronizerKeyInput.wait();
+			}
 		}
+		while ((pressedKey == 38 || pressedKey == 40) && input.getY() > 520);
 		input.setCaretColor(Color.WHITE);
 	}
 

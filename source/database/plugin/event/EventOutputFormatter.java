@@ -3,7 +3,6 @@ package database.plugin.event;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.date.Date;
@@ -12,30 +11,20 @@ import database.plugin.Instance;
 import database.plugin.OutputFormatter;
 
 public class EventOutputFormatter extends OutputFormatter<Event> {
-	private ArrayList<EventPluginExtension<?>> extensionList;
-
-	@Command(tag = "all") public String printAll(LinkedList<Event> list) throws BadLocationException {
-		List<Event> outputList = new ArrayList<Event>();
-		for (EventPluginExtension<?> extension : extensionList) {
-			for (Event event : extension.getIterable()) {
-				outputList.add(event);
-			}
-		}
-		return sortedAndFormattedOutput(outputList);
-	}
-
-	public void setExtensionList(ArrayList<EventPluginExtension<?>> extensionList) {
-		this.extensionList = extensionList;
-	}
-
-	@Override protected String getInitialOutput(LinkedList<Event> list) {
+	@Command(tag = "all") public String printAll(Iterable<Event> iterable) throws BadLocationException {
 		List<Event> eventList = new ArrayList<Event>();
-		for (EventPluginExtension<?> extension : extensionList) {
-			for (Event event : getNearEvents(extension.getIterable())) {
-				eventList.add(event);
-			}
+		for (Event event : iterable) {
+			eventList.add(event);
 		}
 		return sortedAndFormattedOutput(eventList);
+	}
+
+	@Override protected String getInitialOutput(Iterable<Event> iterable) {
+		List<Event> eventList = new ArrayList<Event>();
+		for (Event event : iterable) {
+			eventList.add(event);
+		}
+		return sortedAndFormattedOutput(getNearEvents(eventList));
 	}
 
 	private ArrayList<Event> getNearEvents(Iterable<? extends Event> iterable) {

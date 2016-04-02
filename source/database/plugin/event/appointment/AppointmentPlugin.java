@@ -29,7 +29,7 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 								nodeMap.getNamedItem("attribute").getNodeValue());
 	}
 
-	@Override public void createRequest() throws InterruptedException, BadLocationException {
+	public void createRequest() throws InterruptedException, BadLocationException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("name", ".*");
 		map.put("attribute", ".*");

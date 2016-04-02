@@ -1,6 +1,6 @@
 package database.plugin.expense;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.w3c.dom.Element;
 import database.main.date.Date;
@@ -32,7 +32,7 @@ public class Expense extends Instance {
 	}
 
 	@Override public Map<String, String> getParameter() {
-		Map<String, String> parameter = new HashMap<String, String>();
+		Map<String, String> parameter = new LinkedHashMap<String, String>();
 		parameter.put("name", name);
 		parameter.put("category", category);
 		parameter.put("value", value.toString());

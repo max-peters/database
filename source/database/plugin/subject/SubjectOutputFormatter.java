@@ -1,16 +1,15 @@
 package database.plugin.subject;
 
 import java.text.DecimalFormat;
-import java.util.LinkedList;
 import database.plugin.Command;
 import database.plugin.OutputFormatter;
 
 public class SubjectOutputFormatter extends OutputFormatter<Subject> {
-	@Command(tag = "average") public String getAverage(LinkedList<Subject> list) {
+	@Command(tag = "average") public String getAverage(Iterable<Subject> iterable) {
 		double sumPercentages = 0;
 		double averagePercentage;
 		int currentCounter = 0;
-		for (Subject subject : list) {
+		for (Subject subject : iterable) {
 			sumPercentages += subject.calcPercent();
 			currentCounter++;
 		}
@@ -19,7 +18,7 @@ public class SubjectOutputFormatter extends OutputFormatter<Subject> {
 		return "average percentage : " + averagePercentage + "%";
 	}
 
-	@Command(tag = "all") public String outputAll(LinkedList<Subject> list) {
+	@Command(tag = "all") public String outputAll(Iterable<Subject> iterable) {
 		DecimalFormat oneDecimalPlace = new DecimalFormat("#0.0");
 		DecimalFormat twoDecimalPlace = new DecimalFormat("#0.00");
 		StringBuilder builder = new StringBuilder();
@@ -28,11 +27,11 @@ public class SubjectOutputFormatter extends OutputFormatter<Subject> {
 		int percentLength = 0;
 		int counterLength = 0;
 		int nameLength = 0;
-		if (list.isEmpty()) {
+		if (!iterable.iterator().hasNext()) {
 			builder.append("keine Blätter");
 		}
 		else {
-			for (Subject subject : list) {
+			for (Subject subject : iterable) {
 				int currentWorksheetCounterStringLength = String.valueOf(subject.counter).length();
 				allGradesLength = oneDecimalPlace.format(subject.score).length() > allGradesLength ? oneDecimalPlace.format(subject.score).length() : allGradesLength;
 				allGradesTotalLength = oneDecimalPlace.format(subject.maxPoints).length() > allGradesTotalLength	? oneDecimalPlace.format(subject.maxPoints).length()
@@ -41,7 +40,7 @@ public class SubjectOutputFormatter extends OutputFormatter<Subject> {
 				counterLength = currentWorksheetCounterStringLength > counterLength ? currentWorksheetCounterStringLength : counterLength;
 				nameLength = subject.name.length() > nameLength ? subject.name.length() : nameLength;
 			}
-			for (Subject subject : list) {
+			for (Subject subject : iterable) {
 				builder.append(subject.name);
 				for (int i = subject.name.length(); i < nameLength + 4; i++) {
 					builder.append(" ");
@@ -62,7 +61,7 @@ public class SubjectOutputFormatter extends OutputFormatter<Subject> {
 		return builder.toString();
 	}
 
-	@Override protected String getInitialOutput(LinkedList<Subject> list) {
-		return outputAll(list);
+	@Override protected String getInitialOutput(Iterable<Subject> iterable) {
+		return outputAll(iterable);
 	}
 }
