@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -107,20 +106,6 @@ public class GraphicalUserInterface {
 		JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
 		verticalScrollBar.setPreferredSize(new Dimension(0, 0));
 		verticalScrollBar.setUnitIncrement(10);
-		// InputMap imVertical = verticalScrollBar.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-		// imVertical.put(KeyStroke.getKeyStroke("UP"), "positiveUnitIncrement");
-		// imVertical.put(KeyStroke.getKeyStroke("DOWN"), "negativeUnitIncrement");
-		// Action action = new AbstractAction() {
-		// @Override public void actionPerformed(ActionEvent arg0) {
-		// System.out.println("hiimgosu");
-		// }
-		// };
-		// char keyStrokeAndKey = 'a';
-		// KeyStroke keyStroke = KeyStroke.getKeyStroke(keyStrokeAndKey);
-		// verticalScrollBar.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(keyStroke, keyStrokeAndKey);
-		// verticalScrollBar.getActionMap().put(keyStrokeAndKey, action);
-		System.out.println(verticalScrollBar.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).allKeys().length);
-		System.out.println(verticalScrollBar.getActionMap().allKeys().length);
 		JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
 		horizontalScrollBar.setPreferredSize(new Dimension(0, 0));
 		horizontalScrollBar.setUnitIncrement(10);
@@ -261,9 +246,8 @@ public class GraphicalUserInterface {
 				synchronizerKeyInput.wait();
 			}
 		}
-		while (true);
-		// while ((pressedKey == 38 || pressedKey == 40) && input.getY() > 520);
-		// input.setCaretColor(Color.WHITE);
+		while ((pressedKey == 38 || pressedKey == 40) && input.getY() > 520);
+		input.setCaretColor(Color.WHITE);
 	}
 
 	private String formatCheckLine(Collection<String> collection, int currentLine) {
