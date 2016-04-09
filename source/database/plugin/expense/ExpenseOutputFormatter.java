@@ -162,7 +162,7 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 				valueLength = format.format(expense.value).length();
 			}
 		}
-		// Collections.sort(categories); nach wichtigkeit ordnen
+		Collections.sort(categories);
 		for (String current : categories) {
 			toReturn = toReturn + current + ":" + System.getProperty("line.separator");
 			names = new ArrayList<String>();

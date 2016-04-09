@@ -36,4 +36,12 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 	@Override public void show() {
 		// nothing to show here
 	}
+
+	@Override public void store() throws BadLocationException, InterruptedException {
+		super.store();
+	}
+
+	@Override public void display() throws InterruptedException, BadLocationException {
+		super.display();
+	}
 }

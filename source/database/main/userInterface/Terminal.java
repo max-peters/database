@@ -88,12 +88,11 @@ public class Terminal {
 		String result = null;
 		String input = null;
 		if (regex != null && regex.equals("()")) {
-			errorMessage();
-			throw new CancellationException();
+			throw new RuntimeException();
 		}
+		setInputText(inputText);
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
-			setInputText(inputText);
 			input = readLine();
 			if (input.equals("back")) {
 				throw new CancellationException();

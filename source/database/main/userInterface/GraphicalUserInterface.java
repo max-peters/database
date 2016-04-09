@@ -34,10 +34,9 @@ public class GraphicalUserInterface {
 	private JFrame			frame						= new JFrame("Database");
 	private Image			icon;
 	private JTextField		input						= new JTextField();
-	private String			inputText;
 	private JTextPane		output						= new JTextPane();
 	private JPanel			panel						= new JPanel();
-	private int				pressedKey					= 0;
+	private int				pressedKey;
 	private JScrollPane		scrollPane					= new JScrollPane(panel);
 	private StyledDocument	styledDocument				= output.getStyledDocument();
 	private Object			synchronizerInputConfirm	= new Object();
@@ -55,8 +54,6 @@ public class GraphicalUserInterface {
 		icon = new ImageIcon(classLoader.getResource("icon.png")).getImage();
 		ActionListener inputListener = new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				inputText = input.getText();
-				input.setText(null);
 				synchronized (synchronizerInputConfirm) {
 					synchronizerInputConfirm.notify();
 				}
@@ -200,10 +197,13 @@ public class GraphicalUserInterface {
 	}
 
 	protected String readLine() throws InterruptedException {
+		String inputString;
 		synchronized (synchronizerInputConfirm) {
 			synchronizerInputConfirm.wait();
 		}
-		return inputText;
+		inputString = input.getText();
+		input.setText("");
+		return inputString;
 	}
 
 	protected void setInputText(String string) {

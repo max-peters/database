@@ -98,7 +98,7 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 	}
 
 	@Override public void display() {
-		// nothing to store here
+		// nothing to display here
 	}
 
 	@Override public void show() {

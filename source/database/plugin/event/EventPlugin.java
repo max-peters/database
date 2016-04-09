@@ -85,6 +85,22 @@ public class EventPlugin extends Plugin {
 		}
 	}
 
+	@Command(tag = "display") public void display() throws InterruptedException, BadLocationException {
+		EventPluginExtension<? extends Event> extension = chooseType();
+		if (extension != null) {
+			extension.display();
+			update();
+		}
+	}
+
+	@Command(tag = "store") public void store() throws BadLocationException, InterruptedException {
+		EventPluginExtension<? extends Event> extension = chooseType();
+		if (extension != null) {
+			extension.store();
+			update();
+		}
+	}
+
 	private EventPluginExtension<? extends Event> chooseType() throws InterruptedException, BadLocationException {
 		ArrayList<String> strings = new ArrayList<String>();
 		EventPluginExtension<? extends Event> toReturn = null;
