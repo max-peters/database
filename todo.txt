@@ -1,3 +1,4 @@
 income - aktion mensch check
 mensa
 accept similar strings for command request
+expense: output sort by value

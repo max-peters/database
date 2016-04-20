@@ -19,11 +19,8 @@ public class PluginContainer {
 
 	public boolean changes() {
 		for (Plugin plugin : plugins) {
-			if (plugin instanceof InstancePlugin) {
-				InstancePlugin<?> current = (InstancePlugin<?>) plugin;
-				if (current.getChanges()) {
-					return true;
-				}
+			if (plugin.getChanges()) {
+				return true;
 			}
 		}
 		return false;

@@ -9,4 +9,8 @@ public abstract class Instance {
 	public abstract Map<String, String> getParameter();
 
 	public abstract void insertParameter(Element element);
+
+	@Override public String toString() {
+		return getParameter() + "";
+	}
 }

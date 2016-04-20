@@ -1,10 +1,10 @@
 package database.plugin.expense;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
+import database.main.userInterface.Terminal;
 import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
@@ -33,13 +33,41 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
-		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
-		map.put("value", "[0-9]{1,13}(\\.[0-9]{0,2})?");
-		map.put("date", null);
-		request(map);
-		createAndAdd(map);
+		ExpenseOutputFormatter formatter = (ExpenseOutputFormatter) this.formatter;
+		final String name;
+		String category;
+		Double value;
+		Date date;
+		Thread thread = new Thread(() -> {
+			while (true) {
+				try {
+					Terminal.setInputText(formatter.getMostUsedNameByPrefix(Terminal.readKey(), list));
+				}
+				catch (InterruptedException e) {
+					break;
+				}
+			}
+		});
+		thread.start();
+		name = formatter.getNameByString(Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+"), list);
+		thread.interrupt();
+		thread = new Thread(() -> {
+			Terminal.setInputText(formatter.getMostUsedCategoryByPrefixAndName("", name, list));
+			while (true) {
+				try {
+					Terminal.setInputText(formatter.getMostUsedCategoryByPrefixAndName(Terminal.readKey(), name, list));
+				}
+				catch (InterruptedException e) {
+					break;
+				}
+			}
+		});
+		thread.start();
+		category = formatter.getCategoryByString(Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+"), list);
+		thread.interrupt();
+		value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
+		date = new Date(Terminal.request("date", null, Date.getCurrentDate().toString()));
+		add(new Expense(name, category, value, date));
 		update();
 	}
 }

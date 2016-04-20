@@ -24,10 +24,6 @@ public class Terminal {
 		graphicalUserInterface.blockInput();
 	}
 
-	public static void setInputText(String string) {
-		graphicalUserInterface.setInputText(string);
-	}
-
 	public static int checkRequest(Collection<String> collection) throws InterruptedException, BadLocationException {
 		return graphicalUserInterface.checkRequest(collection);
 	}
@@ -71,6 +67,10 @@ public class Terminal {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 
+	public static String readKey() throws InterruptedException {
+		return graphicalUserInterface.readKey();
+	}
+
 	public static String readLine() throws InterruptedException {
 		return graphicalUserInterface.readLine();
 	}
@@ -94,6 +94,7 @@ public class Terminal {
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
 			input = readLine();
+			graphicalUserInterface.clearInput();
 			if (input.equals("back")) {
 				throw new CancellationException();
 			}
@@ -110,7 +111,7 @@ public class Terminal {
 				request = false;
 			}
 			else if (regex == null && Date.testDateString(input)) {
-				result = input;
+				result = new Date(input).toString();
 				request = false;
 			}
 			else {
@@ -118,6 +119,10 @@ public class Terminal {
 			}
 		}
 		return result;
+	}
+
+	public static void setInputText(String string) {
+		graphicalUserInterface.setInputText(string);
 	}
 
 	public static void showMessageDialog(Throwable e) {

@@ -21,32 +21,35 @@ import database.plugin.event.appointment.AppointmentPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.event.day.DayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
+import database.plugin.settings.Settings;
 import database.plugin.storage.Storage;
 
 public class EventPlugin extends Plugin {
 	private ArrayList<EventPluginExtension<? extends Event>>	extensionList	= new ArrayList<EventPluginExtension<? extends Event>>();
-	private EventOutputFormatter								formatter		= new EventOutputFormatter();
+	private EventOutputFormatter								formatter;
 
-	public EventPlugin(Storage storage, Backup backup, DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin) {
+	public EventPlugin(	Storage storage, Backup backup, DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin,
+						Settings settings) {
 		super("event");
 		extensionList.add(dayPlugin);
 		extensionList.add(birthdayPlugin);
 		extensionList.add(holidayPlugin);
 		extensionList.add(appointmentPlugin);
-	}
-
-	@Override public void initialOutput() throws BadLocationException {
-		String initialOutput = formatter.getInitialOutput(getIterable());
-		if (!initialOutput.isEmpty()) {
-			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
-			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
-		}
+		formatter = new EventOutputFormatter(settings);
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
 		EventPluginExtension<? extends Event> extension = chooseType();
 		if (extension != null) {
 			extension.createRequest();
+			update();
+		}
+	}
+
+	@Override @Command(tag = "display") public void display() throws InterruptedException, BadLocationException {
+		EventPluginExtension<? extends Event> extension = chooseType();
+		if (extension != null) {
+			extension.display();
 			update();
 		}
 	}
@@ -59,6 +62,14 @@ public class EventPlugin extends Plugin {
 			}
 		}
 		return list;
+	}
+
+	@Override public void initialOutput() throws BadLocationException {
+		String initialOutput = formatter.getInitialOutput(getIterable());
+		if (!initialOutput.isEmpty()) {
+			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
+			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
+		}
 	}
 
 	@Override public void print(Document document, Element element) {
@@ -82,14 +93,6 @@ public class EventPlugin extends Plugin {
 				Terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
 				Terminal.waitForInput();
 			}
-		}
-	}
-
-	@Command(tag = "display") public void display() throws InterruptedException, BadLocationException {
-		EventPluginExtension<? extends Event> extension = chooseType();
-		if (extension != null) {
-			extension.display();
-			update();
 		}
 	}
 

@@ -13,6 +13,7 @@ import database.plugin.event.holiday.HolidayPlugin;
 import database.plugin.expense.ExpensePlugin;
 import database.plugin.monthlyExpense.MonthlyExpensePlugin;
 import database.plugin.refilling.RefillingPlugin;
+import database.plugin.settings.Settings;
 import database.plugin.storage.Storage;
 import database.plugin.subject.SubjectPlugin;
 import database.plugin.task.TaskPlugin;
@@ -28,6 +29,7 @@ public class Main {
 			WriterReader writerReader = new WriterReader(pluginContainer);
 			Administration administration = new Administration(pluginContainer, writerReader, backup);
 			Storage storage = new Storage();
+			Settings settings = new Settings();
 			SubjectPlugin subjectPlugin = new SubjectPlugin(storage, backup);
 			ExpensePlugin expensePlugin = new ExpensePlugin(storage, backup);
 			MonthlyExpensePlugin monthlyExpensePlugin = new MonthlyExpensePlugin(expensePlugin, storage, backup);
@@ -37,8 +39,9 @@ public class Main {
 			BirthdayPlugin birthdayPlugin = new BirthdayPlugin(storage, backup);
 			HolidayPlugin holidayPlugin = new HolidayPlugin(storage, backup);
 			AppointmentPlugin appointmentPlugin = new AppointmentPlugin(storage, backup);
-			EventPlugin eventPlugin = new EventPlugin(storage, backup, dayPlugin, birthdayPlugin, holidayPlugin, appointmentPlugin);
+			EventPlugin eventPlugin = new EventPlugin(storage, backup, dayPlugin, birthdayPlugin, holidayPlugin, appointmentPlugin, settings);
 			UtilityPlugin utilityPlugin = new UtilityPlugin(writerReader, pluginContainer, storage);
+			pluginContainer.addPlugin(settings);
 			pluginContainer.addPlugin(utilityPlugin);
 			pluginContainer.addPlugin(subjectPlugin);
 			pluginContainer.addPlugin(expensePlugin);

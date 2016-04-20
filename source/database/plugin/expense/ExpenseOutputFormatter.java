@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -126,9 +127,76 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		return print;
 	}
 
+	protected String getCategoryByString(String name, Iterable<Expense> iterable) {
+		for (Expense expense : iterable) {
+			if (expense.category.equalsIgnoreCase(name)) {
+				return expense.category;
+			}
+		}
+		return null;
+	}
+
 	@Override protected String getInitialOutput(Iterable<Expense> iterable) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month, iterable)) + "€";
+	}
+
+	protected String getMostUsedCategoryByPrefixAndName(String prefix, String name, Iterable<Expense> iterable) {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		String mostUsedCategory = "";
+		for (Expense expense : iterable) {
+			if (categoryContainsName(expense.category, name, iterable)) {
+				if (!map.containsKey(expense.category)) {
+					map.put(expense.category, 1);
+				}
+				else {
+					map.replace(expense.category, map.get(expense.category) + 1);
+				}
+			}
+		}
+		for (Entry<String, Integer> entry : map.entrySet()) {
+			if (entry.getKey().toLowerCase().startsWith(prefix.toLowerCase()) && (map.get(mostUsedCategory) == null || entry.getValue() > map.get(mostUsedCategory))) {
+				mostUsedCategory = entry.getKey();
+			}
+		}
+		return mostUsedCategory.isEmpty() ? "" : mostUsedCategory.substring(prefix.length());
+	}
+
+	protected String getMostUsedNameByPrefix(String prefix, Iterable<Expense> iterable) {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		String mostUsedName = "";
+		for (Expense expense : iterable) {
+			if (!map.containsKey(expense.name)) {
+				map.put(expense.name, 1);
+			}
+			else {
+				map.replace(expense.name, map.get(expense.name) + 1);
+			}
+		}
+		for (Entry<String, Integer> entry : map.entrySet()) {
+			if (entry.getKey().toLowerCase().startsWith(prefix.toLowerCase()) && (map.get(mostUsedName) == null || entry.getValue() > map.get(mostUsedName))) {
+				mostUsedName = entry.getKey();
+			}
+		}
+		return prefix.isEmpty() ? "" : mostUsedName.isEmpty() ? "" : mostUsedName.substring(prefix.length());
+	}
+
+	protected String getNameByString(String name, Iterable<Expense> iterable) {
+		for (Expense expense : iterable) {
+			if (expense.name.equalsIgnoreCase(name)) {
+				return expense.name;
+			}
+		}
+		return null;
+	}
+
+	private boolean categoryContainsName(String category, String name, Iterable<Expense> iterable) {
+		for (Expense expense : iterable) {
+			if (expense.category.equals(category) && expense.name.equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private ArrayList<Month> getMonths(Iterable<Expense> iterable) {

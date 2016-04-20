@@ -29,6 +29,10 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 		update();
 	}
 
+	@Override public void display() throws InterruptedException, BadLocationException {
+		super.display();
+	}
+
 	@Override public void initialOutput() throws BadLocationException {
 		// no initial output here
 	}
@@ -39,9 +43,5 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 
 	@Override public void store() throws BadLocationException, InterruptedException {
 		super.store();
-	}
-
-	@Override public void display() throws InterruptedException, BadLocationException {
-		super.display();
 	}
 }

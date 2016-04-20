@@ -10,7 +10,6 @@ import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
-import database.main.date.Date;
 import database.main.userInterface.Terminal;
 
 public abstract class Plugin {
@@ -90,9 +89,6 @@ public abstract class Plugin {
 	protected void request(Map<String, String> map) throws InterruptedException, BadLocationException {
 		for (Entry<String, String> entry : map.entrySet()) {
 			String parameterInformation = Terminal.request(entry.getKey(), entry.getValue());
-			if (entry.getKey().equals("date")) {
-				parameterInformation = new Date(parameterInformation).toString();
-			}
 			map.replace(entry.getKey(), parameterInformation);
 		}
 	}

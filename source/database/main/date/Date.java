@@ -105,10 +105,10 @@ public class Date implements Comparable<Date> {
 	public static boolean testDateString(String dateInformation) {
 		try {
 			new Date(dateInformation);
+			return true;
 		}
 		catch (Throwable e) {
 			return false;
 		}
-		return true;
 	}
 }

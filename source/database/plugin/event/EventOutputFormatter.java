@@ -9,8 +9,15 @@ import database.main.date.Date;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.OutputFormatter;
+import database.plugin.settings.Settings;
 
 public class EventOutputFormatter extends OutputFormatter<Event> {
+	private Settings settings;
+
+	public EventOutputFormatter(Settings settings) {
+		this.settings = settings;
+	}
+
 	@Command(tag = "all") public String printAll(Iterable<Event> iterable) throws BadLocationException {
 		List<Event> eventList = new ArrayList<Event>();
 		for (Event event : iterable) {
@@ -33,7 +40,7 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 		ArrayList<Event> nearEvents = new ArrayList<Event>();
 		for (Event event : iterable) {
 			localDate = event.updateYear();
-			if (localDate.compareTo(currentDate) < 5) {
+			if (localDate.compareTo(currentDate) < settings.getDisplayedDays()) {
 				nearEvents.add(event);
 			}
 		}

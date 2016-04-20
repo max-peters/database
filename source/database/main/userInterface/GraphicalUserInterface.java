@@ -24,6 +24,8 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import database.main.date.Date;
@@ -36,15 +38,16 @@ public class GraphicalUserInterface {
 	private JTextField		input						= new JTextField();
 	private JTextPane		output						= new JTextPane();
 	private JPanel			panel						= new JPanel();
-	private int				pressedKey;
+	private int				pressedKey					= 0;
 	private JScrollPane		scrollPane					= new JScrollPane(panel);
 	private StyledDocument	styledDocument				= output.getStyledDocument();
 	private Object			synchronizerInputConfirm	= new Object();
 	private Object			synchronizerKeyInput		= new Object();
+	private Object			synchronizerKeyPressed		= new Object();
 	private JTextField		time						= new JTextField();
 	private Timer			timer						= new Timer();
 
-	public GraphicalUserInterface() throws FontFormatException, IOException {
+	public GraphicalUserInterface() throws FontFormatException, IOException, InterruptedException {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		InputStream inputStream = classLoader.getResourceAsStream("DejaVuSansMono.ttf");
@@ -60,10 +63,13 @@ public class GraphicalUserInterface {
 			}
 		};
 		KeyListener keyListener = new KeyListener() {
-			@Override public void keyPressed(KeyEvent arg0) {
-				synchronized (synchronizerKeyInput) {
-					pressedKey = arg0.getKeyCode();
-					synchronizerKeyInput.notify();
+			@Override public void keyPressed(KeyEvent e) {
+				if (e.getExtendedKeyCode() == 8) {
+					input.replaceSelection("");
+				}
+				pressedKey = e.getKeyCode();
+				synchronized (synchronizerKeyPressed) {
+					synchronizerKeyPressed.notify();
 				}
 			}
 
@@ -71,6 +77,18 @@ public class GraphicalUserInterface {
 
 			@Override public void keyTyped(KeyEvent e) {}
 		};
+		DocumentListener documentListener = new DocumentListener() {
+			@Override public void changedUpdate(DocumentEvent e) {}
+
+			@Override public void insertUpdate(DocumentEvent e) {
+				synchronized (synchronizerKeyInput) {
+					synchronizerKeyInput.notify();
+				}
+			}
+
+			@Override public void removeUpdate(DocumentEvent e) {}
+		};
+		input.getDocument().addDocumentListener(documentListener);
 		panel.setLayout(new BorderLayout(0, 0));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setIconImage(icon);
@@ -96,6 +114,8 @@ public class GraphicalUserInterface {
 		input.setForeground(Color.WHITE);
 		input.addActionListener(inputListener);
 		input.addKeyListener(keyListener);
+		input.setSelectedTextColor(Color.BLACK);
+		input.setSelectionColor(Color.WHITE);
 		output.add(input, BorderLayout.AFTER_LAST_LINE);
 		timer.scheduleAtFixedRate(new UpdateTime(time), 0, 500);
 		scrollPane.setViewportBorder(null);
@@ -140,20 +160,18 @@ public class GraphicalUserInterface {
 		input.setCaretColor(Color.BLACK);
 		while (pressedKey != 10) {
 			printLine(formatCheckLine(collection, current), StringType.REQUEST, StringFormat.STANDARD);
-			synchronized (synchronizerKeyInput) {
-				synchronizerKeyInput.wait();
+			synchronized (synchronizerKeyPressed) {
+				synchronizerKeyPressed.wait();
 			}
 			if (pressedKey == 40) {
-				current++;
+				if (!(current == collection.size())) {
+					current++;
+				}
 			}
-			if (pressedKey == 38) {
-				current--;
-			}
-			if (current < 0) {
-				current = 0;
-			}
-			if (current > collection.size()) {
-				current = collection.size();
+			else if (pressedKey == 38) {
+				if (!(current == 0)) {
+					current--;
+				}
 			}
 		}
 		if (current != 0) {
@@ -163,6 +181,10 @@ public class GraphicalUserInterface {
 		pressedKey = 0;
 		releaseInput();
 		return position;
+	}
+
+	protected void clearInput() {
+		input.setText("");
 	}
 
 	protected void getLineOfCharacters(char character) throws BadLocationException {
@@ -196,23 +218,22 @@ public class GraphicalUserInterface {
 		printLine(output.getOutput(), output.getStringType(), output.getStringFormat());
 	}
 
+	protected String readKey() throws InterruptedException {
+		synchronized (synchronizerKeyInput) {
+			synchronizerKeyInput.wait();
+		}
+		if (pressedKey == 8) {
+			System.out.println("hhiiimmmgosuu");
+			input.replaceSelection("ggggggggggggggggg");
+		}
+		return input.getText();
+	}
+
 	protected String readLine() throws InterruptedException {
-		String inputString;
 		synchronized (synchronizerInputConfirm) {
 			synchronizerInputConfirm.wait();
 		}
-		inputString = input.getText();
-		input.setText("");
-		return inputString;
-	}
-
-	protected void setInputText(String string) {
-		input.setText(string);
-		input.setCaretPosition(string.length());
-		input.setSelectionStart(0);
-		input.setSelectionEnd(string.length());
-		input.setSelectedTextColor(Color.BLACK);
-		input.setSelectionColor(Color.WHITE);
+		return input.getText();
 	}
 
 	protected void releaseInput() {
@@ -220,6 +241,14 @@ public class GraphicalUserInterface {
 		input.setFocusable(true);
 		input.grabFocus();
 		input.setCaretColor(Color.WHITE);
+	}
+
+	protected void setInputText(String string) {
+		if (!string.isEmpty()) {
+			String inputText = input.getText();
+			input.setText(inputText + string);
+			input.select(inputText.length(), (inputText + string).length());
+		}
 	}
 
 	protected void showMessageDialog(Throwable e) {
@@ -242,8 +271,8 @@ public class GraphicalUserInterface {
 		releaseInput();
 		input.setCaretColor(Color.BLACK);
 		do {
-			synchronized (synchronizerKeyInput) {
-				synchronizerKeyInput.wait();
+			synchronized (synchronizerKeyPressed) {
+				synchronizerKeyPressed.wait();
 			}
 		}
 		while ((pressedKey == 38 || pressedKey == 40) && input.getY() > 520);
