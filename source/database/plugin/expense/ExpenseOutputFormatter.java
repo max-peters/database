@@ -199,15 +199,6 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		return !nameExists(name, iterable);
 	}
 
-	private boolean nameExists(String name, Iterable<Expense> iterable) {
-		for (Expense expense : iterable) {
-			if (expense.name.equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private ArrayList<Month> getMonths(Iterable<Expense> iterable) {
 		ArrayList<Month> months = new ArrayList<Month>();
 		for (Expense expense : iterable) {
@@ -216,6 +207,15 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 			}
 		}
 		return months;
+	}
+
+	private boolean nameExists(String name, Iterable<Expense> iterable) {
+		for (Expense expense : iterable) {
+			if (expense.name.equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private String outputIntervall(Month month, Iterable<Expense> iterable) {
