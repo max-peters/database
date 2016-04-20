@@ -133,7 +133,7 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 				return expense.category;
 			}
 		}
-		return null;
+		return name;
 	}
 
 	@Override protected String getInitialOutput(Iterable<Expense> iterable) {
@@ -159,7 +159,7 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 				mostUsedCategory = entry.getKey();
 			}
 		}
-		return mostUsedCategory.isEmpty() ? "" : mostUsedCategory.substring(prefix.length());
+		return !nameExists(name, iterable) && prefix.isEmpty() ? "" : mostUsedCategory.isEmpty() ? "" : mostUsedCategory.substring(prefix.length());
 	}
 
 	protected String getMostUsedNameByPrefix(String prefix, Iterable<Expense> iterable) {
@@ -187,12 +187,21 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 				return expense.name;
 			}
 		}
-		return null;
+		return name;
 	}
 
 	private boolean categoryContainsName(String category, String name, Iterable<Expense> iterable) {
 		for (Expense expense : iterable) {
 			if (expense.category.equals(category) && expense.name.equals(name)) {
+				return true;
+			}
+		}
+		return !nameExists(name, iterable);
+	}
+
+	private boolean nameExists(String name, Iterable<Expense> iterable) {
+		for (Expense expense : iterable) {
+			if (expense.name.equals(name)) {
 				return true;
 			}
 		}

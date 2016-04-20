@@ -1,6 +1,7 @@
 package database.plugin.expense;
 
 import java.util.Map;
+import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
@@ -35,6 +36,7 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
 		ExpenseOutputFormatter formatter = (ExpenseOutputFormatter) this.formatter;
 		final String name;
+		String temp = null;
 		String category;
 		Double value;
 		Date date;
@@ -49,13 +51,20 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 			}
 		});
 		thread.start();
-		name = formatter.getNameByString(Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+"), list);
+		try {
+			temp = formatter.getNameByString(Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+"), list);
+		}
+		catch (CancellationException e) {
+			thread.interrupt();
+			throw new CancellationException();
+		}
+		name = temp;
 		thread.interrupt();
 		thread = new Thread(() -> {
 			Terminal.setInputText(formatter.getMostUsedCategoryByPrefixAndName("", name, list));
 			while (true) {
 				try {
-					Terminal.setInputText(formatter.getMostUsedCategoryByPrefixAndName(Terminal.readKey(), name, list));
+					Terminal.setInputText(formatter.getMostUsedCategoryByPrefixAndName(Terminal.readKey(), "", list));
 				}
 				catch (InterruptedException e) {
 					break;
@@ -63,7 +72,13 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 			}
 		});
 		thread.start();
-		category = formatter.getCategoryByString(Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+"), list);
+		try {
+			category = formatter.getCategoryByString(Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+"), list);
+		}
+		catch (CancellationException e) {
+			thread.interrupt();
+			throw new CancellationException();
+		}
 		thread.interrupt();
 		value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
 		date = new Date(Terminal.request("date", null, Date.getCurrentDate().toString()));
