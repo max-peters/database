@@ -89,7 +89,7 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		map.put("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		map.put("value", "[0-9]{1,13}(\\.[0-9]*)?");
-		map.put("date", null);
+		map.put("date", "DATE");
 		map.put("executionday", "(first|mid|last)");
 		request(map);
 		createAndAdd(map);

@@ -9,6 +9,7 @@ import database.main.date.Date;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.OutputFormatter;
+import database.plugin.event.appointment.Appointment;
 import database.plugin.settings.Settings;
 
 public class EventOutputFormatter extends OutputFormatter<Event> {
@@ -50,6 +51,21 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 	private String sortedAndFormattedOutput(List<Event> list) {
 		String lines = "";
 		int longestNameLength = 0;
+		List<Appointment> appointmentList = new ArrayList<Appointment>();
+		for (Event event : list) {
+			if (event instanceof Appointment) {
+				appointmentList.add((Appointment) event);
+			}
+		}
+		for (Appointment appointment : appointmentList) {
+			list.remove(appointment);
+		}
+		Collections.sort(appointmentList, new Comparator<Appointment>() {
+			@Override public int compare(Appointment o1, Appointment o2) {
+				return o2.begin.compareTo(o1.begin);
+			}
+		});
+		list.addAll(appointmentList);
 		Collections.sort(list, new Comparator<Instance>() {
 			@Override public int compare(Instance arg0, Instance arg1) {
 				return ((Event) arg0).updateYear().compareTo(((Event) arg1).updateYear());

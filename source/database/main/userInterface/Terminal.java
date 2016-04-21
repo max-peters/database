@@ -7,6 +7,7 @@ import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.date.Date;
+import database.main.date.Time;
 import database.plugin.Plugin;
 
 public class Terminal {
@@ -106,12 +107,16 @@ public class Terminal {
 				printLine(help, StringType.SOLUTION, StringFormat.STANDARD);
 				waitForInput();
 			}
-			else if (regex != null && input.matches(regex)) {
+			else if (input.matches(regex)) {
 				result = input;
 				request = false;
 			}
-			else if (regex == null && Date.testDateString(input)) {
+			else if (regex == "DATE" && Date.testDateString(input)) {
 				result = new Date(input).toString();
+				request = false;
+			}
+			else if (regex == "TIME" && Time.testTimeString(input)) {
+				result = new Time(input).toString();
 				request = false;
 			}
 			else {

@@ -10,7 +10,6 @@ public class Date implements Comparable<Date> {
 	public Year						year;
 	private static Calendar			calendar;
 	private static SimpleDateFormat	dateFormat	= new SimpleDateFormat("dd.MM.yyyy");
-	private static SimpleDateFormat	timeFormat	= new SimpleDateFormat("HH:mm:ss");
 
 	public Date(String date) {
 		Calendar calendar = Calendar.getInstance();
@@ -95,11 +94,6 @@ public class Date implements Comparable<Date> {
 	public static Date getCurrentDate() {
 		calendar = Calendar.getInstance();
 		return new Date(dateFormat.format(calendar.getTime()));
-	}
-
-	public static String getCurrentTime() {
-		calendar = Calendar.getInstance();
-		return timeFormat.format(calendar.getTime());
 	}
 
 	public static boolean testDateString(String dateInformation) {

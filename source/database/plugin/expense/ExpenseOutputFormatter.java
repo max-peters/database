@@ -223,11 +223,10 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		int nameLength = 0;
 		int valueLength = 0;
 		int blankCounter;
-		double value;
 		String blanks;
 		String toReturn = "";
 		ArrayList<String> categories = new ArrayList<String>();
-		ArrayList<String> names;
+		Map<String, Double> names;
 		for (Expense expense : iterable) {
 			if (expense.checkValidity(month) && !categories.contains(expense.category)) {
 				categories.add(expense.category);
@@ -242,27 +241,30 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		Collections.sort(categories);
 		for (String current : categories) {
 			toReturn = toReturn + current + ":" + System.getProperty("line.separator");
-			names = new ArrayList<String>();
+			names = new LinkedHashMap<String, Double>();
 			for (Expense expense : iterable) {
-				if (expense.checkValidity(month) && expense.category.equals(current) && !names.contains(expense.name)) {
-					names.add(expense.name);
+				if (expense.checkValidity(month) && expense.category.equals(current)) {
+					names.put(expense.name, 0.0);
 				}
 			}
-			Collections.sort(names);
-			for (String name : names) {
-				value = 0;
-				blanks = "      ";
-				toReturn = toReturn + "  - " + name;
+			for (String name : names.keySet()) {
 				for (Expense expense : iterable) {
 					if (expense.checkValidity(month) && expense.category.equals(current) && expense.name.equals(name)) {
-						value = value + expense.value;
+						names.replace(name, names.get(name) + expense.value);
 					}
 				}
-				blankCounter = nameLength - name.length() + 1 + valueLength - format.format(value).length();
+			}
+			Map<String, Double> map = new LinkedHashMap<String, Double>();
+			Stream<Map.Entry<String, Double>> st = names.entrySet().stream();
+			st.sorted(Map.Entry.comparingByValue()).forEachOrdered(e -> map.put(e.getKey(), e.getValue()));
+			for (Entry<String, Double> entry : map.entrySet()) {
+				blanks = "       ";
+				toReturn = toReturn + "  - " + entry.getKey();
+				blankCounter = nameLength - entry.getKey().length() + 1 + valueLength - format.format(entry.getValue()).length();
 				for (int i = 0; i < blankCounter; i++) {
 					blanks = blanks + " ";
 				}
-				toReturn = toReturn + blanks + "  " + format.format(value) + "€" + System.getProperty("line.separator");
+				toReturn = toReturn + blanks + format.format(entry.getValue()) + "€" + System.getProperty("line.separator");
 			}
 		}
 		return toReturn;

@@ -53,7 +53,7 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 		map.put("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("cost", "[0-9]{1,13}(\\.[0-9]*)?");
 		map.put("distance", "[0-9]{1,13}(\\.[0-9]*)?");
-		map.put("date", null);
+		map.put("date", "DATE");
 		request(map);
 		createAndAdd(map);
 		update();

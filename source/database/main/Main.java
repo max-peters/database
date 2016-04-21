@@ -23,13 +23,13 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			PluginContainer pluginContainer = new PluginContainer();
+			Settings settings = new Settings();
 			GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
 			Backup backup = new Backup();
 			new Terminal(graphicalUserInterface, pluginContainer);
 			WriterReader writerReader = new WriterReader(pluginContainer);
 			Administration administration = new Administration(pluginContainer, writerReader, backup);
 			Storage storage = new Storage();
-			Settings settings = new Settings();
 			SubjectPlugin subjectPlugin = new SubjectPlugin(storage, backup);
 			ExpensePlugin expensePlugin = new ExpensePlugin(storage, backup);
 			MonthlyExpensePlugin monthlyExpensePlugin = new MonthlyExpensePlugin(expensePlugin, storage, backup);

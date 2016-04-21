@@ -29,6 +29,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import database.main.date.Date;
+import database.main.date.Time;
 
 public class GraphicalUserInterface {
 	private int				currentLineNumber			= 0;
@@ -131,7 +132,7 @@ public class GraphicalUserInterface {
 		for (StringFormat format : StringFormat.values()) {
 			format.initialise(styledDocument);
 		}
-		frame.setSize(780, 520);
+		frame.setSize(800, 530);
 		input.setSize(770, input.getFontMetrics(font).getHeight());
 		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 	}
@@ -308,6 +309,6 @@ class UpdateTime extends TimerTask {
 	}
 
 	@Override public void run() {
-		timeTextfield.setText(Date.getCurrentDate() + " " + Date.getCurrentTime());
+		timeTextfield.setText(Date.getCurrentDate() + " " + Time.getCurrentTime());
 	}
 }

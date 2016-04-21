@@ -81,7 +81,7 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 		}
 		thread.interrupt();
 		value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
-		date = new Date(Terminal.request("date", null, Date.getCurrentDate().toString()));
+		date = new Date(Terminal.request("date", "DATE", Date.getCurrentDate().toString()));
 		add(new Expense(name, category, value, date));
 		update();
 	}

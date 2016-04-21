@@ -23,7 +23,7 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 	public void createRequest() throws InterruptedException, BadLocationException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)");
-		map.put("date", null);
+		map.put("date", "DATE");
 		request(map);
 		createAndAdd(map);
 		update();
