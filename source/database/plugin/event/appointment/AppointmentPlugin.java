@@ -33,18 +33,18 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {
 		String name;
+		String end;
 		Time begin;
-		Time end;
 		Date date;
 		name = Terminal.request("name", ".+");
-		begin = new Time(Terminal.request("begin", "TIME"));
-		end = new Time(Terminal.request("end", "TIME"));
-		while (begin.compareTo(end) <= 0) {
-			Terminal.errorMessage();
-			end = new Time(Terminal.request("end", "TIME"));
-		}
 		date = new Date(Terminal.request("date", "DATE"));
-		add(new Appointment(name, date, begin, end));
+		begin = new Time(Terminal.request("begin", "TIME"));
+		end = Terminal.request("end", "TIME");
+		while (!end.isEmpty() && begin.compareTo(new Time(end)) <= 0) {
+			Terminal.errorMessage();
+			end = Terminal.request("end", "TIME");
+		}
+		add(new Appointment(name, date, begin, end.isEmpty() ? null : new Time(end)));
 		update();
 	}
 }

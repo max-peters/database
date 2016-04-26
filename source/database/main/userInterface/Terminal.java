@@ -112,11 +112,13 @@ public class Terminal {
 				request = false;
 			}
 			else if (regex == "DATE" && Date.testDateString(input)) {
-				result = new Date(input).toString();
+				// result = new Date(input).toString();
+				result = input;
 				request = false;
 			}
 			else if (regex == "TIME" && Time.testTimeString(input)) {
-				result = new Time(input).toString();
+				// result = new Time(input).toString();
+				result = input;
 				request = false;
 			}
 			else {

@@ -1,4 +1,5 @@
 income - aktion mensch check
-mensa
-accept similar strings for command request
-expense: output sort by value
+expense - mensa request
+accept similar strings for command request // string autocompletion
+task - category
+
