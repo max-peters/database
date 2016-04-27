@@ -36,12 +36,15 @@ public class Appointment extends Event {
 	}
 
 	@Override protected String appendToOutput() {
-		String string = "[" + begin + " UHR";
-		if (end != null) {
-			string += " to " + end + " UHR]";
-		}
-		else {
-			string += "]";
+		String string = "";
+		if (begin != null) {
+			string = "[" + begin + " UHR";
+			if (end != null) {
+				string += " to " + end + " UHR]";
+			}
+			else {
+				string += "]";
+			}
 		}
 		return string;
 	}

@@ -65,10 +65,15 @@ public class GraphicalUserInterface {
 		};
 		KeyListener keyListener = new KeyListener() {
 			@Override public void keyPressed(KeyEvent e) {
-				if (e.getExtendedKeyCode() == 8) {
+				pressedKey = e.getExtendedKeyCode();
+				if (pressedKey == 8) {
 					input.replaceSelection("");
 				}
-				pressedKey = e.getKeyCode();
+				else if (pressedKey == 10) {
+					synchronized (synchronizerKeyInput) {
+						synchronizerKeyInput.notify();
+					}
+				}
 				synchronized (synchronizerKeyPressed) {
 					synchronizerKeyPressed.notify();
 				}
@@ -223,10 +228,6 @@ public class GraphicalUserInterface {
 		synchronized (synchronizerKeyInput) {
 			synchronizerKeyInput.wait();
 		}
-		if (pressedKey == 8) {
-			System.out.println("hhiiimmmgosuu");
-			input.replaceSelection("ggggggggggggggggg");
-		}
 		return input.getText();
 	}
 
@@ -244,12 +245,18 @@ public class GraphicalUserInterface {
 		input.setCaretColor(Color.WHITE);
 	}
 
+	protected int getLastKey() {
+		return pressedKey;
+	}
+
+	protected void resetLastKey() {
+		pressedKey = 0;
+	}
+
 	protected void setInputText(String string) {
-		if (!string.isEmpty()) {
-			String inputText = input.getText();
-			input.setText(inputText + string);
-			input.select(inputText.length(), (inputText + string).length());
-		}
+		String inputText = input.getText();
+		input.setText(inputText + string);
+		input.select(inputText.length(), (inputText + string).length());
 	}
 
 	protected void showMessageDialog(Throwable e) {

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.date.Date;
+import database.main.date.Time;
 import database.plugin.Command;
 import database.plugin.Instance;
 import database.plugin.OutputFormatter;
@@ -62,7 +63,9 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 		}
 		Collections.sort(appointmentList, new Comparator<Appointment>() {
 			@Override public int compare(Appointment o1, Appointment o2) {
-				return o2.begin.compareTo(o1.begin);
+				Time temp1 = o1.begin != null ? o1.begin : new Time("00:00");
+				Time temp2 = o2.begin != null ? o2.begin : new Time("00:00");
+				return temp2.compareTo(temp1);
 			}
 		});
 		list.addAll(appointmentList);

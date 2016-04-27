@@ -2,4 +2,3 @@ income - aktion mensch check
 expense - mensa request
 accept similar strings for command request // string autocompletion
 task - category
-

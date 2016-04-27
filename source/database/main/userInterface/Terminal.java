@@ -8,6 +8,7 @@ import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.date.Date;
 import database.main.date.Time;
+import database.main.userInterface.autocompletion.Autocompletion;
 import database.plugin.Plugin;
 
 public class Terminal {
@@ -81,43 +82,36 @@ public class Terminal {
 	}
 
 	public static String request(String printOut, String regex) throws InterruptedException, BadLocationException {
-		return request(printOut, regex, "");
+		return request(printOut, regex, "", null);
 	}
 
 	public static String request(String printOut, String regex, String inputText) throws InterruptedException, BadLocationException {
+		return request(printOut, regex, inputText, null);
+	}
+
+	public static String request(String printOut, String regex, Autocompletion autocompletion) throws InterruptedException, BadLocationException {
+		return request(printOut, regex, "", autocompletion);
+	}
+
+	public static String request(String printOut, String regex, String inputText, Autocompletion autocompletion) throws InterruptedException, BadLocationException {
 		boolean request = true;
 		String result = null;
 		String input = null;
-		if (regex != null && regex.equals("()")) {
-			throw new RuntimeException();
+		if (!inputText.isEmpty()) {
+			setInputText(inputText);
 		}
-		setInputText(inputText);
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
-			input = readLine();
+			input = autocompletion != null ? autocompletion.getLine() : readLine();
 			graphicalUserInterface.clearInput();
 			if (input.equals("back")) {
 				throw new CancellationException();
 			}
 			else if (input.equals("help")) {
-				String help = regex;
-				if (regex == null) {
-					help = "(date)";
-				}
-				printLine(help, StringType.SOLUTION, StringFormat.STANDARD);
+				printLine(regex, StringType.SOLUTION, StringFormat.STANDARD);
 				waitForInput();
 			}
-			else if (input.matches(regex)) {
-				result = input;
-				request = false;
-			}
-			else if (regex == "DATE" && Date.testDateString(input)) {
-				// result = new Date(input).toString();
-				result = input;
-				request = false;
-			}
-			else if (regex == "TIME" && Time.testTimeString(input)) {
-				// result = new Time(input).toString();
+			else if (input.matches(regex) || regex == "DATE" && Date.testDateString(input) || regex == "TIME" && Time.testTimeString(input)) {
 				result = input;
 				request = false;
 			}
@@ -134,6 +128,14 @@ public class Terminal {
 
 	public static void showMessageDialog(Throwable e) {
 		graphicalUserInterface.showMessageDialog(e);
+	}
+
+	public static int getLastKey() {
+		return graphicalUserInterface.getLastKey();
+	}
+
+	public static void resetLastKey() {
+		graphicalUserInterface.resetLastKey();
 	}
 
 	public static void update() throws BadLocationException {
