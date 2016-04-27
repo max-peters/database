@@ -20,14 +20,14 @@ public class Appointment extends Event {
 	@Override public Map<String, String> getParameter() {
 		Map<String, String> parameter = new HashMap<String, String>();
 		parameter.putAll(super.getParameter());
-		parameter.put("begin", begin.toString());
-		parameter.put("end", end.toString());
+		parameter.put("begin", begin == null ? "" : begin.toString());
+		parameter.put("end", end == null ? "" : end.toString());
 		return parameter;
 	}
 
 	@Override public void insertParameter(Element element) {
 		super.insertParameter(element);
-		element.setAttribute("begin", begin.toString());
+		element.setAttribute("begin", begin == null ? "" : begin.toString());
 		element.setAttribute("end", end == null ? "" : end.toString());
 	}
 

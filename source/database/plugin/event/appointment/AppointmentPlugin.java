@@ -22,7 +22,8 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 	}
 
 	@Override public Appointment create(Map<String, String> parameter) {
-		return new Appointment(parameter.get("name"), new Date(parameter.get("date")), new Time(parameter.get("begin")), new Time(parameter.get("end")));
+		return new Appointment(	parameter.get("name"), new Date(parameter.get("date")), parameter.get("begin").isEmpty() ? null : new Time(parameter.get("begin")),
+								parameter.get("end").isEmpty() ? null : new Time(parameter.get("end")));
 	}
 
 	@Override public Appointment create(NamedNodeMap nodeMap) {

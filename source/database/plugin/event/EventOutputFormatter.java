@@ -87,7 +87,7 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 				for (int i = line.length(); i < longestNameLength + 3; i++) {
 					line += " ";
 				}
-				lines += line + event.appendToOutput() + System.getProperty("line.separator");
+				lines += " " + line + event.appendToOutput() + System.getProperty("line.separator");
 			}
 		}
 		return lines;

@@ -292,10 +292,10 @@ public class GraphicalUserInterface {
 		int counter = 1;
 		for (String string : collection) {
 			if (counter == currentLine) {
-				output += "\u2611 ";
+				output += " \u2611 ";
 			}
 			else {
-				output += "\u2610 ";
+				output += " \u2610 ";
 			}
 			output += string + System.getProperty("line.separator");
 			counter++;

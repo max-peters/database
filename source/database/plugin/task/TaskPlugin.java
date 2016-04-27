@@ -1,7 +1,6 @@
 package database.plugin.task;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
@@ -31,16 +30,17 @@ public class TaskPlugin extends InstancePlugin<Task> {
 	}
 
 	@Override public Task create(Map<String, String> parameter) {
-		return new Task(parameter.get("name"));
+		return new Task(parameter.get("name"), parameter.get("category"));
 	}
 
 	@Override public Task create(NamedNodeMap nodeMap) {
-		return new Task(nodeMap.getNamedItem("name").getNodeValue());
+		return new Task(nodeMap.getNamedItem("name").getNodeValue(), nodeMap.getNamedItem("category").getNodeValue());
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("name", ".+");
+		map.put("category", ".+");
 		request(map);
 		createAndAdd(map);
 		update();
@@ -50,16 +50,23 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		// nothing to show here
 	}
 
+	public void add(Task toAdd) {
+		int position = -1;
+		for (Task task : list) {
+			if (task.category.equals(toAdd.category)) {
+				position = list.indexOf(task);
+				break;
+			}
+		}
+		list.add(position + 1, toAdd);
+	}
+
 	private Task getTaskByCheckRequest() throws InterruptedException, BadLocationException {
 		boolean display = getDisplay();
 		int position;
 		setDisplay(false);
 		Terminal.update();
-		ArrayList<String> strings = new ArrayList<String>();
-		for (Task task : getIterable()) {
-			strings.add(task.name);
-		}
-		position = Terminal.checkRequest(strings);
+		position = Terminal.checkRequest(((TaskOutputFormatter) formatter).formatOutput(list));
 		setDisplay(display);
 		Terminal.update();
 		if (position != -1) {

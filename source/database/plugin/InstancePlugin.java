@@ -82,9 +82,10 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	}
 
 	public void remove(Instance toRemove) throws BadLocationException {
-		list.remove(toRemove);
-		backup.backupRemoval(toRemove, this);
-		update();
+		if (list.remove(toRemove)) {
+			backup.backupRemoval(toRemove, this);
+			update();
+		}
 	}
 
 	@Command(tag = "show") public void show() throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {

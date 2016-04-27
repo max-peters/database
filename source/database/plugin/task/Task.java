@@ -6,17 +6,19 @@ import org.w3c.dom.Element;
 import database.plugin.Instance;
 
 public class Task extends Instance {
-	public String name;
+	public String	name;
+	public String	category;
 
-	public Task(String name) {
+	public Task(String name, String category) {
 		this.name = name;
+		this.category = category;
 	}
 
 	@Override public boolean equals(Object object) {
 		Task task;
 		if (object != null && object.getClass().equals(this.getClass())) {
 			task = (Task) object;
-			if (name.equals(task.name)) {
+			if (name.equals(task.name) && category.equals(task.category)) {
 				return true;
 			}
 		}
@@ -26,10 +28,12 @@ public class Task extends Instance {
 	@Override public Map<String, String> getParameter() {
 		Map<String, String> parameter = new HashMap<String, String>();
 		parameter.put("name", name);
+		parameter.put("category", category);
 		return parameter;
 	}
 
 	@Override public void insertParameter(Element element) {
 		element.setAttribute("name", name);
+		element.setAttribute("category", category);
 	}
 }
