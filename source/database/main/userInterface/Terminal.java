@@ -43,6 +43,10 @@ public class Terminal {
 		return collectedLines;
 	}
 
+	public static int getLastKey() {
+		return graphicalUserInterface.getLastKey();
+	}
+
 	public static void getLineOfCharacters(char character) throws BadLocationException {
 		graphicalUserInterface.getLineOfCharacters(character);
 	}
@@ -85,12 +89,12 @@ public class Terminal {
 		return request(printOut, regex, "", null);
 	}
 
-	public static String request(String printOut, String regex, String inputText) throws InterruptedException, BadLocationException {
-		return request(printOut, regex, inputText, null);
-	}
-
 	public static String request(String printOut, String regex, Autocompletion autocompletion) throws InterruptedException, BadLocationException {
 		return request(printOut, regex, "", autocompletion);
+	}
+
+	public static String request(String printOut, String regex, String inputText) throws InterruptedException, BadLocationException {
+		return request(printOut, regex, inputText, null);
 	}
 
 	public static String request(String printOut, String regex, String inputText, Autocompletion autocompletion) throws InterruptedException, BadLocationException {
@@ -122,20 +126,16 @@ public class Terminal {
 		return result;
 	}
 
+	public static void resetLastKey() {
+		graphicalUserInterface.resetLastKey();
+	}
+
 	public static void setInputText(String string) {
 		graphicalUserInterface.setInputText(string);
 	}
 
 	public static void showMessageDialog(Throwable e) {
 		graphicalUserInterface.showMessageDialog(e);
-	}
-
-	public static int getLastKey() {
-		return graphicalUserInterface.getLastKey();
-	}
-
-	public static void resetLastKey() {
-		graphicalUserInterface.resetLastKey();
 	}
 
 	public static void update() throws BadLocationException {

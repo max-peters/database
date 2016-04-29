@@ -3,23 +3,19 @@ package database.plugin;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
+import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
 
 public abstract class Plugin {
-	private boolean	changes;
 	private boolean	display;
 	private String	identity;
 
 	public Plugin(String identity) {
 		this.identity = identity;
-		changes = false;
 	}
 
 	public void conduct(String command) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -34,15 +30,8 @@ public abstract class Plugin {
 	}
 
 	@Command(tag = "display") public void display() throws InterruptedException, BadLocationException {
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("display", "(true|false)");
-		request(map);
-		display = Boolean.valueOf(map.get("display"));
-		update();
-	}
-
-	public boolean getChanges() {
-		return changes;
+		display = Boolean.valueOf(Terminal.request("display", "(true|false)"));
+		Terminal.update();
 	}
 
 	public String getCommandTags(Class<?> classWithMethods) {
@@ -71,25 +60,9 @@ public abstract class Plugin {
 
 	public void print(Document document, Element element) {}
 
-	public void read(String nodeName, NamedNodeMap nodeMap) {}
-
-	public void setChanges(boolean changes) {
-		this.changes = changes;
-	}
+	public void read(String nodeName, NamedNodeMap nodeMap) throws ParserConfigurationException {}
 
 	public void setDisplay(boolean display) {
 		this.display = display;
-	}
-
-	public void update() throws BadLocationException {
-		Terminal.update();
-		setChanges(true);
-	}
-
-	protected void request(Map<String, String> map) throws InterruptedException, BadLocationException {
-		for (Entry<String, String> entry : map.entrySet()) {
-			String parameterInformation = Terminal.request(entry.getKey(), entry.getValue());
-			map.replace(entry.getKey(), parameterInformation);
-		}
 	}
 }

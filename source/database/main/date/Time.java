@@ -1,25 +1,14 @@
 package database.main.date;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 public class Time implements Comparable<Time> {
-	private int						hour;
-	private int						minute;
-	private static Calendar			calendar	= Calendar.getInstance();
-	private static SimpleDateFormat	timeFormat	= new SimpleDateFormat("HH:mm:ss");
+	private int	hour;
+	private int	minute;
 
 	public Time(String string) {
 		String[] splitResult = string.split(":");
 		int localHour = 0;
 		int localMinute = 0;
-		if (splitResult.length == 1 && string.isEmpty()) {
-			SimpleDateFormat localTimeFormat = new SimpleDateFormat("HH");
-			localHour = Integer.valueOf(localTimeFormat.format(calendar.getTime()));
-			localTimeFormat = new SimpleDateFormat("mm");
-			localMinute = Integer.valueOf(localTimeFormat.format(calendar.getTime()));
-		}
-		else if (splitResult.length == 1 && !string.isEmpty()) {
+		if (splitResult.length == 1 && !string.isEmpty()) {
 			localHour = Integer.valueOf(splitResult[0]);
 		}
 		else if (splitResult.length == 2) {
@@ -46,10 +35,6 @@ public class Time implements Comparable<Time> {
 
 	@Override public String toString() {
 		return (String.valueOf(hour).length() == 1 ? "0" + hour : hour) + ":" + (String.valueOf(minute).length() == 1 ? "0" + minute : minute);
-	}
-
-	public static String getCurrentTime() {
-		return timeFormat.format(calendar.getTime());
 	}
 
 	public static boolean testTimeString(String timeInformation) {

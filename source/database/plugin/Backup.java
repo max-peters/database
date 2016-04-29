@@ -1,62 +1,59 @@
 package database.plugin;
 
-import java.util.Map;
+import java.io.IOException;
 import javax.swing.text.BadLocationException;
-import database.main.userInterface.StringFormat;
-import database.main.userInterface.StringType;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
+import database.main.PluginContainer;
+import database.main.WriterReader;
 import database.main.userInterface.Terminal;
+import database.plugin.storage.Storage;
 
 public class Backup {
-	private InstancePlugin<?>	instancePlugin;
-	private Map<String, String>	newState;
-	private Map<String, String>	oldState;
+	private Document		backup;
+	private boolean			changes	= false;
+	private PluginContainer	pluginContainer;
+	private Storage			storage;
+	private WriterReader	writerReader;
 
-	public void backupChangeAfter(Instance newState, InstancePlugin<?> instancePlugin) {
-		if (this.instancePlugin != instancePlugin) {
-			throw new RuntimeException();
-		}
-		this.newState = newState.getParameter();
+	public Backup(WriterReader writerReader, PluginContainer pluginContainer, Storage storage) {
+		this.writerReader = writerReader;
+		this.pluginContainer = pluginContainer;
+		this.storage = storage;
 	}
 
-	public void backupChangeBefor(Instance oldState, InstancePlugin<?> instancePlugin) {
-		this.instancePlugin = instancePlugin;
-		this.oldState = oldState.getParameter();
+	public void backup() throws ParserConfigurationException {
+		backup = writerReader.createDocument();
+		changes = true;
 	}
 
-	public void backupCreation(Instance instance, InstancePlugin<?> instancePlugin) {
-		this.instancePlugin = instancePlugin;
-		newState = instance.getParameter();
-		oldState = null;
-	}
-
-	public void backupRemoval(Instance instance, InstancePlugin<?> instancePlugin) {
-		this.instancePlugin = instancePlugin;
-		newState = null;
-		oldState = instance.getParameter();
-	}
-
-	public void cancel() throws BadLocationException, InterruptedException {
-		if (newState != null) {
-			if (oldState != null) {
-				Map<String, String> localOldState = oldState;
-				Map<String, String> localNewState = newState;
-				instancePlugin.remove(instancePlugin.create(newState));
-				instancePlugin.createAndAdd(localOldState);
-				oldState = localNewState;
-				newState = localOldState;
-			}
-			else {
-				instancePlugin.remove(instancePlugin.create(newState));
+	public void clear() throws BadLocationException {
+		for (Plugin plugin : pluginContainer.getPlugins()) {
+			if (plugin instanceof InstancePlugin) {
+				((InstancePlugin<?>) plugin).clearList();
 			}
 		}
-		else if (oldState != null) {
-			instancePlugin.createAndAdd(oldState);
+		storage.clearList();
+	}
+
+	public boolean getChanges() {
+		return changes;
+	}
+
+	public void restore() throws InterruptedException, IOException, SAXException, TransformerException, BadLocationException, ParserConfigurationException {
+		if (backup != null) {
+			Document temp = writerReader.createDocument();
+			clear();
+			writerReader.readDocument(backup);
+			Terminal.update();
+			backup = temp;
 		}
-		else {
-			Terminal.printLine("no command to cancel", StringType.SOLUTION, StringFormat.STANDARD);
-			Terminal.waitForInput();
-		}
-		instancePlugin.setChanges(!instancePlugin.getChanges());
-		Terminal.update();
+	}
+
+	public void save() {
+		backup = null;
+		changes = false;
 	}
 }

@@ -1,7 +1,5 @@
 package database.plugin.event.appointment;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.w3c.dom.Element;
 import database.main.date.Date;
 import database.main.date.Time;
@@ -15,14 +13,6 @@ public class Appointment extends Event {
 		super(name, date);
 		this.begin = begin;
 		this.end = end;
-	}
-
-	@Override public Map<String, String> getParameter() {
-		Map<String, String> parameter = new HashMap<String, String>();
-		parameter.putAll(super.getParameter());
-		parameter.put("begin", begin == null ? "" : begin.toString());
-		parameter.put("end", end == null ? "" : end.toString());
-		return parameter;
 	}
 
 	@Override public void insertParameter(Element element) {

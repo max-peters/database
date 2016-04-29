@@ -13,7 +13,6 @@ import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
-import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
@@ -22,14 +21,12 @@ import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.event.day.DayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
 import database.plugin.settings.Settings;
-import database.plugin.storage.Storage;
 
 public class EventPlugin extends Plugin {
 	private ArrayList<EventPluginExtension<? extends Event>>	extensionList	= new ArrayList<EventPluginExtension<? extends Event>>();
 	private EventOutputFormatter								formatter;
 
-	public EventPlugin(	Storage storage, Backup backup, DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin,
-						Settings settings) {
+	public EventPlugin(DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin, Settings settings) {
 		super("event");
 		extensionList.add(dayPlugin);
 		extensionList.add(birthdayPlugin);
@@ -42,7 +39,7 @@ public class EventPlugin extends Plugin {
 		EventPluginExtension<? extends Event> extension = chooseType();
 		if (extension != null) {
 			extension.createRequest();
-			update();
+			Terminal.update();
 		}
 	}
 
@@ -50,7 +47,7 @@ public class EventPlugin extends Plugin {
 		EventPluginExtension<? extends Event> extension = chooseType();
 		if (extension != null) {
 			extension.display();
-			update();
+			Terminal.update();
 		}
 	}
 
@@ -100,7 +97,7 @@ public class EventPlugin extends Plugin {
 		EventPluginExtension<? extends Event> extension = chooseType();
 		if (extension != null) {
 			extension.store();
-			update();
+			Terminal.update();
 		}
 	}
 

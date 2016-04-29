@@ -1,7 +1,5 @@
 package database.plugin.event;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.w3c.dom.Element;
 import database.main.date.Date;
 import database.plugin.Instance;
@@ -24,13 +22,6 @@ public abstract class Event extends Instance {
 			}
 		}
 		return false;
-	}
-
-	@Override public Map<String, String> getParameter() {
-		Map<String, String> parameter = new HashMap<String, String>();
-		parameter.put("name", name);
-		parameter.put("date", date.toString());
-		return parameter;
 	}
 
 	@Override public void insertParameter(Element element) {

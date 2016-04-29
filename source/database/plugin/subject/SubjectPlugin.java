@@ -1,35 +1,22 @@
 package database.plugin.subject;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
-import database.plugin.Backup;
+import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.storage.Storage;
 
 public class SubjectPlugin extends InstancePlugin<Subject> {
-	public SubjectPlugin(Storage storage, Backup backup) {
-		super("subject", storage, new SubjectOutputFormatter(), backup);
+	public SubjectPlugin(Storage storage) {
+		super("subject", storage, new SubjectOutputFormatter());
 	}
 
 	@Command(tag = "add") public void addRequest() throws InterruptedException, BadLocationException {
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("add", getTagsAsRegex());
-		map.put("score", "[0-9]{1,13}(\\.[0-9]*)?");
-		map.put("maximum points", "[0-9]{1,13}(\\.[0-9]*)?");
-		request(map);
-		Subject toChange = getSubject(map.get("add"));
-		backup.backupChangeBefor(toChange, this);
-		toChange.setGrade(Double.parseDouble(map.get("score")), Double.parseDouble(map.get("maximum points")));
-		backup.backupChangeAfter(toChange, this);
-		update();
-	}
-
-	@Override public Subject create(Map<String, String> parameter) {
-		return new Subject(	parameter.get("name"), parameter.get("tag"), Double.valueOf(parameter.get("score")), Double.valueOf(parameter.get("maxPoints")),
-							Integer.valueOf(parameter.get("counter")));
+		Subject toChange = getSubject(Terminal.request("add", getTagsAsRegex()));
+		toChange.setGrade(	Double.parseDouble(Terminal.request("score", "[0-9]{1,13}(\\.[0-9]*)?")),
+							Double.parseDouble(Terminal.request("maximum points", "[0-9]{1,13}(\\.[0-9]*)?")));
+		Terminal.update();
 	}
 
 	@Override public Subject create(NamedNodeMap nodeMap) {
@@ -38,15 +25,8 @@ public class SubjectPlugin extends InstancePlugin<Subject> {
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
-		Map<String, String> map = new LinkedHashMap<String, String>();
-		map.put("name", "[A-ZÖÄÜ].*");
-		map.put("tag", "[a-zöäüß]*");
-		request(map);
-		map.put("maxPoints", "0");
-		map.put("score", "0");
-		map.put("counter", "0");
-		createAndAdd(map);
-		update();
+		add(new Subject(Terminal.request("name", "[A-ZÖÄÜ].*"), Terminal.request("tag", "[a-zöäüß]*"), 0.0, 0.0, 0));
+		Terminal.update();
 	}
 
 	private Subject getSubject(String tag) {

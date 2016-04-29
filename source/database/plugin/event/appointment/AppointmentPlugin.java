@@ -1,29 +1,22 @@
 package database.plugin.event.appointment;
 
-import java.util.Map;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
 import database.main.date.Time;
 import database.main.userInterface.Terminal;
-import database.plugin.Backup;
 import database.plugin.event.EventPluginExtension;
 import database.plugin.storage.Storage;
 
 public class AppointmentPlugin extends EventPluginExtension<Appointment> {
-	public AppointmentPlugin(Storage storage, Backup backup) {
-		super("appointment", storage, backup);
+	public AppointmentPlugin(Storage storage) {
+		super("appointment", storage);
 	}
 
 	@Override public void add(Appointment appointment) {
 		if (!appointment.date.isPast()) {
 			super.add(appointment);
 		}
-	}
-
-	@Override public Appointment create(Map<String, String> parameter) {
-		return new Appointment(	parameter.get("name"), new Date(parameter.get("date")), parameter.get("begin").isEmpty() ? null : new Time(parameter.get("begin")),
-								parameter.get("end").isEmpty() ? null : new Time(parameter.get("end")));
 	}
 
 	@Override public Appointment create(NamedNodeMap nodeMap) {
@@ -49,6 +42,6 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 			}
 		}
 		add(new Appointment(name, date, begin, temp.isEmpty() ? null : new Time(temp)));
-		update();
+		Terminal.update();
 	}
 }

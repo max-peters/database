@@ -28,8 +28,8 @@ public class Administration {
 		}
 	}
 
-	private void exit() throws InterruptedException, BadLocationException, ParserConfigurationException, TransformerException {
-		if (pluginContainer.changes()) {
+	private void exit() throws InterruptedException, BadLocationException, TransformerException, ParserConfigurationException {
+		if (backup.getChanges()) {
 			String command;
 			command = Terminal.request("there are unsaved changes - exit", "(y|n|s)");
 			switch (command) {
@@ -64,7 +64,7 @@ public class Administration {
 						exit();
 						break;
 					case "cancel":
-						backup.cancel();
+						backup.restore();
 						break;
 				}
 			}
@@ -79,11 +79,11 @@ public class Administration {
 		}
 	}
 
-	private void save() throws BadLocationException, ParserConfigurationException, TransformerException {
+	private void save() throws BadLocationException, TransformerException, ParserConfigurationException {
 		Terminal.blockInput();
 		Terminal.printLine("saving", StringType.REQUEST, StringFormat.ITALIC);
 		writerReader.write();
-		pluginContainer.setUnchanged();
+		backup.save();
 		Terminal.printLine("saved", StringType.REQUEST, StringFormat.ITALIC);
 	}
 }

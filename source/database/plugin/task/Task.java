@@ -1,13 +1,11 @@
 package database.plugin.task;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.w3c.dom.Element;
 import database.plugin.Instance;
 
 public class Task extends Instance {
-	public String	name;
 	public String	category;
+	public String	name;
 
 	public Task(String name, String category) {
 		this.name = name;
@@ -23,13 +21,6 @@ public class Task extends Instance {
 			}
 		}
 		return false;
-	}
-
-	@Override public Map<String, String> getParameter() {
-		Map<String, String> parameter = new HashMap<String, String>();
-		parameter.put("name", name);
-		parameter.put("category", category);
-		return parameter;
 	}
 
 	@Override public void insertParameter(Element element) {

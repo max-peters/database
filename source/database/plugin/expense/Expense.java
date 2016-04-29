@@ -1,7 +1,5 @@
 package database.plugin.expense;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.w3c.dom.Element;
 import database.main.date.Date;
 import database.main.date.Month;
@@ -29,15 +27,6 @@ public class Expense extends Instance {
 			}
 		}
 		return false;
-	}
-
-	@Override public Map<String, String> getParameter() {
-		Map<String, String> parameter = new LinkedHashMap<String, String>();
-		parameter.put("name", name);
-		parameter.put("category", category);
-		parameter.put("value", value.toString());
-		parameter.put("date", date.toString());
-		return parameter;
 	}
 
 	@Override public void insertParameter(Element element) {

@@ -1,19 +1,17 @@
 package database.plugin.expense;
 
-import java.util.Map;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
 import database.main.userInterface.Terminal;
 import database.main.userInterface.autocompletion.Autocompletion;
-import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.storage.Storage;
 
 public class ExpensePlugin extends InstancePlugin<Expense> {
-	public ExpensePlugin(Storage storage, Backup backup) {
-		super("expense", storage, new ExpenseOutputFormatter(), backup);
+	public ExpensePlugin(Storage storage) {
+		super("expense", storage, new ExpenseOutputFormatter());
 	}
 
 	@Override public void add(Expense expense) {
@@ -22,10 +20,6 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 			i--;
 		}
 		list.add(i, expense);
-	}
-
-	@Override public Expense create(Map<String, String> parameter) {
-		return new Expense(parameter.get("name"), parameter.get("category"), Double.valueOf(parameter.get("value")), new Date(parameter.get("date")));
 	}
 
 	@Override public Expense create(NamedNodeMap nodeMap) {
@@ -45,6 +39,6 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 																				})),
 															list),
 						Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?")), new Date(Terminal.request("date", "DATE", Date.getCurrentDate().toString()))));
-		update();
+		Terminal.update();
 	}
 }

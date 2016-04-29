@@ -13,9 +13,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Timer;
 import java.util.TimerTask;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -29,7 +32,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import database.main.date.Date;
-import database.main.date.Time;
 
 public class GraphicalUserInterface {
 	private int				currentLineNumber			= 0;
@@ -102,18 +104,18 @@ public class GraphicalUserInterface {
 		time.setEditable(false);
 		time.setEnabled(false);
 		time.setFont(font);
-		time.setBorder(null);
+		time.setBorder(BorderFactory.createEmptyBorder());
 		time.setBackground(Color.BLACK);
 		time.setDisabledTextColor(Color.WHITE);
 		panel.add(time, BorderLayout.NORTH);
 		output.setEditable(false);
 		output.setEnabled(false);
 		output.setFont(font);
-		output.setBorder(null);
+		output.setBorder(BorderFactory.createEmptyBorder());
 		output.setBackground(Color.BLACK);
 		output.setDisabledTextColor(Color.WHITE);
 		panel.add(output, BorderLayout.CENTER);
-		input.setBorder(null);
+		input.setBorder(BorderFactory.createEmptyBorder());
 		input.setFont(font.deriveFont(Font.ITALIC));
 		input.setCaretColor(Color.WHITE);
 		input.setBackground(Color.BLACK);
@@ -124,8 +126,7 @@ public class GraphicalUserInterface {
 		input.setSelectionColor(Color.WHITE);
 		output.add(input, BorderLayout.AFTER_LAST_LINE);
 		timer.scheduleAtFixedRate(new UpdateTime(time), 0, 500);
-		scrollPane.setViewportBorder(null);
-		scrollPane.setBorder(null);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
 		verticalScrollBar.setPreferredSize(new Dimension(0, 0));
 		verticalScrollBar.setUnitIncrement(10);
@@ -193,6 +194,10 @@ public class GraphicalUserInterface {
 		input.setText("");
 	}
 
+	protected int getLastKey() {
+		return pressedKey;
+	}
+
 	protected void getLineOfCharacters(char character) throws BadLocationException {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < frame.getWidth() / output.getFontMetrics(font).charWidth(character); i++) {
@@ -243,10 +248,6 @@ public class GraphicalUserInterface {
 		input.setFocusable(true);
 		input.grabFocus();
 		input.setCaretColor(Color.WHITE);
-	}
-
-	protected int getLastKey() {
-		return pressedKey;
 	}
 
 	protected void resetLastKey() {
@@ -309,13 +310,14 @@ public class GraphicalUserInterface {
 }
 
 class UpdateTime extends TimerTask {
-	private JTextField timeTextfield;
+	private SimpleDateFormat	timeFormat	= new SimpleDateFormat("HH:mm:ss");
+	private JTextField			timeTextfield;
 
 	UpdateTime(JTextField timeTextfield) {
 		this.timeTextfield = timeTextfield;
 	}
 
 	@Override public void run() {
-		timeTextfield.setText(Date.getCurrentDate() + " " + Time.getCurrentTime());
+		timeTextfield.setText(Date.getCurrentDate().toString() + " " + timeFormat.format(Calendar.getInstance().getTime()));
 	}
 }

@@ -1,11 +1,11 @@
 package database.plugin.storage;
 
 import java.util.ArrayList;
-import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import database.main.userInterface.Terminal;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
@@ -43,15 +43,10 @@ public class Storage extends Plugin {
 	}
 
 	public void store(InstancePlugin<? extends Instance> instancePlugin) throws BadLocationException, InterruptedException {
-		String line;
 		for (Instance instance : instancePlugin.getIterable()) {
-			line = "";
-			for (Entry<String, String> entry : instance.getParameter().entrySet()) {
-				line += entry.getKey() + ": " + entry.getValue() + ", ";
-			}
-			storage.add(line.substring(0, line.lastIndexOf(",")));
+			storage.add(instance.toString().substring(1, instance.toString().length() - 1));
 		}
 		instancePlugin.clearList();
-		instancePlugin.update();
+		Terminal.update();
 	}
 }

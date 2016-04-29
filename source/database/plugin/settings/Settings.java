@@ -37,6 +37,6 @@ public class Settings extends Plugin {
 
 	@Command(tag = "days") public void setDisplayedDays() throws InterruptedException, BadLocationException {
 		eventDisplayRange = Integer.valueOf(Terminal.request("enter event display range [days]", "[0-9]{1,13}"));
-		update();
+		Terminal.update();
 	}
 }

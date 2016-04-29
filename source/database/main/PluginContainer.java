@@ -3,7 +3,6 @@ package database.main;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import database.plugin.Command;
-import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
 public class PluginContainer {
@@ -15,15 +14,6 @@ public class PluginContainer {
 
 	public void addPlugin(Plugin plugin) {
 		plugins.add(plugin);
-	}
-
-	public boolean changes() {
-		for (Plugin plugin : plugins) {
-			if (plugin.getChanges()) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	public Plugin getPlugin(String identity) {
@@ -53,14 +43,5 @@ public class PluginContainer {
 
 	public ArrayList<Plugin> getPlugins() {
 		return plugins;
-	}
-
-	public void setUnchanged() {
-		for (Plugin plugin : plugins) {
-			if (plugin instanceof InstancePlugin) {
-				InstancePlugin<?> current = (InstancePlugin<?>) plugin;
-				current.setChanges(false);
-			}
-		}
 	}
 }

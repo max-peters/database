@@ -28,7 +28,21 @@ public class WriterReader {
 		remoteStorage = new File("Z:/storage.xml");
 	}
 
-	public void read() throws InterruptedException, IOException, ParserConfigurationException, SAXException {
+	public Document createDocument() throws ParserConfigurationException {
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		Document document = documentBuilder.newDocument();
+		Element database = document.createElement("database");
+		document.appendChild(database);
+		for (Plugin currentPlugin : pluginContainer.getPlugins()) {
+			Element element = document.createElement(currentPlugin.getIdentity());
+			currentPlugin.print(document, element);
+			database.appendChild(element);
+		}
+		return document;
+	}
+
+	public void read() throws InterruptedException, IOException, SAXException, ParserConfigurationException {
 		if (!localStorage.exists()) {
 			if (remoteStorage.exists() || connect() == 0) {
 				readFile(remoteStorage);
@@ -39,7 +53,17 @@ public class WriterReader {
 		}
 	}
 
-	public void updateStorage() throws InterruptedException, IOException, ParserConfigurationException, SAXException, TransformerException {
+	public void readDocument(Document document) throws ParserConfigurationException {
+		NodeList nList = document.getElementsByTagName("*");
+		for (int i = 0; i < nList.getLength(); i++) {
+			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
+			if (plugin != null) {
+				plugin.read(nList.item(i).getNodeName(), nList.item(i).getAttributes());
+			}
+		}
+	}
+
+	public void updateStorage() throws InterruptedException, IOException, SAXException, TransformerException, ParserConfigurationException {
 		if ((remoteStorage.exists() || connect() == 0) && localStorage.exists()) {
 			File newestFile = remoteStorage.lastModified() < localStorage.lastModified() ? localStorage : remoteStorage;
 			readFile(newestFile);
@@ -60,29 +84,13 @@ public class WriterReader {
 	private void readFile(File file) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-		Document doc = dBuilder.parse(file);
-		doc.getDocumentElement().normalize();
-		NodeList nList = doc.getElementsByTagName("*");
-		for (int i = 0; i < nList.getLength(); i++) {
-			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
-			if (plugin != null) {
-				plugin.read(nList.item(i).getNodeName(), nList.item(i).getAttributes());
-			}
-		}
+		Document document = dBuilder.parse(file);
+		document.getDocumentElement().normalize();
+		readDocument(document);
 	}
 
 	private void writeFile(File file) throws ParserConfigurationException, TransformerException {
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-		Document document = documentBuilder.newDocument();
-		Element database = document.createElement("database");
-		document.appendChild(database);
-		for (Plugin currentPlugin : pluginContainer.getPlugins()) {
-			Element element = document.createElement(currentPlugin.getIdentity());
-			currentPlugin.print(document, element);
-			database.appendChild(element);
-		}
-		DOMSource domSource = new DOMSource(document);
+		DOMSource domSource = new DOMSource(createDocument());
 		StreamResult streamResult = new StreamResult(file);
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer serializer = tf.newTransformer();

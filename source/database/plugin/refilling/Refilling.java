@@ -1,7 +1,5 @@
 package database.plugin.refilling;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.w3c.dom.Element;
 import database.main.date.Date;
 import database.plugin.Instance;
@@ -32,15 +30,6 @@ public class Refilling extends Instance {
 			}
 		}
 		return false;
-	}
-
-	@Override public Map<String, String> getParameter() {
-		Map<String, String> parameter = new HashMap<String, String>();
-		parameter.put("distance", distance.toString());
-		parameter.put("refuelAmount", refuelAmount.toString());
-		parameter.put("cost", cost.toString());
-		parameter.put("date", date.toString());
-		return parameter;
 	}
 
 	@Override public void insertParameter(Element element) {

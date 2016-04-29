@@ -1,7 +1,5 @@
 package database.plugin.subject;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.w3c.dom.Element;
 import database.plugin.Instance;
 
@@ -29,16 +27,6 @@ public class Subject extends Instance {
 			}
 		}
 		return false;
-	}
-
-	@Override public Map<String, String> getParameter() {
-		Map<String, String> parameter = new HashMap<String, String>();
-		parameter.put("counter", String.valueOf(counter));
-		parameter.put("name", name);
-		parameter.put("tag", tag);
-		parameter.put("score", score.toString());
-		parameter.put("maxPoints", maxPoints.toString());
-		return parameter;
 	}
 
 	@Override public void insertParameter(Element element) {

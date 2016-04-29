@@ -8,29 +8,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
-import database.plugin.Backup;
 import database.plugin.event.EventPluginExtension;
 import database.plugin.storage.Storage;
 
 public class HolidayPlugin extends EventPluginExtension<Holiday> {
-	public HolidayPlugin(Storage storage, Backup backup) {
-		super("holiday", storage, backup);
-	}
-
-	@Override public Holiday create(Map<String, String> parameter) {
-		return new Holiday(parameter.get("name"), new Date(parameter.get("date")));
+	public HolidayPlugin(Storage storage) {
+		super("holiday", storage);
 	}
 
 	@Override public Holiday create(NamedNodeMap nodeMap) {
 		return new Holiday(nodeMap.getNamedItem("name").getNodeValue(), new Date(nodeMap.getNamedItem("date").getNodeValue()));
 	}
 
+	@Override public void createRequest() throws InterruptedException, BadLocationException {
+		// no create request
+	}
+
 	public void updateHolidays() throws IOException {
 		for (Holiday holiday : getIterable()) {
 			if (holiday.date.isPast()) {
 				getHolidays();
+				return;
 			}
 		}
 	}
@@ -49,7 +50,7 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 				map.put("name", name);
 				map.put("date", date);
 				if (list.isEmpty() && !newDate.isPast()) {
-					createAndAdd(map);
+					add(new Holiday(name, new Date(date)));
 				}
 				else {
 					boolean contains = false;
@@ -63,7 +64,7 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 						}
 					}
 					if (!contains && !newDate.isPast()) {
-						createAndAdd(map);
+						add(new Holiday(name, new Date(date)));
 					}
 				}
 			}
