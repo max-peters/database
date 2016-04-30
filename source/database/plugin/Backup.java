@@ -8,8 +8,9 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import database.main.PluginContainer;
 import database.main.WriterReader;
+import database.main.userInterface.StringFormat;
+import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
-import database.plugin.storage.Storage;
 
 public class Backup {
 	private Document		backup;
@@ -24,8 +25,11 @@ public class Backup {
 		this.storage = storage;
 	}
 
-	public void backup() throws ParserConfigurationException {
-		backup = writerReader.createDocument();
+	public void backup() {
+		try {
+			backup = writerReader.createDocument();
+		}
+		catch (ParserConfigurationException e) {}
 		changes = true;
 	}
 
@@ -49,6 +53,10 @@ public class Backup {
 			writerReader.readDocument(backup);
 			Terminal.update();
 			backup = temp;
+		}
+		else {
+			Terminal.printLine("nothing to cancel", StringType.SOLUTION, StringFormat.STANDARD);
+			Terminal.waitForInput();
 		}
 	}
 

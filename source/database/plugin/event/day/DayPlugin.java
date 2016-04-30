@@ -4,12 +4,13 @@ import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
 import database.main.userInterface.Terminal;
+import database.plugin.Backup;
+import database.plugin.Storage;
 import database.plugin.event.EventPluginExtension;
-import database.plugin.storage.Storage;
 
 public class DayPlugin extends EventPluginExtension<Day> {
-	public DayPlugin(Storage storage) {
-		super("day", storage);
+	public DayPlugin(Storage storage, Backup backup) {
+		super("day", storage, backup);
 	}
 
 	@Override public Day create(NamedNodeMap nodeMap) {

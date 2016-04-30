@@ -4,22 +4,25 @@ import java.io.IOException;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
+import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
-import database.plugin.storage.Storage;
+import database.plugin.Storage;
 
 public class TaskPlugin extends InstancePlugin<Task> {
-	public TaskPlugin(Storage storage) {
-		super("task", storage, new TaskOutputFormatter());
+	public TaskPlugin(Storage storage, Backup backup) {
+		super("task", storage, new TaskOutputFormatter(), backup);
 	}
 
 	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException {
 		Task task = getTaskByCheckRequest();
+		backup.backup();
 		task.name = Terminal.request("new name", ".+", task.name);
 		Terminal.update();
 	}
 
 	@Command(tag = "check") public void checkRequest() throws InterruptedException, BadLocationException, IOException {
+		backup.backup();
 		remove(getTaskByCheckRequest());
 		Terminal.update();
 	}
@@ -29,6 +32,7 @@ public class TaskPlugin extends InstancePlugin<Task> {
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
+		backup.backup();
 		add(new Task(Terminal.request("name", ".+"), Terminal.request("category", ".+")));
 		Terminal.update();
 	}

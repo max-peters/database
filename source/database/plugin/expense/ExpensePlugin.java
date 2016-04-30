@@ -5,13 +5,14 @@ import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
 import database.main.userInterface.Terminal;
 import database.main.userInterface.autocompletion.Autocompletion;
+import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
-import database.plugin.storage.Storage;
+import database.plugin.Storage;
 
 public class ExpensePlugin extends InstancePlugin<Expense> {
-	public ExpensePlugin(Storage storage) {
-		super("expense", storage, new ExpenseOutputFormatter());
+	public ExpensePlugin(Storage storage, Backup backup) {
+		super("expense", storage, new ExpenseOutputFormatter(), backup);
 	}
 
 	@Override public void add(Expense expense) {
@@ -33,6 +34,7 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 		name = formatter.getNameByString(Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", new Autocompletion((String input) -> {
 			return formatter.getMostUsedNameByPrefix(input, list);
 		})), list);
+		backup.backup();
 		add(new Expense(name, formatter.getCategoryByString(Terminal.request(	"category", "[A-ZÖÄÜa-zöäüß\\- ]+", formatter.getMostUsedCategoryByPrefixAndName("", name, list),
 																				new Autocompletion((String input) -> {
 																					return formatter.getMostUsedCategoryByPrefixAndName(input, "", list);

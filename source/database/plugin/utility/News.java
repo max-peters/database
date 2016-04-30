@@ -8,10 +8,12 @@ import java.net.URLConnection;
 
 public class News {
 	private String rank;
+	// private int daysTillDecay;
 
 	public News() {
 		try {
 			rank = getRank();
+			// daysTillDecay = getDaysTillDecay();
 		}
 		catch (IOException e) {
 			rank = "404 page not found";
@@ -40,4 +42,10 @@ public class News {
 		in.close();
 		return rank;
 	}
+	// private int getDaysTillDecay() throws IOException {
+	// String line;
+	// int daysTillDecay = 0;
+	//
+	// return daysTillDecay;
+	// }
 }

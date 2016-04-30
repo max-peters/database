@@ -1,12 +1,13 @@
 package database.plugin.event;
 
 import javax.swing.text.BadLocationException;
+import database.plugin.Backup;
 import database.plugin.InstancePlugin;
-import database.plugin.storage.Storage;
+import database.plugin.Storage;
 
 public abstract class EventPluginExtension<T extends Event> extends InstancePlugin<T> {
-	public EventPluginExtension(String identity, Storage storage) {
-		super(identity, storage, null);
+	public EventPluginExtension(String identity, Storage storage, Backup backup) {
+		super(identity, storage, null, backup);
 	}
 
 	@Override public void add(T event) {

@@ -16,13 +16,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import database.plugin.Plugin;
+import database.plugin.Storage;
 
 public class WriterReader {
 	private final File		localStorage;
 	private PluginContainer	pluginContainer;
 	private final File		remoteStorage;
+	private Storage			storage;
 
-	public WriterReader(PluginContainer pluginContainer) {
+	public WriterReader(PluginContainer pluginContainer, Storage storage) {
+		this.storage = storage;
 		this.pluginContainer = pluginContainer;
 		localStorage = new File(System.getProperty("user.home") + "/Documents/storage.xml");
 		remoteStorage = new File("Z:/storage.xml");
@@ -33,12 +36,16 @@ public class WriterReader {
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		Document document = documentBuilder.newDocument();
 		Element database = document.createElement("database");
+		Element element;
 		document.appendChild(database);
 		for (Plugin currentPlugin : pluginContainer.getPlugins()) {
-			Element element = document.createElement(currentPlugin.getIdentity());
+			element = document.createElement(currentPlugin.getIdentity());
 			currentPlugin.print(document, element);
 			database.appendChild(element);
 		}
+		element = document.createElement("storage");
+		storage.print(document, element);
+		database.appendChild(element);
 		return document;
 	}
 
@@ -59,6 +66,9 @@ public class WriterReader {
 			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
 			if (plugin != null) {
 				plugin.read(nList.item(i).getNodeName(), nList.item(i).getAttributes());
+			}
+			else if (nList.item(i).getParentNode().getNodeName().equals("storage")) {
+				storage.read(nList.item(i).getNodeName(), nList.item(i).getAttributes());
 			}
 		}
 	}

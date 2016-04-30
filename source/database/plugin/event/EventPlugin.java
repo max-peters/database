@@ -13,6 +13,7 @@ import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
+import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
@@ -26,8 +27,8 @@ public class EventPlugin extends Plugin {
 	private ArrayList<EventPluginExtension<? extends Event>>	extensionList	= new ArrayList<EventPluginExtension<? extends Event>>();
 	private EventOutputFormatter								formatter;
 
-	public EventPlugin(DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin, Settings settings) {
-		super("event");
+	public EventPlugin(DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin, Settings settings, Backup backup) {
+		super("event", backup);
 		extensionList.add(dayPlugin);
 		extensionList.add(birthdayPlugin);
 		extensionList.add(holidayPlugin);
@@ -38,6 +39,7 @@ public class EventPlugin extends Plugin {
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
 		EventPluginExtension<? extends Event> extension = chooseType();
 		if (extension != null) {
+			backup.backup();
 			extension.createRequest();
 			Terminal.update();
 		}

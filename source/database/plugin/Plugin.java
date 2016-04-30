@@ -11,11 +11,13 @@ import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
 
 public abstract class Plugin {
-	private boolean	display;
-	private String	identity;
+	protected Backup	backup;
+	private boolean		display;
+	private String		identity;
 
-	public Plugin(String identity) {
+	public Plugin(String identity, Backup backup) {
 		this.identity = identity;
+		this.backup = backup;
 	}
 
 	public void conduct(String command) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {

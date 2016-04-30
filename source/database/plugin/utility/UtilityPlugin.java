@@ -4,6 +4,10 @@ import java.io.IOException;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 import database.main.WriterReader;
 import database.main.date.Date;
@@ -15,13 +19,11 @@ import database.plugin.Command;
 import database.plugin.Plugin;
 
 public class UtilityPlugin extends Plugin {
-	private Backup			backup;
 	private News			news;
 	private WriterReader	writerReader;
 
 	public UtilityPlugin(Backup backup, WriterReader writerReader) throws IOException {
-		super("utility");
-		this.backup = backup;
+		super("utility", backup);
 		this.writerReader = writerReader;
 		news = new News();
 	}
@@ -36,6 +38,18 @@ public class UtilityPlugin extends Plugin {
 
 	@Override public void initialOutput() throws BadLocationException {
 		Terminal.printLine(news.getCurrentRank(), StringType.MAIN, StringFormat.STANDARD);
+	}
+
+	@Override public void print(Document document, Element element) {
+		Element entryElement = document.createElement("display");
+		entryElement.setAttribute("boolean", String.valueOf(getDisplay()));
+		element.appendChild(entryElement);
+	}
+
+	@Override public void read(String nodeName, NamedNodeMap nodeMap) throws ParserConfigurationException, DOMException {
+		if (nodeName.equals("display")) {
+			setDisplay(Boolean.valueOf(nodeMap.getNamedItem("boolean").getNodeValue()));
+		}
 	}
 
 	@Command(tag = "update") public void updateStorage()	throws BadLocationException, InterruptedException, IOException, SAXException, TransformerException,

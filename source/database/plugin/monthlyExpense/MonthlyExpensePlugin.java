@@ -12,17 +12,18 @@ import database.main.userInterface.OutputInformation;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
+import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
+import database.plugin.Storage;
 import database.plugin.expense.Expense;
 import database.plugin.expense.ExpensePlugin;
-import database.plugin.storage.Storage;
 
 public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 	private ExpensePlugin expensePlugin;
 
-	public MonthlyExpensePlugin(ExpensePlugin expensePlugin, Storage storage) {
-		super("monthlyexpense", storage, null);
+	public MonthlyExpensePlugin(ExpensePlugin expensePlugin, Storage storage, Backup backup) {
+		super("monthlyexpense", storage, null, backup);
 		this.expensePlugin = expensePlugin;
 	}
 
@@ -54,6 +55,7 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		else {
 			return;
 		}
+		backup.backup();
 		switch (change) {
 			case "name":
 				monthlyExpense.name = Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", monthlyExpense.name);
@@ -75,6 +77,7 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, NumberFormatException {
+		backup.backup();
 		add(new MonthlyExpense(	Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+"), Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+"),
 								Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?")), new Date(Terminal.request("date", "DATE")),
 								ExecutionDay.getExecutionDay(Terminal.request("executionday", "(first|mid|last)"))));
@@ -95,6 +98,7 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		for (Expense expense : getIterable()) {
 			strings.add(expense.name + " - " + expense.category);
 		}
+		backup.backup();
 		remove(list.get(Terminal.checkRequest(strings)));
 	}
 

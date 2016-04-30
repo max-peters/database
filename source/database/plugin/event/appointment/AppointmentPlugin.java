@@ -5,12 +5,13 @@ import org.w3c.dom.NamedNodeMap;
 import database.main.date.Date;
 import database.main.date.Time;
 import database.main.userInterface.Terminal;
+import database.plugin.Backup;
+import database.plugin.Storage;
 import database.plugin.event.EventPluginExtension;
-import database.plugin.storage.Storage;
 
 public class AppointmentPlugin extends EventPluginExtension<Appointment> {
-	public AppointmentPlugin(Storage storage) {
-		super("appointment", storage);
+	public AppointmentPlugin(Storage storage, Backup backup) {
+		super("appointment", storage, backup);
 	}
 
 	@Override public void add(Appointment appointment) {

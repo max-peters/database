@@ -12,15 +12,14 @@ import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
-import database.plugin.storage.Storage;
 
 public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	protected OutputFormatter<T>	formatter;
 	protected LinkedList<T>			list;
 	private Storage					storage;
 
-	public InstancePlugin(String identity, Storage storage, OutputFormatter<T> formatter) {
-		super(identity);
+	public InstancePlugin(String identity, Storage storage, OutputFormatter<T> formatter, Backup backup) {
+		super(identity, backup);
 		this.list = new LinkedList<T>();
 		this.storage = storage;
 		this.formatter = formatter;
@@ -91,6 +90,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	}
 
 	@Command(tag = "store") public void store() throws BadLocationException, InterruptedException {
+		backup.backup();
 		storage.store(this);
 	}
 }
