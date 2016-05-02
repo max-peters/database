@@ -115,7 +115,8 @@ public class Terminal {
 				printLine(regex, StringType.SOLUTION, StringFormat.STANDARD);
 				waitForInput();
 			}
-			else if (input.matches(regex) || regex == "DATE" && Date.testDateString(input) || regex == "TIME" && Time.testTimeString(input)) {
+			else if (input.matches(regex)|| regex == "DATE" && Date.testDateString(input) || regex == "TIME" && Time.testTimeString(input)
+						|| regex == "TIMEn" && (Time.testTimeString(input) || input.isEmpty())) {
 				result = input;
 				request = false;
 			}

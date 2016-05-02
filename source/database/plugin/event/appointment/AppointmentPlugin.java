@@ -33,13 +33,13 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 		Date date;
 		name = Terminal.request("name", ".+");
 		date = new Date(Terminal.request("date", "DATE"));
-		temp = Terminal.request("begin", "TIME");
+		temp = Terminal.request("begin", "TIMEn");
 		begin = temp.isEmpty() ? null : new Time(temp);
 		if (begin != null) {
-			temp = Terminal.request("end", "TIME");
+			temp = Terminal.request("end", "TIMEn");
 			while (!temp.isEmpty() && begin.compareTo(new Time(temp)) <= 0) {
 				Terminal.errorMessage();
-				temp = Terminal.request("end", "TIME");
+				temp = Terminal.request("end", "TIMEn");
 			}
 		}
 		add(new Appointment(name, date, begin, temp.isEmpty() ? null : new Time(temp)));
