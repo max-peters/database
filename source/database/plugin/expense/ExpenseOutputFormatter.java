@@ -16,6 +16,9 @@ import database.plugin.Command;
 import database.plugin.OutputFormatter;
 
 public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
+	private Map<String, Integer>	categoryAmount	= new HashMap<String, Integer>();
+	private Map<String, Integer>	nameAmount		= new HashMap<String, Integer>();
+
 	@Command(tag = "day") public String outputAveragePerDay(Iterable<Expense> iterable) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		double value = 0;
@@ -141,21 +144,28 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month, iterable)) + "€";
 	}
 
-	protected String getMostUsedCategoryByPrefixAndName(String prefix, String name, Iterable<Expense> iterable) {
-		Map<String, Integer> map = new HashMap<String, Integer>();
-		String mostUsedCategory = "";
-		for (Expense expense : iterable) {
-			if (categoryContainsName(expense.category, name, iterable)) {
-				if (!map.containsKey(expense.category)) {
-					map.put(expense.category, 1);
-				}
-				else {
-					map.replace(expense.category, map.get(expense.category) + 1);
-				}
+	protected void addExpense(Expense expense, Iterable<Expense> iterable) {
+		if (categoryContainsName(expense.category, expense.name, iterable)) {
+			if (!categoryAmount.containsKey(expense.category)) {
+				categoryAmount.put(expense.category, 1);
+			}
+			else {
+				categoryAmount.replace(expense.category, categoryAmount.get(expense.category) + 1);
 			}
 		}
-		for (Entry<String, Integer> entry : map.entrySet()) {
-			if (entry.getKey().toLowerCase().startsWith(prefix.toLowerCase()) && (map.get(mostUsedCategory) == null || entry.getValue() > map.get(mostUsedCategory))) {
+		if (!nameAmount.containsKey(expense.name)) {
+			nameAmount.put(expense.name, 1);
+		}
+		else {
+			nameAmount.replace(expense.name, nameAmount.get(expense.name) + 1);
+		}
+	}
+
+	protected String getMostUsedCategoryByPrefixAndName(String prefix, String name, Iterable<Expense> iterable) {
+		String mostUsedCategory = "";
+		for (Entry<String, Integer> entry : categoryAmount.entrySet()) {
+			if (entry.getKey().toLowerCase().startsWith(prefix.toLowerCase())
+				&& (categoryAmount.get(mostUsedCategory) == null || entry.getValue() > categoryAmount.get(mostUsedCategory))) {
 				mostUsedCategory = entry.getKey();
 			}
 		}
@@ -163,18 +173,9 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 	}
 
 	protected String getMostUsedNameByPrefix(String prefix, Iterable<Expense> iterable) {
-		Map<String, Integer> map = new HashMap<String, Integer>();
 		String mostUsedName = "";
-		for (Expense expense : iterable) {
-			if (!map.containsKey(expense.name)) {
-				map.put(expense.name, 1);
-			}
-			else {
-				map.replace(expense.name, map.get(expense.name) + 1);
-			}
-		}
-		for (Entry<String, Integer> entry : map.entrySet()) {
-			if (entry.getKey().toLowerCase().startsWith(prefix.toLowerCase()) && (map.get(mostUsedName) == null || entry.getValue() > map.get(mostUsedName))) {
+		for (Entry<String, Integer> entry : nameAmount.entrySet()) {
+			if (entry.getKey().toLowerCase().startsWith(prefix.toLowerCase()) && (nameAmount.get(mostUsedName) == null || entry.getValue() > nameAmount.get(mostUsedName))) {
 				mostUsedName = entry.getKey();
 			}
 		}

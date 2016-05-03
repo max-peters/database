@@ -21,6 +21,7 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 			i--;
 		}
 		list.add(i, expense);
+		((ExpenseOutputFormatter) formatter).addExpense(expense, list);
 	}
 
 	@Override public Expense create(NamedNodeMap nodeMap) {
