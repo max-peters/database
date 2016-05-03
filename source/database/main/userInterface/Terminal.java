@@ -52,6 +52,7 @@ public class Terminal {
 	}
 
 	public static void initialOutput() throws BadLocationException {
+		System.out.println("again");
 		for (Plugin plugin : pluginContainer.getPlugins()) {
 			if (plugin.getDisplay()) {
 				plugin.initialOutput();

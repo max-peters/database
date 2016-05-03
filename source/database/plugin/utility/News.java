@@ -11,36 +11,38 @@ public class News {
 	// private int daysTillDecay;
 
 	public News() {
-		try {
-			rank = getRank();
-			// daysTillDecay = getDaysTillDecay();
-		}
-		catch (IOException e) {
-			rank = "404 page not found";
-		}
+		// daysTillDecay = getDaysTillDecay();
 	}
 
 	public String getCurrentRank() {
 		return rank;
 	}
 
-	private String getRank() throws IOException {
+	public void setRank() throws IOException {
 		String line;
-		String rank = "";
-		URL url = new URL("http://www.lolking.net/summoner/euw/37588528");
-		URLConnection conn = url.openConnection();
-		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		while ((line = in.readLine()) != null) {
-			if (line.matches(".*<span class=\"tier-flag-.*\">[A-Z ]*</span>.*")) {
-				rank = line.substring(line.indexOf('>') + 1, line.indexOf('<', line.indexOf('>')));
-			}
-			if (line.matches(".*League Points.*")) {
-				rank += " - " + line.substring(line.indexOf('>') + 1, line.indexOf('<', line.indexOf('>')));
-				break;
+		URL url;
+		URLConnection conn;
+		BufferedReader in = null;
+		try {
+			url = new URL("http://www.lolking.net/summoner/euw/37588528");
+			conn = url.openConnection();
+			in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			while ((line = in.readLine()) != null) {
+				if (line.matches(".*<span class=\"tier-flag-.*\">[A-Z ]*</span>.*")) {
+					rank = line.substring(line.indexOf('>') + 1, line.indexOf('<', line.indexOf('>')));
+				}
+				if (line.matches(".*League Points.*")) {
+					rank += " - " + line.substring(line.indexOf('>') + 1, line.indexOf('<', line.indexOf('>')));
+					break;
+				}
 			}
 		}
-		in.close();
-		return rank;
+		catch (IOException e) {
+			rank = "404 page not found";
+		}
+		finally {
+			in.close();
+		}
 	}
 	// private int getDaysTillDecay() throws IOException {
 	// String line;

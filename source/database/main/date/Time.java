@@ -1,5 +1,8 @@
 package database.main.date;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class Time implements Comparable<Time> {
 	private int	hour;
 	private int	minute;
@@ -29,8 +32,13 @@ public class Time implements Comparable<Time> {
 
 	@Override public int compareTo(Time time) {
 		int firstValue = hour * 60 + minute;
-		int secondValue = time.hour * 60 + minute;
+		int secondValue = time.hour * 60 + time.minute;
 		return secondValue - firstValue;
+	}
+
+	public boolean isPast() {
+		SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+		return new Time(timeFormat.format(Calendar.getInstance().getTime())).compareTo(this) < 0;
 	}
 
 	@Override public String toString() {

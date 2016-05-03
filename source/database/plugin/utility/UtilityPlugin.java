@@ -22,10 +22,10 @@ public class UtilityPlugin extends Plugin {
 	private News			news;
 	private WriterReader	writerReader;
 
-	public UtilityPlugin(Backup backup, WriterReader writerReader) throws IOException {
+	public UtilityPlugin(Backup backup, WriterReader writerReader, News news) throws IOException {
 		super("utility", backup);
+		this.news = news;
 		this.writerReader = writerReader;
-		news = new News();
 	}
 
 	@Command(tag = "days") public void calculateDayNumber() throws BadLocationException, InterruptedException {

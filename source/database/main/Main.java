@@ -17,13 +17,35 @@ import database.plugin.refilling.RefillingPlugin;
 import database.plugin.settings.Settings;
 import database.plugin.subject.SubjectPlugin;
 import database.plugin.task.TaskPlugin;
+import database.plugin.utility.News;
 import database.plugin.utility.UtilityPlugin;
 
 public class Main {
 	public static void main(String[] args) {
+		Thread guiThread;
+		Thread newsThread;
 		try {
-			PluginContainer pluginContainer = new PluginContainer();
 			GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
+			guiThread = new Thread(() -> {
+				try {
+					graphicalUserInterface.initialise();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+			guiThread.start();
+			News news = new News();
+			newsThread = new Thread(() -> {
+				try {
+					news.setRank();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+			newsThread.start();
+			PluginContainer pluginContainer = new PluginContainer();
 			Storage storage = new Storage();
 			new Terminal(graphicalUserInterface, pluginContainer);
 			WriterReader writerReader = new WriterReader(pluginContainer, storage);
@@ -40,7 +62,7 @@ public class Main {
 			HolidayPlugin holidayPlugin = new HolidayPlugin(storage, backup);
 			AppointmentPlugin appointmentPlugin = new AppointmentPlugin(storage, backup);
 			EventPlugin eventPlugin = new EventPlugin(dayPlugin, birthdayPlugin, holidayPlugin, appointmentPlugin, settings, backup);
-			UtilityPlugin utilityPlugin = new UtilityPlugin(backup, writerReader);
+			UtilityPlugin utilityPlugin = new UtilityPlugin(backup, writerReader, news);
 			pluginContainer.addPlugin(settings);
 			pluginContainer.addPlugin(utilityPlugin);
 			pluginContainer.addPlugin(subjectPlugin);
@@ -55,9 +77,11 @@ public class Main {
 			pluginContainer.addPlugin(appointmentPlugin);
 			writerReader.read();
 			holidayPlugin.updateHolidays();
-			graphicalUserInterface.setVisible(true);
+			guiThread.join();
+			newsThread.join();
 			Terminal.initialOutput();
 			Terminal.printCollectedLines();
+			graphicalUserInterface.setVisible(true);
 			administration.request();
 		}
 		catch (Throwable e) {

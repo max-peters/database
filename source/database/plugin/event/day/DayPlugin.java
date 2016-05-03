@@ -19,6 +19,5 @@ public class DayPlugin extends EventPluginExtension<Day> {
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {
 		add(new Day(Terminal.request("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)"), new Date(Terminal.request("date", "DATE"))));
-		Terminal.update();
 	}
 }

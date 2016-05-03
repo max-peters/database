@@ -34,23 +34,34 @@ import javax.swing.text.StyledDocument;
 import database.main.date.Date;
 
 public class GraphicalUserInterface {
-	private int				currentLineNumber			= 0;
+	private int				currentLineNumber;
 	private Font			font;
-	private JFrame			frame						= new JFrame("Database");
+	private JFrame			frame;
 	private Image			icon;
-	private JTextField		input						= new JTextField();
-	private JTextPane		output						= new JTextPane();
-	private JPanel			panel						= new JPanel();
-	private int				pressedKey					= 0;
-	private JScrollPane		scrollPane					= new JScrollPane(panel);
-	private StyledDocument	styledDocument				= output.getStyledDocument();
-	private Object			synchronizerInputConfirm	= new Object();
-	private Object			synchronizerKeyInput		= new Object();
-	private Object			synchronizerKeyPressed		= new Object();
-	private JTextField		time						= new JTextField();
-	private Timer			timer						= new Timer();
+	private JTextField		input;
+	private JTextPane		output;
+	private JPanel			panel;
+	private int				pressedKey;
+	private JScrollPane		scrollPane;
+	private StyledDocument	styledDocument;
+	private Object			synchronizerInputConfirm;
+	private Object			synchronizerKeyInput;
+	private Object			synchronizerKeyPressed;
+	private JTextField		time;
+	private Timer			timer;
 
-	public GraphicalUserInterface() throws FontFormatException, IOException, InterruptedException {
+	public void initialise() throws FontFormatException, IOException {
+		frame = new JFrame("Database");
+		input = new JTextField();
+		output = new JTextPane();
+		panel = new JPanel();
+		scrollPane = new JScrollPane(panel);
+		styledDocument = output.getStyledDocument();
+		synchronizerInputConfirm = new Object();
+		synchronizerKeyInput = new Object();
+		synchronizerKeyPressed = new Object();
+		time = new JTextField();
+		timer = new Timer();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		InputStream inputStream = classLoader.getResourceAsStream("DejaVuSansMono.ttf");

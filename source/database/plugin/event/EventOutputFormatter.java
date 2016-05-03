@@ -38,11 +38,9 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 
 	private ArrayList<Event> getNearEvents(Iterable<? extends Event> iterable) {
 		Date currentDate = Date.getCurrentDate();
-		Date localDate;
 		ArrayList<Event> nearEvents = new ArrayList<Event>();
 		for (Event event : iterable) {
-			localDate = event.updateYear();
-			if (localDate.compareTo(currentDate) < settings.getDisplayedDays()) {
+			if (event.updateYear().compareTo(currentDate) < settings.getDisplayedDays()) {
 				nearEvents.add(event);
 			}
 		}

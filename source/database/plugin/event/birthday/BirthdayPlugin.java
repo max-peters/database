@@ -19,6 +19,5 @@ public class BirthdayPlugin extends EventPluginExtension<Birthday> {
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {
 		add(new Birthday(Terminal.request("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)"), new Date(Terminal.request("date", "DATE"))));
-		Terminal.update();
 	}
 }

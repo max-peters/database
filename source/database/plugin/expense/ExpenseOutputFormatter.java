@@ -130,6 +130,21 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		return print;
 	}
 
+	protected void addExpense(Expense expense, Iterable<Expense> iterable) {
+		if (!categoryAmount.containsKey(expense.category)) {
+			categoryAmount.put(expense.category, 1);
+		}
+		else {
+			categoryAmount.replace(expense.category, categoryAmount.get(expense.category) + 1);
+		}
+		if (!nameAmount.containsKey(expense.name)) {
+			nameAmount.put(expense.name, 1);
+		}
+		else {
+			nameAmount.replace(expense.name, nameAmount.get(expense.name) + 1);
+		}
+	}
+
 	protected String getCategoryByString(String name, Iterable<Expense> iterable) {
 		for (Expense expense : iterable) {
 			if (expense.category.equalsIgnoreCase(name)) {
@@ -144,29 +159,14 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		return "total expenditure this mounth: " + format.format(value(Date.getCurrentDate().month, iterable)) + "€";
 	}
 
-	protected void addExpense(Expense expense, Iterable<Expense> iterable) {
-		if (categoryContainsName(expense.category, expense.name, iterable)) {
-			if (!categoryAmount.containsKey(expense.category)) {
-				categoryAmount.put(expense.category, 1);
-			}
-			else {
-				categoryAmount.replace(expense.category, categoryAmount.get(expense.category) + 1);
-			}
-		}
-		if (!nameAmount.containsKey(expense.name)) {
-			nameAmount.put(expense.name, 1);
-		}
-		else {
-			nameAmount.replace(expense.name, nameAmount.get(expense.name) + 1);
-		}
-	}
-
 	protected String getMostUsedCategoryByPrefixAndName(String prefix, String name, Iterable<Expense> iterable) {
 		String mostUsedCategory = "";
 		for (Entry<String, Integer> entry : categoryAmount.entrySet()) {
-			if (entry.getKey().toLowerCase().startsWith(prefix.toLowerCase())
-				&& (categoryAmount.get(mostUsedCategory) == null || entry.getValue() > categoryAmount.get(mostUsedCategory))) {
-				mostUsedCategory = entry.getKey();
+			if (categoryContainsName(entry.getKey(), name, iterable)) {
+				if (entry.getKey().toLowerCase().startsWith(prefix.toLowerCase())
+					&& (categoryAmount.get(mostUsedCategory) == null || entry.getValue() > categoryAmount.get(mostUsedCategory))) {
+					mostUsedCategory = entry.getKey();
+				}
 			}
 		}
 		return !nameExists(name, iterable) && prefix.isEmpty() ? "" : mostUsedCategory.isEmpty() ? "" : mostUsedCategory.substring(prefix.length());
