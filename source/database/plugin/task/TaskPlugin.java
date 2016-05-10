@@ -17,9 +17,11 @@ public class TaskPlugin extends InstancePlugin<Task> {
 
 	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException {
 		Task task = getTaskByCheckRequest();
-		backup.backup();
-		task.name = Terminal.request("new name", ".+", task.name);
-		Terminal.update();
+		if (task != null) {
+			backup.backup();
+			task.name = Terminal.request("new name", ".+", task.name);
+			Terminal.update();
+		}
 	}
 
 	@Command(tag = "check") public void checkRequest() throws InterruptedException, BadLocationException, IOException {
