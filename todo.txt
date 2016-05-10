@@ -2,3 +2,4 @@ income - aktion mensch check
 expense - mensa request // bei eingabe in vorderen wortteil springt curser an schluss
 accept similar strings for command request // string autocompletion
 news - days till decay
+equals korret implementieren

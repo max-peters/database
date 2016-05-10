@@ -72,7 +72,7 @@ public class Main {
 			holidayPlugin.updateHolidays();
 			guiThread.join();
 			graphicalUserInterface.setVisible(true);
-			Terminal.initialOutput();
+			Terminal.update();
 			Terminal.printCollectedLines();
 			administration.request();
 		}

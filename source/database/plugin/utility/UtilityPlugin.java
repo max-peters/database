@@ -55,10 +55,9 @@ public class UtilityPlugin extends Plugin {
 	}
 
 	@Override public void setDisplay(boolean display) {
-		Thread newsThread;
 		super.setDisplay(display);
 		if (display == true) {
-			newsThread = new Thread(() -> {
+			new Thread(() -> {
 				try {
 					news.setRank();
 					guiThread.join();
@@ -68,8 +67,7 @@ public class UtilityPlugin extends Plugin {
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-			});
-			newsThread.start();
+			}).start();
 		}
 	};
 
@@ -79,6 +77,18 @@ public class UtilityPlugin extends Plugin {
 		Terminal.blockInput();
 		backup.clear();
 		writerReader.updateStorage();
+		Terminal.update();
+	}
+
+	@Command(tag = "test") public void test() throws BadLocationException {
+		new Thread(() -> {
+			try {
+				Terminal.update();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}).start();
 		Terminal.update();
 	}
 }

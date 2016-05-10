@@ -1,6 +1,7 @@
 package database.plugin.task;
 
 import java.io.IOException;
+import java.util.List;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
@@ -43,15 +44,32 @@ public class TaskPlugin extends InstancePlugin<Task> {
 
 	private Task getTaskByCheckRequest() throws InterruptedException, BadLocationException {
 		boolean display = getDisplay();
+		String string;
+		String[] splitResult;
 		int position;
+		Task temp = null;
+		List<String> stringList = ((TaskOutputFormatter) formatter).formatOutput(list);
 		setDisplay(false);
 		Terminal.update();
-		position = Terminal.checkRequest(((TaskOutputFormatter) formatter).formatOutput(list));
+		position = Terminal.checkRequest(stringList);
 		setDisplay(display);
 		Terminal.update();
 		if (position != -1) {
-			return list.get(position);
+			string = stringList.get(position);
 		}
-		return null;
+		else {
+			return temp;
+		}
+		splitResult = string.split("-");
+		while (splitResult[0].endsWith(" ")) {
+			splitResult[0] = splitResult[0].substring(0, splitResult[0].length() - 1);
+		}
+		splitResult[1] = splitResult[1].substring(1);
+		for (Task task : list) {
+			if (task.category.equals(splitResult[0]) && (task.name.equals(splitResult[1]))) {
+				temp = task;
+			}
+		}
+		return temp;
 	}
 }

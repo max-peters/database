@@ -8,7 +8,7 @@ import java.net.URLConnection;
 
 public class News {
 	// private int daysTillDecay;
-	private String rank = "fetching in progress";
+	private String rank;
 
 	public String getCurrentRank() {
 		return rank;
@@ -19,6 +19,7 @@ public class News {
 		URL url;
 		URLConnection conn;
 		BufferedReader in = null;
+		rank = "fetching in progress";
 		try {
 			url = new URL("http://www.lolking.net/summoner/euw/37588528");
 			conn = url.openConnection();
@@ -41,9 +42,7 @@ public class News {
 		}
 	}
 	// private int getDaysTillDecay() throws IOException {
-	// String line;
 	// int daysTillDecay = 0;
-	//
 	// return daysTillDecay;
 	// }
 }

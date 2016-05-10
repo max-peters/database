@@ -52,7 +52,7 @@ public class Terminal {
 		graphicalUserInterface.getLineOfCharacters(character);
 	}
 
-	public static void initialOutput() throws BadLocationException {
+	public static synchronized void initialOutput() throws BadLocationException {
 		for (Plugin plugin : pluginContainer.getPlugins()) {
 			if (plugin.getDisplay()) {
 				plugin.initialOutput();
@@ -160,7 +160,7 @@ public class Terminal {
 		graphicalUserInterface.showMessageDialog(e);
 	}
 
-	public static void update() throws BadLocationException {
+	public static synchronized void update() throws BadLocationException {
 		graphicalUserInterface.update();
 	}
 
