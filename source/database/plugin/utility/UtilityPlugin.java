@@ -19,13 +19,15 @@ import database.plugin.Command;
 import database.plugin.Plugin;
 
 public class UtilityPlugin extends Plugin {
+	private Thread			guiThread;
 	private News			news;
 	private WriterReader	writerReader;
 
-	public UtilityPlugin(Backup backup, WriterReader writerReader, News news) throws IOException {
+	public UtilityPlugin(Backup backup, WriterReader writerReader, News news, Thread guiThread) throws IOException {
 		super("utility", backup);
 		this.news = news;
 		this.writerReader = writerReader;
+		this.guiThread = guiThread;
 	}
 
 	@Command(tag = "days") public void calculateDayNumber() throws BadLocationException, InterruptedException {
@@ -51,6 +53,25 @@ public class UtilityPlugin extends Plugin {
 			setDisplay(Boolean.valueOf(nodeMap.getNamedItem("boolean").getNodeValue()));
 		}
 	}
+
+	@Override public void setDisplay(boolean display) {
+		Thread newsThread;
+		super.setDisplay(display);
+		if (display == true) {
+			newsThread = new Thread(() -> {
+				try {
+					news.setRank();
+					guiThread.join();
+					Terminal.update();
+					Terminal.printLine("command:", StringType.REQUEST, StringFormat.ITALIC);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+			newsThread.start();
+		}
+	};
 
 	@Command(tag = "update") public void updateStorage()	throws BadLocationException, InterruptedException, IOException, SAXException, TransformerException,
 															ParserConfigurationException {

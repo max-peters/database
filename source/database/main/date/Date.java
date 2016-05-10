@@ -45,6 +45,23 @@ public class Date implements Comparable<Date> {
 		}
 	}
 
+	public void addDays(int offset) {
+		for (int i = 0; i < offset; i++) {
+			if (day.counter + 1 <= month.getDayCount()) {
+				day = month.days[day.counter];
+			}
+			else if (month.counter + 1 <= 12) {
+				day = month.days[day.counter - month.getDayCount()];
+				month = year.months[month.counter];
+			}
+			else {
+				year = new Year(year.counter + 1);
+				day = month.days[day.counter - month.getDayCount()];
+				month = year.months[0];
+			}
+		}
+	}
+
 	@Override public int compareTo(Date date) {
 		int startYear = year.counter < date.year.counter ? year.counter : date.year.counter;
 		return calculateDaySum(this, startYear) - calculateDaySum(date, startYear);

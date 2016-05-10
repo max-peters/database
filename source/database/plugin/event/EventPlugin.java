@@ -21,18 +21,21 @@ import database.plugin.event.appointment.AppointmentPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.event.day.DayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
+import database.plugin.event.weeklyAppointment.WeeklyAppointmentPlugin;
 import database.plugin.settings.Settings;
 
 public class EventPlugin extends Plugin {
 	private ArrayList<EventPluginExtension<? extends Event>>	extensionList	= new ArrayList<EventPluginExtension<? extends Event>>();
 	private EventOutputFormatter								formatter;
 
-	public EventPlugin(DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin, Settings settings, Backup backup) {
+	public EventPlugin(	DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin,
+						WeeklyAppointmentPlugin weeklyAppointmentPlugin, Settings settings, Backup backup) {
 		super("event", backup);
 		extensionList.add(dayPlugin);
 		extensionList.add(birthdayPlugin);
 		extensionList.add(holidayPlugin);
 		extensionList.add(appointmentPlugin);
+		extensionList.add(weeklyAppointmentPlugin);
 		formatter = new EventOutputFormatter(settings);
 	}
 

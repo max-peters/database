@@ -31,7 +31,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
-import database.main.date.Date;
 
 public class GraphicalUserInterface {
 	private int				currentLineNumber;
@@ -321,6 +320,7 @@ public class GraphicalUserInterface {
 }
 
 class UpdateTime extends TimerTask {
+	SimpleDateFormat			dateFormat	= new SimpleDateFormat("dd.MM.yyyy");
 	private SimpleDateFormat	timeFormat	= new SimpleDateFormat("HH:mm:ss");
 	private JTextField			timeTextfield;
 
@@ -329,6 +329,6 @@ class UpdateTime extends TimerTask {
 	}
 
 	@Override public void run() {
-		timeTextfield.setText(Date.getCurrentDate().toString() + " " + timeFormat.format(Calendar.getInstance().getTime()));
+		timeTextfield.setText(dateFormat.format(Calendar.getInstance().getTime()) + " " + timeFormat.format(Calendar.getInstance().getTime()));
 	}
 }

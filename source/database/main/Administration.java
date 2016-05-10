@@ -48,7 +48,7 @@ public class Administration {
 	private void inputRequestAdministration() throws Exception {
 		String command = null;
 		try {
-			command = Terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "cancel|exit|save)");
+			command = Terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "cancel|exit|save)", 1);
 			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx())) {
 				Plugin plugin = pluginContainer.getPlugin(command);
 				command = Terminal.request(command, plugin.getCommandTags(plugin.getClass()));

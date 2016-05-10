@@ -40,7 +40,7 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 		Date currentDate = Date.getCurrentDate();
 		ArrayList<Event> nearEvents = new ArrayList<Event>();
 		for (Event event : iterable) {
-			if (event.updateYear().compareTo(currentDate) < settings.getDisplayedDays()) {
+			if (event.updateYear().compareTo(currentDate) <= settings.getDisplayedDays()) {
 				nearEvents.add(event);
 			}
 		}

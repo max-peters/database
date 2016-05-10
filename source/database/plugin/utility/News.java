@@ -7,12 +7,8 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class News {
-	private String rank;
 	// private int daysTillDecay;
-
-	public News() {
-		// daysTillDecay = getDaysTillDecay();
-	}
+	private String rank = "fetching in progress";
 
 	public String getCurrentRank() {
 		return rank;

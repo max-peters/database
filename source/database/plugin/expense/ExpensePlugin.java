@@ -31,17 +31,18 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
 		ExpenseOutputFormatter formatter = (ExpenseOutputFormatter) this.formatter;
-		String name;
-		name = formatter.getNameByString(Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", new Autocompletion((String input) -> {
+		String name = formatter.getNameByString(Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", new Autocompletion((String input) -> {
 			return formatter.getMostUsedNameByPrefix(input, list);
 		})), list);
+		String category = formatter.getCategoryByString(Terminal.request(	"category", "[A-ZÖÄÜa-zöäüß\\- ]+", formatter.getMostUsedCategoryByPrefixAndName("", name, list),
+																			new Autocompletion((String input) -> {
+																				return formatter.getMostUsedCategoryByPrefixAndName(input, "", list);
+																			})),
+														list);
+		Double value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
+		Date date = new Date(Terminal.request("date", "DATE", Date.getCurrentDate().toString()));
 		backup.backup();
-		add(new Expense(name, formatter.getCategoryByString(Terminal.request(	"category", "[A-ZÖÄÜa-zöäüß\\- ]+", formatter.getMostUsedCategoryByPrefixAndName("", name, list),
-																				new Autocompletion((String input) -> {
-																					return formatter.getMostUsedCategoryByPrefixAndName(input, "", list);
-																				})),
-															list),
-						Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?")), new Date(Terminal.request("date", "DATE", Date.getCurrentDate().toString()))));
+		add(new Expense(name, category, value, date));
 		Terminal.update();
 	}
 }

@@ -15,7 +15,7 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 	}
 
 	@Override public void add(Appointment appointment) {
-		if (!appointment.date.isPast() && !appointment.date.isToday()
+		if (!appointment.date.isPast() && !appointment.date.isToday()|| appointment.date.isToday() && appointment.begin == null
 			|| appointment.date.isToday() && appointment.begin != null && appointment.end == null && !appointment.begin.isPast()
 			|| appointment.date.isToday() && appointment.begin != null && appointment.end != null && !appointment.end.isPast()) {
 			super.add(appointment);
@@ -35,13 +35,13 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 		Date date;
 		name = Terminal.request("name", ".+");
 		date = new Date(Terminal.request("date", "DATE"));
-		temp = Terminal.request("begin", "TIMEn");
+		temp = Terminal.request("begin", "(TIME|)");
 		begin = temp.isEmpty() ? null : new Time(temp);
 		if (begin != null) {
-			temp = Terminal.request("end", "TIMEn");
+			temp = Terminal.request("end", "(TIME|)");
 			while (!temp.isEmpty() && begin.compareTo(new Time(temp)) <= 0) {
 				Terminal.errorMessage();
-				temp = Terminal.request("end", "TIMEn");
+				temp = Terminal.request("end", "(TIME|)");
 			}
 		}
 		add(new Appointment(name, date, begin, temp.isEmpty() ? null : new Time(temp)));

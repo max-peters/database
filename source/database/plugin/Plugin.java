@@ -32,7 +32,7 @@ public abstract class Plugin {
 	}
 
 	@Command(tag = "display") public void display() throws InterruptedException, BadLocationException {
-		display = Boolean.valueOf(Terminal.request("display", "(true|false)"));
+		setDisplay(Boolean.valueOf(Terminal.request("display", "(true|false)")));
 		Terminal.update();
 	}
 

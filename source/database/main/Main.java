@@ -11,6 +11,7 @@ import database.plugin.event.appointment.AppointmentPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.event.day.DayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
+import database.plugin.event.weeklyAppointment.WeeklyAppointmentPlugin;
 import database.plugin.expense.ExpensePlugin;
 import database.plugin.monthlyExpense.MonthlyExpensePlugin;
 import database.plugin.refilling.RefillingPlugin;
@@ -23,7 +24,6 @@ import database.plugin.utility.UtilityPlugin;
 public class Main {
 	public static void main(String[] args) {
 		Thread guiThread;
-		Thread newsThread;
 		try {
 			GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
 			guiThread = new Thread(() -> {
@@ -35,18 +35,9 @@ public class Main {
 				}
 			});
 			guiThread.start();
-			News news = new News();
-			newsThread = new Thread(() -> {
-				try {
-					news.setRank();
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-			});
-			newsThread.start();
 			PluginContainer pluginContainer = new PluginContainer();
 			Storage storage = new Storage();
+			News news = new News();
 			new Terminal(graphicalUserInterface, pluginContainer);
 			WriterReader writerReader = new WriterReader(pluginContainer, storage);
 			Backup backup = new Backup(writerReader, pluginContainer, storage);
@@ -61,8 +52,9 @@ public class Main {
 			BirthdayPlugin birthdayPlugin = new BirthdayPlugin(storage, backup);
 			HolidayPlugin holidayPlugin = new HolidayPlugin(storage, backup);
 			AppointmentPlugin appointmentPlugin = new AppointmentPlugin(storage, backup);
-			EventPlugin eventPlugin = new EventPlugin(dayPlugin, birthdayPlugin, holidayPlugin, appointmentPlugin, settings, backup);
-			UtilityPlugin utilityPlugin = new UtilityPlugin(backup, writerReader, news);
+			WeeklyAppointmentPlugin weeklyAppointmentPlugin = new WeeklyAppointmentPlugin(storage, backup);
+			EventPlugin eventPlugin = new EventPlugin(dayPlugin, birthdayPlugin, holidayPlugin, appointmentPlugin, weeklyAppointmentPlugin, settings, backup);
+			UtilityPlugin utilityPlugin = new UtilityPlugin(backup, writerReader, news, guiThread);
 			pluginContainer.addPlugin(settings);
 			pluginContainer.addPlugin(utilityPlugin);
 			pluginContainer.addPlugin(subjectPlugin);
@@ -75,13 +67,13 @@ public class Main {
 			pluginContainer.addPlugin(birthdayPlugin);
 			pluginContainer.addPlugin(holidayPlugin);
 			pluginContainer.addPlugin(appointmentPlugin);
+			pluginContainer.addPlugin(weeklyAppointmentPlugin);
 			writerReader.read();
 			holidayPlugin.updateHolidays();
 			guiThread.join();
-			newsThread.join();
+			graphicalUserInterface.setVisible(true);
 			Terminal.initialOutput();
 			Terminal.printCollectedLines();
-			graphicalUserInterface.setVisible(true);
 			administration.request();
 		}
 		catch (Throwable e) {
