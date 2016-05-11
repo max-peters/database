@@ -24,6 +24,19 @@ public class Year {
 		return dayCount;
 	}
 
+	public boolean equals(Object object) {
+		if (object == null || !object.getClass().equals(Year.class)) {
+			return false;
+		}
+		Year year = (Year) object;
+		if (year.counter == counter) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	@Override public String toString() {
 		return String.valueOf(counter);
 	}

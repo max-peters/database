@@ -33,7 +33,7 @@ public abstract class Event extends Instance {
 		Date localDate = null;
 		Date currentDate = Date.getCurrentDate();
 		if (currentDate.month.counter > date.month.counter || currentDate.month.counter == date.month.counter && currentDate.day.counter > date.day.counter) {
-			localDate = new Date(date.day.counter + "." + date.month.counter + "." + String.valueOf(currentDate.year.counter + 1));
+			localDate = new Date(date.day.counter + "." + date.month.counter + "." + (currentDate.year.counter + 1));
 		}
 		else {
 			localDate = new Date(date.day.counter + "." + date.month.counter + "." + currentDate.year.counter);
@@ -41,5 +41,5 @@ public abstract class Event extends Instance {
 		return localDate;
 	}
 
-	protected abstract String appendToOutput();
+	protected abstract String getAdditionToOutput();
 }

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -19,24 +20,33 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 	private Map<String, Integer>	categoryAmount	= new HashMap<String, Integer>();
 	private Map<String, Integer>	nameAmount		= new HashMap<String, Integer>();
 
-	@Command(tag = "day") public String outputAveragePerDay(Iterable<Expense> iterable) {
+	@Command(tag = "average") public String outputAverage(Iterable<Expense> iterable) {
 		DecimalFormat format = new DecimalFormat("#0.00");
-		double value = 0;
+		double monthValue = 0;
+		double yearValue = 0;
 		int dayCounter = 0;
-		for (Month month : getMonths(iterable)) {
-			value = value + value(month, iterable);
+		String yearAverage;
+		String monthAverage;
+		String dayAverage;
+		List<Month> monthList = getMonths(iterable);
+		monthList.remove(monthList.size() - 1);
+		for (Month month : monthList) {
+			double value = value(month, iterable);
+			monthValue = monthValue + value;
 			dayCounter = dayCounter + month.getDayCount();
 		}
-		return "average value per day: " + format.format(value / dayCounter) + "€";
-	}
-
-	@Command(tag = "average") public String outputAveragePerMonth(Iterable<Expense> iterable) {
-		DecimalFormat format = new DecimalFormat("#0.00");
-		double value = 0;
-		for (Month month : getMonths(iterable)) {
-			value = value + value(month, iterable);
+		yearValue = ((monthValue / monthList.size()) * 12 + (monthValue / dayCounter) * 365.25) / 2;
+		yearAverage = "  - year  :  " + format.format(yearValue) + "€";
+		monthAverage = "  - month :  " + format.format(monthValue / monthList.size()) + "€";
+		dayAverage = "  - day   :  " + format.format(monthValue / dayCounter) + "€";
+		while (yearAverage.length() > monthAverage.length()) {
+			monthAverage = monthAverage.replaceFirst(": ", ":  ");
 		}
-		return "average value per month: " + format.format(value / getMonths(iterable).size()) + "€";
+		while (monthAverage.length() > dayAverage.length()) {
+			dayAverage = dayAverage.replaceFirst(": ", ":  ");
+		}
+		return " average value per"+ System.getProperty("line.separator") + dayAverage + System.getProperty("line.separator") + monthAverage + System.getProperty("line.separator")
+				+ yearAverage;
 	}
 
 	@Command(tag = "category") public String outputCategory(Iterable<Expense> iterable) {
@@ -107,9 +117,19 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 	@Command(tag = "month") public String outputMonth(Iterable<Expense> iterable) {
 		DecimalFormat format = new DecimalFormat("#0.00");
 		String output = "";
+		int valueLength = 0;
 		for (Month month : getMonths(iterable)) {
-			output = output+ String.format("%2s", month.counter).replace(" ", "0") + "/" + month.year.counter + " : " + format.format(value(month, iterable)) + "€"
-						+ System.getProperty("line.separator");
+			String temp = format.format(value(month, iterable));
+			if (temp.length() > valueLength) {
+				valueLength = temp.length();
+			}
+		}
+		for (Month month : getMonths(iterable)) {
+			String value = format.format(value(month, iterable)) + "€";
+			while (value.length() < valueLength + 1) {
+				value = " " + value;
+			}
+			output += " " + String.format("%2s", month.counter).replace(" ", "0") + "/" + month.year.counter + " : " + value + System.getProperty("line.separator");
 		}
 		return output;
 	}

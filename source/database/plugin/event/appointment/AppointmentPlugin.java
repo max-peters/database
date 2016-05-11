@@ -18,7 +18,14 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 		if (!appointment.date.isPast() && !appointment.date.isToday()|| appointment.date.isToday() && appointment.begin == null
 			|| appointment.date.isToday() && appointment.begin != null && appointment.end == null && !appointment.begin.isPast()
 			|| appointment.date.isToday() && appointment.begin != null && appointment.end != null && !appointment.end.isPast()) {
-			super.add(appointment);
+			int i = list.size();
+			while (i > 0 && list.get(i - 1).date.compareTo(appointment.date) > 0
+					|| (i > 0)&& list.get(i - 1).date.compareTo(appointment.date) == 0
+						&& (list.get(i - 1).begin != null ? list.get(i - 1).begin : new Time("00:00")).compareTo(appointment.begin != null	? appointment.begin
+																																			: new Time("00:00")) < 0) {
+				i--;
+			}
+			list.add(i, appointment);
 		}
 	}
 

@@ -8,7 +8,7 @@ public class Birthday extends Event {
 		super(name, date);
 	}
 
-	@Override protected String appendToOutput() {
+	@Override protected String getAdditionToOutput() {
 		return "[" + getAge() + "]";
 	}
 
