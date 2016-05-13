@@ -41,7 +41,7 @@ public class SubjectOutputFormatter extends OutputFormatter<Subject> {
 				nameLength = subject.name.length() > nameLength ? subject.name.length() : nameLength;
 			}
 			for (Subject subject : iterable) {
-				builder.append(subject.name);
+				builder.append(" " + subject.name);
 				for (int i = subject.name.length(); i < nameLength + 4; i++) {
 					builder.append(" ");
 				}

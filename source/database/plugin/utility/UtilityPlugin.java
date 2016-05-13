@@ -22,6 +22,7 @@ public class UtilityPlugin extends Plugin {
 	private Thread			guiThread;
 	private News			news;
 	private WriterReader	writerReader;
+	private Thread			launcher;
 
 	public UtilityPlugin(Backup backup, WriterReader writerReader, News news, Thread guiThread) throws IOException {
 		super("utility", backup);
@@ -39,7 +40,12 @@ public class UtilityPlugin extends Plugin {
 	}
 
 	@Override public void initialOutput() throws BadLocationException {
-		Terminal.printLine(news.getCurrentRank(), StringType.MAIN, StringFormat.STANDARD);
+		if (news.getDaysTillDecay() != 0) {
+			Terminal.printLine(news.getRank() + "  (" + news.getDaysTillDecay() + " days till decay)", StringType.MAIN, StringFormat.STANDARD);
+		}
+		else {
+			Terminal.printLine("fetching in progress...", StringType.MAIN, StringFormat.STANDARD);
+		}
 	}
 
 	@Override public void print(Document document, Element element) {
@@ -57,9 +63,10 @@ public class UtilityPlugin extends Plugin {
 	@Override public void setDisplay(boolean display) {
 		super.setDisplay(display);
 		if (display == true) {
-			new Thread(() -> {
+			launcher = new Thread(() -> {
 				try {
 					news.setRank();
+					news.setDaysTillDecay();
 					guiThread.join();
 					Terminal.update();
 					Terminal.printLine("command:", StringType.REQUEST, StringFormat.ITALIC);
@@ -67,7 +74,8 @@ public class UtilityPlugin extends Plugin {
 				catch (Exception e) {
 					e.printStackTrace();
 				}
-			}).start();
+			});
+			launcher.start();
 		}
 	};
 
@@ -77,18 +85,6 @@ public class UtilityPlugin extends Plugin {
 		Terminal.blockInput();
 		backup.clear();
 		writerReader.updateStorage();
-		Terminal.update();
-	}
-
-	@Command(tag = "test") public void test() throws BadLocationException {
-		new Thread(() -> {
-			try {
-				Terminal.update();
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}).start();
 		Terminal.update();
 	}
 }
