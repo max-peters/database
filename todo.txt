@@ -3,3 +3,5 @@ expense - mensa request // bei eingabe in vorderen wortteil springt curser an sc
 accept similar strings for command request // string autocompletion
 news - days till decay
 equals korret implementieren
+event - mit datum prüfen ob termin frei // termine über zeitraum
+fix update // printcollectedlines vs news.update

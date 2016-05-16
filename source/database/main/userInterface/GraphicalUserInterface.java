@@ -278,7 +278,7 @@ public class GraphicalUserInterface {
 		JOptionPane.showMessageDialog(frame, stackTrace, e.getClass().getName(), JOptionPane.INFORMATION_MESSAGE);
 	}
 
-	protected void update() throws BadLocationException {
+	protected synchronized void update() throws BadLocationException {
 		output.setText("");
 		currentLineNumber = 0;
 		blockInput();

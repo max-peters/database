@@ -46,7 +46,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	@Override public void initialOutput() throws BadLocationException {
 		String initialOutput = formatter.getInitialOutput(getIterable());
 		if (!initialOutput.isEmpty()) {
-			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
+			Terminal.printLine(getIdentity(), StringType.MAIN, StringFormat.BOLD);
 			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
 		}
 	}
@@ -71,7 +71,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		}
 	}
 
-	public void remove(Instance toRemove) throws BadLocationException {
+	public void remove(Instance toRemove) throws BadLocationException, InterruptedException {
 		if (list.remove(toRemove)) {
 			Terminal.update();
 		}

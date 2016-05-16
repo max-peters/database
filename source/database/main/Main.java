@@ -73,7 +73,6 @@ public class Main {
 			guiThread.join();
 			graphicalUserInterface.setVisible(true);
 			Terminal.update();
-			Terminal.printCollectedLines();
 			administration.request();
 		}
 		catch (Throwable e) {

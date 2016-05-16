@@ -11,6 +11,7 @@ import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import database.main.date.Date;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
@@ -61,6 +62,40 @@ public class EventPlugin extends Plugin {
 		}
 	}
 
+	@Command(tag = "check") public void check() throws InterruptedException, BadLocationException {
+		boolean display = getDisplay();
+		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>();
+		list.add(extensionMap.get("appointment"));
+		list.add(extensionMap.get("weeklyappointment"));
+		Date date = new Date(Terminal.request("date", "DATE"));
+		List<Event> eventList = new LinkedList<Event>();
+		String output = null;
+		for (Event event : getIterable(list)) {
+			if (event.date.equals(date)) {
+				eventList.add(event);
+			}
+		}
+		if (eventList.size() == 0) {
+			output = "there are no appointments for this date.";
+		}
+		else if (eventList.size() == 1) {
+			output = "there is a appointment for this date:";
+		}
+		else if (eventList.size() == 2) {
+			output = "there are appointments for this date:";
+		}
+		setDisplay(false);
+		Terminal.update();
+		Terminal.printLine("event", StringType.REQUEST, StringFormat.BOLD);
+		Terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
+		for (String string : formatter.formatOutput(eventList)) {
+			Terminal.printLine(" ->" + string, StringType.SOLUTION, StringFormat.STANDARD);
+		}
+		Terminal.waitForInput();
+		setDisplay(display);
+		Terminal.update();
+	}
+
 	public Iterable<Event> getIterable(Iterable<EventPluginExtension<? extends Event>> extensionList) {
 		List<Event> list = new LinkedList<Event>();
 		for (InstancePlugin<? extends Event> extension : extensionList) {
@@ -80,7 +115,7 @@ public class EventPlugin extends Plugin {
 	@Override public void initialOutput() throws BadLocationException {
 		String initialOutput = formatter.getInitialOutput(getIterable(extensionMap.values()));
 		if (!initialOutput.isEmpty()) {
-			Terminal.printLine(getIdentity() + ":", StringType.MAIN, StringFormat.BOLD);
+			Terminal.printLine(getIdentity(), StringType.MAIN, StringFormat.BOLD);
 			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
 		}
 	}

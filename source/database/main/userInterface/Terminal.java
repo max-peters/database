@@ -67,6 +67,7 @@ public class Terminal {
 				graphicalUserInterface.printLine(output);
 			}
 			waitForInput();
+			collectedLines.clear();
 		}
 	}
 
@@ -160,8 +161,9 @@ public class Terminal {
 		graphicalUserInterface.showMessageDialog(e);
 	}
 
-	public static synchronized void update() throws BadLocationException {
+	public static void update() throws BadLocationException, InterruptedException {
 		graphicalUserInterface.update();
+		printCollectedLines();
 	}
 
 	public static void waitForInput() throws InterruptedException {
