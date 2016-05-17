@@ -79,7 +79,7 @@ public class EventPlugin extends Plugin {
 			output = "there are no appointments for this date.";
 		}
 		else if (eventList.size() == 1) {
-			output = "there is a appointment for this date:";
+			output = "there is an appointment for this date:";
 		}
 		else if (eventList.size() == 2) {
 			output = "there are appointments for this date:";
