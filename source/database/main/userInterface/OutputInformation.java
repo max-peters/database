@@ -11,17 +11,6 @@ public class OutputInformation {
 		this.stringType = stringType;
 	}
 
-	@Override public boolean equals(Object object) {
-		OutputInformation information;
-		if (object != null && object instanceof OutputInformation) {
-			information = (OutputInformation) object;
-			if (output.equals(information.getOutput()) && stringFormat.equals(information.getStringFormat()) && stringType.equals(information.getStringType())) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public Object getOutput() {
 		return output;
 	}

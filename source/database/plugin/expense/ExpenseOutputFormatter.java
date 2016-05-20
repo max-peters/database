@@ -114,24 +114,25 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 	}
 
 	@Command(tag = "month") public String outputMonth(Iterable<Expense> iterable) {
-		// DecimalFormat format = new DecimalFormat("#0.00");
-		// String output = "";
-		// int valueLength = 0;
-		// for (Month month : getMonths(iterable)) {
-		// String temp = format.format(value(month, iterable));
-		// if (temp.length() > valueLength) {
-		// valueLength = temp.length();
-		// }
-		// }
-		// for (Month month : getMonths(iterable)) {
-		// String value = format.format(value(month, iterable)) + "€";
-		// while (value.length() < valueLength + 1) {
-		// value = " " + value;
-		// }
-		// output += " " + String.format("%2s", month.getValue()).replace(" ", "0") + "/" + "month.year.counter" + " : " + value + System.getProperty("line.separator");
-		// }
-		// return output;
-		return "";
+		Map<String, Double> map = new LinkedHashMap<String, Double>();
+		int valueLength = 0;
+		String output = "";
+		for (Expense expense : iterable) {
+			String key = new DecimalFormat("00").format(expense.date.getMonthValue()) + "/" + String.valueOf(expense.date.getYear()).replaceFirst("20", "");
+			map.put(key, map.getOrDefault(key, 0.0) + expense.value);
+			int length = new DecimalFormat("#0.00").format(map.get(key)).length();
+			if (length > valueLength) {
+				valueLength = length;
+			}
+		}
+		for (Entry<String, Double> entry : map.entrySet()) {
+			String value = new DecimalFormat("#0.00").format(entry.getValue());
+			while (value.length() < valueLength) {
+				value = " " + value;
+			}
+			output += " " + entry.getKey() + " : " + value + "€" + System.getProperty("line.separator");
+		}
+		return output;
 	}
 
 	@Command(tag = "all") public String printAll(Iterable<Expense> iterable) {
@@ -144,22 +145,25 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 
 	@Command(tag = "current") public String printCurrent(Iterable<Expense> iterable) {
 		StringBuilder builder = new StringBuilder();
-		int longestName = 0;
+		int longestValue = 0;
 		for (Expense expense : iterable) {
 			if (expense.date.getMonthValue() == LocalDate.now().getMonthValue() && expense.date.getYear() == LocalDate.now().getYear()) {
-				if (expense.name.length() > longestName) {
-					longestName = expense.name.length();
+				if (new DecimalFormat("#0.00").format(expense.value).length() > longestValue) {
+					longestValue = new DecimalFormat("#0.00").format(expense.value).length();
 				}
 			}
 		}
 		for (Expense expense : iterable) {
 			if (expense.date.getMonthValue() == LocalDate.now().getMonthValue() && expense.date.getYear() == LocalDate.now().getYear()) {
 				String name = expense.name;
-				while (name.length() < longestName) {
+				String value = new DecimalFormat("#0.00").format(expense.value) + "€";
+				while (name.length() < 66) {
 					name += " ";
 				}
-				builder.append(" + "+ expense.date.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) + " - " + name + " " + new DecimalFormat("#0.00").format(expense.value)
-								+ System.getProperty("line.separator"));
+				while (value.length() <= longestValue) {
+					value = " " + value;
+				}
+				builder.append(" \u2022 " + expense.date.format(DateTimeFormatter.ofPattern("dd/MM")) + " - " + name + " " + value + System.getProperty("line.separator"));
 			}
 		}
 		return builder.toString();
