@@ -4,13 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
-import database.main.date.Date;
 import database.plugin.Backup;
 import database.plugin.Storage;
 import database.plugin.event.EventPluginExtension;
@@ -21,7 +22,7 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 	}
 
 	@Override public Holiday create(NamedNodeMap nodeMap) {
-		return new Holiday(nodeMap.getNamedItem("name").getNodeValue(), new Date(nodeMap.getNamedItem("date").getNodeValue()));
+		return new Holiday(nodeMap.getNamedItem("name").getNodeValue(), LocalDate.parse(nodeMap.getNamedItem("date").getNodeValue(), DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 	}
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {
@@ -30,7 +31,7 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 
 	public void updateHolidays() throws IOException {
 		for (Holiday holiday : getIterable()) {
-			if (holiday.date.isPast()) {
+			if (holiday.date.isBefore(LocalDate.now())) {
 				getHolidays();
 				return;
 			}
@@ -47,25 +48,25 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 				String date = temp.substring(0, temp.lastIndexOf(","));
 				temp = lines.get(i + 1).replace("&ouml;", "ö").replace(":", " ");
 				String name = temp.substring(14, temp.length() - 1);
-				Date newDate = new Date(date);
+				LocalDate newDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 				map.put("name", name);
 				map.put("date", date);
-				if (list.isEmpty() && !newDate.isPast()) {
-					add(new Holiday(name, new Date(date)));
+				if (list.isEmpty() && !newDate.isBefore(LocalDate.now())) {
+					add(new Holiday(name, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.uuuu"))));
 				}
 				else {
 					boolean contains = false;
 					for (Holiday holiday : getIterable()) {
 						if (holiday.name.equals(name)) {
 							contains = true;
-							if (holiday.date.compareTo(newDate) < 0 && holiday.date.isPast()) {
+							if (holiday.date.isBefore(newDate) && holiday.date.isBefore(LocalDate.now())) {
 								holiday.date = newDate;
 								return;
 							}
 						}
 					}
-					if (!contains && !newDate.isPast()) {
-						add(new Holiday(name, new Date(date)));
+					if (!contains && !newDate.isBefore(LocalDate.now())) {
+						add(new Holiday(name, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.uuuu"))));
 					}
 				}
 			}

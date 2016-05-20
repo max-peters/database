@@ -1,9 +1,10 @@
 package database.plugin.event.appointment;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
-import database.main.date.Date;
-import database.main.date.Time;
 import database.main.userInterface.Terminal;
 import database.plugin.Backup;
 import database.plugin.Storage;
@@ -15,14 +16,17 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 	}
 
 	@Override public void add(Appointment appointment) {
-		if (!appointment.date.isPast() && !appointment.date.isToday()|| appointment.date.isToday() && appointment.begin == null
-			|| appointment.date.isToday() && appointment.begin != null && appointment.end == null && !appointment.begin.isPast()
-			|| appointment.date.isToday() && appointment.begin != null && appointment.end != null && !appointment.end.isPast()) {
+		if (!appointment.date.isBefore(LocalDate.now()) && !appointment.date.isEqual(LocalDate.now())|| appointment.date.isEqual(LocalDate.now()) && appointment.begin == null
+			|| appointment.date.isEqual(LocalDate.now()) && appointment.begin != null && appointment.end == null && !appointment.begin.isBefore(LocalTime.now())
+			|| appointment.date.isEqual(LocalDate.now()) && appointment.begin != null && appointment.end != null && !appointment.end.isBefore(LocalTime.now())) {
 			int i = list.size();
-			while (i > 0 && list.get(i - 1).date.compareTo(appointment.date) > 0
-					|| (i > 0)&& list.get(i - 1).date.compareTo(appointment.date) == 0
-						&& (list.get(i - 1).begin != null ? list.get(i - 1).begin : new Time("00:00")).compareTo(appointment.begin != null	? appointment.begin
-																																			: new Time("00:00")) < 0) {
+			while (i > 0 && list.get(i - 1).date.isAfter(appointment.date)
+					|| (i > 0)&& list.get(i - 1).date.isEqual(appointment.date)
+						&& (list.get(i - 1).begin != null	? list.get(i - 1).begin
+															: LocalTime.parse(	"00:00",
+																				DateTimeFormatter.ofPattern("HH:mm"))).isBefore(appointment.begin != null	? appointment.begin
+																																							: LocalTime.parse(	"00:00",
+																																												DateTimeFormatter.ofPattern("HH:mm")))) {
 				i--;
 			}
 			list.add(i, appointment);
@@ -30,27 +34,30 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 	}
 
 	@Override public Appointment create(NamedNodeMap nodeMap) {
-		return new Appointment(	nodeMap.getNamedItem("name").getNodeValue(), new Date(nodeMap.getNamedItem("date").getNodeValue()),
-								nodeMap.getNamedItem("begin").getNodeValue().isEmpty() ? null : new Time(nodeMap.getNamedItem("begin").getNodeValue()),
-								nodeMap.getNamedItem("end").getNodeValue().isEmpty() ? null : new Time(nodeMap.getNamedItem("end").getNodeValue()));
+		return new Appointment(	nodeMap.getNamedItem("name").getNodeValue(), LocalDate.parse(nodeMap.getNamedItem("date").getNodeValue(), DateTimeFormatter.ofPattern("dd.MM.uuuu")),
+								nodeMap.getNamedItem("begin").getNodeValue().isEmpty()	? null
+																						: LocalTime.parse(	nodeMap.getNamedItem("begin").getNodeValue(),
+																											DateTimeFormatter.ofPattern("HH:mm")),
+								nodeMap	.getNamedItem("end").getNodeValue()
+										.isEmpty() ? null : LocalTime.parse(nodeMap.getNamedItem("end").getNodeValue(), DateTimeFormatter.ofPattern("HH:mm")));
 	}
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {
 		String name;
 		String temp = "";
-		Time begin;
-		Date date;
+		LocalTime begin;
+		LocalDate date;
 		name = Terminal.request("name", ".+");
-		date = new Date(Terminal.request("date", "DATE"));
-		temp = Terminal.request("begin", "(TIME|)");
-		begin = temp.isEmpty() ? null : new Time(temp);
+		date = LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		temp = Terminal.request("begin", "(TIME)");
+		begin = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
 		if (begin != null) {
-			temp = Terminal.request("end", "(TIME|)");
-			while (!temp.isEmpty() && begin.compareTo(new Time(temp)) <= 0) {
+			temp = Terminal.request("end", "(TIME)");
+			while (!temp.isEmpty() && begin.isBefore(LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm")))) {
 				Terminal.errorMessage();
-				temp = Terminal.request("end", "(TIME|)");
+				temp = Terminal.request("end", "(TIME)");
 			}
 		}
-		add(new Appointment(name, date, begin, temp.isEmpty() ? null : new Time(temp)));
+		add(new Appointment(name, date, begin, temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"))));
 	}
 }

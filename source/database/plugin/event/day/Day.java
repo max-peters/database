@@ -1,14 +1,14 @@
 package database.plugin.event.day;
 
-import database.main.date.Date;
+import java.time.LocalDate;
 import database.plugin.event.Event;
 
 public class Day extends Event {
-	public Day(String name, Date date) {
+	public Day(String name, LocalDate date) {
 		super(name, date);
 	}
 
 	@Override protected String getAdditionToOutput() {
-		return "(" + date.year + ")";
+		return "(" + date.getYear() + ")";
 	}
 }

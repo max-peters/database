@@ -1,9 +1,11 @@
 package database.plugin.event;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.text.BadLocationException;
-import database.main.date.Date;
 import database.plugin.Command;
 import database.plugin.OutputFormatter;
 import database.plugin.settings.Settings;
@@ -32,10 +34,9 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 	}
 
 	protected ArrayList<Event> getNearEvents(Iterable<? extends Event> iterable) {
-		Date currentDate = Date.getCurrentDate();
 		ArrayList<Event> nearEvents = new ArrayList<Event>();
 		for (Event event : iterable) {
-			if (event.updateYear().compareTo(currentDate) <= settings.getDisplayedDays()) {
+			if (ChronoUnit.DAYS.between(LocalDate.now(), event.updateYear()) <= settings.getDisplayedDays()) {
 				nearEvents.add(event);
 			}
 		}
@@ -46,15 +47,16 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 		List<String> output = new ArrayList<String>();
 		int longestNameLength = 0;
 		for (Event event : iterable) {
-			if (event.updateYear().year.counter == Date.getCurrentDate().year.counter) {
+			if (event.updateYear().getYear() == LocalDate.now().getYear()) {
 				if ((event.updateYear() + " - " + event.name).length() > longestNameLength) {
-					longestNameLength = (event.updateYear() + " - " + event.name).length();
+					longestNameLength = (event.updateYear().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) + " - " + event.name).length();
 				}
 			}
 		}
 		for (Event event : iterable) {
-			if (event.updateYear().year.counter == Date.getCurrentDate().year.counter) {
-				String line = event.updateYear().isToday() ? "TODAY      - " + event.name : event.updateYear() + " - " + event.name;
+			if (event.updateYear().getYear() == LocalDate.now().getYear()) {
+				String line = event.updateYear().isEqual(LocalDate.now())	? "TODAY      - " + event.name
+																			: event.updateYear().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) + " - " + event.name;
 				for (int i = line.length(); i < longestNameLength + 3; i++) {
 					line += " ";
 				}

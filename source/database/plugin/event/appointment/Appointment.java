@@ -1,15 +1,16 @@
 package database.plugin.event.appointment;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import org.w3c.dom.Element;
-import database.main.date.Date;
-import database.main.date.Time;
 import database.plugin.event.Event;
 
 public class Appointment extends Event {
-	public Time	begin;
-	public Time	end;
+	public LocalTime	begin;
+	public LocalTime	end;
 
-	public Appointment(String name, Date date, Time begin, Time end) {
+	public Appointment(String name, LocalDate date, LocalTime begin, LocalTime end) {
 		super(name, date);
 		this.begin = begin;
 		this.end = end;
@@ -17,11 +18,11 @@ public class Appointment extends Event {
 
 	@Override public void insertParameter(Element element) {
 		super.insertParameter(element);
-		element.setAttribute("begin", begin == null ? "" : begin.toString());
-		element.setAttribute("end", end == null ? "" : end.toString());
+		element.setAttribute("begin", begin == null ? "" : begin.format(DateTimeFormatter.ofPattern("HH:mm")));
+		element.setAttribute("end", end == null ? "" : end.format(DateTimeFormatter.ofPattern("HH:mm")));
 	}
 
-	@Override public Date updateYear() {
+	@Override public LocalDate updateYear() {
 		return date;
 	}
 

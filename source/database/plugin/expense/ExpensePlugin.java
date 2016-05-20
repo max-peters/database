@@ -1,8 +1,9 @@
 package database.plugin.expense;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
-import database.main.date.Date;
 import database.main.userInterface.Terminal;
 import database.main.userInterface.autocompletion.Autocompletion;
 import database.plugin.Backup;
@@ -17,7 +18,7 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 
 	@Override public void add(Expense expense) {
 		int i = list.size();
-		while (i > 0 && list.get(i - 1).date.compareTo(expense.date) > 0) {
+		while (i > 0 && list.get(i - 1).date.isAfter(expense.date)) {
 			i--;
 		}
 		list.add(i, expense);
@@ -26,7 +27,8 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 
 	@Override public Expense create(NamedNodeMap nodeMap) {
 		return new Expense(	nodeMap.getNamedItem("name").getNodeValue(), nodeMap.getNamedItem("category").getNodeValue(),
-							Double.valueOf(nodeMap.getNamedItem("value").getNodeValue()), new Date(nodeMap.getNamedItem("date").getNodeValue()));
+							Double.valueOf(nodeMap.getNamedItem("value").getNodeValue()),
+							LocalDate.parse(nodeMap.getNamedItem("date").getNodeValue(), DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
@@ -40,7 +42,8 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 																			})),
 														list);
 		Double value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
-		Date date = new Date(Terminal.request("date", "DATE", Date.getCurrentDate().toString()));
+		LocalDate date = LocalDate.parse(	Terminal.request("date", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.mm.yyyy"))),
+											DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		backup.backup();
 		add(new Expense(name, category, value, date));
 		Terminal.update();

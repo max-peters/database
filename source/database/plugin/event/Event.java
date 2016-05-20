@@ -1,14 +1,15 @@
 package database.plugin.event;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.w3c.dom.Element;
-import database.main.date.Date;
 import database.plugin.Instance;
 
 public abstract class Event extends Instance {
-	public Date		date;
-	public String	name;
+	public LocalDate	date;
+	public String		name;
 
-	public Event(String name, Date date) {
+	public Event(String name, LocalDate date) {
 		this.name = name;
 		this.date = date;
 	}
@@ -17,7 +18,7 @@ public abstract class Event extends Instance {
 		Event event;
 		if (object != null && object.getClass().equals(this.getClass())) {
 			event = (Event) object;
-			if (event.date.equals(date) && event.name.equals(name)) {
+			if (event.date.isEqual(date) && event.name.equals(name)) {
 				return true;
 			}
 		}
@@ -26,19 +27,17 @@ public abstract class Event extends Instance {
 
 	@Override public void insertParameter(Element element) {
 		element.setAttribute("name", name);
-		element.setAttribute("date", date.toString());
+		element.setAttribute("date", date.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 	}
 
-	public Date updateYear() {
-		Date localDate = null;
-		Date currentDate = Date.getCurrentDate();
-		if (currentDate.month.counter > date.month.counter || currentDate.month.counter == date.month.counter && currentDate.day.counter > date.day.counter) {
-			localDate = new Date(date.day.counter + "." + date.month.counter + "." + (currentDate.year.counter + 1));
+	public LocalDate updateYear() {
+		LocalDate currentDate = LocalDate.now();
+		if (currentDate.getMonthValue() > date.getMonthValue() || currentDate.getMonthValue() == date.getMonthValue() && currentDate.getDayOfMonth() > date.getDayOfMonth()) {
+			return date.withYear(currentDate.getYear() + 1);
 		}
 		else {
-			localDate = new Date(date.day.counter + "." + date.month.counter + "." + currentDate.year.counter);
+			return date.withYear(currentDate.getYear());
 		}
-		return localDate;
 	}
 
 	protected abstract String getAdditionToOutput();

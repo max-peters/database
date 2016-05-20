@@ -1,16 +1,17 @@
 package database.plugin.refilling;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.w3c.dom.Element;
-import database.main.date.Date;
 import database.plugin.Instance;
 
 public class Refilling extends Instance {
-	public Double	cost;
-	public Date		date;
-	public Double	distance;
-	public Double	refuelAmount;
+	public Double		cost;
+	public LocalDate	date;
+	public Double		distance;
+	public Double		refuelAmount;
 
-	public Refilling(Double distance, Double refuelAmount, Double cost, Date date) {
+	public Refilling(Double distance, Double refuelAmount, Double cost, LocalDate date) {
 		this.distance = distance;
 		this.refuelAmount = refuelAmount;
 		this.cost = cost;
@@ -25,7 +26,7 @@ public class Refilling extends Instance {
 		Refilling refilling;
 		if (object != null && object.getClass().equals(this.getClass())) {
 			refilling = (Refilling) object;
-			if (date.equals(refilling.date) && distance.equals(refilling.distance) && cost.equals(refilling.cost) && refuelAmount.equals(refilling.refuelAmount)) {
+			if (date.isEqual(refilling.date) && distance.equals(refilling.distance) && cost.equals(refilling.cost) && refuelAmount.equals(refilling.refuelAmount)) {
 				return true;
 			}
 		}
@@ -36,6 +37,6 @@ public class Refilling extends Instance {
 		element.setAttribute("distance", distance.toString());
 		element.setAttribute("refuelAmount", refuelAmount.toString());
 		element.setAttribute("cost", cost.toString());
-		element.setAttribute("date", date.toString());
+		element.setAttribute("date", date.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 	}
 }

@@ -1,8 +1,9 @@
 package database.plugin.refilling;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.NamedNodeMap;
-import database.main.date.Date;
 import database.main.userInterface.Terminal;
 import database.plugin.Backup;
 import database.plugin.Command;
@@ -21,7 +22,7 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 
 	@Override public void add(Refilling refilling) {
 		int i = list.size();
-		while (i > 0 && list.get(i - 1).date.compareTo(refilling.date) > 0) {
+		while (i > 0 && list.get(i - 1).date.isAfter(refilling.date)) {
 			i--;
 		}
 		list.add(i, refilling);
@@ -29,14 +30,16 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 
 	@Override public Refilling create(NamedNodeMap nodeMap) {
 		return new Refilling(	Double.valueOf(nodeMap.getNamedItem("distance").getNodeValue()), Double.valueOf(nodeMap.getNamedItem("refuelAmount").getNodeValue()),
-								Double.valueOf(nodeMap.getNamedItem("cost").getNodeValue()), new Date(nodeMap.getNamedItem("date").getNodeValue()));
+								Double.valueOf(nodeMap.getNamedItem("cost").getNodeValue()),
+								LocalDate.parse(nodeMap.getNamedItem("date").getNodeValue(), DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
 		backup.backup();
 		Refilling refilling = new Refilling(Double.valueOf(Terminal.request("distance", "[0-9]{1,13}(\\.[0-9]*)?")),
 											Double.valueOf(Terminal.request("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?")),
-											Double.valueOf(Terminal.request("cost", "[0-9]{1,13}(\\.[0-9]*)?")), new Date(Terminal.request("date", "DATE")));
+											Double.valueOf(Terminal.request("cost", "[0-9]{1,13}(\\.[0-9]*)?")),
+											LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 		add(refilling);
 		expensePlugin.add(new Expense("Auto - Tankstelle", "Fahrtkosten", refilling.cost, refilling.date));
 		Terminal.update();

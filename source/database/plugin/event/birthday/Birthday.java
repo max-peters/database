@@ -1,10 +1,10 @@
 package database.plugin.event.birthday;
 
-import database.main.date.Date;
+import java.time.LocalDate;
 import database.plugin.event.Event;
 
 public class Birthday extends Event {
-	public Birthday(String name, Date date) {
+	public Birthday(String name, LocalDate date) {
 		super(name, date);
 	}
 
@@ -13,6 +13,6 @@ public class Birthday extends Event {
 	}
 
 	private int getAge() {
-		return Date.getCurrentDate().year.counter - date.year.counter;
+		return LocalDate.now().getYear() - date.getYear();
 	}
 }

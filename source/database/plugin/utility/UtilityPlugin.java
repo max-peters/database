@@ -1,6 +1,9 @@
 package database.plugin.utility;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -10,7 +13,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.SAXException;
 import database.main.WriterReader;
-import database.main.date.Date;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
@@ -32,10 +34,11 @@ public class UtilityPlugin extends Plugin {
 	}
 
 	@Command(tag = "days") public void calculateDayNumber() throws BadLocationException, InterruptedException {
-		Date firstDate = new Date(Terminal.request("first date", "DATE"));
-		Date secondDate = new Date(Terminal.request("second date", "DATE"));
-		Terminal.printLine("day number between " + firstDate + " and " + secondDate + ":", StringType.REQUEST, StringFormat.STANDARD);
-		Terminal.printLine(Math.abs(firstDate.compareTo(secondDate)), StringType.SOLUTION, StringFormat.STANDARD);
+		LocalDate firstDate = LocalDate.parse(Terminal.request("first date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		LocalDate secondDate = LocalDate.parse(Terminal.request("second date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		Terminal.printLine("day number between "+ firstDate.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) + " and "
+							+ secondDate.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) + ":", StringType.REQUEST, StringFormat.STANDARD);
+		Terminal.printLine(ChronoUnit.DAYS.between(firstDate, secondDate), StringType.SOLUTION, StringFormat.STANDARD);
 		Terminal.waitForInput();
 	}
 

@@ -2,6 +2,8 @@ package database.plugin.event;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,7 +13,6 @@ import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
-import database.main.date.Date;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
@@ -67,7 +68,7 @@ public class EventPlugin extends Plugin {
 		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>();
 		list.add(extensionMap.get("appointment"));
 		list.add(extensionMap.get("weeklyappointment"));
-		Date date = new Date(Terminal.request("date", "DATE"));
+		LocalDate date = LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		List<Event> eventList = new LinkedList<Event>();
 		String output = null;
 		for (Event event : getIterable(list)) {
@@ -102,7 +103,7 @@ public class EventPlugin extends Plugin {
 			if (extension.getDisplay()) {
 				for (Event event : extension.getIterable()) {
 					int i = list.size();
-					while (i > 0 && list.get(i - 1).updateYear().compareTo(event.updateYear()) > 0) {
+					while (i > 0 && list.get(i - 1).updateYear().isAfter(event.updateYear())) {
 						i--;
 					}
 					list.add(i, event);
@@ -176,7 +177,7 @@ public class EventPlugin extends Plugin {
 				i++;
 			}
 			if (temp instanceof WeeklyAppointment) {
-				temp.date.addDays(7);
+				temp.date = temp.date.plusDays(7);
 			}
 			else if (temp instanceof Appointment) {
 				extensionMap.get("appointment").remove(temp);

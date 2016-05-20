@@ -12,7 +12,7 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 
 	@Override public void add(T event) {
 		int i = list.size();
-		while (i > 0 && list.get(i - 1).date.compareTo(event.date) > 0) {
+		while (i > 0 && list.get(i - 1).date.isAfter(event.date)) {
 			i--;
 		}
 		list.add(i, event);

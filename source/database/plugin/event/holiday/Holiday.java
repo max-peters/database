@@ -1,14 +1,14 @@
 package database.plugin.event.holiday;
 
-import database.main.date.Date;
+import java.time.LocalDate;
 import database.plugin.event.Event;
 
 public class Holiday extends Event {
-	public Holiday(String name, Date date) {
+	public Holiday(String name, LocalDate date) {
 		super(name, date);
 	}
 
-	@Override public Date updateYear() {
+	@Override public LocalDate updateYear() {
 		return date;
 	}
 

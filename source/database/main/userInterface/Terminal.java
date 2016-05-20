@@ -1,5 +1,9 @@
 package database.main.userInterface;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -7,8 +11,6 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
-import database.main.date.Date;
-import database.main.date.Time;
 import database.main.userInterface.autocompletion.Autocompletion;
 import database.plugin.Plugin;
 
@@ -138,8 +140,16 @@ public class Terminal {
 				printLine(regex, StringType.SOLUTION, StringFormat.STANDARD);
 				waitForInput();
 			}
-			else if (input.matches(regex) || "DATE".matches(regex) && Date.testDateString(input) || "TIME".matches(regex) && Time.testTimeString(input)) {
+			else if (input.matches(regex)) {
 				result = input;
+				request = false;
+			}
+			else if ("DATE".matches(regex) && testDateString(parseDateString(input))) {
+				result = parseDateString(input);
+				request = false;
+			}
+			else if ("TIME".matches(regex) && testTimeString(parseTimeString(input))) {
+				result = parseTimeString(input);
 				request = false;
 			}
 			else {
@@ -201,5 +211,66 @@ public class Terminal {
 			newcost = swap;
 		}
 		return cost[len0 - 1];
+	}
+
+	private static boolean testDateString(String date) {
+		try {
+			LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+			return true;
+		}
+		catch (DateTimeParseException e) {
+			return false;
+		}
+	}
+
+	private static boolean testTimeString(String time) {
+		try {
+			LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
+			return true;
+		}
+		catch (DateTimeParseException e) {
+			return false;
+		}
+	}
+
+	public static String parseDateString(String date) {
+		String formattedDate = null;
+		if (date.isEmpty()) {
+			formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		}
+		else {
+			String[] splitResult = date.split("\\.");
+			formattedDate = add(splitResult[0], 2) + ".";
+			if (splitResult.length == 1) {
+				formattedDate = formattedDate + add(String.valueOf(LocalDate.now().getMonthValue()), 2) + "." + add(String.valueOf(LocalDate.now().getYear()), 4);
+			}
+			else if (splitResult.length == 2) {
+				formattedDate = formattedDate + add(splitResult[1], 2) + "." + add(String.valueOf(LocalDate.now().getYear()), 4);
+			}
+			else if (splitResult.length == 3) {
+				formattedDate = formattedDate + add(splitResult[1], 2) + "." + add(splitResult[2], 4);
+			}
+		}
+		return formattedDate;
+	}
+
+	private static String add(String string, int k) {
+		String s = string;
+		for (string.length(); s.length() < k;) {
+			s = "0" + s;
+		}
+		return s;
+	}
+
+	private static String parseTimeString(String time) {
+		String formattedTime = null;
+		String[] splitResult = time.split(":");
+		if (splitResult.length == 1) {
+			formattedTime = add(splitResult[0], 2) + ":00";
+		}
+		else if (splitResult.length == 2) {
+			formattedTime = add(splitResult[0], 2) + ":" + add(splitResult[1], 2);
+		}
+		return formattedTime;
 	}
 }
