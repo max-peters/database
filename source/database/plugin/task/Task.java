@@ -1,6 +1,5 @@
 package database.plugin.task;
 
-import org.w3c.dom.Element;
 import database.plugin.Instance;
 
 public class Task extends Instance {
@@ -21,10 +20,5 @@ public class Task extends Instance {
 			}
 		}
 		return false;
-	}
-
-	@Override public void insertParameter(Element element) {
-		element.setAttribute("name", name);
-		element.setAttribute("category", category);
 	}
 }

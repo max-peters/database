@@ -3,7 +3,7 @@ package database.plugin.settings;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import database.main.userInterface.Terminal;
 import database.plugin.Backup;
 import database.plugin.Command;
@@ -30,9 +30,9 @@ public class Settings extends Plugin {
 		element.appendChild(entryElement);
 	}
 
-	@Override public void read(String nodeName, NamedNodeMap nodeMap) {
-		if (nodeName.equals("eventDisplayRange")) {
-			eventDisplayRange = Integer.valueOf(nodeMap.getNamedItem("int").getNodeValue());
+	@Override public void read(Node node) {
+		if (node.getNodeName().equals("eventDisplayRange")) {
+			eventDisplayRange = Integer.valueOf(node.getAttributes().getNamedItem("int").getNodeValue());
 		}
 	}
 

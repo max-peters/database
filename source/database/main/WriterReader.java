@@ -65,7 +65,7 @@ public class WriterReader {
 		for (int i = 0; i < nList.getLength(); i++) {
 			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
 			if (plugin != null) {
-				plugin.read(nList.item(i).getNodeName(), nList.item(i).getAttributes());
+				plugin.read(nList.item(i));
 			}
 			else if (nList.item(i).getParentNode().getNodeName().equals("storage")) {
 				storage.read(nList.item(i).getNodeName(), nList.item(i).getAttributes());

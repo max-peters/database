@@ -1,8 +1,6 @@
 package database.plugin.event;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import org.w3c.dom.Element;
 import database.plugin.Instance;
 
 public abstract class Event extends Instance {
@@ -23,11 +21,6 @@ public abstract class Event extends Instance {
 			}
 		}
 		return false;
-	}
-
-	@Override public void insertParameter(Element element) {
-		element.setAttribute("name", name);
-		element.setAttribute("date", date.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 	}
 
 	public LocalDate updateYear() {

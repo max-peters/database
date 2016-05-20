@@ -1,8 +1,6 @@
 package database.plugin.refilling;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import org.w3c.dom.Element;
 import database.plugin.Instance;
 
 public class Refilling extends Instance {
@@ -31,12 +29,5 @@ public class Refilling extends Instance {
 			}
 		}
 		return false;
-	}
-
-	@Override public void insertParameter(Element element) {
-		element.setAttribute("distance", distance.toString());
-		element.setAttribute("refuelAmount", refuelAmount.toString());
-		element.setAttribute("cost", cost.toString());
-		element.setAttribute("date", date.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 	}
 }

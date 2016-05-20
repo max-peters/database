@@ -2,6 +2,7 @@ package database.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.LinkedList;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -9,6 +10,8 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import com.google.gson.Gson;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
@@ -51,23 +54,24 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		}
 	}
 
-	@Override public void print(Document document, Element element) {
+	@Override public void print(Document document, Element appendTo) {
 		for (T instance : list) {
 			Element entryElement = document.createElement("entry");
-			instance.insertParameter(entryElement);
-			element.appendChild(entryElement);
+			entryElement.setTextContent(instance.toString());
+			appendTo.appendChild(entryElement);
 		}
 		Element entryElement = document.createElement("display");
-		entryElement.setAttribute("boolean", String.valueOf(getDisplay()));
-		element.appendChild(entryElement);
+		entryElement.setTextContent(String.valueOf(getDisplay()));
+		appendTo.appendChild(entryElement);
 	}
 
-	@Override public void read(String nodeName, NamedNodeMap nodeMap) throws ParserConfigurationException, DOMException {
-		if (nodeName.equals("entry")) {
-			add(create(nodeMap));
+	@Override public void read(Node node) throws ParserConfigurationException, DOMException {
+		@SuppressWarnings("unchecked") Class<T> c = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+		if (node.getNodeName().equals("entry")) {
+			add(new Gson().fromJson(node.getTextContent(), c));
 		}
-		else if (nodeName.equals("display")) {
-			setDisplay(Boolean.valueOf(nodeMap.getNamedItem("boolean").getNodeValue()));
+		else if (node.getNodeName().equals("display")) {
+			setDisplay(Boolean.valueOf(node.getTextContent()));
 		}
 	}
 

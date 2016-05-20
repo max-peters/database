@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
@@ -121,15 +121,15 @@ public class EventPlugin extends Plugin {
 		}
 	}
 
-	@Override public void print(Document document, Element element) {
+	@Override public void print(Document document, Element appendTo) {
 		Element entryElement = document.createElement("display");
-		entryElement.setAttribute("boolean", String.valueOf(getDisplay()));
-		element.appendChild(entryElement);
+		entryElement.setTextContent(String.valueOf(getDisplay()));
+		appendTo.appendChild(entryElement);
 	}
 
-	@Override public void read(String nodeName, NamedNodeMap nodeMap) {
-		if (nodeName.equals("display")) {
-			setDisplay(Boolean.valueOf(nodeMap.getNamedItem("boolean").getNodeValue()));
+	@Override public void read(Node node) {
+		if (node.getNodeName().equals("display")) {
+			setDisplay(Boolean.valueOf(node.getTextContent()));
 		}
 	}
 

@@ -7,7 +7,7 @@ import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import database.main.userInterface.Terminal;
 
 public abstract class Plugin {
@@ -60,9 +60,9 @@ public abstract class Plugin {
 
 	public void initialOutput() throws BadLocationException {}
 
-	public void print(Document document, Element element) {}
+	public void print(Document document, Element appendTo) {}
 
-	public void read(String nodeName, NamedNodeMap nodeMap) throws ParserConfigurationException {}
+	public void read(Node node) throws ParserConfigurationException {}
 
 	public void setDisplay(boolean display) {
 		this.display = display;

@@ -1,6 +1,5 @@
 package database.plugin.subject;
 
-import org.w3c.dom.Element;
 import database.plugin.Instance;
 
 public class Subject extends Instance {
@@ -27,14 +26,6 @@ public class Subject extends Instance {
 			}
 		}
 		return false;
-	}
-
-	@Override public void insertParameter(Element element) {
-		element.setAttribute("counter", String.valueOf(counter));
-		element.setAttribute("name", name);
-		element.setAttribute("tag", tag);
-		element.setAttribute("score", score.toString());
-		element.setAttribute("maxPoints", maxPoints.toString());
 	}
 
 	protected double calcPercent() {

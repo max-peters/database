@@ -10,7 +10,7 @@ import javax.xml.transform.TransformerException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import database.main.WriterReader;
 import database.main.userInterface.StringFormat;
@@ -51,15 +51,15 @@ public class UtilityPlugin extends Plugin {
 		}
 	}
 
-	@Override public void print(Document document, Element element) {
+	@Override public void print(Document document, Element appendTo) {
 		Element entryElement = document.createElement("display");
-		entryElement.setAttribute("boolean", String.valueOf(getDisplay()));
-		element.appendChild(entryElement);
+		entryElement.setTextContent(String.valueOf(getDisplay()));
+		appendTo.appendChild(entryElement);
 	}
 
-	@Override public void read(String nodeName, NamedNodeMap nodeMap) throws ParserConfigurationException, DOMException {
-		if (nodeName.equals("display")) {
-			setDisplay(Boolean.valueOf(nodeMap.getNamedItem("boolean").getNodeValue()));
+	@Override public void read(Node node) throws ParserConfigurationException, DOMException {
+		if (node.getNodeName().equals("display")) {
+			setDisplay(Boolean.valueOf(node.getTextContent()));
 		}
 	}
 

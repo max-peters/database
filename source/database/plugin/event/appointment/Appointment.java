@@ -2,8 +2,6 @@ package database.plugin.event.appointment;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import org.w3c.dom.Element;
 import database.plugin.event.Event;
 
 public class Appointment extends Event {
@@ -14,12 +12,6 @@ public class Appointment extends Event {
 		super(name, date);
 		this.begin = begin;
 		this.end = end;
-	}
-
-	@Override public void insertParameter(Element element) {
-		super.insertParameter(element);
-		element.setAttribute("begin", begin == null ? "" : begin.format(DateTimeFormatter.ofPattern("HH:mm")));
-		element.setAttribute("end", end == null ? "" : end.format(DateTimeFormatter.ofPattern("HH:mm")));
 	}
 
 	@Override public LocalDate updateYear() {
