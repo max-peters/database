@@ -2,7 +2,6 @@ package database.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.util.LinkedList;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,12 +18,14 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	protected OutputFormatter<T>	formatter;
 	protected LinkedList<T>			list;
 	private Storage					storage;
+	private Class<T>				instanceClass;
 
-	public InstancePlugin(String identity, Storage storage, OutputFormatter<T> formatter, Backup backup) {
+	public InstancePlugin(String identity, Storage storage, OutputFormatter<T> formatter, Backup backup, Class<T> instanceClass) {
 		super(identity, backup);
 		this.list = new LinkedList<T>();
 		this.storage = storage;
 		this.formatter = formatter;
+		this.instanceClass = instanceClass;
 	}
 
 	public void add(T instance) {
@@ -59,9 +60,8 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	}
 
 	@Override public void read(Node node) throws ParserConfigurationException, DOMException {
-		@SuppressWarnings("unchecked") Class<T> c = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 		if (node.getNodeName().equals("entry")) {
-			add(new Gson().fromJson(node.getTextContent(), c));
+			add(new Gson().fromJson(node.getTextContent(), instanceClass));
 		}
 		else if (node.getNodeName().equals("display")) {
 			setDisplay(Boolean.valueOf(node.getTextContent()));

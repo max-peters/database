@@ -6,8 +6,8 @@ import database.plugin.InstancePlugin;
 import database.plugin.Storage;
 
 public abstract class EventPluginExtension<T extends Event> extends InstancePlugin<T> {
-	public EventPluginExtension(String identity, Storage storage, Backup backup) {
-		super(identity, storage, null, backup);
+	public EventPluginExtension(String identity, Storage storage, Backup backup, Class<T> instanceClass) {
+		super(identity, storage, null, backup, instanceClass);
 	}
 
 	@Override public void add(T event) {

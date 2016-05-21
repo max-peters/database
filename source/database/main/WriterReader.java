@@ -68,7 +68,7 @@ public class WriterReader {
 				plugin.read(nList.item(i));
 			}
 			else if (nList.item(i).getParentNode().getNodeName().equals("storage")) {
-				storage.read(nList.item(i).getNodeName(), nList.item(i).getAttributes());
+				storage.read(nList.item(i));
 			}
 		}
 	}

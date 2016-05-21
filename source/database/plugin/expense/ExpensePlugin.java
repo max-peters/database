@@ -3,7 +3,6 @@ package database.plugin.expense;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
-import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
 import database.main.userInterface.autocompletion.Autocompletion;
 import database.plugin.Backup;
@@ -13,7 +12,7 @@ import database.plugin.Storage;
 
 public class ExpensePlugin extends InstancePlugin<Expense> {
 	public ExpensePlugin(Storage storage, Backup backup) {
-		super("expense", storage, new ExpenseOutputFormatter(), backup);
+		super("expense", storage, new ExpenseOutputFormatter(), backup, Expense.class);
 	}
 
 	@Override public void add(Expense expense) {
@@ -23,12 +22,6 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 		}
 		list.add(i, expense);
 		((ExpenseOutputFormatter) formatter).addExpense(expense, list);
-	}
-
-	@Override public Expense create(NamedNodeMap nodeMap) {
-		return new Expense(	nodeMap.getNamedItem("name").getNodeValue(), nodeMap.getNamedItem("category").getNodeValue(),
-							Double.valueOf(nodeMap.getNamedItem("value").getNodeValue()),
-							LocalDate.parse(nodeMap.getNamedItem("date").getNodeValue(), DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {

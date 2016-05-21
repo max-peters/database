@@ -72,7 +72,7 @@ public class EventPlugin extends Plugin {
 		List<Event> eventList = new LinkedList<Event>();
 		String output = null;
 		for (Event event : getIterable(list)) {
-			if (event.date.equals(date)) {
+			if (event.date.isEqual(date)) {
 				eventList.add(event);
 			}
 		}

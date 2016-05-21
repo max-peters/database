@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.text.BadLocationException;
-import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.OutputInformation;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
@@ -22,7 +21,7 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 	private ExpensePlugin expensePlugin;
 
 	public MonthlyExpensePlugin(ExpensePlugin expensePlugin, Storage storage, Backup backup) {
-		super("monthlyexpense", storage, null, backup);
+		super("monthlyexpense", storage, null, backup, MonthlyExpense.class);
 		this.expensePlugin = expensePlugin;
 	}
 
@@ -67,13 +66,6 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 				break;
 		}
 		Terminal.update();
-	}
-
-	@Override public MonthlyExpense create(NamedNodeMap nodeMap) {
-		return new MonthlyExpense(	nodeMap.getNamedItem("name").getNodeValue(), nodeMap.getNamedItem("category").getNodeValue(),
-									Double.valueOf(nodeMap.getNamedItem("value").getNodeValue()),
-									LocalDate.parse(nodeMap.getNamedItem("date").getNodeValue(), DateTimeFormatter.ofPattern("dd.MM.uuuu")),
-									ExecutionDay.getExecutionDay(nodeMap.getNamedItem("executionday").getNodeValue()));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, NumberFormatException {
@@ -122,9 +114,9 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		return date;
 	}
 
-	private boolean containsExceptValue(Iterable<Expense> iterable, Expense expense) {
+	private boolean equalsExceptValue(Iterable<Expense> iterable, Expense expense) {
 		for (Expense currentExpense : iterable) {
-			if (currentExpense.name.equals(expense.name) && currentExpense.category.equals(expense.category) && currentExpense.date.equals(expense.date)) {
+			if (currentExpense.name.equals(expense.name) && currentExpense.category.equals(expense.category) && currentExpense.date.isEqual(expense.date)) {
 				return true;
 			}
 		}
@@ -134,7 +126,7 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 	private void createExpense(Expense expense, ExpensePlugin expensePlugin, ExecutionDay executionDay) {
 		expense.date = adjustDate(expense.date.getMonthValue(), expense.date.getYear(), executionDay);
 		while (expense.date.isBefore(LocalDate.now()) || expense.date.isEqual(LocalDate.now())) {
-			if (!containsExceptValue(expensePlugin.getIterable(), expense)) {
+			if (!equalsExceptValue(expensePlugin.getIterable(), expense)) {
 				expensePlugin.add(new Expense(expense.name, expense.category, expense.value, expense.date));
 				if (!Terminal.getCollectedLines().contains(new OutputInformation("expense created:", StringType.SOLUTION, StringFormat.STANDARD))) {
 					Terminal.collectLine("expense created:", StringFormat.STANDARD);

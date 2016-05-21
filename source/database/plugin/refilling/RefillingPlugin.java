@@ -3,7 +3,6 @@ package database.plugin.refilling;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
-import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
 import database.plugin.Backup;
 import database.plugin.Command;
@@ -16,7 +15,7 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 	private ExpensePlugin expensePlugin;
 
 	public RefillingPlugin(ExpensePlugin expensePlugin, Storage storage, Backup backup) {
-		super("refilling", storage, new RefillingOutputFormatter(), backup);
+		super("refilling", storage, new RefillingOutputFormatter(), backup, Refilling.class);
 		this.expensePlugin = expensePlugin;
 	}
 
@@ -26,12 +25,6 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 			i--;
 		}
 		list.add(i, refilling);
-	}
-
-	@Override public Refilling create(NamedNodeMap nodeMap) {
-		return new Refilling(	Double.valueOf(nodeMap.getNamedItem("distance").getNodeValue()), Double.valueOf(nodeMap.getNamedItem("refuelAmount").getNodeValue()),
-								Double.valueOf(nodeMap.getNamedItem("cost").getNodeValue()),
-								LocalDate.parse(nodeMap.getNamedItem("date").getNodeValue(), DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {

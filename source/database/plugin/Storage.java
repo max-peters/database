@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import database.main.userInterface.Terminal;
 
 public class Storage {
@@ -21,18 +21,18 @@ public class Storage {
 	public void print(Document document, Element element) {
 		for (String string : storage) {
 			Element entryElement = document.createElement("entry");
-			entryElement.setAttribute("string", string);
+			entryElement.setTextContent(string);
 			element.appendChild(entryElement);
 		}
 	}
 
-	public void read(String nodeName, NamedNodeMap nodeMap) {
-		storage.add(nodeMap.getNamedItem("string").getNodeValue());
+	public void read(Node node) {
+		storage.add(node.getTextContent());
 	}
 
 	public void store(InstancePlugin<? extends Instance> instancePlugin) throws BadLocationException, InterruptedException {
 		for (Instance instance : instancePlugin.getIterable()) {
-			storage.add(instance.toString().replace("\"", "'"));
+			storage.add(instance.toString());
 		}
 		instancePlugin.clearList();
 		Terminal.update();

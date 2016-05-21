@@ -3,7 +3,6 @@ package database.plugin.task;
 import java.io.IOException;
 import java.util.List;
 import javax.swing.text.BadLocationException;
-import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
 import database.plugin.Backup;
 import database.plugin.Command;
@@ -12,7 +11,7 @@ import database.plugin.Storage;
 
 public class TaskPlugin extends InstancePlugin<Task> {
 	public TaskPlugin(Storage storage, Backup backup) {
-		super("task", storage, new TaskOutputFormatter(), backup);
+		super("task", storage, new TaskOutputFormatter(), backup, Task.class);
 	}
 
 	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException {
@@ -28,10 +27,6 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		backup.backup();
 		remove(getTaskByCheckRequest());
 		Terminal.update();
-	}
-
-	@Override public Task create(NamedNodeMap nodeMap) {
-		return new Task(nodeMap.getNamedItem("name").getNodeValue(), nodeMap.getNamedItem("category").getNodeValue());
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {

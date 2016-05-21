@@ -3,7 +3,6 @@ package database.plugin.event.day;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
-import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
 import database.plugin.Backup;
 import database.plugin.Storage;
@@ -11,11 +10,7 @@ import database.plugin.event.EventPluginExtension;
 
 public class DayPlugin extends EventPluginExtension<Day> {
 	public DayPlugin(Storage storage, Backup backup) {
-		super("day", storage, backup);
-	}
-
-	@Override public Day create(NamedNodeMap nodeMap) {
-		return new Day(nodeMap.getNamedItem("name").getNodeValue(), LocalDate.parse(nodeMap.getNamedItem("date").getNodeValue(), DateTimeFormatter.ofPattern("dd.MM.uuuu")));
+		super("day", storage, backup, Day.class);
 	}
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {

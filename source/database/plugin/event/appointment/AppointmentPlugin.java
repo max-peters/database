@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
-import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
 import database.plugin.Backup;
 import database.plugin.Storage;
@@ -12,7 +11,7 @@ import database.plugin.event.EventPluginExtension;
 
 public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 	public AppointmentPlugin(Storage storage, Backup backup) {
-		super("appointment", storage, backup);
+		super("appointment", storage, backup, Appointment.class);
 	}
 
 	@Override public void add(Appointment appointment) {
@@ -31,15 +30,6 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 			}
 			list.add(i, appointment);
 		}
-	}
-
-	@Override public Appointment create(NamedNodeMap nodeMap) {
-		return new Appointment(	nodeMap.getNamedItem("name").getNodeValue(), LocalDate.parse(nodeMap.getNamedItem("date").getNodeValue(), DateTimeFormatter.ofPattern("dd.MM.uuuu")),
-								nodeMap.getNamedItem("begin").getNodeValue().isEmpty()	? null
-																						: LocalTime.parse(	nodeMap.getNamedItem("begin").getNodeValue(),
-																											DateTimeFormatter.ofPattern("HH:mm")),
-								nodeMap	.getNamedItem("end").getNodeValue()
-										.isEmpty() ? null : LocalTime.parse(nodeMap.getNamedItem("end").getNodeValue(), DateTimeFormatter.ofPattern("HH:mm")));
 	}
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {

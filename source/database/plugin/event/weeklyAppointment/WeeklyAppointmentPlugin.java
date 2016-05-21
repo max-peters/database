@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
-import org.w3c.dom.NamedNodeMap;
 import database.main.userInterface.Terminal;
 import database.plugin.Backup;
 import database.plugin.Storage;
@@ -12,7 +11,7 @@ import database.plugin.event.EventPluginExtension;
 
 public class WeeklyAppointmentPlugin extends EventPluginExtension<WeeklyAppointment> {
 	public WeeklyAppointmentPlugin(Storage storage, Backup backup) {
-		super("weeklyappointment", storage, backup);
+		super("weeklyappointment", storage, backup, WeeklyAppointment.class);
 	}
 
 	@Override public void add(WeeklyAppointment weeklyAppointment) {
@@ -25,16 +24,6 @@ public class WeeklyAppointmentPlugin extends EventPluginExtension<WeeklyAppointm
 			weeklyAppointment.date = weeklyAppointment.date.plusDays(7);
 		}
 		super.add(weeklyAppointment);
-	}
-
-	@Override public WeeklyAppointment create(NamedNodeMap nodeMap) {
-		return new WeeklyAppointment(	nodeMap.getNamedItem("name").getNodeValue(),
-										LocalDate.parse(nodeMap.getNamedItem("date").getNodeValue(), DateTimeFormatter.ofPattern("dd.MM.uuuu")),
-										nodeMap.getNamedItem("begin").getNodeValue().isEmpty()	? null
-																								: LocalTime.parse(	nodeMap.getNamedItem("begin").getNodeValue(),
-																													DateTimeFormatter.ofPattern("HH:mm")),
-										nodeMap	.getNamedItem("end").getNodeValue()
-												.isEmpty() ? null : LocalTime.parse(nodeMap.getNamedItem("end").getNodeValue(), DateTimeFormatter.ofPattern("HH:mm")));
 	}
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {

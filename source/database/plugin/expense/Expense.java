@@ -15,15 +15,4 @@ public class Expense extends Instance {
 		this.value = value;
 		this.date = date;
 	}
-
-	@Override public boolean equals(Object object) {
-		Expense expense;
-		if (object != null && object.getClass().equals(this.getClass())) {
-			expense = (Expense) object;
-			if (name.equals(expense.name) && category.equals(expense.category) && date.isEqual(expense.date) && value.equals(expense.value)) {
-				return true;
-			}
-		}
-		return false;
-	}
 }

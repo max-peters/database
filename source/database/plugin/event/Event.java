@@ -12,17 +12,6 @@ public abstract class Event extends Instance {
 		this.date = date;
 	}
 
-	@Override public boolean equals(Object object) {
-		Event event;
-		if (object != null && object.getClass().equals(this.getClass())) {
-			event = (Event) object;
-			if (event.date.isEqual(date) && event.name.equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public LocalDate updateYear() {
 		LocalDate currentDate = LocalDate.now();
 		if (currentDate.getMonthValue() > date.getMonthValue() || currentDate.getMonthValue() == date.getMonthValue() && currentDate.getDayOfMonth() > date.getDayOfMonth()) {
