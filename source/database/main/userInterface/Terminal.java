@@ -50,8 +50,8 @@ public class Terminal {
 		return graphicalUserInterface.getLastKey();
 	}
 
-	public static void getLineOfCharacters(char character) throws BadLocationException {
-		graphicalUserInterface.getLineOfCharacters(character);
+	public static void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
+		graphicalUserInterface.getLineOfCharacters(character, stringType);
 	}
 
 	public static synchronized void initialOutput() throws BadLocationException {
@@ -64,7 +64,7 @@ public class Terminal {
 
 	public static void printCollectedLines() throws InterruptedException, BadLocationException {
 		if (!collectedLines.isEmpty()) {
-			Terminal.getLineOfCharacters('-');
+			Terminal.getLineOfCharacters('-', StringType.SOLUTION);
 			for (OutputInformation output : collectedLines) {
 				graphicalUserInterface.printLine(output);
 			}

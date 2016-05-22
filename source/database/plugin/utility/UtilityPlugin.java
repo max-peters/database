@@ -7,10 +7,6 @@ import java.time.temporal.ChronoUnit;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import database.main.WriterReader;
 import database.main.userInterface.StringFormat;
@@ -21,16 +17,13 @@ import database.plugin.Command;
 import database.plugin.Plugin;
 
 public class UtilityPlugin extends Plugin {
-	private Thread			guiThread;
 	private News			news;
 	private WriterReader	writerReader;
-	private Thread			launcher;
 
-	public UtilityPlugin(Backup backup, WriterReader writerReader, News news, Thread guiThread) throws IOException {
+	public UtilityPlugin(Backup backup, WriterReader writerReader) throws IOException {
 		super("utility", backup);
-		this.news = news;
+		this.news = new News();
 		this.writerReader = writerReader;
-		this.guiThread = guiThread;
 	}
 
 	@Command(tag = "days") public void calculateDayNumber() throws BadLocationException, InterruptedException {
@@ -42,45 +35,40 @@ public class UtilityPlugin extends Plugin {
 		Terminal.waitForInput();
 	}
 
-	@Override public void initialOutput() throws BadLocationException {
-		if (news.getDaysTillDecay() != 0) {
-			Terminal.printLine(news.getRank() + "  (" + news.getDaysTillDecay() + " days till decay)", StringType.MAIN, StringFormat.STANDARD);
+	@Command(tag = "status") public void getLoLStatus() throws BadLocationException, InterruptedException {
+		Terminal.blockInput();
+		Thread gatherer = new Thread(() -> {
+			try {
+				news.setDaysTillDecay();
+				news.setRank();
+				news.connection = true;
+			}
+			catch (Exception e) {
+				news.connection = false;
+			}
+		});
+		gatherer.start();
+		Terminal.getLineOfCharacters('-', StringType.MAIN);
+		Terminal.printLine("league of legends status:", StringType.MAIN, StringFormat.STANDARD);
+		while (gatherer.isAlive()) {
+			Terminal.printLine("fetching in progress |", StringType.REQUEST, StringFormat.STANDARD);
+			Thread.sleep(100);
+			Terminal.printLine("fetching in progress /", StringType.REQUEST, StringFormat.STANDARD);
+			Thread.sleep(100);
+			Terminal.printLine("fetching in progress \u2014", StringType.REQUEST, StringFormat.STANDARD);
+			Thread.sleep(100);
+		}
+		if (news.connection) {
+			Terminal.printLine(" " + news.getRank() + " [" + news.getDaysTillDecay() + " days till decay]", StringType.REQUEST, StringFormat.STANDARD);
+			Terminal.waitForInput();
+			Terminal.update();
 		}
 		else {
-			Terminal.printLine("fetching in progress...", StringType.MAIN, StringFormat.STANDARD);
+			Terminal.printLine(" error 404 page not found", StringType.REQUEST, StringFormat.STANDARD);
+			Terminal.waitForInput();
+			Terminal.update();
 		}
 	}
-
-	@Override public void print(Document document, Element appendTo) {
-		Element entryElement = document.createElement("display");
-		entryElement.setTextContent(String.valueOf(getDisplay()));
-		appendTo.appendChild(entryElement);
-	}
-
-	@Override public void read(Node node) throws ParserConfigurationException, DOMException {
-		if (node.getNodeName().equals("display")) {
-			setDisplay(Boolean.valueOf(node.getTextContent()));
-		}
-	}
-
-	@Override public void setDisplay(boolean display) {
-		super.setDisplay(display);
-		if (display == true) {
-			launcher = new Thread(() -> {
-				try {
-					news.setRank();
-					news.setDaysTillDecay();
-					guiThread.join();
-					Terminal.update();
-					Terminal.printLine("command:", StringType.REQUEST, StringFormat.ITALIC);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
-			});
-			launcher.start();
-		}
-	};
 
 	@Command(tag = "update") public void updateStorage()	throws BadLocationException, InterruptedException, IOException, SAXException, TransformerException,
 															ParserConfigurationException {

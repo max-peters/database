@@ -79,7 +79,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		for (Method method : formatter.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
 				Object output = method.invoke(formatter, getIterable());
-				Terminal.getLineOfCharacters('-');
+				Terminal.getLineOfCharacters('-', StringType.SOLUTION);
 				Terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
 				Terminal.waitForInput();
 			}

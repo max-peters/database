@@ -208,12 +208,12 @@ public class GraphicalUserInterface {
 		return pressedKey;
 	}
 
-	protected void getLineOfCharacters(char character) throws BadLocationException {
+	protected void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < frame.getWidth() / output.getFontMetrics(font).charWidth(character); i++) {
 			builder.append(character);
 		}
-		printLine(builder.toString(), StringType.REQUEST, StringFormat.STANDARD);
+		printLine(builder.toString(), stringType, StringFormat.STANDARD);
 	}
 
 	protected void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {

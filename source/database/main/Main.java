@@ -18,7 +18,6 @@ import database.plugin.refilling.RefillingPlugin;
 import database.plugin.settings.Settings;
 import database.plugin.subject.SubjectPlugin;
 import database.plugin.task.TaskPlugin;
-import database.plugin.utility.News;
 import database.plugin.utility.UtilityPlugin;
 
 public class Main {
@@ -37,7 +36,6 @@ public class Main {
 			guiThread.start();
 			PluginContainer pluginContainer = new PluginContainer();
 			Storage storage = new Storage();
-			News news = new News();
 			new Terminal(graphicalUserInterface, pluginContainer);
 			WriterReader writerReader = new WriterReader(pluginContainer, storage);
 			Backup backup = new Backup(writerReader, pluginContainer, storage);
@@ -54,7 +52,7 @@ public class Main {
 			AppointmentPlugin appointmentPlugin = new AppointmentPlugin(storage, backup);
 			WeeklyAppointmentPlugin weeklyAppointmentPlugin = new WeeklyAppointmentPlugin(storage, backup);
 			EventPlugin eventPlugin = new EventPlugin(dayPlugin, birthdayPlugin, holidayPlugin, appointmentPlugin, weeklyAppointmentPlugin, settings, backup);
-			UtilityPlugin utilityPlugin = new UtilityPlugin(backup, writerReader, news, guiThread);
+			UtilityPlugin utilityPlugin = new UtilityPlugin(backup, writerReader);
 			pluginContainer.addPlugin(settings);
 			pluginContainer.addPlugin(utilityPlugin);
 			pluginContainer.addPlugin(subjectPlugin);

@@ -26,13 +26,13 @@ public class Settings extends Plugin {
 
 	@Override public void print(Document document, Element element) {
 		Element entryElement = document.createElement("eventDisplayRange");
-		entryElement.setAttribute("int", String.valueOf(eventDisplayRange));
+		entryElement.setTextContent(String.valueOf(eventDisplayRange));
 		element.appendChild(entryElement);
 	}
 
 	@Override public void read(Node node) {
 		if (node.getNodeName().equals("eventDisplayRange")) {
-			eventDisplayRange = Integer.valueOf(node.getAttributes().getNamedItem("int").getNodeValue());
+			eventDisplayRange = Integer.valueOf(node.getTextContent());
 		}
 	}
 

@@ -12,6 +12,7 @@ import org.json.JSONObject;
 public class News {
 	private int		daysTillDecay;
 	private String	rank;
+	public boolean	connection;
 
 	public String getRank() {
 		return rank;

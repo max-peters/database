@@ -144,7 +144,7 @@ public class EventPlugin extends Plugin {
 					Terminal.update();
 				}
 				Object output = method.invoke(formatter, getIterable(extensionMap.values()));
-				Terminal.getLineOfCharacters('-');
+				Terminal.getLineOfCharacters('-', StringType.SOLUTION);
 				Terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
 				Terminal.waitForInput();
 				if (command.equals("all")) {
