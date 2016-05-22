@@ -20,10 +20,10 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 			|| appointment.date.isEqual(LocalDate.now()) && appointment.begin != null && appointment.end != null && !appointment.end.isBefore(LocalTime.now())) {
 			int i = list.size();
 			while (i > 0 && list.get(i - 1).date.isAfter(appointment.date)
-					|| (i > 0)&& list.get(i - 1).date.isEqual(appointment.date)
+					|| i > 0&& list.get(i - 1).date.isEqual(appointment.date)
 						&& (list.get(i - 1).begin != null	? list.get(i - 1).begin
 															: LocalTime.parse(	"00:00",
-																				DateTimeFormatter.ofPattern("HH:mm"))).isBefore(appointment.begin != null	? appointment.begin
+																				DateTimeFormatter.ofPattern("HH:mm"))).isAfter(appointment.begin != null	? appointment.begin
 																																							: LocalTime.parse(	"00:00",
 																																												DateTimeFormatter.ofPattern("HH:mm")))) {
 				i--;
@@ -43,7 +43,7 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 		begin = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
 		if (begin != null) {
 			temp = Terminal.request("end", "(TIME)");
-			while (!temp.isEmpty() && begin.isBefore(LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm")))) {
+			while (!temp.isEmpty() && !begin.isBefore(LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm")))) {
 				Terminal.errorMessage();
 				temp = Terminal.request("end", "(TIME)");
 			}

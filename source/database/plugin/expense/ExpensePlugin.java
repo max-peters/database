@@ -35,7 +35,7 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 																			})),
 														list);
 		Double value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
-		LocalDate date = LocalDate.parse(	Terminal.request("date", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.mm.yyyy"))),
+		LocalDate date = LocalDate.parse(	Terminal.request("date", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))),
 											DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		backup.backup();
 		add(new Expense(name, category, value, date));

@@ -148,7 +148,7 @@ public class Terminal {
 				result = parseDateString(input);
 				request = false;
 			}
-			else if ("TIME".matches(regex) && testTimeString(parseTimeString(input))) {
+			else if ("TIME".matches(regex) && (testTimeString(parseTimeString(input)) || input.isEmpty())) {
 				result = parseTimeString(input);
 				request = false;
 			}
@@ -265,7 +265,10 @@ public class Terminal {
 	private static String parseTimeString(String time) {
 		String formattedTime = null;
 		String[] splitResult = time.split(":");
-		if (splitResult.length == 1) {
+		if (time.isEmpty()) {
+			formattedTime = "";
+		}
+		else if (splitResult.length == 1) {
 			formattedTime = add(splitResult[0], 2) + ":00";
 		}
 		else if (splitResult.length == 2) {

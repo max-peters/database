@@ -15,8 +15,8 @@ public class WeeklyAppointmentPlugin extends EventPluginExtension<WeeklyAppointm
 	}
 
 	@Override public void add(WeeklyAppointment weeklyAppointment) {
-		while (!(!weeklyAppointment.date.isBefore(LocalDate.now()))&& !weeklyAppointment.date.isEqual(LocalDate.now()) | weeklyAppointment.date.isEqual(LocalDate.now())
-				&& weeklyAppointment.begin == null
+		while (weeklyAppointment.date.isBefore(LocalDate.now()) && !weeklyAppointment.date.isEqual(LocalDate.now())
+				|| weeklyAppointment.date.isEqual(LocalDate.now()) && weeklyAppointment.begin == null
 				|| weeklyAppointment.date.isEqual(LocalDate.now())&& weeklyAppointment.begin != null && weeklyAppointment.end == null
 					&& !weeklyAppointment.begin.isAfter(LocalTime.now())
 				|| weeklyAppointment.date.isEqual(LocalDate.now())&& weeklyAppointment.begin != null && weeklyAppointment.end != null

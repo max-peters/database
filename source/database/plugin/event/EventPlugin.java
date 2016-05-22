@@ -135,12 +135,22 @@ public class EventPlugin extends Plugin {
 
 	@Command(tag = "show") public void show() throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		String command = Terminal.request("show", getCommandTags(formatter.getClass()));
+		boolean display = false;
 		for (Method method : formatter.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
+				if (command.equals("all")) {
+					display = getDisplay();
+					setDisplay(false);
+					Terminal.update();
+				}
 				Object output = method.invoke(formatter, getIterable(extensionMap.values()));
 				Terminal.getLineOfCharacters('-');
 				Terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
 				Terminal.waitForInput();
+				if (command.equals("all")) {
+					setDisplay(display);
+					Terminal.update();
+				}
 			}
 		}
 	}
