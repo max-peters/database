@@ -25,12 +25,15 @@ public class Backup {
 		this.storage = storage;
 	}
 
-	public void backup() {
+	public void backup() throws BadLocationException {
+		Terminal.printLine("creating backup...", StringType.REQUEST, StringFormat.STANDARD);
+		Terminal.blockInput();
 		try {
 			backup = writerReader.createDocument();
 		}
 		catch (ParserConfigurationException e) {}
 		changes = true;
+		Terminal.releaseInput();
 	}
 
 	public void clear() throws BadLocationException {

@@ -4,3 +4,5 @@ accept similar strings for command request // string autocompletion
 event - termine über zeitraum // zugriff auf eventplugin in formatter
 fix update 
 utility - difference between dates and events and events and events
+increase interaction between plugins.. (show lol decay date in event, add task date and show as event)
+rework backup

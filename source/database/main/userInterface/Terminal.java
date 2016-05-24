@@ -276,4 +276,8 @@ public class Terminal {
 		}
 		return formattedTime;
 	}
+
+	public static void releaseInput() {
+		graphicalUserInterface.releaseInput();
+	}
 }
