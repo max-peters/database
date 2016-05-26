@@ -50,11 +50,11 @@ public class UtilityPlugin extends Plugin {
 		Terminal.getLineOfCharacters('-', StringType.MAIN);
 		Terminal.printLine("league of legends status:", StringType.MAIN, StringFormat.STANDARD);
 		while (gatherer.isAlive()) {
-			Terminal.printLine("fetching in progress |", StringType.REQUEST, StringFormat.STANDARD);
+			Terminal.printLine("fetching in progress |", StringType.REQUEST, StringFormat.ITALIC);
 			Thread.sleep(100);
-			Terminal.printLine("fetching in progress /", StringType.REQUEST, StringFormat.STANDARD);
+			Terminal.printLine("fetching in progress /", StringType.REQUEST, StringFormat.ITALIC);
 			Thread.sleep(100);
-			Terminal.printLine("fetching in progress \u2014", StringType.REQUEST, StringFormat.STANDARD);
+			Terminal.printLine("fetching in progress \u2014", StringType.REQUEST, StringFormat.ITALIC);
 			Thread.sleep(100);
 		}
 		if (news.connection) {
@@ -71,9 +71,10 @@ public class UtilityPlugin extends Plugin {
 
 	@Command(tag = "update") public void updateStorage()	throws BadLocationException, InterruptedException, IOException, SAXException, TransformerException,
 															ParserConfigurationException {
-		Terminal.printLine("updating...", StringType.REQUEST, StringFormat.ITALIC);
+		Terminal.printLine("connecting...", StringType.REQUEST, StringFormat.ITALIC);
 		Terminal.blockInput();
 		writerReader.updateStorage();
+		Terminal.waitForInput();
 		Terminal.update();
 	}
 }

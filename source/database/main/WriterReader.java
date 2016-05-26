@@ -2,6 +2,7 @@ package database.main;
 
 import java.io.File;
 import java.io.IOException;
+import javax.swing.text.BadLocationException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,6 +16,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import database.main.userInterface.StringFormat;
+import database.main.userInterface.StringType;
+import database.main.userInterface.Terminal;
 import database.plugin.Plugin;
 import database.plugin.Storage;
 
@@ -73,12 +77,18 @@ public class WriterReader {
 		}
 	}
 
-	public void updateStorage() throws InterruptedException, IOException, SAXException, TransformerException, ParserConfigurationException {
+	public void updateStorage() throws InterruptedException, IOException, SAXException, TransformerException, ParserConfigurationException, BadLocationException {
 		if ((remoteStorage.exists() || connect() == 0) && localStorage.exists()) {
 			File newestFile = remoteStorage.lastModified() < localStorage.lastModified() ? localStorage : remoteStorage;
+			Terminal.printLine("loading " + newestFile.getPath(), StringType.REQUEST, StringFormat.ITALIC);
+			pluginContainer.clear();
 			readFile(newestFile);
 			writeFile(localStorage);
 			writeFile(remoteStorage);
+			Terminal.printLine(newestFile.getPath() + " loaded", StringType.REQUEST, StringFormat.ITALIC);
+		}
+		else {
+			Terminal.printLine("connection failed", StringType.REQUEST, StringFormat.ITALIC);
 		}
 	}
 

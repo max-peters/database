@@ -3,6 +3,7 @@ package database.main;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import database.plugin.Command;
+import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 
 public class PluginContainer {
@@ -14,6 +15,14 @@ public class PluginContainer {
 
 	public void addPlugin(Plugin plugin) {
 		plugins.add(plugin);
+	}
+
+	public void clear() {
+		for (Plugin plugin : plugins) {
+			if (plugin instanceof InstancePlugin<?>) {
+				((InstancePlugin<?>) plugin).clearList();
+			}
+		}
 	}
 
 	public Plugin getPlugin(String identity) {
