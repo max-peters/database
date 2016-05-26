@@ -10,18 +10,18 @@ import database.main.userInterface.OutputInformation;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
-import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.Storage;
+import database.plugin.backup.BackupService;
 import database.plugin.expense.Expense;
 import database.plugin.expense.ExpensePlugin;
 
 public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 	private ExpensePlugin expensePlugin;
 
-	public MonthlyExpensePlugin(ExpensePlugin expensePlugin, Storage storage, Backup backup) {
-		super("monthlyexpense", storage, null, backup, MonthlyExpense.class);
+	public MonthlyExpensePlugin(ExpensePlugin expensePlugin, Storage storage) {
+		super("monthlyexpense", storage, null, MonthlyExpense.class);
 		this.expensePlugin = expensePlugin;
 	}
 
@@ -53,7 +53,7 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		else {
 			return;
 		}
-		backup.backup();
+		BackupService.backupChangeBefor(monthlyExpense, this);
 		switch (change) {
 			case "name":
 				monthlyExpense.name = Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", monthlyExpense.name);
@@ -65,15 +65,17 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 				monthlyExpense.value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]*)?", String.valueOf(monthlyExpense.value)));
 				break;
 		}
+		BackupService.backupChangeAfter(monthlyExpense, this);
 		Terminal.update();
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, NumberFormatException {
-		backup.backup();
-		add(new MonthlyExpense(	Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+"), Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+"),
-								Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?")),
-								LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu")),
-								ExecutionDay.getExecutionDay(Terminal.request("executionday", "(first|mid|last)"))));
+		MonthlyExpense monthlyExpense = new MonthlyExpense(	Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+"), Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+"),
+															Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?")),
+															LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu")),
+															ExecutionDay.getExecutionDay(Terminal.request("executionday", "(first|mid|last)")));
+		add(monthlyExpense);
+		BackupService.backupCreation(monthlyExpense, this);
 		Terminal.update();
 		Terminal.printCollectedLines();
 	}
@@ -91,8 +93,14 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		for (Expense expense : getIterable()) {
 			strings.add(expense.name + " - " + expense.category);
 		}
-		backup.backup();
-		remove(list.get(Terminal.checkRequest(strings)));
+		int position = Terminal.checkRequest(strings);
+		if (position < 0) {
+			return;
+		}
+		MonthlyExpense monthlyExpense = list.get(position);
+		remove(monthlyExpense);
+		BackupService.backupRemoval(monthlyExpense, this);
+		Terminal.update();
 	}
 
 	@Override public void store() {

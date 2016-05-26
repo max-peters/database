@@ -11,13 +11,11 @@ import org.w3c.dom.Node;
 import database.main.userInterface.Terminal;
 
 public abstract class Plugin {
-	protected Backup	backup;
-	private boolean		display;
-	private String		identity;
+	private boolean	display;
+	private String	identity;
 
-	public Plugin(String identity, Backup backup) {
+	public Plugin(String identity) {
 		this.identity = identity;
-		this.backup = backup;
 	}
 
 	public void conduct(String command) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {

@@ -5,15 +5,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import database.main.userInterface.Terminal;
-import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.Plugin;
 
 public class Settings extends Plugin {
 	private int eventDisplayRange;
 
-	public Settings(Backup backup) {
-		super("settings", backup);
+	public Settings() {
+		super("settings");
 	}
 
 	@Override public void display() {

@@ -5,13 +5,13 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
 import database.main.userInterface.Terminal;
-import database.plugin.Backup;
 import database.plugin.Storage;
+import database.plugin.backup.BackupService;
 import database.plugin.event.EventPluginExtension;
 
 public class WeeklyAppointmentPlugin extends EventPluginExtension<WeeklyAppointment> {
-	public WeeklyAppointmentPlugin(Storage storage, Backup backup) {
-		super("weeklyappointment", storage, backup, WeeklyAppointment.class);
+	public WeeklyAppointmentPlugin(Storage storage) {
+		super("weeklyappointment", storage, WeeklyAppointment.class);
 	}
 
 	@Override public void add(WeeklyAppointment weeklyAppointment) {
@@ -42,7 +42,8 @@ public class WeeklyAppointmentPlugin extends EventPluginExtension<WeeklyAppointm
 				temp = Terminal.request("end", "(TIME)");
 			}
 		}
-		Terminal.blockInput();
-		add(new WeeklyAppointment(name, date, begin, temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"))));
+		WeeklyAppointment weeklyAppointment = new WeeklyAppointment(name, date, begin, temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm")));
+		add(weeklyAppointment);
+		BackupService.backupCreation(weeklyAppointment, this);
 	}
 }

@@ -16,10 +16,10 @@ import org.w3c.dom.Node;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
-import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
+import database.plugin.backup.BackupService;
 import database.plugin.event.appointment.Appointment;
 import database.plugin.event.appointment.AppointmentPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
@@ -34,8 +34,8 @@ public class EventPlugin extends Plugin {
 	private EventOutputFormatter								formatter;
 
 	public EventPlugin(	DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin,
-						WeeklyAppointmentPlugin weeklyAppointmentPlugin, Settings settings, Backup backup) {
-		super("event", backup);
+						WeeklyAppointmentPlugin weeklyAppointmentPlugin, Settings settings) {
+		super("event");
 		extensionMap.put(dayPlugin.getIdentity(), dayPlugin);
 		extensionMap.put(birthdayPlugin.getIdentity(), birthdayPlugin);
 		extensionMap.put(holidayPlugin.getIdentity(), holidayPlugin);
@@ -49,7 +49,6 @@ public class EventPlugin extends Plugin {
 		list.remove("holiday");
 		EventPluginExtension<? extends Event> extension = chooseType(list);
 		if (extension != null) {
-			backup.backup();
 			extension.createRequest();
 			Terminal.update();
 		}
@@ -191,6 +190,7 @@ public class EventPlugin extends Plugin {
 			}
 			else if (temp instanceof Appointment) {
 				extensionMap.get("appointment").remove(temp);
+				BackupService.backupRemoval(temp, extensionMap.get("weeklyappointment"));
 			}
 			setDisplay(display);
 			Terminal.update();

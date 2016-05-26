@@ -20,8 +20,8 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	private Storage					storage;
 	private Class<T>				instanceClass;
 
-	public InstancePlugin(String identity, Storage storage, OutputFormatter<T> formatter, Backup backup, Class<T> instanceClass) {
-		super(identity, backup);
+	public InstancePlugin(String identity, Storage storage, OutputFormatter<T> formatter, Class<T> instanceClass) {
+		super(identity);
 		this.list = new LinkedList<T>();
 		this.storage = storage;
 		this.formatter = formatter;
@@ -30,6 +30,10 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 
 	public void add(T instance) {
 		list.add(instance);
+	}
+
+	public void createAndAdd(String json) {
+		add(new Gson().fromJson(json, instanceClass));
 	}
 
 	public void clearList() {
@@ -61,7 +65,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 
 	@Override public void read(Node node) throws ParserConfigurationException, DOMException {
 		if (node.getNodeName().equals("entry")) {
-			add(new Gson().fromJson(node.getTextContent(), instanceClass));
+			createAndAdd(node.getTextContent());
 		}
 		else if (node.getNodeName().equals("display")) {
 			setDisplay(Boolean.valueOf(node.getTextContent()));
@@ -87,7 +91,12 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	}
 
 	@Command(tag = "store") public void store() throws BadLocationException, InterruptedException {
-		backup.backup();
-		storage.store(this);
+		if (Boolean.valueOf(Terminal.request("do you want to store all entries", "(true|false)"))) {
+			storage.store(this);
+		}
+	}
+
+	public Class<T> getInstanceClass() {
+		return instanceClass;
 	}
 }

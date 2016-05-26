@@ -8,18 +8,16 @@ import javax.xml.transform.TransformerException;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
-import database.plugin.Backup;
 import database.plugin.Plugin;
+import database.plugin.backup.BackupService;
 
 public class Administration {
-	private Backup			backup;
 	private PluginContainer	pluginContainer;
 	private WriterReader	writerReader;
 
-	public Administration(PluginContainer pluginContainer, WriterReader writerReader, Backup backup) {
+	public Administration(PluginContainer pluginContainer, WriterReader writerReader) {
 		this.pluginContainer = pluginContainer;
 		this.writerReader = writerReader;
-		this.backup = backup;
 	}
 
 	public void request() throws Exception {
@@ -29,7 +27,7 @@ public class Administration {
 	}
 
 	private void exit() throws InterruptedException, BadLocationException, TransformerException, ParserConfigurationException {
-		if (backup.getChanges()) {
+		if (BackupService.isChanged()) {
 			String command;
 			command = Terminal.request("there are unsaved changes - exit", "(y|n|s)");
 			switch (command) {
@@ -64,7 +62,7 @@ public class Administration {
 						exit();
 						break;
 					case "cancel":
-						backup.restore();
+						BackupService.restore();
 						break;
 				}
 			}
@@ -83,7 +81,7 @@ public class Administration {
 		Terminal.blockInput();
 		Terminal.printLine("saving", StringType.REQUEST, StringFormat.ITALIC);
 		writerReader.write();
-		backup.save();
+		BackupService.save();
 		Terminal.printLine("saved", StringType.REQUEST, StringFormat.ITALIC);
 	}
 }

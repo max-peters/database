@@ -4,34 +4,37 @@ import java.io.IOException;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.userInterface.Terminal;
-import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.Storage;
+import database.plugin.backup.BackupService;
 
 public class TaskPlugin extends InstancePlugin<Task> {
-	public TaskPlugin(Storage storage, Backup backup) {
-		super("task", storage, new TaskOutputFormatter(), backup, Task.class);
+	public TaskPlugin(Storage storage) {
+		super("task", storage, new TaskOutputFormatter(), Task.class);
 	}
 
 	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException {
 		Task task = getTaskByCheckRequest();
 		if (task != null) {
-			backup.backup();
+			BackupService.backupChangeBefor(task, this);
 			task.name = Terminal.request("new name", ".+", task.name);
+			BackupService.backupChangeAfter(task, this);
 			Terminal.update();
 		}
 	}
 
 	@Command(tag = "check") public void checkRequest() throws InterruptedException, BadLocationException, IOException {
-		backup.backup();
-		remove(getTaskByCheckRequest());
+		Task task = getTaskByCheckRequest();
+		remove(task);
+		BackupService.backupRemoval(task, this);
 		Terminal.update();
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
-		backup.backup();
-		add(new Task(Terminal.request("name", ".+"), Terminal.request("category", ".+")));
+		Task task = new Task(Terminal.request("name", ".+"), Terminal.request("category", ".+"));
+		add(task);
+		BackupService.backupCreation(task, this);
 		Terminal.update();
 	}
 

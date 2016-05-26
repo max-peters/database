@@ -11,13 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
-import database.plugin.Backup;
 import database.plugin.Storage;
 import database.plugin.event.EventPluginExtension;
 
 public class HolidayPlugin extends EventPluginExtension<Holiday> {
-	public HolidayPlugin(Storage storage, Backup backup) {
-		super("holiday", storage, backup, Holiday.class);
+	public HolidayPlugin(Storage storage) {
+		super("holiday", storage, Holiday.class);
 	}
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {

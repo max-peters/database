@@ -12,7 +12,6 @@ import database.main.WriterReader;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
-import database.plugin.Backup;
 import database.plugin.Command;
 import database.plugin.Plugin;
 
@@ -20,8 +19,8 @@ public class UtilityPlugin extends Plugin {
 	private News			news;
 	private WriterReader	writerReader;
 
-	public UtilityPlugin(Backup backup, WriterReader writerReader) throws IOException {
-		super("utility", backup);
+	public UtilityPlugin(WriterReader writerReader) throws IOException {
+		super("utility");
 		this.news = new News();
 		this.writerReader = writerReader;
 	}
@@ -74,7 +73,6 @@ public class UtilityPlugin extends Plugin {
 															ParserConfigurationException {
 		Terminal.printLine("updating...", StringType.REQUEST, StringFormat.ITALIC);
 		Terminal.blockInput();
-		backup.clear();
 		writerReader.updateStorage();
 		Terminal.update();
 	}

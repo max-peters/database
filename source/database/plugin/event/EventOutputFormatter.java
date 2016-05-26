@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.plugin.Command;
-import database.plugin.InstancePlugin;
 import database.plugin.OutputFormatter;
 import database.plugin.settings.Settings;
 
@@ -18,8 +17,7 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 		this.settings = settings;
 	}
 
-	@Command(tag = "all") public String printAll(Iterable<Event> iterable, InstancePlugin<Event> plugin) throws BadLocationException {
-		System.out.println(plugin.getIdentity());
+	@Command(tag = "all") public String printAll(Iterable<Event> iterable) throws BadLocationException {
 		String output = "";
 		for (String string : formatOutput(iterable)) {
 			output += string + System.getProperty("line.separator");
