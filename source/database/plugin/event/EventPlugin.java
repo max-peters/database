@@ -76,7 +76,7 @@ public class EventPlugin extends Plugin {
 			}
 		}
 		if (eventList.size() == 0) {
-			output = "there are no appointments for this date.";
+			output = "there are no appointments for this date";
 		}
 		else if (eventList.size() == 1) {
 			output = "there is an appointment for this date:";
