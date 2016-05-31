@@ -57,7 +57,8 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 							contains = true;
 							if (holiday.date.isBefore(newDate) && holiday.date.isBefore(LocalDate.now())) {
 								add(new Holiday(name, newDate));
-								return;
+								remove(holiday);
+								break;
 							}
 						}
 					}
@@ -90,7 +91,7 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 		}
 		catch (IOException e) {
 			Terminal.collectLine("holiday", StringFormat.BOLD);
-			Terminal.collectLine("error 404: page not found", StringFormat.STANDARD);
+			Terminal.collectLine(" error 404: page not found", StringFormat.STANDARD);
 		}
 	}
 }

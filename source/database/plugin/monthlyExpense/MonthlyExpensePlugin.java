@@ -77,7 +77,6 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		add(monthlyExpense);
 		BackupService.backupCreation(monthlyExpense, this);
 		Terminal.update();
-		Terminal.printCollectedLines();
 	}
 
 	@Override public void display() {
@@ -136,10 +135,11 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		while (expense.date.isBefore(LocalDate.now()) || expense.date.isEqual(LocalDate.now())) {
 			if (!equalsExceptValue(expensePlugin.getIterable(), expense)) {
 				expensePlugin.add(new Expense(expense.name, expense.category, expense.value, expense.date));
-				if (!Terminal.getCollectedLines().contains(new OutputInformation("expense created:", StringType.SOLUTION, StringFormat.STANDARD))) {
-					Terminal.collectLine("expense created:", StringFormat.STANDARD);
+				if (!Terminal.getCollectedLines().contains(new OutputInformation("expense", StringType.SOLUTION, StringFormat.BOLD))) {
+					Terminal.collectLine("expense", StringFormat.BOLD);
 				}
-				Terminal.collectLine(" - " + expense.date + " " + expense.name + " (" + expense.category + ") " + expense.value + "€", StringFormat.STANDARD);
+				Terminal.collectLine(" + "+ expense.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.name + " (" + expense.category + ") " + expense.value
+										+ "€", StringFormat.STANDARD);
 			}
 			if (expense.date.getMonthValue() == 12) {
 				expense.date = adjustDate(1, expense.date.getYear() + 1, executionDay);
