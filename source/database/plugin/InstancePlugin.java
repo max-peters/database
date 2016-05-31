@@ -41,7 +41,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	}
 
 	public Iterable<T> getIterable() {
-		return list;
+		return new LinkedList<T>(list);
 	}
 
 	@Override public void initialOutput() throws BadLocationException {

@@ -59,10 +59,7 @@ public class RefillingOutputFormatter extends OutputFormatter<Refilling> {
 
 	@Override protected String getInitialOutput(Iterable<Refilling> iterable) {
 		String output = "";
-		if (!iterable.iterator().hasNext()) {
-			output = "no entries";
-		}
-		else {
+		if (iterable.iterator().hasNext()) {
 			int sum = 0;
 			Iterator<Refilling> it = iterable.iterator();
 			while (it.hasNext()) {

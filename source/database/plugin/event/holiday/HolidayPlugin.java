@@ -15,6 +15,8 @@ import database.plugin.Storage;
 import database.plugin.event.EventPluginExtension;
 
 public class HolidayPlugin extends EventPluginExtension<Holiday> {
+	private List<String> lines = new ArrayList<String>();
+
 	public HolidayPlugin(Storage storage) {
 		super("holiday", storage, Holiday.class);
 	}
@@ -24,24 +26,21 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 	}
 
 	public void updateHolidays() throws BadLocationException, InterruptedException {
-		try {
-			if (!getIterable().iterator().hasNext()) {
-				getHolidays();
-			}
+		if (!getIterable().iterator().hasNext()) {
+			connectAndSetList();
+		}
+		else {
 			for (Holiday holiday : getIterable()) {
 				if (holiday.date.isBefore(LocalDate.now())) {
-					getHolidays();
-					return;
+					connectAndSetList();
+					break;
 				}
 			}
 		}
-		catch (IOException e) {
-			Terminal.collectLine("couldn't update holidays", StringFormat.STANDARD);
-		}
+		getHolidays();
 	}
 
-	private void getHolidays() throws IOException, BadLocationException, InterruptedException {
-		List<String> lines = getList();
+	private void getHolidays() throws BadLocationException, InterruptedException {
 		for (int i = 0; i < lines.size(); i++) {
 			if (lines.get(i).matches(".*<a href=\"/Feiertage/feiertag_.*.html\" class=\"dash\">.*")) {
 				String temp = lines.get(i + 5).replace(" ", "");
@@ -58,7 +57,6 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 							contains = true;
 							if (holiday.date.isBefore(newDate) && holiday.date.isBefore(LocalDate.now())) {
 								add(new Holiday(name, newDate));
-								remove(holiday);
 								return;
 							}
 						}
@@ -69,23 +67,30 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 				}
 			}
 		}
+		if (lines.size() != 0) {
+			for (Holiday holiday : getIterable()) {
+				if (holiday.date.isBefore(LocalDate.now())) {
+					remove(holiday);
+				}
+			}
+		}
 	}
 
-	private List<String> getList() throws IOException {
-		List<String> lines = new ArrayList<String>();
+	private void connectAndSetList() {
 		String line;
 		InputStreamReader isr;
+		lines.clear();
 		try {
 			isr = new InputStreamReader(new URL("http://www.schulferien.org/Feiertage/Feiertage_Baden_Wuerttemberg.html").openConnection().getInputStream());
+			BufferedReader in = new BufferedReader(isr);
+			while ((line = in.readLine()) != null) {
+				lines.add(line);
+			}
+			in.close();
 		}
 		catch (IOException e) {
-			return lines;
+			Terminal.collectLine("holiday", StringFormat.BOLD);
+			Terminal.collectLine("error 404: page not found", StringFormat.STANDARD);
 		}
-		BufferedReader in = new BufferedReader(isr);
-		while ((line = in.readLine()) != null) {
-			lines.add(line);
-		}
-		in.close();
-		return lines;
 	}
 }
