@@ -25,6 +25,9 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 
 	public void updateHolidays() throws BadLocationException, InterruptedException {
 		try {
+			if (!getIterable().iterator().hasNext()) {
+				getHolidays();
+			}
 			for (Holiday holiday : getIterable()) {
 				if (holiday.date.isBefore(LocalDate.now())) {
 					getHolidays();

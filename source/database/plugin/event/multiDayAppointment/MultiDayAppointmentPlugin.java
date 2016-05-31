@@ -7,7 +7,6 @@ import database.plugin.event.EventPluginExtension;
 public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppointment> {
 	public MultiDayAppointmentPlugin(Storage storage) {
 		super("multidayappointment", storage, MultiDayAppointment.class);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {
