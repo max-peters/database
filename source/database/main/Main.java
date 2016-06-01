@@ -11,6 +11,7 @@ import database.plugin.event.appointment.AppointmentPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.event.day.DayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
+import database.plugin.event.multiDayAppointment.MultiDayAppointmentPlugin;
 import database.plugin.event.weeklyAppointment.WeeklyAppointmentPlugin;
 import database.plugin.expense.ExpensePlugin;
 import database.plugin.monthlyExpense.MonthlyExpensePlugin;
@@ -51,7 +52,8 @@ public class Main {
 			HolidayPlugin holidayPlugin = new HolidayPlugin(storage);
 			AppointmentPlugin appointmentPlugin = new AppointmentPlugin(storage);
 			WeeklyAppointmentPlugin weeklyAppointmentPlugin = new WeeklyAppointmentPlugin(storage);
-			EventPlugin eventPlugin = new EventPlugin(dayPlugin, birthdayPlugin, holidayPlugin, appointmentPlugin, weeklyAppointmentPlugin, settings);
+			MultiDayAppointmentPlugin multiDayAppointmentPlugin = new MultiDayAppointmentPlugin(storage);
+			EventPlugin eventPlugin = new EventPlugin(dayPlugin, birthdayPlugin, holidayPlugin, appointmentPlugin, weeklyAppointmentPlugin, multiDayAppointmentPlugin, settings);
 			UtilityPlugin utilityPlugin = new UtilityPlugin(writerReader);
 			pluginContainer.addPlugin(settings);
 			pluginContainer.addPlugin(utilityPlugin);
@@ -66,6 +68,7 @@ public class Main {
 			pluginContainer.addPlugin(holidayPlugin);
 			pluginContainer.addPlugin(appointmentPlugin);
 			pluginContainer.addPlugin(weeklyAppointmentPlugin);
+			pluginContainer.addPlugin(multiDayAppointmentPlugin);
 			writerReader.read();
 			holidayPlugin.updateHolidays();
 			guiThread.join();

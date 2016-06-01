@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,22 +25,25 @@ import database.plugin.event.appointment.AppointmentPlugin;
 import database.plugin.event.birthday.BirthdayPlugin;
 import database.plugin.event.day.DayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
+import database.plugin.event.multiDayAppointment.MultiDayAppointment;
+import database.plugin.event.multiDayAppointment.MultiDayAppointmentPlugin;
 import database.plugin.event.weeklyAppointment.WeeklyAppointment;
 import database.plugin.event.weeklyAppointment.WeeklyAppointmentPlugin;
 import database.plugin.settings.Settings;
 
 public class EventPlugin extends Plugin {
-	private Map<String, EventPluginExtension<? extends Event>>	extensionMap	= new HashMap<String, EventPluginExtension<? extends Event>>();
+	private Map<String, EventPluginExtension<? extends Event>>	extensionMap	= new LinkedHashMap<String, EventPluginExtension<? extends Event>>();
 	private EventOutputFormatter								formatter;
 
 	public EventPlugin(	DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin,
-						WeeklyAppointmentPlugin weeklyAppointmentPlugin, Settings settings) {
+						WeeklyAppointmentPlugin weeklyAppointmentPlugin, MultiDayAppointmentPlugin multiDayAppointmentPlugin, Settings settings) {
 		super("event");
+		extensionMap.put(holidayPlugin.getIdentity(), holidayPlugin);
 		extensionMap.put(dayPlugin.getIdentity(), dayPlugin);
 		extensionMap.put(birthdayPlugin.getIdentity(), birthdayPlugin);
-		extensionMap.put(holidayPlugin.getIdentity(), holidayPlugin);
 		extensionMap.put(appointmentPlugin.getIdentity(), appointmentPlugin);
 		extensionMap.put(weeklyAppointmentPlugin.getIdentity(), weeklyAppointmentPlugin);
+		extensionMap.put(multiDayAppointmentPlugin.getIdentity(), multiDayAppointmentPlugin);
 		formatter = new EventOutputFormatter(settings);
 	}
 
@@ -172,6 +175,7 @@ public class EventPlugin extends Plugin {
 		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>();
 		list.add(extensionMap.get("appointment"));
 		list.add(extensionMap.get("weeklyappointment"));
+		list.add(extensionMap.get("multidayappointment"));
 		Iterable<Event> iterable = formatter.getNearEvents(getIterable(list));
 		List<String> stringList = formatter.formatOutput(iterable);
 		setDisplay(false);
@@ -188,13 +192,17 @@ public class EventPlugin extends Plugin {
 			if (temp instanceof WeeklyAppointment) {
 				temp.date = temp.date.plusDays(7);
 			}
+			else if (temp instanceof MultiDayAppointment) {
+				extensionMap.get("multidayappointment").remove(temp);
+				BackupService.backupRemoval(temp, extensionMap.get("multidayappointment"));
+			}
 			else if (temp instanceof Appointment) {
 				extensionMap.get("appointment").remove(temp);
-				BackupService.backupRemoval(temp, extensionMap.get("weeklyappointment"));
+				BackupService.backupRemoval(temp, extensionMap.get("appointment"));
 			}
-			setDisplay(display);
-			Terminal.update();
 		}
+		setDisplay(display);
+		Terminal.update();
 	}
 
 	private EventPluginExtension<? extends Event> chooseType(List<String> strings) throws InterruptedException, BadLocationException {
