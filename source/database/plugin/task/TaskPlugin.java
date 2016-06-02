@@ -26,9 +26,11 @@ public class TaskPlugin extends InstancePlugin<Task> {
 
 	@Command(tag = "check") public void checkRequest() throws InterruptedException, BadLocationException, IOException {
 		Task task = getTaskByCheckRequest();
-		remove(task);
-		BackupService.backupRemoval(task, this);
-		Terminal.update();
+		if (task != null) {
+			remove(task);
+			BackupService.backupRemoval(task, this);
+			Terminal.update();
+		}
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
