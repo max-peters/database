@@ -1,4 +1,4 @@
-package database.plugin.monthlyExpense;
+package database.plugin.repetitiveExpense;
 
 public enum ExecutionDay {
 	FIRST, LAST, MID;

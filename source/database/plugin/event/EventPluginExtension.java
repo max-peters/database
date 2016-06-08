@@ -1,5 +1,8 @@
 package database.plugin.event;
 
+import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.plugin.InstancePlugin;
 import database.plugin.Storage;
@@ -18,6 +21,16 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 	}
 
 	public abstract void createRequest() throws InterruptedException, BadLocationException;
+
+	public List<Event> getEvents(LocalDate date) {
+		List<Event> eventList = new LinkedList<Event>();
+		for (Event event : getIterable()) {
+			if (event.updateYear().isEqual(date)) {
+				eventList.add(event);
+			}
+		}
+		return eventList;
+	}
 
 	@Override public void display() throws InterruptedException, BadLocationException {
 		super.display();

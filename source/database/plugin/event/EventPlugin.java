@@ -67,25 +67,26 @@ public class EventPlugin extends Plugin {
 
 	@Command(tag = "check") public void check() throws InterruptedException, BadLocationException {
 		boolean display = getDisplay();
-		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>();
-		list.add(extensionMap.get("appointment"));
-		list.add(extensionMap.get("weeklyappointment"));
+		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>(extensionMap.values());
+		// list.add(extensionMap.get("appointment"));
+		// list.add(extensionMap.get("birthday"));
+		// list.add(extensionMap.get("holiday"));
+		// list.add(extensionMap.get("weeklyappointment"));
+		// list.add(extensionMap.get("multydayappointment"));
 		LocalDate date = LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		List<Event> eventList = new LinkedList<Event>();
 		String output = null;
-		for (Event event : getIterable(list)) {
-			if (event.date.isEqual(date)) {
-				eventList.add(event);
-			}
+		for (EventPluginExtension<? extends Event> plugin : list) {
+			eventList.addAll(plugin.getEvents(date));
 		}
 		if (eventList.size() == 0) {
-			output = "there are no appointments for this date";
+			output = " there are no appointments for this date";
 		}
 		else if (eventList.size() == 1) {
-			output = "there is an appointment for this date:";
+			output = " there is an appointment for this date:";
 		}
 		else if (eventList.size() == 2) {
-			output = "there are appointments for this date:";
+			output = " there are appointments for this date:";
 		}
 		setDisplay(false);
 		Terminal.update();

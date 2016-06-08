@@ -3,10 +3,13 @@ package database.plugin.event.multiDayAppointment;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.userInterface.Terminal;
 import database.plugin.Storage;
 import database.plugin.backup.BackupService;
+import database.plugin.event.Event;
 import database.plugin.event.EventPluginExtension;
 
 public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppointment> {
@@ -41,5 +44,15 @@ public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppo
 		MultiDayAppointment multiDayAppointment = new MultiDayAppointment(name, firstDay, begin, lastDay, end);
 		add(multiDayAppointment);
 		BackupService.backupCreation(multiDayAppointment, this);
+	}
+
+	public List<Event> getEvents(LocalDate date) {
+		List<Event> eventList = new LinkedList<Event>();
+		for (MultiDayAppointment event : getIterable()) {
+			if ((event.date.isBefore(date) || event.date.isEqual(date)) && (event.lastDay.isAfter(date) || event.lastDay.isEqual(date))) {
+				eventList.add(event);
+			}
+		}
+		return eventList;
 	}
 }

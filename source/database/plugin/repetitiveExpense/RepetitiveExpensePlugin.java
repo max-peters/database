@@ -1,7 +1,8 @@
-package database.plugin.monthlyExpense;
+package database.plugin.repetitiveExpense;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,22 +18,22 @@ import database.plugin.backup.BackupService;
 import database.plugin.expense.Expense;
 import database.plugin.expense.ExpensePlugin;
 
-public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
+public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 	private ExpensePlugin expensePlugin;
 
-	public MonthlyExpensePlugin(ExpensePlugin expensePlugin, Storage storage) {
-		super("monthlyexpense", storage, null, MonthlyExpense.class);
+	public RepetitiveExpensePlugin(ExpensePlugin expensePlugin, Storage storage) {
+		super("repetitiveexpense", storage, null, RepetitiveExpense.class);
 		this.expensePlugin = expensePlugin;
 	}
 
-	@Override public void add(MonthlyExpense monthlyExpense) {
-		super.add(monthlyExpense);
-		createExpense(new Expense(monthlyExpense.name, monthlyExpense.category, monthlyExpense.value, monthlyExpense.date), expensePlugin, monthlyExpense.executionDay);
+	@Override public void add(RepetitiveExpense repetitiveExpense) {
+		super.add(repetitiveExpense);
+		createExpense(repetitiveExpense, expensePlugin);
 	}
 
 	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException {
 		List<String> strings = new ArrayList<String>();
-		MonthlyExpense monthlyExpense = null;
+		RepetitiveExpense repetitiveExpense = null;
 		String change = null;
 		int position;
 		for (Expense expense : getIterable()) {
@@ -40,12 +41,12 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		}
 		position = Terminal.checkRequest(strings);
 		if (position != -1) {
-			monthlyExpense = list.get(position);
+			repetitiveExpense = list.get(position);
 		}
 		else {
 			return;
 		}
-		strings = Arrays.asList(new String[] { "name", "category", "value" });
+		strings = Arrays.asList(new String[] { "name", "category", "value", "interval" });
 		position = Terminal.checkRequest(strings);
 		if (position != -1) {
 			change = strings.get(position);
@@ -53,29 +54,33 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		else {
 			return;
 		}
-		BackupService.backupChangeBefor(monthlyExpense, this);
+		BackupService.backupChangeBefor(repetitiveExpense, this);
 		switch (change) {
 			case "name":
-				monthlyExpense.name = Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", monthlyExpense.name);
+				repetitiveExpense.name = Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", repetitiveExpense.name);
 				break;
 			case "category":
-				monthlyExpense.category = Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+", monthlyExpense.category);
+				repetitiveExpense.category = Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+", repetitiveExpense.category);
 				break;
 			case "value":
-				monthlyExpense.value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]*)?", String.valueOf(monthlyExpense.value)));
+				repetitiveExpense.value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]*)?", String.valueOf(repetitiveExpense.value)));
+				break;
+			case "interval":
+				repetitiveExpense.interval = Integer.valueOf(Terminal.request("interval", "[0-9]{1,13}", String.valueOf(repetitiveExpense.interval)));
 				break;
 		}
-		BackupService.backupChangeAfter(monthlyExpense, this);
+		BackupService.backupChangeAfter(repetitiveExpense, this);
 		Terminal.update();
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, NumberFormatException {
-		MonthlyExpense monthlyExpense = new MonthlyExpense(	Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+"), Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+"),
-															Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?")),
-															LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu")),
-															ExecutionDay.getExecutionDay(Terminal.request("executionday", "(first|mid|last)")));
-		add(monthlyExpense);
-		BackupService.backupCreation(monthlyExpense, this);
+		RepetitiveExpense repetitiveExpense = new RepetitiveExpense(Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+"), Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+"),
+																	Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?")),
+																	LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu")),
+																	ExecutionDay.getExecutionDay(Terminal.request("executionday", "(first|mid|last)")),
+																	Integer.valueOf(Terminal.request("interval", "[0-9]{1,13}")));
+		add(repetitiveExpense);
+		BackupService.backupCreation(repetitiveExpense, this);
 		Terminal.update();
 	}
 
@@ -96,9 +101,9 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		if (position < 0) {
 			return;
 		}
-		MonthlyExpense monthlyExpense = list.get(position);
-		remove(monthlyExpense);
-		BackupService.backupRemoval(monthlyExpense, this);
+		RepetitiveExpense repetitiveExpense = list.get(position);
+		remove(repetitiveExpense);
+		BackupService.backupRemoval(repetitiveExpense, this);
 		Terminal.update();
 	}
 
@@ -130,10 +135,12 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 		return false;
 	}
 
-	private void createExpense(Expense expense, ExpensePlugin expensePlugin, ExecutionDay executionDay) {
-		expense.date = adjustDate(expense.date.getMonthValue(), expense.date.getYear(), executionDay);
+	private void createExpense(RepetitiveExpense repetitiveExpense, ExpensePlugin expensePlugin) {
+		Expense expense = new Expense(repetitiveExpense.name, repetitiveExpense.category, repetitiveExpense.value, repetitiveExpense.date);
+		expense.date = adjustDate(expense.date.getMonthValue(), expense.date.getYear(), repetitiveExpense.executionDay);
 		while (expense.date.isBefore(LocalDate.now()) || expense.date.isEqual(LocalDate.now())) {
-			if (!equalsExceptValue(expensePlugin.getIterable(), expense)) {
+			if (!equalsExceptValue(expensePlugin.getIterable(), expense)
+				&& Math.floorMod(ChronoUnit.MONTHS.between(repetitiveExpense.date, expense.date), repetitiveExpense.interval) == 0) {
 				expensePlugin.add(new Expense(expense.name, expense.category, expense.value, expense.date));
 				if (!Terminal.getCollectedLines().contains(new OutputInformation("expense", StringType.SOLUTION, StringFormat.BOLD))) {
 					Terminal.collectLine("expense", StringFormat.BOLD);
@@ -142,10 +149,10 @@ public class MonthlyExpensePlugin extends InstancePlugin<MonthlyExpense> {
 										+ "€", StringFormat.STANDARD);
 			}
 			if (expense.date.getMonthValue() == 12) {
-				expense.date = adjustDate(1, expense.date.getYear() + 1, executionDay);
+				expense.date = adjustDate(1, expense.date.getYear() + 1, repetitiveExpense.executionDay);
 			}
 			else {
-				expense.date = adjustDate(expense.date.getMonthValue() + 1, expense.date.getYear(), executionDay);
+				expense.date = adjustDate(expense.date.getMonthValue() + 1, expense.date.getYear(), repetitiveExpense.executionDay);
 			}
 		}
 	}

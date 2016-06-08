@@ -14,8 +14,8 @@ import database.plugin.event.holiday.HolidayPlugin;
 import database.plugin.event.multiDayAppointment.MultiDayAppointmentPlugin;
 import database.plugin.event.weeklyAppointment.WeeklyAppointmentPlugin;
 import database.plugin.expense.ExpensePlugin;
-import database.plugin.monthlyExpense.MonthlyExpensePlugin;
 import database.plugin.refilling.RefillingPlugin;
+import database.plugin.repetitiveExpense.RepetitiveExpensePlugin;
 import database.plugin.settings.Settings;
 import database.plugin.subject.SubjectPlugin;
 import database.plugin.task.TaskPlugin;
@@ -44,7 +44,7 @@ public class Main {
 			Settings settings = new Settings();
 			SubjectPlugin subjectPlugin = new SubjectPlugin(storage);
 			ExpensePlugin expensePlugin = new ExpensePlugin(storage);
-			MonthlyExpensePlugin monthlyExpensePlugin = new MonthlyExpensePlugin(expensePlugin, storage);
+			RepetitiveExpensePlugin repetitiveExpensePlugin = new RepetitiveExpensePlugin(expensePlugin, storage);
 			RefillingPlugin refillingPlugin = new RefillingPlugin(expensePlugin, storage);
 			TaskPlugin taskPlugin = new TaskPlugin(storage);
 			DayPlugin dayPlugin = new DayPlugin(storage);
@@ -59,7 +59,7 @@ public class Main {
 			pluginContainer.addPlugin(utilityPlugin);
 			pluginContainer.addPlugin(subjectPlugin);
 			pluginContainer.addPlugin(expensePlugin);
-			pluginContainer.addPlugin(monthlyExpensePlugin);
+			pluginContainer.addPlugin(repetitiveExpensePlugin);
 			pluginContainer.addPlugin(refillingPlugin);
 			pluginContainer.addPlugin(taskPlugin);
 			pluginContainer.addPlugin(eventPlugin);
