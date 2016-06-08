@@ -11,6 +11,7 @@ import database.plugin.Storage;
 import database.plugin.backup.BackupService;
 import database.plugin.event.Event;
 import database.plugin.event.EventPluginExtension;
+import database.plugin.event.appointment.Appointment;
 
 public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppointment> {
 	public MultiDayAppointmentPlugin(Storage storage) {
@@ -50,7 +51,7 @@ public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppo
 		List<Event> eventList = new LinkedList<Event>();
 		for (MultiDayAppointment event : getIterable()) {
 			if ((event.date.isBefore(date) || event.date.isEqual(date)) && (event.lastDay.isAfter(date) || event.lastDay.isEqual(date))) {
-				eventList.add(event);
+				eventList.add(new Appointment(event.name, date, null, null));
 			}
 		}
 		return eventList;
