@@ -12,15 +12,7 @@ public abstract class Event extends Instance {
 		this.date = date;
 	}
 
-	public LocalDate updateYear() {
-		LocalDate currentDate = LocalDate.now();
-		if (currentDate.getMonthValue() > date.getMonthValue() || currentDate.getMonthValue() == date.getMonthValue() && currentDate.getDayOfMonth() > date.getDayOfMonth()) {
-			return date.withYear(currentDate.getYear() + 1);
-		}
-		else {
-			return date.withYear(currentDate.getYear());
-		}
-	}
+	public abstract LocalDate updateYear();
 
 	protected abstract String getAdditionToOutput();
 }

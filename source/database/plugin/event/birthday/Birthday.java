@@ -12,6 +12,16 @@ public class Birthday extends Event {
 		return "[" + getAge() + "]";
 	}
 
+	@Override public LocalDate updateYear() {
+		LocalDate currentDate = LocalDate.now();
+		if (currentDate.getMonthValue() > date.getMonthValue() || currentDate.getMonthValue() == date.getMonthValue() && currentDate.getDayOfMonth() > date.getDayOfMonth()) {
+			return date.withYear(currentDate.getYear() + 1);
+		}
+		else {
+			return date.withYear(currentDate.getYear());
+		}
+	}
+
 	private int getAge() {
 		return LocalDate.now().getYear() - date.getYear();
 	}
