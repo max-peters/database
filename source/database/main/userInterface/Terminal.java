@@ -144,11 +144,11 @@ public class Terminal {
 				result = input;
 				request = false;
 			}
-			else if ("DATE".matches(regex) && testDateString(parseDateString(input))) {
+			else if ("DATE".equals(regex) && (testDateString(parseDateString(input)) || input.isEmpty())) {
 				result = parseDateString(input);
 				request = false;
 			}
-			else if ("TIME".matches(regex) && (testTimeString(parseTimeString(input)) || input.isEmpty())) {
+			else if ("TIME".equals(regex) && (testTimeString(parseTimeString(input)) || input.isEmpty())) {
 				result = parseTimeString(input);
 				request = false;
 			}
@@ -236,7 +236,7 @@ public class Terminal {
 	public static String parseDateString(String date) {
 		String formattedDate = null;
 		if (date.isEmpty()) {
-			formattedDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+			formattedDate = "";
 		}
 		else {
 			String[] splitResult = date.split("\\.");

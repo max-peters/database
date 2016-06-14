@@ -1,6 +1,8 @@
 package database.plugin.task;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.userInterface.Terminal;
@@ -34,7 +36,16 @@ public class TaskPlugin extends InstancePlugin<Task> {
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
-		Task task = new Task(Terminal.request("name", ".+"), Terminal.request("category", ".+"));
+		String name = Terminal.request("name", ".+");
+		String category = Terminal.request("category", ".+");
+		String temp = Terminal.request("date", "DATE");
+		LocalDate date = temp.isEmpty() ? null : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		while (date != null && date.isBefore(LocalDate.now())) {
+			Terminal.errorMessage();
+			temp = Terminal.request("date", "DATE");
+			date = temp.isEmpty() ? null : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		}
+		Task task = new Task(name, category, date);
 		add(task);
 		BackupService.backupCreation(task, this);
 		Terminal.update();

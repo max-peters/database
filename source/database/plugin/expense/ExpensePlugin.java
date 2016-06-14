@@ -35,8 +35,8 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 																			})),
 														list);
 		Double value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
-		LocalDate date = LocalDate.parse(	Terminal.request("date", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))),
-											DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		String temp = Terminal.request("date", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		Expense expense = new Expense(name, category, value, date);
 		add(expense);
 		BackupService.backupCreation(expense, this);

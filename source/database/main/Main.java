@@ -53,7 +53,7 @@ public class Main {
 			AppointmentPlugin appointmentPlugin = new AppointmentPlugin(storage);
 			WeeklyAppointmentPlugin weeklyAppointmentPlugin = new WeeklyAppointmentPlugin(storage);
 			MultiDayAppointmentPlugin multiDayAppointmentPlugin = new MultiDayAppointmentPlugin(storage);
-			EventPlugin eventPlugin = new EventPlugin(dayPlugin, birthdayPlugin, holidayPlugin, appointmentPlugin, weeklyAppointmentPlugin, multiDayAppointmentPlugin, settings);
+			EventPlugin eventPlugin = new EventPlugin(dayPlugin, birthdayPlugin, holidayPlugin, appointmentPlugin, weeklyAppointmentPlugin, multiDayAppointmentPlugin, settings,taskPlugin);
 			UtilityPlugin utilityPlugin = new UtilityPlugin(writerReader);
 			pluginContainer.addPlugin(settings);
 			pluginContainer.addPlugin(utilityPlugin);

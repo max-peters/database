@@ -14,7 +14,10 @@ public class DayPlugin extends EventPluginExtension<Day> {
 	}
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {
-		Day day = new Day(Terminal.request("name", ".+"), LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu")));
+		String name = Terminal.request("name", ".+");
+		String temp = Terminal.request("date", "DATE");
+		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		Day day = new Day(name, date);
 		add(day);
 		BackupService.backupCreation(day, this);
 	}

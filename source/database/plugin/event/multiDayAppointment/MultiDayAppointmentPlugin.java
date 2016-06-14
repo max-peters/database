@@ -32,15 +32,18 @@ public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppo
 		LocalDate firstDay;
 		LocalDate lastDay;
 		name = Terminal.request("name", ".+");
-		firstDay = LocalDate.parse(Terminal.request("first day", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		temp = Terminal.request("begin", "(TIME)");
+		temp = Terminal.request("first day", "DATE");
+		firstDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		temp = Terminal.request("begin", "TIME");
 		begin = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
-		lastDay = LocalDate.parse(Terminal.request("last day", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		temp = Terminal.request("last day", "DATE");
+		lastDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		while (!lastDay.isAfter(firstDay)) {
 			Terminal.errorMessage();
-			lastDay = LocalDate.parse(Terminal.request("last day", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+			temp = Terminal.request("last day", "DATE");
+			lastDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		}
-		temp = Terminal.request("end", "(TIME)");
+		temp = Terminal.request("end", "TIME");
 		end = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
 		MultiDayAppointment multiDayAppointment = new MultiDayAppointment(name, firstDay, begin, lastDay, end);
 		add(multiDayAppointment);

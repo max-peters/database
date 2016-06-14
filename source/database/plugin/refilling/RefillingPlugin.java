@@ -28,10 +28,12 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
-		Refilling refilling = new Refilling(Double.valueOf(Terminal.request("distance", "[0-9]{1,13}(\\.[0-9]*)?")),
-											Double.valueOf(Terminal.request("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?")),
-											Double.valueOf(Terminal.request("cost", "[0-9]{1,13}(\\.[0-9]*)?")),
-											LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu")));
+		Double distance = Double.valueOf(Terminal.request("distance", "[0-9]{1,13}(\\.[0-9]*)?"));
+		Double refuelAmount = Double.valueOf(Terminal.request("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?"));
+		Double cost = Double.valueOf(Terminal.request("cost", "[0-9]{1,13}(\\.[0-9]*)?"));
+		String temp = Terminal.request("date", "DATE");
+		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		Refilling refilling = new Refilling(distance, refuelAmount, cost, date);
 		Expense expense = new Expense("Auto - Tankstelle", "Fahrtkosten", refilling.cost, refilling.date);
 		add(refilling);
 		expensePlugin.add(expense);

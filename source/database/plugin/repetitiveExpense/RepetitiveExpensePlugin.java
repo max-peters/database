@@ -74,11 +74,14 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, NumberFormatException {
-		RepetitiveExpense repetitiveExpense = new RepetitiveExpense(Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+"), Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+"),
-																	Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?")),
-																	LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu")),
-																	ExecutionDay.getExecutionDay(Terminal.request("executionday", "(first|mid|last)")),
-																	Integer.valueOf(Terminal.request("interval", "[0-9]{1,13}")));
+		String name = Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
+		String category = Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
+		Double value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
+		String temp = Terminal.request("date", "DATE");
+		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		ExecutionDay executionDay = ExecutionDay.getExecutionDay(Terminal.request("executionday", "(first|mid|last)"));
+		int interval = Integer.valueOf(Terminal.request("interval", "[0-9]{1,13}"));
+		RepetitiveExpense repetitiveExpense = new RepetitiveExpense(name, category, value, date, executionDay, interval);
 		add(repetitiveExpense);
 		BackupService.backupCreation(repetitiveExpense, this);
 		Terminal.update();

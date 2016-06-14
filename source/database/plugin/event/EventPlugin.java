@@ -3,10 +3,8 @@ package database.plugin.event;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,13 +30,16 @@ import database.plugin.event.multiDayAppointment.MultiDayAppointmentPlugin;
 import database.plugin.event.weeklyAppointment.WeeklyAppointment;
 import database.plugin.event.weeklyAppointment.WeeklyAppointmentPlugin;
 import database.plugin.settings.Settings;
+import database.plugin.task.Task;
+import database.plugin.task.TaskPlugin;
 
 public class EventPlugin extends Plugin {
 	private Map<String, EventPluginExtension<? extends Event>>	extensionMap	= new LinkedHashMap<String, EventPluginExtension<? extends Event>>();
+	private TaskPlugin											taskPlugin;
 	private EventOutputFormatter								formatter;
 
 	public EventPlugin(	DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin,
-						WeeklyAppointmentPlugin weeklyAppointmentPlugin, MultiDayAppointmentPlugin multiDayAppointmentPlugin, Settings settings) {
+						WeeklyAppointmentPlugin weeklyAppointmentPlugin, MultiDayAppointmentPlugin multiDayAppointmentPlugin, Settings settings, TaskPlugin taskPlugin) {
 		super("event");
 		extensionMap.put(holidayPlugin.getIdentity(), holidayPlugin);
 		extensionMap.put(dayPlugin.getIdentity(), dayPlugin);
@@ -46,7 +47,8 @@ public class EventPlugin extends Plugin {
 		extensionMap.put(appointmentPlugin.getIdentity(), appointmentPlugin);
 		extensionMap.put(weeklyAppointmentPlugin.getIdentity(), weeklyAppointmentPlugin);
 		extensionMap.put(multiDayAppointmentPlugin.getIdentity(), multiDayAppointmentPlugin);
-		formatter = new EventOutputFormatter(settings);
+		this.formatter = new EventOutputFormatter(settings);
+		this.taskPlugin = taskPlugin;
 	}
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
@@ -70,7 +72,8 @@ public class EventPlugin extends Plugin {
 	@Command(tag = "check") public void check() throws InterruptedException, BadLocationException {
 		boolean display = getDisplay();
 		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>(extensionMap.values());
-		LocalDate date = LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		String temp = Terminal.request("date", "DATE");
+		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		List<Event> eventList = new LinkedList<Event>();
 		String output = null;
 		for (EventPluginExtension<? extends Event> plugin : list) {
@@ -103,35 +106,7 @@ public class EventPlugin extends Plugin {
 			if (extension.getDisplay()) {
 				for (Event event : extension.getIterable()) {
 					int i = list.size();
-					while (i > 0 && new Comparator<Event>() {
-						@Override public int compare(Event first, Event second) {
-							LocalDateTime e1;
-							LocalDateTime e2;
-							if (first instanceof Appointment) {
-								if (((Appointment) first).begin != null) {
-									e1 = first.date.atTime(((Appointment) first).begin);
-								}
-								else {
-									e1 = first.updateYear().atTime(0, 0);
-								}
-							}
-							else {
-								e1 = first.updateYear().atTime(23, 59);
-							}
-							if (second instanceof Appointment) {
-								if (((Appointment) second).begin != null) {
-									e2 = second.date.atTime(((Appointment) second).begin);
-								}
-								else {
-									e2 = second.updateYear().atTime(0, 0);
-								}
-							}
-							else {
-								e2 = second.updateYear().atTime(23, 59);
-							}
-							return e1.compareTo(e2);
-						}
-					}.compare(list.get(i - 1), event) > 0) {
+					while (i > 0 && list.get(i - 1).compareTo(event) > 0) {
 						i--;
 					}
 					list.add(i, event);
@@ -142,7 +117,7 @@ public class EventPlugin extends Plugin {
 	}
 
 	@Override public void initialOutput() throws BadLocationException {
-		String initialOutput = formatter.getInitialOutput(getIterable(extensionMap.values()));
+		String initialOutput = formatter.getInitialOutput(addTaskDates(getIterable(extensionMap.values())));
 		if (!initialOutput.isEmpty()) {
 			Terminal.printLine(getIdentity(), StringType.MAIN, StringFormat.BOLD);
 			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
@@ -171,7 +146,7 @@ public class EventPlugin extends Plugin {
 					setDisplay(false);
 					Terminal.update();
 				}
-				Object output = method.invoke(formatter, getIterable(extensionMap.values()));
+				Object output = method.invoke(formatter, addTaskDates(getIterable(extensionMap.values())));
 				Terminal.getLineOfCharacters('-', StringType.SOLUTION);
 				Terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
 				Terminal.waitForInput();
@@ -238,5 +213,23 @@ public class EventPlugin extends Plugin {
 			toReturn = extensionMap.get(strings.get(position));
 		}
 		return toReturn;
+	}
+
+	private Iterable<Event> addTaskDates(Iterable<Event> iterable) {
+		List<Event> list = new LinkedList<Event>();
+		for (Event event : iterable) {
+			list.add(event);
+		}
+		for (Task task : taskPlugin.getIterable()) {
+			if (task.date != null) {
+				int i = list.size();
+				Appointment appointment = new Appointment(task.name, task.date, null, null);
+				while (i > 0 && list.get(i - 1).compareTo(appointment) > 0) {
+					i--;
+				}
+				list.add(i, appointment);
+			}
+		}
+		return list;
 	}
 }

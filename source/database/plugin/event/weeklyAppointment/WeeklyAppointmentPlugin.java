@@ -32,14 +32,15 @@ public class WeeklyAppointmentPlugin extends EventPluginExtension<WeeklyAppointm
 		LocalTime begin;
 		LocalDate date;
 		name = Terminal.request("name", ".+");
-		date = LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		temp = Terminal.request("begin", "(TIME)");
+		temp = Terminal.request("date", "DATE");
+		date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		temp = Terminal.request("begin", "TIME");
 		begin = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
 		if (begin != null) {
-			temp = Terminal.request("end", "(TIME)");
+			temp = Terminal.request("end", "TIME");
 			while (!temp.isEmpty() && begin.isBefore(LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm")))) {
 				Terminal.errorMessage();
-				temp = Terminal.request("end", "(TIME)");
+				temp = Terminal.request("end", "TIME");
 			}
 		}
 		WeeklyAppointment weeklyAppointment = new WeeklyAppointment(name, date, begin, temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm")));

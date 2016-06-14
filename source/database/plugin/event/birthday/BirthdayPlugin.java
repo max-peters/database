@@ -14,8 +14,10 @@ public class BirthdayPlugin extends EventPluginExtension<Birthday> {
 	}
 
 	@Override public void createRequest() throws InterruptedException, BadLocationException {
-		Birthday birthday = new Birthday(	Terminal.request("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)"),
-											LocalDate.parse(Terminal.request("date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu")));
+		String name = Terminal.request("name", "[A-ZÖÄÜ][a-zöäüß]*($|([- ][A-ZÖÄÜ][a-zöäüß]*)+)");
+		String temp = Terminal.request("date", "DATE");
+		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		Birthday birthday = new Birthday(name, date);
 		add(birthday);
 		BackupService.backupCreation(birthday, this);
 	}

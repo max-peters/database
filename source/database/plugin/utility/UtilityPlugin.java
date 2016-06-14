@@ -26,8 +26,10 @@ public class UtilityPlugin extends Plugin {
 	}
 
 	@Command(tag = "days") public void calculateDayNumber() throws BadLocationException, InterruptedException {
-		LocalDate firstDate = LocalDate.parse(Terminal.request("first date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		LocalDate secondDate = LocalDate.parse(Terminal.request("second date", "DATE"), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		String temp = Terminal.request("first date", "DATE");
+		LocalDate firstDate = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		temp = Terminal.request("second date", "DATE");
+		LocalDate secondDate = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		Terminal.printLine("day number between "+ firstDate.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) + " and "
 							+ secondDate.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) + ":", StringType.REQUEST, StringFormat.STANDARD);
 		Terminal.printLine(ChronoUnit.DAYS.between(firstDate, secondDate), StringType.SOLUTION, StringFormat.STANDARD);
