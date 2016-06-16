@@ -25,24 +25,6 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 		return output;
 	}
 
-	@Override protected String getInitialOutput(Iterable<Event> iterable) {
-		String output = "";
-		for (String string : formatOutput(getNearEvents(iterable))) {
-			output += string + System.getProperty("line.separator");
-		}
-		return output;
-	}
-
-	protected ArrayList<Event> getNearEvents(Iterable<? extends Event> iterable) {
-		ArrayList<Event> nearEvents = new ArrayList<Event>();
-		for (Event event : iterable) {
-			if (ChronoUnit.DAYS.between(LocalDate.now(), event.updateYear()) <= settings.getDisplayedDays()) {
-				nearEvents.add(event);
-			}
-		}
-		return nearEvents;
-	}
-
 	protected List<String> formatOutput(Iterable<? extends Event> iterable) {
 		List<String> output = new ArrayList<String>();
 		int longestNameLength = 0;
@@ -64,5 +46,23 @@ public class EventOutputFormatter extends OutputFormatter<Event> {
 			}
 		}
 		return output;
+	}
+
+	@Override protected String getInitialOutput(Iterable<Event> iterable) {
+		String output = "";
+		for (String string : formatOutput(getNearEvents(iterable))) {
+			output += string + System.getProperty("line.separator");
+		}
+		return output;
+	}
+
+	protected ArrayList<Event> getNearEvents(Iterable<? extends Event> iterable) {
+		ArrayList<Event> nearEvents = new ArrayList<Event>();
+		for (Event event : iterable) {
+			if (ChronoUnit.DAYS.between(LocalDate.now(), event.updateYear()) <= settings.getDisplayedDays()) {
+				nearEvents.add(event);
+			}
+		}
+		return nearEvents;
 	}
 }

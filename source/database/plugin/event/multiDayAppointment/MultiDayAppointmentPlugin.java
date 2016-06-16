@@ -50,7 +50,7 @@ public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppo
 		BackupService.backupCreation(multiDayAppointment, this);
 	}
 
-	public List<Event> getEvents(LocalDate date) {
+	@Override public List<Event> getEvents(LocalDate date) {
 		List<Event> eventList = new LinkedList<Event>();
 		for (MultiDayAppointment event : getIterable()) {
 			if ((event.date.isBefore(date) || event.date.isEqual(date)) && (event.lastDay.isAfter(date) || event.lastDay.isEqual(date))) {

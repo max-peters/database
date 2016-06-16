@@ -21,7 +21,7 @@ public class UtilityPlugin extends Plugin {
 
 	public UtilityPlugin(WriterReader writerReader) throws IOException {
 		super("utility");
-		this.news = new News();
+		news = new News();
 		this.writerReader = writerReader;
 	}
 

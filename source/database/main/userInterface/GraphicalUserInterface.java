@@ -157,6 +157,19 @@ public class GraphicalUserInterface {
 		frame.setVisible(visible);
 	}
 
+	protected String autocomplete(Completeable completeable) throws InterruptedException {
+		String inputString = null;
+		pressedKey = 0;
+		while (pressedKey != 10) {
+			synchronized (synchronizerKeyInput) {
+				synchronizerKeyInput.wait();
+			}
+			inputString = input.getText();
+			setInputText(completeable.getNewInput(inputString));
+		}
+		return inputString;
+	}
+
 	protected void blockInput() {
 		input.setEditable(false);
 		input.setFocusable(false);
@@ -202,10 +215,6 @@ public class GraphicalUserInterface {
 
 	protected void clearInput() {
 		input.setText("");
-	}
-
-	protected int getLastKey() {
-		return pressedKey;
 	}
 
 	protected void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
@@ -260,10 +269,6 @@ public class GraphicalUserInterface {
 		input.setCaretColor(Color.WHITE);
 	}
 
-	protected void resetLastKey() {
-		pressedKey = 0;
-	}
-
 	protected void setInputText(String string) {
 		String inputText = input.getText();
 		input.setText(inputText + string);
@@ -281,9 +286,6 @@ public class GraphicalUserInterface {
 	protected synchronized void update() throws BadLocationException {
 		output.setText("");
 		currentLineNumber = 0;
-		blockInput();
-		Terminal.initialOutput();
-		releaseInput();
 	}
 
 	protected void waitForInput() throws InterruptedException {
@@ -320,7 +322,7 @@ public class GraphicalUserInterface {
 }
 
 class UpdateTime extends TimerTask {
-	SimpleDateFormat			dateFormat	= new SimpleDateFormat("dd.MM.yyyy");
+	private SimpleDateFormat	dateFormat	= new SimpleDateFormat("dd.MM.yyyy");
 	private SimpleDateFormat	timeFormat	= new SimpleDateFormat("HH:mm:ss");
 	private JTextField			timeTextfield;
 

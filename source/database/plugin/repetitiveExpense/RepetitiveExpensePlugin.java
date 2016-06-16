@@ -7,9 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.text.BadLocationException;
-import database.main.userInterface.OutputInformation;
 import database.main.userInterface.StringFormat;
-import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
@@ -115,7 +113,7 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 	}
 
 	private LocalDate adjustDate(int month, int year, ExecutionDay executionDay) {
-		LocalDate date = LocalDate.parse(Terminal.parseDateString("01." + month + "." + year), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		LocalDate date = LocalDate.of(year, month, 1);
 		switch (executionDay) {
 			case FIRST:
 				break;
@@ -129,15 +127,6 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 		return date;
 	}
 
-	private boolean equalsExceptValue(Iterable<Expense> iterable, Expense expense) {
-		for (Expense currentExpense : iterable) {
-			if (currentExpense.name.equals(expense.name) && currentExpense.category.equals(expense.category) && currentExpense.date.isEqual(expense.date)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private void createExpense(RepetitiveExpense repetitiveExpense, ExpensePlugin expensePlugin) {
 		Expense expense = new Expense(repetitiveExpense.name, repetitiveExpense.category, repetitiveExpense.value, repetitiveExpense.date);
 		expense.date = adjustDate(expense.date.getMonthValue(), expense.date.getYear(), repetitiveExpense.executionDay);
@@ -145,11 +134,8 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 			if (!equalsExceptValue(expensePlugin.getIterable(), expense)
 				&& Math.floorMod(ChronoUnit.MONTHS.between(repetitiveExpense.date, expense.date), repetitiveExpense.interval) == 0) {
 				expensePlugin.add(new Expense(expense.name, expense.category, expense.value, expense.date));
-				if (!Terminal.getCollectedLines().contains(new OutputInformation("expense", StringType.SOLUTION, StringFormat.BOLD))) {
-					Terminal.collectLine("expense", StringFormat.BOLD);
-				}
 				Terminal.collectLine(" + "+ expense.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.name + " (" + expense.category + ") " + expense.value
-										+ "€", StringFormat.STANDARD);
+										+ "€", StringFormat.STANDARD, "expense");
 			}
 			if (expense.date.getMonthValue() == 12) {
 				expense.date = adjustDate(1, expense.date.getYear() + 1, repetitiveExpense.executionDay);
@@ -158,5 +144,14 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 				expense.date = adjustDate(expense.date.getMonthValue() + 1, expense.date.getYear(), repetitiveExpense.executionDay);
 			}
 		}
+	}
+
+	private boolean equalsExceptValue(Iterable<Expense> iterable, Expense expense) {
+		for (Expense currentExpense : iterable) {
+			if (currentExpense.name.equals(expense.name) && currentExpense.category.equals(expense.category) && currentExpense.date.isEqual(expense.date)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

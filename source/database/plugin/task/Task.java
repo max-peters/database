@@ -5,8 +5,8 @@ import database.plugin.Instance;
 
 public class Task extends Instance {
 	public String		category;
-	public String		name;
 	public LocalDate	date;
+	public String		name;
 
 	public Task(String name, String category, LocalDate date) {
 		this.name = name;

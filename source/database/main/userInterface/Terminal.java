@@ -7,22 +7,23 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
-import database.main.userInterface.autocompletion.Autocompletion;
-import database.plugin.Plugin;
 
 public class Terminal {
-	private static List<OutputInformation>	collectedLines;
-	private static GraphicalUserInterface	graphicalUserInterface;
-	private static PluginContainer			pluginContainer;
+	private static Map<OutputInformation, String>	collectedLines;
+	private static GraphicalUserInterface			graphicalUserInterface;
+	private static PluginContainer					pluginContainer;
 
 	public Terminal(GraphicalUserInterface graphicalUserInterface, PluginContainer pluginContainer) {
 		Terminal.graphicalUserInterface = graphicalUserInterface;
 		Terminal.pluginContainer = pluginContainer;
-		Terminal.collectedLines = new ArrayList<OutputInformation>();
+		Terminal.collectedLines = new LinkedHashMap<OutputInformation, String>();
 	}
 
 	public static void blockInput() {
@@ -33,40 +34,35 @@ public class Terminal {
 		return graphicalUserInterface.checkRequest(collection);
 	}
 
-	public static void collectLine(Object output, StringFormat stringFormat) {
-		collectedLines.add(new OutputInformation(output, StringType.SOLUTION, stringFormat));
+	public static void collectLine(Object output, StringFormat stringFormat, String headline) {
+		collectedLines.put(new OutputInformation(output, StringType.SOLUTION, stringFormat), headline);
 	}
 
 	public static void errorMessage() throws BadLocationException, InterruptedException {
-		printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
-		waitForInput();
-	}
-
-	public static List<OutputInformation> getCollectedLines() {
-		return collectedLines;
-	}
-
-	public static int getLastKey() {
-		return graphicalUserInterface.getLastKey();
+		Terminal.printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
+		Terminal.waitForInput();
 	}
 
 	public static void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
 		graphicalUserInterface.getLineOfCharacters(character, stringType);
 	}
 
-	public static synchronized void initialOutput() throws BadLocationException {
-		for (Plugin plugin : pluginContainer.getPlugins()) {
-			if (plugin.getDisplay()) {
-				plugin.initialOutput();
-			}
-		}
-	}
-
 	public static void printCollectedLines() throws InterruptedException, BadLocationException {
 		if (!collectedLines.isEmpty()) {
-			Terminal.getLineOfCharacters('-', StringType.SOLUTION);
-			for (OutputInformation output : collectedLines) {
-				graphicalUserInterface.printLine(output);
+			getLineOfCharacters('-', StringType.SOLUTION);
+			List<String> list = new ArrayList<String>();
+			for (String string : collectedLines.values()) {
+				if (!list.contains(string)) {
+					list.add(string);
+				}
+			}
+			for (String string : list) {
+				graphicalUserInterface.printLine(new OutputInformation(string, StringType.SOLUTION, StringFormat.BOLD));
+				for (Entry<OutputInformation, String> entry : collectedLines.entrySet()) {
+					if (entry.getValue().equals(string)) {
+						graphicalUserInterface.printLine(entry.getKey());
+					}
+				}
 			}
 			waitForInput();
 			collectedLines.clear();
@@ -77,16 +73,12 @@ public class Terminal {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 
-	public static String readKey() throws InterruptedException {
-		return graphicalUserInterface.readKey();
-	}
-
 	public static String request(String printOut, String regex) throws InterruptedException, BadLocationException {
 		return request(printOut, regex, "", null);
 	}
 
-	public static String request(String printOut, String regex, Autocompletion autocompletion) throws InterruptedException, BadLocationException {
-		return request(printOut, regex, "", autocompletion);
+	public static String request(String printOut, String regex, Completeable completeable) throws InterruptedException, BadLocationException {
+		return request(printOut, regex, "", completeable);
 	}
 
 	public static String request(String printOut, String regex, int levenshteinDistance) throws InterruptedException, BadLocationException {
@@ -122,16 +114,16 @@ public class Terminal {
 		return request(printOut, regex, inputText, null);
 	}
 
-	public static String request(String printOut, String regex, String inputText, Autocompletion autocompletion) throws InterruptedException, BadLocationException {
+	public static String request(String printOut, String regex, String inputText, Completeable completeable) throws InterruptedException, BadLocationException {
 		boolean request = true;
 		String result = null;
 		String input = null;
 		if (!inputText.isEmpty()) {
-			setInputText(inputText);
+			graphicalUserInterface.setInputText(inputText);
 		}
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
-			input = autocompletion != null ? autocompletion.getLine() : graphicalUserInterface.readLine();
+			input = completeable != null ? graphicalUserInterface.autocomplete(completeable) : graphicalUserInterface.readLine();
 			graphicalUserInterface.clearInput();
 			if (input.equals("back")) {
 				throw new CancellationException();
@@ -159,25 +151,24 @@ public class Terminal {
 		return result;
 	}
 
-	public static void resetLastKey() {
-		graphicalUserInterface.resetLastKey();
-	}
-
-	public static void setInputText(String string) {
-		graphicalUserInterface.setInputText(string);
-	}
-
-	public static void showMessageDialog(Throwable e) {
-		graphicalUserInterface.showMessageDialog(e);
-	}
-
 	public static void update() throws BadLocationException, InterruptedException {
 		graphicalUserInterface.update();
+		blockInput();
+		pluginContainer.initialOutput();
+		graphicalUserInterface.releaseInput();
 		printCollectedLines();
 	}
 
 	public static void waitForInput() throws InterruptedException {
 		graphicalUserInterface.waitForInput();
+	}
+
+	private static String add(String string, int k) {
+		String s = string;
+		for (string.length(); s.length() < k;) {
+			s = "0" + s;
+		}
+		return s;
 	}
 
 	private static String getElementWithDistance(String input, String[] splitResult, int levenshteinDistance) {
@@ -213,27 +204,7 @@ public class Terminal {
 		return cost[len0 - 1];
 	}
 
-	private static boolean testDateString(String date) {
-		try {
-			LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-			return true;
-		}
-		catch (DateTimeParseException e) {
-			return false;
-		}
-	}
-
-	private static boolean testTimeString(String time) {
-		try {
-			LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
-			return true;
-		}
-		catch (DateTimeParseException e) {
-			return false;
-		}
-	}
-
-	public static String parseDateString(String date) {
+	private static String parseDateString(String date) {
 		String formattedDate = null;
 		if (date.isEmpty()) {
 			formattedDate = "";
@@ -254,14 +225,6 @@ public class Terminal {
 		return formattedDate;
 	}
 
-	private static String add(String string, int k) {
-		String s = string;
-		for (string.length(); s.length() < k;) {
-			s = "0" + s;
-		}
-		return s;
-	}
-
 	private static String parseTimeString(String time) {
 		String formattedTime = null;
 		String[] splitResult = time.split(":");
@@ -277,7 +240,23 @@ public class Terminal {
 		return formattedTime;
 	}
 
-	public static void releaseInput() {
-		graphicalUserInterface.releaseInput();
+	private static boolean testDateString(String date) {
+		try {
+			LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+			return true;
+		}
+		catch (DateTimeParseException e) {
+			return false;
+		}
+	}
+
+	private static boolean testTimeString(String time) {
+		try {
+			LocalTime.parse(time, DateTimeFormatter.ofPattern("HH:mm"));
+			return true;
+		}
+		catch (DateTimeParseException e) {
+			return false;
+		}
 	}
 }

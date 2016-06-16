@@ -40,6 +40,23 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 		getHolidays();
 	}
 
+	private void connectAndSetList() {
+		String line;
+		InputStreamReader isr;
+		lines.clear();
+		try {
+			isr = new InputStreamReader(new URL("http://www.schulferien.org/Feiertage/Feiertage_Baden_Wuerttemberg.html").openConnection().getInputStream());
+			BufferedReader in = new BufferedReader(isr);
+			while ((line = in.readLine()) != null) {
+				lines.add(line);
+			}
+			in.close();
+		}
+		catch (IOException e) {
+			Terminal.collectLine(" error 404: page not found", StringFormat.STANDARD, "holiday");
+		}
+	}
+
 	private void getHolidays() throws BadLocationException, InterruptedException {
 		for (int i = 0; i < lines.size(); i++) {
 			if (lines.get(i).matches(".*<a href=\"/Feiertage/feiertag_.*.html\" class=\"dash\">.*")) {
@@ -74,24 +91,6 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 					remove(holiday);
 				}
 			}
-		}
-	}
-
-	private void connectAndSetList() {
-		String line;
-		InputStreamReader isr;
-		lines.clear();
-		try {
-			isr = new InputStreamReader(new URL("http://www.schulferien.org/Feiertage/Feiertage_Baden_Wuerttemberg.html").openConnection().getInputStream());
-			BufferedReader in = new BufferedReader(isr);
-			while ((line = in.readLine()) != null) {
-				lines.add(line);
-			}
-			in.close();
-		}
-		catch (IOException e) {
-			Terminal.collectLine("holiday", StringFormat.BOLD);
-			Terminal.collectLine(" error 404: page not found", StringFormat.STANDARD);
 		}
 	}
 }

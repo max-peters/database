@@ -79,7 +79,7 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		}
 		splitResult[1] = splitResult[1].substring(1);
 		for (Task task : list) {
-			if (task.category.equals(splitResult[0]) && (task.name.equals(splitResult[1]))) {
+			if (task.category.equals(splitResult[0]) && task.name.equals(splitResult[1])) {
 				temp = task;
 			}
 		}

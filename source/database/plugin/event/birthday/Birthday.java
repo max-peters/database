@@ -8,10 +8,6 @@ public class Birthday extends Event {
 		super(name, date);
 	}
 
-	@Override protected String getAdditionToOutput() {
-		return "[" + getAge() + "]";
-	}
-
 	@Override public LocalDate updateYear() {
 		LocalDate currentDate = LocalDate.now();
 		if (currentDate.getMonthValue() > date.getMonthValue() || currentDate.getMonthValue() == date.getMonthValue() && currentDate.getDayOfMonth() > date.getDayOfMonth()) {
@@ -20,6 +16,10 @@ public class Birthday extends Event {
 		else {
 			return date.withYear(currentDate.getYear());
 		}
+	}
+
+	@Override protected String getAdditionToOutput() {
+		return "[" + getAge() + "]";
 	}
 
 	private int getAge() {

@@ -22,6 +22,10 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 
 	public abstract void createRequest() throws InterruptedException, BadLocationException;
 
+	@Override public void display() throws InterruptedException, BadLocationException {
+		super.display();
+	}
+
 	public List<Event> getEvents(LocalDate date) {
 		List<Event> eventList = new LinkedList<Event>();
 		for (Event event : getIterable()) {
@@ -30,10 +34,6 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 			}
 		}
 		return eventList;
-	}
-
-	@Override public void display() throws InterruptedException, BadLocationException {
-		super.display();
 	}
 
 	@Override public void initialOutput() throws BadLocationException {

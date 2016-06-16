@@ -9,10 +9,10 @@ import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 
 public class Backup {
+	private boolean								changes;
 	private InstancePlugin<? extends Instance>	instancePlugin;
 	private String								newState;
 	private String								oldState;
-	private boolean								changes;
 
 	protected void backupChangeAfter(Instance newState, InstancePlugin<?> instancePlugin) {
 		if (this.instancePlugin != instancePlugin) {
@@ -39,6 +39,10 @@ public class Backup {
 		newState = null;
 		oldState = instance.toString();
 		changes = true;
+	}
+
+	protected boolean isChanged() {
+		return changes;
 	}
 
 	protected void restore() throws BadLocationException, InterruptedException {
@@ -69,9 +73,5 @@ public class Backup {
 			Terminal.waitForInput();
 		}
 		Terminal.update();
-	}
-
-	protected boolean isChanged() {
-		return changes;
 	}
 }

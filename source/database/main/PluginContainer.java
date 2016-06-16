@@ -2,6 +2,9 @@ package database.main;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import javax.swing.text.BadLocationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
@@ -15,6 +18,14 @@ public class PluginContainer {
 
 	public void addPlugin(Plugin plugin) {
 		plugins.add(plugin);
+	}
+
+	public void addToDocument(Document document, Element appendTo) {
+		for (Plugin currentPlugin : plugins) {
+			Element element = document.createElement(currentPlugin.getIdentity());
+			currentPlugin.print(document, element);
+			appendTo.appendChild(element);
+		}
 	}
 
 	public void clear() {
@@ -50,7 +61,11 @@ public class PluginContainer {
 		return regex.endsWith("|") ? regex.substring(0, regex.lastIndexOf("|")) + ")" : "()";
 	}
 
-	public ArrayList<Plugin> getPlugins() {
-		return plugins;
+	public void initialOutput() throws BadLocationException {
+		for (Plugin plugin : plugins) {
+			if (plugin.getDisplay()) {
+				plugin.initialOutput();
+			}
+		}
 	}
 }

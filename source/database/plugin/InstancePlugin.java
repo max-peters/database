@@ -17,8 +17,8 @@ import database.main.userInterface.Terminal;
 public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	protected OutputFormatter<T>	formatter;
 	protected LinkedList<T>			list;
-	private Storage					storage;
 	private Class<T>				instanceClass;
+	private Storage					storage;
 
 	public InstancePlugin(String identity, Storage storage, OutputFormatter<T> formatter, Class<T> instanceClass) {
 		super(identity);
@@ -32,12 +32,16 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		list.add(instance);
 	}
 
+	public void clearList() {
+		list.clear();
+	}
+
 	public void createAndAdd(String json) {
 		add(new Gson().fromJson(json, instanceClass));
 	}
 
-	public void clearList() {
-		list.clear();
+	public Class<T> getInstanceClass() {
+		return instanceClass;
 	}
 
 	public Iterable<T> getIterable() {
@@ -94,9 +98,5 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		if (Boolean.valueOf(Terminal.request("do you want to store all entries", "(true|false)"))) {
 			storage.store(this);
 		}
-	}
-
-	public Class<T> getInstanceClass() {
-		return instanceClass;
 	}
 }

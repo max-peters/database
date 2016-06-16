@@ -40,14 +40,9 @@ public class WriterReader {
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		Document document = documentBuilder.newDocument();
 		Element database = document.createElement("database");
-		Element element;
+		Element element = document.createElement("storage");
 		document.appendChild(database);
-		for (Plugin currentPlugin : pluginContainer.getPlugins()) {
-			element = document.createElement(currentPlugin.getIdentity());
-			currentPlugin.print(document, element);
-			database.appendChild(element);
-		}
-		element = document.createElement("storage");
+		pluginContainer.addToDocument(document, database);
 		storage.print(document, element);
 		database.appendChild(element);
 		return document;

@@ -12,6 +12,20 @@ public class BackupService {
 	private static LinkedList<Backup>	backups	= new LinkedList<Backup>();
 	private static boolean				changes;
 
+	public static void backupChangeAfter(Instance newState, InstancePlugin<?> instancePlugin) {
+		if (backups.size() != 1) {
+			throw new IllegalStateException();
+		}
+		backups.get(0).backupChangeAfter(newState, instancePlugin);
+	}
+
+	public static void backupChangeBefor(Instance oldState, InstancePlugin<?> instancePlugin) {
+		Backup b = new Backup();
+		clear();
+		b.backupChangeBefor(oldState, instancePlugin);
+		backups.add(b);
+	}
+
 	public static void backupCreation(Instance instance, InstancePlugin<?> instancePlugin) {
 		Backup b = new Backup();
 		clear();
@@ -35,23 +49,13 @@ public class BackupService {
 		backups.add(b);
 	}
 
-	public static void backupChangeBefor(Instance oldState, InstancePlugin<?> instancePlugin) {
-		Backup b = new Backup();
-		clear();
-		b.backupChangeBefor(oldState, instancePlugin);
-		backups.add(b);
-	}
-
-	public static void backupChangeAfter(Instance newState, InstancePlugin<?> instancePlugin) {
-		if (backups.size() != 1) {
-			throw new IllegalStateException();
+	public static boolean isChanged() {
+		for (Backup backup : backups) {
+			if (backup.isChanged()) {
+				return true;
+			}
 		}
-		backups.get(0).backupChangeAfter(newState, instancePlugin);
-	}
-
-	public static void save() {
-		backups.clear();
-		changes = false;
+		return changes;
 	}
 
 	public static void restore() throws BadLocationException, InterruptedException {
@@ -64,13 +68,9 @@ public class BackupService {
 		}
 	}
 
-	public static boolean isChanged() {
-		for (Backup backup : backups) {
-			if (backup.isChanged()) {
-				return true;
-			}
-		}
-		return changes;
+	public static void save() {
+		backups.clear();
+		changes = false;
 	}
 
 	private static void clear() {

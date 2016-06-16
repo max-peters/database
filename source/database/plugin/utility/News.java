@@ -10,16 +10,35 @@ import java.net.URLEncoder;
 import org.json.JSONObject;
 
 public class News {
+	public boolean	connection;
 	private int		daysTillDecay;
 	private String	rank;
-	public boolean	connection;
+
+	public int getDaysTillDecay() {
+		return daysTillDecay;
+	}
 
 	public String getRank() {
 		return rank;
 	}
 
-	public int getDaysTillDecay() {
-		return daysTillDecay;
+	public void setDaysTillDecay() throws IOException {
+		String data = URLEncoder.encode("region", "UTF-8")+ "=" + URLEncoder.encode("EUW", "UTF-8") + "&" + URLEncoder.encode("summoner", "UTF-8") + "="
+						+ URLEncoder.encode("Brundlefliege", "UTF-8");
+		URL url = new URL("http://decayoflegends.com/files/check.php");
+		URLConnection conn = url.openConnection();
+		conn.setDoOutput(true);
+		OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+		wr.write(data);
+		wr.flush();
+		StringBuilder sb = new StringBuilder();
+		int cp;
+		InputStreamReader isr = new InputStreamReader(conn.getInputStream());
+		while ((cp = isr.read()) != -1) {
+			sb.append((char) cp);
+		}
+		wr.close();
+		daysTillDecay = Integer.valueOf(new JSONObject(sb.toString()).get("days").toString());
 	}
 
 	public void setRank() throws IOException {
@@ -40,24 +59,5 @@ public class News {
 			}
 		}
 		in.close();
-	}
-
-	public void setDaysTillDecay() throws IOException {
-		String data = URLEncoder.encode("region", "UTF-8")+ "=" + URLEncoder.encode("EUW", "UTF-8") + "&" + URLEncoder.encode("summoner", "UTF-8") + "="
-						+ URLEncoder.encode("Brundlefliege", "UTF-8");
-		URL url = new URL("http://decayoflegends.com/files/check.php");
-		URLConnection conn = url.openConnection();
-		conn.setDoOutput(true);
-		OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-		wr.write(data);
-		wr.flush();
-		StringBuilder sb = new StringBuilder();
-		int cp;
-		InputStreamReader isr = new InputStreamReader(conn.getInputStream());
-		while ((cp = isr.read()) != -1) {
-			sb.append((char) cp);
-		}
-		wr.close();
-		daysTillDecay = Integer.valueOf(new JSONObject(sb.toString()).get("days").toString());
 	}
 }
