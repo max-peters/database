@@ -1,7 +1,6 @@
 package database.main.userInterface;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -72,50 +71,31 @@ public class Terminal {
 	}
 
 	public static String request(String printOut, String regex) throws InterruptedException, BadLocationException {
-		return request(printOut, regex, "", null);
+		return request(printOut, regex, "", null, 0);
 	}
 
 	public static String request(String printOut, String regex, Completeable completeable) throws InterruptedException, BadLocationException {
-		return request(printOut, regex, "", completeable);
+		return request(printOut, regex, "", completeable, 0);
 	}
 
 	public static String request(String printOut, String regex, int levenshteinDistance) throws InterruptedException, BadLocationException {
+		return request(printOut, regex, "", null, levenshteinDistance);
+	}
+
+	public static String request(String printOut, String regex, String inputText) throws InterruptedException, BadLocationException {
+		return request(printOut, regex, inputText, null, 0);
+	}
+
+	public static String request(String printOut, String regex, String inputText, Completeable completeable) throws InterruptedException, BadLocationException {
+		return request(printOut, regex, inputText, completeable, 0);
+	}
+
+	public static String request(String printOut, String regex, String inputText, Completeable completeable, int levenshteinDistance)	throws InterruptedException,
+																																		BadLocationException {
 		boolean request = true;
 		String result = null;
 		String input = null;
 		String[] splitResult = regex.substring(1, regex.length() - 1).split("\\|");
-		while (request) {
-			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
-			input = graphicalUserInterface.readLine();
-			graphicalUserInterface.clearInput();
-			if (input.equals("back")) {
-				throw new CancellationException();
-			}
-			else if (input.equals("help")) {
-				printLine(Arrays.asList(splitResult), StringType.SOLUTION, StringFormat.STANDARD);
-				waitForInput();
-			}
-			else {
-				result = stringUtility.getElementWithDistance(input, splitResult, levenshteinDistance);
-				if (result != null) {
-					request = false;
-				}
-				else {
-					errorMessage();
-				}
-			}
-		}
-		return result;
-	}
-
-	public static String request(String printOut, String regex, String inputText) throws InterruptedException, BadLocationException {
-		return request(printOut, regex, inputText, null);
-	}
-
-	public static String request(String printOut, String regex, String inputText, Completeable completeable) throws InterruptedException, BadLocationException {
-		boolean request = true;
-		String result = null;
-		String input = null;
 		if (!inputText.isEmpty()) {
 			graphicalUserInterface.setInputText(inputText);
 		}
@@ -143,7 +123,13 @@ public class Terminal {
 				request = false;
 			}
 			else {
-				errorMessage();
+				result = stringUtility.getElementWithDistance(input, splitResult, levenshteinDistance);
+				if (result != null) {
+					request = false;
+				}
+				else {
+					errorMessage();
+				}
 			}
 		}
 		return result;
