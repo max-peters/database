@@ -48,9 +48,10 @@ public class EventPlugin extends Plugin {
 		Event temp = null;
 		MultiDayAppointmentPlugin multiDayAppointmentPlugin = (MultiDayAppointmentPlugin) pluginContainer.getPlugin("multidayappointment");
 		AppointmentPlugin appointmentPlugin = (AppointmentPlugin) pluginContainer.getPlugin("appointment");
+		WeeklyAppointmentPlugin weeklyAppointmentPlugin = (WeeklyAppointmentPlugin) pluginContainer.getPlugin("weeklyappointment");
 		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>();
 		list.add(appointmentPlugin);
-		list.add((WeeklyAppointmentPlugin) pluginContainer.getPlugin("weeklyappointment"));
+		list.add(weeklyAppointmentPlugin);
 		list.add(multiDayAppointmentPlugin);
 		Iterable<Event> iterable = getNearEvents(getIterable(list), ((Settings) pluginContainer.getPlugin("settings")).getDisplayedDays());
 		List<String> stringList = formatOutput(iterable);
@@ -66,7 +67,9 @@ public class EventPlugin extends Plugin {
 				i++;
 			}
 			if (temp instanceof WeeklyAppointment) {
+				backupService.backupChangeBefor(temp, weeklyAppointmentPlugin);
 				temp.date = temp.date.plusDays(7);
+				backupService.backupChangeAfter(temp, weeklyAppointmentPlugin);
 			}
 			else if (temp instanceof MultiDayAppointment) {
 				multiDayAppointmentPlugin.remove(temp);
