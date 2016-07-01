@@ -11,28 +11,28 @@ import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.Terminal;
-import database.plugin.Storage;
+import database.plugin.backup.BackupService;
 import database.plugin.event.EventPluginExtension;
 
 public class HolidayPlugin extends EventPluginExtension<Holiday> {
 	private List<String> lines = new ArrayList<String>();
 
-	public HolidayPlugin(Storage storage) {
-		super("holiday", storage, Holiday.class);
+	public HolidayPlugin() {
+		super("holiday", Holiday.class);
 	}
 
-	@Override public void createRequest() throws InterruptedException, BadLocationException {
+	@Override public void createRequest(Terminal terminal, BackupService backupService) throws InterruptedException, BadLocationException {
 		// no create request
 	}
 
-	public void updateHolidays() throws BadLocationException, InterruptedException {
+	public void updateHolidays(Terminal terminal) throws BadLocationException, InterruptedException {
 		if (!getIterable().iterator().hasNext()) {
-			connectAndSetList();
+			connectAndSetList(terminal);
 		}
 		else {
 			for (Holiday holiday : getIterable()) {
 				if (holiday.date.isBefore(LocalDate.now())) {
-					connectAndSetList();
+					connectAndSetList(terminal);
 					break;
 				}
 			}
@@ -40,7 +40,7 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 		getHolidays();
 	}
 
-	private void connectAndSetList() {
+	private void connectAndSetList(Terminal terminal) {
 		String line;
 		InputStreamReader isr;
 		lines.clear();
@@ -53,7 +53,7 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 			in.close();
 		}
 		catch (IOException e) {
-			Terminal.collectLine(" error 404: page not found", StringFormat.STANDARD, "holiday");
+			terminal.collectLine(" error 404: page not found", StringFormat.STANDARD, "holiday");
 		}
 	}
 

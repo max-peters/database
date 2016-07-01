@@ -10,21 +10,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import com.google.gson.Gson;
+import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
 
 public abstract class InstancePlugin<T extends Instance> extends Plugin {
-	protected OutputFormatter<T>	formatter;
-	protected LinkedList<T>			list;
-	private Class<T>				instanceClass;
-	private Storage					storage;
+	protected LinkedList<T>	list;
+	public Class<T>			instanceClass;
 
-	public InstancePlugin(String identity, Storage storage, OutputFormatter<T> formatter, Class<T> instanceClass) {
+	public InstancePlugin(String identity, Class<T> instanceClass) {
 		super(identity);
 		this.list = new LinkedList<T>();
-		this.storage = storage;
-		this.formatter = formatter;
 		this.instanceClass = instanceClass;
 	}
 
@@ -40,19 +37,16 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		add(new Gson().fromJson(json, instanceClass));
 	}
 
-	public Class<T> getInstanceClass() {
-		return instanceClass;
-	}
-
 	public Iterable<T> getIterable() {
 		return new LinkedList<T>(list);
 	}
 
-	@Override public void initialOutput() throws BadLocationException {
+	@Override public void initialOutput(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
+		OutputFormatter<T> formatter = (OutputFormatter<T>) formatterProvider.getFormatter(instanceClass);
 		String initialOutput = formatter.getInitialOutput(getIterable());
 		if (!initialOutput.isEmpty()) {
-			Terminal.printLine(getIdentity(), StringType.MAIN, StringFormat.BOLD);
-			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
+			terminal.printLine(identity, StringType.MAIN, StringFormat.BOLD);
+			terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
 		}
 	}
 
@@ -63,7 +57,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 			appendTo.appendChild(entryElement);
 		}
 		Element entryElement = document.createElement("display");
-		entryElement.setTextContent(String.valueOf(getDisplay()));
+		entryElement.setTextContent(String.valueOf(display));
 		appendTo.appendChild(entryElement);
 	}
 
@@ -72,31 +66,32 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 			createAndAdd(node.getTextContent());
 		}
 		else if (node.getNodeName().equals("display")) {
-			setDisplay(Boolean.valueOf(node.getTextContent()));
+			display = Boolean.valueOf(node.getTextContent());
 		}
 	}
 
 	public void remove(Instance toRemove) throws BadLocationException, InterruptedException {
-		if (list.remove(toRemove)) {
-			Terminal.update();
-		}
+		list.remove(toRemove);
 	}
 
-	@Command(tag = "show") public void show() throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		String command = Terminal.request("show", getCommandTags(formatter.getClass()));
+	@Command(tag = "show") public void show(Terminal terminal, FormatterProvider formatterProvider)	throws InterruptedException, BadLocationException, IllegalAccessException,
+																									IllegalArgumentException, InvocationTargetException {
+		OutputFormatter<T> formatter = (OutputFormatter<T>) formatterProvider.getFormatter(instanceClass);
+		String command = terminal.request("show", getCommandTags(formatter.getClass()));
 		for (Method method : formatter.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
 				Object output = method.invoke(formatter, getIterable());
-				Terminal.getLineOfCharacters('-', StringType.SOLUTION);
-				Terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
-				Terminal.waitForInput();
+				terminal.getLineOfCharacters('-', StringType.SOLUTION);
+				terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
+				terminal.waitForInput();
 			}
 		}
 	}
 
-	@Command(tag = "store") public void store() throws BadLocationException, InterruptedException {
-		if (Boolean.valueOf(Terminal.request("do you want to store all entries", "(true|false)"))) {
-			storage.store(this);
+	@Command(tag = "store") public void store(PluginContainer pluginContainer, Terminal terminal, FormatterProvider formatterProvider)	throws BadLocationException,
+																																		InterruptedException {
+		if (Boolean.valueOf(terminal.request("do you want to store all entries", "(true|false)"))) {
+			pluginContainer.getStorage().store(this, terminal, pluginContainer, formatterProvider);
 		}
 	}
 }

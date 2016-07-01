@@ -1,9 +1,9 @@
 package database.plugin.event;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -13,10 +13,12 @@ import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
+import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 import database.plugin.backup.BackupService;
@@ -34,37 +36,27 @@ import database.plugin.task.Task;
 import database.plugin.task.TaskPlugin;
 
 public class EventPlugin extends Plugin {
-	private Map<String, EventPluginExtension<? extends Event>>	extensionMap	= new LinkedHashMap<String, EventPluginExtension<? extends Event>>();
-	private EventOutputFormatter								formatter;
-	private TaskPlugin											taskPlugin;
-
-	public EventPlugin(	DayPlugin dayPlugin, BirthdayPlugin birthdayPlugin, HolidayPlugin holidayPlugin, AppointmentPlugin appointmentPlugin,
-						WeeklyAppointmentPlugin weeklyAppointmentPlugin, MultiDayAppointmentPlugin multiDayAppointmentPlugin, Settings settings, TaskPlugin taskPlugin) {
+	public EventPlugin() {
 		super("event");
-		extensionMap.put(holidayPlugin.getIdentity(), holidayPlugin);
-		extensionMap.put(dayPlugin.getIdentity(), dayPlugin);
-		extensionMap.put(birthdayPlugin.getIdentity(), birthdayPlugin);
-		extensionMap.put(appointmentPlugin.getIdentity(), appointmentPlugin);
-		extensionMap.put(weeklyAppointmentPlugin.getIdentity(), weeklyAppointmentPlugin);
-		extensionMap.put(multiDayAppointmentPlugin.getIdentity(), multiDayAppointmentPlugin);
-		formatter = new EventOutputFormatter(settings);
-		this.taskPlugin = taskPlugin;
 	}
 
-	@Command(tag = "cancel") public void cancel() throws BadLocationException, InterruptedException {
-		boolean display = getDisplay();
+	@Command(tag = "cancel") public void cancel(Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+												FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+		boolean displayTemp = display;
 		int i = 0;
 		int position;
 		Event temp = null;
+		MultiDayAppointmentPlugin multiDayAppointmentPlugin = (MultiDayAppointmentPlugin) pluginContainer.getPlugin("multidayappointment");
+		AppointmentPlugin appointmentPlugin = (AppointmentPlugin) pluginContainer.getPlugin("appointment");
 		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>();
-		list.add(extensionMap.get("appointment"));
-		list.add(extensionMap.get("weeklyappointment"));
-		list.add(extensionMap.get("multidayappointment"));
-		Iterable<Event> iterable = formatter.getNearEvents(getIterable(list));
-		List<String> stringList = formatter.formatOutput(iterable);
-		setDisplay(false);
-		Terminal.update();
-		position = Terminal.checkRequest(stringList);
+		list.add(appointmentPlugin);
+		list.add((WeeklyAppointmentPlugin) pluginContainer.getPlugin("weeklyappointment"));
+		list.add(multiDayAppointmentPlugin);
+		Iterable<Event> iterable = getNearEvents(getIterable(list), ((Settings) pluginContainer.getPlugin("settings")).getDisplayedDays());
+		List<String> stringList = formatOutput(iterable);
+		display = false;
+		terminal.update(pluginContainer, formatterProvider);
+		position = terminal.checkRequest(stringList);
 		if (position >= 0) {
 			for (Event event : iterable) {
 				if (i == position) {
@@ -77,22 +69,23 @@ public class EventPlugin extends Plugin {
 				temp.date = temp.date.plusDays(7);
 			}
 			else if (temp instanceof MultiDayAppointment) {
-				extensionMap.get("multidayappointment").remove(temp);
-				BackupService.backupRemoval(temp, extensionMap.get("multidayappointment"));
+				multiDayAppointmentPlugin.remove(temp);
+				backupService.backupRemoval(temp, multiDayAppointmentPlugin);
 			}
 			else if (temp instanceof Appointment) {
-				extensionMap.get("appointment").remove(temp);
-				BackupService.backupRemoval(temp, extensionMap.get("appointment"));
+				appointmentPlugin.remove(temp);
+				backupService.backupRemoval(temp, appointmentPlugin);
 			}
 		}
-		setDisplay(display);
-		Terminal.update();
+		display = displayTemp;
+		terminal.update(pluginContainer, formatterProvider);
 	}
 
-	@Command(tag = "check") public void check() throws InterruptedException, BadLocationException {
-		boolean display = getDisplay();
-		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>(extensionMap.values());
-		String temp = Terminal.request("date", "DATE");
+	@Command(tag = "check") public void check(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws InterruptedException,
+																																		BadLocationException {
+		boolean displayTemp = display;
+		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>(getExtensionMap(pluginContainer).values());
+		String temp = terminal.request("date", "DATE");
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		List<Event> eventList = new LinkedList<Event>();
 		String output = null;
@@ -108,40 +101,42 @@ public class EventPlugin extends Plugin {
 		else if (eventList.size() == 2) {
 			output = " there are appointments for this date:";
 		}
-		setDisplay(false);
-		Terminal.update();
-		Terminal.printLine("event", StringType.REQUEST, StringFormat.BOLD);
-		Terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
-		for (String string : formatter.formatOutput(eventList)) {
-			Terminal.printLine(" ->" + string, StringType.SOLUTION, StringFormat.STANDARD);
+		display = false;
+		terminal.update(pluginContainer, formatterProvider);
+		terminal.printLine("event", StringType.REQUEST, StringFormat.BOLD);
+		terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
+		for (String string : formatOutput(eventList)) {
+			terminal.printLine(" ->" + string, StringType.SOLUTION, StringFormat.STANDARD);
 		}
-		Terminal.waitForInput();
-		setDisplay(display);
-		Terminal.update();
+		terminal.waitForInput();
+		display = displayTemp;
+		terminal.update(pluginContainer, formatterProvider);
 	}
 
-	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
-		List<String> list = new ArrayList<String>(extensionMap.keySet());
+	@Command(tag = "new") public void createRequest(Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+													FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+		List<String> list = new ArrayList<String>(getExtensionMap(pluginContainer).keySet());
 		list.remove("holiday");
-		EventPluginExtension<? extends Event> extension = chooseType(list);
+		EventPluginExtension<? extends Event> extension = chooseType(list, terminal, pluginContainer);
 		if (extension != null) {
-			extension.createRequest();
-			Terminal.update();
+			extension.createRequest(terminal, backupService);
+			terminal.update(pluginContainer, formatterProvider);
 		}
 	}
 
-	@Override @Command(tag = "display") public void display() throws InterruptedException, BadLocationException {
-		EventPluginExtension<? extends Event> extension = chooseType(new ArrayList<String>(extensionMap.keySet()));
+	@Override @Command(tag = "display") public void display(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws InterruptedException,
+																																						BadLocationException {
+		EventPluginExtension<? extends Event> extension = chooseType(new ArrayList<String>(getExtensionMap(pluginContainer).keySet()), terminal, pluginContainer);
 		if (extension != null) {
-			extension.display();
-			Terminal.update();
+			extension.display(terminal, pluginContainer, formatterProvider);
+			terminal.update(pluginContainer, formatterProvider);
 		}
 	}
 
 	public Iterable<Event> getIterable(Iterable<EventPluginExtension<? extends Event>> extensionList) {
 		List<Event> list = new LinkedList<Event>();
 		for (InstancePlugin<? extends Event> extension : extensionList) {
-			if (extension.getDisplay()) {
+			if (extension.display) {
 				for (Event event : extension.getIterable()) {
 					int i = list.size();
 					while (i > 0 && list.get(i - 1).compareTo(event) > 0) {
@@ -154,59 +149,56 @@ public class EventPlugin extends Plugin {
 		return list;
 	}
 
-	@Override public void initialOutput() throws BadLocationException {
-		String initialOutput = formatter.getInitialOutput(addTaskDates(getIterable(extensionMap.values())));
-		if (!initialOutput.isEmpty()) {
-			Terminal.printLine(getIdentity(), StringType.MAIN, StringFormat.BOLD);
-			Terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
+	@Override public void initialOutput(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
+		String output = "";
+		for (String string : formatOutput(getNearEvents(addTaskDates(getIterable(getExtensionMap(pluginContainer).values()), (TaskPlugin) pluginContainer.getPlugin("task")),
+														((Settings) pluginContainer.getPlugin("settings")).getDisplayedDays()))) {
+			output += string + System.getProperty("line.separator");
+		}
+		if (!output.isEmpty()) {
+			terminal.printLine(identity, StringType.MAIN, StringFormat.BOLD);
+			terminal.printLine(output, StringType.MAIN, StringFormat.STANDARD);
 		}
 	}
 
 	@Override public void print(Document document, Element appendTo) {
 		Element entryElement = document.createElement("display");
-		entryElement.setTextContent(String.valueOf(getDisplay()));
+		entryElement.setTextContent(String.valueOf(display));
 		appendTo.appendChild(entryElement);
 	}
 
 	@Override public void read(Node node) {
 		if (node.getNodeName().equals("display")) {
-			setDisplay(Boolean.valueOf(node.getTextContent()));
+			display = Boolean.valueOf(node.getTextContent());
 		}
 	}
 
-	@Command(tag = "show") public void show() throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		String command = Terminal.request("show", getCommandTags(formatter.getClass()));
-		boolean display = false;
-		for (Method method : formatter.getClass().getMethods()) {
-			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
-				if (command.equals("all")) {
-					display = getDisplay();
-					setDisplay(false);
-					Terminal.update();
-				}
-				Object output = method.invoke(formatter, addTaskDates(getIterable(extensionMap.values())));
-				Terminal.getLineOfCharacters('-', StringType.SOLUTION);
-				Terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
-				Terminal.waitForInput();
-				if (command.equals("all")) {
-					setDisplay(display);
-					Terminal.update();
-				}
-			}
-		}
+	@Command(tag = "show") public void show(Terminal terminal, PluginContainer pluginContainer,
+											FormatterProvider formatterProvider)	throws InterruptedException, BadLocationException, IllegalAccessException,
+																					IllegalArgumentException, InvocationTargetException {
+		boolean displayTemp = display;
+		display = false;
+		terminal.update(pluginContainer, formatterProvider);
+		terminal.getLineOfCharacters('-', StringType.SOLUTION);
+		terminal.printLine(	printAll(addTaskDates(getIterable(getExtensionMap(pluginContainer).values()), (TaskPlugin) pluginContainer.getPlugin("task"))), StringType.SOLUTION,
+							StringFormat.STANDARD);
+		terminal.waitForInput();
+		display = displayTemp;
+		terminal.update(pluginContainer, formatterProvider);
 	}
 
-	@Command(tag = "store") public void store() throws BadLocationException, InterruptedException {
-		List<String> list = new ArrayList<String>(extensionMap.keySet());
+	@Command(tag = "store") public void store(PluginContainer pluginContainer, Terminal terminal, FormatterProvider formatterProvider)	throws BadLocationException,
+																																		InterruptedException {
+		List<String> list = new ArrayList<String>(getExtensionMap(pluginContainer).keySet());
 		list.remove("holiday");
-		EventPluginExtension<? extends Event> extension = chooseType(list);
+		EventPluginExtension<? extends Event> extension = chooseType(list, terminal, pluginContainer);
 		if (extension != null) {
-			extension.store();
-			Terminal.update();
+			extension.store(pluginContainer, terminal, formatterProvider);
+			terminal.update(pluginContainer, formatterProvider);
 		}
 	}
 
-	private Iterable<Event> addTaskDates(Iterable<Event> iterable) {
+	private Iterable<Event> addTaskDates(Iterable<Event> iterable, TaskPlugin taskPlugin) {
 		List<Event> list = new LinkedList<Event>();
 		for (Event event : iterable) {
 			list.add(event);
@@ -224,12 +216,71 @@ public class EventPlugin extends Plugin {
 		return list;
 	}
 
-	private EventPluginExtension<? extends Event> chooseType(List<String> strings) throws InterruptedException, BadLocationException {
+	private EventPluginExtension<? extends Event> chooseType(List<String> strings, Terminal terminal, PluginContainer pluginContainer)	throws InterruptedException,
+																																		BadLocationException {
 		EventPluginExtension<? extends Event> toReturn = null;
-		int position = Terminal.checkRequest(strings);
+		int position = terminal.checkRequest(strings);
 		if (position != -1) {
-			toReturn = extensionMap.get(strings.get(position));
+			toReturn = (EventPluginExtension<? extends Event>) pluginContainer.getPlugin(strings.get(position));
 		}
 		return toReturn;
+	}
+
+	private List<String> formatOutput(Iterable<? extends Event> iterable) {
+		List<String> output = new ArrayList<String>();
+		int longestNameLength = 0;
+		for (Event event : iterable) {
+			if (event.updateYear().getYear() == LocalDate.now().getYear()) {
+				if ((event.updateYear() + " - " + event.name).length() > longestNameLength) {
+					longestNameLength = (event.updateYear().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) + " - " + event.name).length();
+				}
+			}
+		}
+		for (Event event : iterable) {
+			if (event.updateYear().getYear() == LocalDate.now().getYear()) {
+				String line = event.updateYear().isEqual(LocalDate.now())	? "TODAY      - " + event.name
+																			: event.updateYear().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) + " - " + event.name;
+				for (int i = line.length(); i < longestNameLength + 3; i++) {
+					line += " ";
+				}
+				output.add(" " + line + event.getAdditionToOutput());
+			}
+		}
+		return output;
+	}
+
+	private Map<String, EventPluginExtension<? extends Event>> getExtensionMap(PluginContainer pluginContainer) {
+		Map<String, EventPluginExtension<? extends Event>> extensionMap = new LinkedHashMap<String, EventPluginExtension<? extends Event>>();
+		DayPlugin dayPlugin = (DayPlugin) pluginContainer.getPlugin("day");
+		BirthdayPlugin birthdayPlugin = (BirthdayPlugin) pluginContainer.getPlugin("birthday");
+		HolidayPlugin holidayPlugin = (HolidayPlugin) pluginContainer.getPlugin("holiday");
+		AppointmentPlugin appointmentPlugin = (AppointmentPlugin) pluginContainer.getPlugin("appointment");
+		WeeklyAppointmentPlugin weeklyAppointmentPlugin = (WeeklyAppointmentPlugin) pluginContainer.getPlugin("weeklyappointment");
+		MultiDayAppointmentPlugin multiDayAppointmentPlugin = (MultiDayAppointmentPlugin) pluginContainer.getPlugin("multidayappointment");
+		extensionMap.put(holidayPlugin.identity, holidayPlugin);
+		extensionMap.put(dayPlugin.identity, dayPlugin);
+		extensionMap.put(birthdayPlugin.identity, birthdayPlugin);
+		extensionMap.put(appointmentPlugin.identity, appointmentPlugin);
+		extensionMap.put(weeklyAppointmentPlugin.identity, weeklyAppointmentPlugin);
+		extensionMap.put(multiDayAppointmentPlugin.identity, multiDayAppointmentPlugin);
+		return extensionMap;
+	}
+
+	private ArrayList<Event> getNearEvents(Iterable<? extends Event> iterable, int displayRange) {
+		ArrayList<Event> nearEvents = new ArrayList<Event>();
+		for (Event event : iterable) {
+			if (ChronoUnit.DAYS.between(LocalDate.now(), event.updateYear()) <= displayRange) {
+				nearEvents.add(event);
+			}
+		}
+		return nearEvents;
+	}
+
+	private String printAll(Iterable<Event> iterable) throws BadLocationException {
+		String output = "";
+		for (String string : formatOutput(iterable)) {
+			output += string + System.getProperty("line.separator");
+		}
+		return output;
 	}
 }

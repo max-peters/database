@@ -5,13 +5,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
 import database.main.userInterface.Terminal;
-import database.plugin.Storage;
 import database.plugin.backup.BackupService;
 import database.plugin.event.EventPluginExtension;
 
 public class AppointmentPlugin extends EventPluginExtension<Appointment> {
-	public AppointmentPlugin(Storage storage) {
-		super("appointment", storage, Appointment.class);
+	public AppointmentPlugin() {
+		super("appointment", Appointment.class);
 	}
 
 	@Override public void add(Appointment appointment) {
@@ -32,25 +31,25 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 		}
 	}
 
-	@Override public void createRequest() throws InterruptedException, BadLocationException {
+	@Override public void createRequest(Terminal terminal, BackupService backupService) throws InterruptedException, BadLocationException {
 		String name;
 		String temp = "";
 		LocalTime begin;
 		LocalDate date;
-		name = Terminal.request("name", ".+");
-		temp = Terminal.request("date", "DATE");
+		name = terminal.request("name", ".+");
+		temp = terminal.request("date", "DATE");
 		date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		temp = Terminal.request("begin", "TIME");
+		temp = terminal.request("begin", "TIME");
 		begin = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
 		if (begin != null) {
-			temp = Terminal.request("end", "TIME");
+			temp = terminal.request("end", "TIME");
 			while (!temp.isEmpty() && !begin.isBefore(LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm")))) {
-				Terminal.errorMessage();
-				temp = Terminal.request("end", "TIME");
+				terminal.errorMessage();
+				temp = terminal.request("end", "TIME");
 			}
 		}
 		Appointment appointment = new Appointment(name, date, begin, temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm")));
 		add(appointment);
-		BackupService.backupCreation(appointment, this);
+		backupService.backupCreation(appointment, this);
 	}
 }

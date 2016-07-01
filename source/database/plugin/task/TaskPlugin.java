@@ -5,68 +5,72 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.text.BadLocationException;
+import database.main.PluginContainer;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
+import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
-import database.plugin.Storage;
 import database.plugin.backup.BackupService;
 
 public class TaskPlugin extends InstancePlugin<Task> {
-	public TaskPlugin(Storage storage) {
-		super("task", storage, new TaskOutputFormatter(), Task.class);
+	public TaskPlugin() {
+		super("task", Task.class);
 	}
 
-	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException {
-		Task task = getTaskByCheckRequest();
+	@Command(tag = "edit") public void changeRequest(	Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+														FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
+		Task task = getTaskByCheckRequest(terminal, pluginContainer, formatterProvider);
 		if (task != null) {
-			BackupService.backupChangeBefor(task, this);
-			task.name = Terminal.request("new name", ".+", task.name);
-			BackupService.backupChangeAfter(task, this);
-			Terminal.update();
+			backupService.backupChangeBefor(task, this);
+			task.name = terminal.request("new name", ".+", task.name);
+			backupService.backupChangeAfter(task, this);
+			terminal.update(pluginContainer, formatterProvider);
 		}
 	}
 
-	@Command(tag = "check") public void checkRequest() throws InterruptedException, BadLocationException, IOException {
-		Task task = getTaskByCheckRequest();
+	@Command(tag = "check") public void checkRequest(	Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+														FormatterProvider formatterProvider) throws InterruptedException, BadLocationException, IOException {
+		Task task = getTaskByCheckRequest(terminal, pluginContainer, formatterProvider);
 		if (task != null) {
 			remove(task);
-			BackupService.backupRemoval(task, this);
-			Terminal.update();
+			backupService.backupRemoval(task, this);
+			terminal.update(pluginContainer, formatterProvider);
 		}
 	}
 
-	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException {
-		String name = Terminal.request("name", ".+");
-		String category = Terminal.request("category", ".+");
-		String temp = Terminal.request("date", "DATE");
+	@Command(tag = "new") public void createRequest(Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+													FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+		String name = terminal.request("name", ".+");
+		String category = terminal.request("category", ".+");
+		String temp = terminal.request("date", "DATE");
 		LocalDate date = temp.isEmpty() ? null : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		while (date != null && date.isBefore(LocalDate.now())) {
-			Terminal.errorMessage();
-			temp = Terminal.request("date", "DATE");
+			terminal.errorMessage();
+			temp = terminal.request("date", "DATE");
 			date = temp.isEmpty() ? null : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		}
 		Task task = new Task(name, category, date);
 		add(task);
-		BackupService.backupCreation(task, this);
-		Terminal.update();
+		backupService.backupCreation(task, this);
+		terminal.update(pluginContainer, formatterProvider);
 	}
 
-	@Override public void show() {
+	@Override public void show(Terminal terminal, FormatterProvider formatterProvider) {
 		// nothing to show here
 	}
 
-	private Task getTaskByCheckRequest() throws InterruptedException, BadLocationException {
-		boolean display = getDisplay();
+	private Task getTaskByCheckRequest(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
+		boolean displayTemp = display;
 		String string;
 		String[] splitResult;
 		int position;
 		Task temp = null;
-		List<String> stringList = ((TaskOutputFormatter) formatter).formatOutput(list);
-		setDisplay(false);
-		Terminal.update();
-		position = Terminal.checkRequest(stringList);
-		setDisplay(display);
-		Terminal.update();
+		List<String> stringList = ((TaskOutputFormatter) formatterProvider.getFormatter(Task.class)).formatOutput(list);
+		display = false;
+		terminal.update(pluginContainer, formatterProvider);
+		position = terminal.checkRequest(stringList);
+		display = displayTemp;
+		terminal.update(pluginContainer, formatterProvider);
 		if (position != -1) {
 			string = stringList.get(position);
 		}

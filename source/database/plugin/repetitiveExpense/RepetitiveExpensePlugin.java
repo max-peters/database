@@ -4,111 +4,74 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.swing.text.BadLocationException;
+import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
+import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
-import database.plugin.Storage;
 import database.plugin.backup.BackupService;
 import database.plugin.expense.Expense;
 import database.plugin.expense.ExpensePlugin;
 
 public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
-	private ExpensePlugin expensePlugin;
-
-	public RepetitiveExpensePlugin(ExpensePlugin expensePlugin, Storage storage) {
-		super("repetitiveexpense", storage, null, RepetitiveExpense.class);
-		this.expensePlugin = expensePlugin;
+	public RepetitiveExpensePlugin() {
+		super("repetitiveexpense", RepetitiveExpense.class);
 	}
 
 	@Override public void add(RepetitiveExpense repetitiveExpense) {
 		super.add(repetitiveExpense);
-		createExpense(repetitiveExpense, expensePlugin);
 	}
 
-	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException {
-		List<String> strings = new ArrayList<String>();
-		RepetitiveExpense repetitiveExpense = null;
-		String change = null;
-		int position;
-		for (Expense expense : getIterable()) {
-			strings.add(expense.name + " - " + expense.category);
+	public void createExpense(Terminal terminal, ExpensePlugin expensePlugin, BackupService backupService) {
+		for (RepetitiveExpense repetitiveExpense : list) {
+			createExpense(repetitiveExpense, terminal, expensePlugin, backupService);
 		}
-		position = Terminal.checkRequest(strings);
-		if (position != -1) {
-			repetitiveExpense = list.get(position);
-		}
-		else {
-			return;
-		}
-		strings = Arrays.asList(new String[] { "name", "category", "value", "interval" });
-		position = Terminal.checkRequest(strings);
-		if (position != -1) {
-			change = strings.get(position);
-		}
-		else {
-			return;
-		}
-		BackupService.backupChangeBefor(repetitiveExpense, this);
-		switch (change) {
-			case "name":
-				repetitiveExpense.name = Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", repetitiveExpense.name);
-				break;
-			case "category":
-				repetitiveExpense.category = Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+", repetitiveExpense.category);
-				break;
-			case "value":
-				repetitiveExpense.value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]*)?", String.valueOf(repetitiveExpense.value)));
-				break;
-			case "interval":
-				repetitiveExpense.interval = Integer.valueOf(Terminal.request("interval", "[0-9]{1,13}", String.valueOf(repetitiveExpense.interval)));
-				break;
-		}
-		BackupService.backupChangeAfter(repetitiveExpense, this);
-		Terminal.update();
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, NumberFormatException {
-		String name = Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
-		String category = Terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
-		Double value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
-		String temp = Terminal.request("date", "DATE");
+	@Command(tag = "new") public void createRequest(Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException, NumberFormatException {
+		String name = terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
+		String category = terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
+		Double value = Double.valueOf(terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
+		String temp = terminal.request("date", "DATE");
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		ExecutionDay executionDay = ExecutionDay.getExecutionDay(Terminal.request("executionday", "(first|mid|last)"));
-		int interval = Integer.valueOf(Terminal.request("interval", "[0-9]{1,13}"));
+		ExecutionDay executionDay = ExecutionDay.getExecutionDay(terminal.request("executionday", "(first|mid|last)"));
+		int interval = Integer.valueOf(terminal.request("interval", "[0-9]{1,13}"));
 		RepetitiveExpense repetitiveExpense = new RepetitiveExpense(name, category, value, date, executionDay, interval);
 		add(repetitiveExpense);
-		BackupService.backupCreation(repetitiveExpense, this);
-		Terminal.update();
+		backupService.backupCreation(repetitiveExpense, this);
+		createExpense(repetitiveExpense, terminal, (ExpensePlugin) pluginContainer.getPlugin("expense"), backupService);
+		terminal.update(pluginContainer, formatterProvider);
 	}
 
-	@Override public void display() {
+	@Override public void display(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) {
 		// nothing to display here
 	}
 
-	@Override public void show() {
+	@Override public void show(Terminal terminal, FormatterProvider formatterProvider) {
 		// nothing to show here
 	}
 
-	@Command(tag = "stop") public void stopRequest() throws InterruptedException, BadLocationException {
+	@Command(tag = "stop") public void stopRequest(	Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
 		List<String> strings = new ArrayList<String>();
 		for (Expense expense : getIterable()) {
 			strings.add(expense.name + " - " + expense.category);
 		}
-		int position = Terminal.checkRequest(strings);
+		int position = terminal.checkRequest(strings);
 		if (position < 0) {
 			return;
 		}
 		RepetitiveExpense repetitiveExpense = list.get(position);
 		remove(repetitiveExpense);
-		BackupService.backupRemoval(repetitiveExpense, this);
-		Terminal.update();
+		backupService.backupRemoval(repetitiveExpense, this);
+		terminal.update(pluginContainer, formatterProvider);
 	}
 
-	@Override public void store() {
+	@Override public void store(PluginContainer pluginContainer, Terminal terminal, FormatterProvider formatterProvider) {
 		// nothing to store here
 	}
 
@@ -127,14 +90,16 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 		return date;
 	}
 
-	private void createExpense(RepetitiveExpense repetitiveExpense, ExpensePlugin expensePlugin) {
+	private void createExpense(RepetitiveExpense repetitiveExpense, Terminal terminal, ExpensePlugin expensePlugin, BackupService backupService) {
 		Expense expense = new Expense(repetitiveExpense.name, repetitiveExpense.category, repetitiveExpense.value, repetitiveExpense.date);
 		expense.date = adjustDate(expense.date.getMonthValue(), expense.date.getYear(), repetitiveExpense.executionDay);
 		while (expense.date.isBefore(LocalDate.now()) || expense.date.isEqual(LocalDate.now())) {
 			if (!equalsExceptValue(expensePlugin.getIterable(), expense)
 				&& Math.floorMod(ChronoUnit.MONTHS.between(repetitiveExpense.date, expense.date), repetitiveExpense.interval) == 0) {
-				expensePlugin.add(new Expense(expense.name, expense.category, expense.value, expense.date));
-				Terminal.collectLine(" + "+ expense.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.name + " (" + expense.category + ") " + expense.value
+				Expense newExpense = new Expense(expense.name, expense.category, expense.value, expense.date);
+				expensePlugin.add(newExpense);
+				backupService.backupRelatedCreation(newExpense, expensePlugin);
+				terminal.collectLine(" + "+ expense.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.name + " (" + expense.category + ") " + expense.value
 										+ "€", StringFormat.STANDARD, "expense");
 			}
 			if (expense.date.getMonthValue() == 12) {

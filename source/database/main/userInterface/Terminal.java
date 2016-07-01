@@ -9,42 +9,41 @@ import java.util.Map.Entry;
 import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
+import database.plugin.FormatterProvider;
 
 public class Terminal {
-	private static Map<OutputInformation, String>	collectedLines;
-	private static GraphicalUserInterface			graphicalUserInterface;
-	private static PluginContainer					pluginContainer;
-	private static StringUtility					stringUtility;
+	private Map<OutputInformation, String>	collectedLines;
+	private GraphicalUserInterface			graphicalUserInterface;
+	private StringUtility					stringUtility;
 
-	public Terminal(GraphicalUserInterface graphicalUserInterface, PluginContainer pluginContainer) {
-		Terminal.graphicalUserInterface = graphicalUserInterface;
-		Terminal.pluginContainer = pluginContainer;
-		Terminal.collectedLines = new LinkedHashMap<OutputInformation, String>();
-		Terminal.stringUtility = new StringUtility();
+	public Terminal(GraphicalUserInterface graphicalUserInterface) {
+		this.graphicalUserInterface = graphicalUserInterface;
+		collectedLines = new LinkedHashMap<OutputInformation, String>();
+		stringUtility = new StringUtility();
 	}
 
-	public static void blockInput() {
+	public void blockInput() {
 		graphicalUserInterface.blockInput();
 	}
 
-	public static int checkRequest(Collection<String> collection) throws InterruptedException, BadLocationException {
+	public int checkRequest(Collection<String> collection) throws InterruptedException, BadLocationException {
 		return graphicalUserInterface.checkRequest(collection);
 	}
 
-	public static void collectLine(Object output, StringFormat stringFormat, String headline) {
+	public void collectLine(Object output, StringFormat stringFormat, String headline) {
 		collectedLines.put(new OutputInformation(output, StringType.SOLUTION, stringFormat), headline);
 	}
 
-	public static void errorMessage() throws BadLocationException, InterruptedException {
-		Terminal.printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
-		Terminal.waitForInput();
+	public void errorMessage() throws BadLocationException, InterruptedException {
+		graphicalUserInterface.printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
+		graphicalUserInterface.waitForInput();
 	}
 
-	public static void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
+	public void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
 		graphicalUserInterface.getLineOfCharacters(character, stringType);
 	}
 
-	public static void printCollectedLines() throws InterruptedException, BadLocationException {
+	public void printCollectedLines() throws InterruptedException, BadLocationException {
 		if (!collectedLines.isEmpty()) {
 			getLineOfCharacters('-', StringType.SOLUTION);
 			List<String> list = new ArrayList<String>();
@@ -66,32 +65,31 @@ public class Terminal {
 		}
 	}
 
-	public static synchronized void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
+	public synchronized void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 
-	public static String request(String printOut, String regex) throws InterruptedException, BadLocationException {
+	public String request(String printOut, String regex) throws InterruptedException, BadLocationException {
 		return request(printOut, regex, "", null, 0);
 	}
 
-	public static String request(String printOut, String regex, Completeable completeable) throws InterruptedException, BadLocationException {
+	public String request(String printOut, String regex, Completeable completeable) throws InterruptedException, BadLocationException {
 		return request(printOut, regex, "", completeable, 0);
 	}
 
-	public static String request(String printOut, String regex, int levenshteinDistance) throws InterruptedException, BadLocationException {
+	public String request(String printOut, String regex, int levenshteinDistance) throws InterruptedException, BadLocationException {
 		return request(printOut, regex, "", null, levenshteinDistance);
 	}
 
-	public static String request(String printOut, String regex, String inputText) throws InterruptedException, BadLocationException {
+	public String request(String printOut, String regex, String inputText) throws InterruptedException, BadLocationException {
 		return request(printOut, regex, inputText, null, 0);
 	}
 
-	public static String request(String printOut, String regex, String inputText, Completeable completeable) throws InterruptedException, BadLocationException {
+	public String request(String printOut, String regex, String inputText, Completeable completeable) throws InterruptedException, BadLocationException {
 		return request(printOut, regex, inputText, completeable, 0);
 	}
 
-	public static String request(String printOut, String regex, String inputText, Completeable completeable, int levenshteinDistance)	throws InterruptedException,
-																																		BadLocationException {
+	public String request(String printOut, String regex, String inputText, Completeable completeable, int levenshteinDistance) throws InterruptedException, BadLocationException {
 		boolean request = true;
 		String result = null;
 		String input = null;
@@ -135,15 +133,15 @@ public class Terminal {
 		return result;
 	}
 
-	public static void update() throws BadLocationException, InterruptedException {
+	public void update(PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
 		graphicalUserInterface.update();
-		blockInput();
-		pluginContainer.initialOutput();
+		graphicalUserInterface.blockInput();
+		pluginContainer.initialOutput(this, formatterProvider);
 		graphicalUserInterface.releaseInput();
 		printCollectedLines();
 	}
 
-	public static void waitForInput() throws InterruptedException {
+	public void waitForInput() throws InterruptedException {
 		graphicalUserInterface.waitForInput();
 	}
 }

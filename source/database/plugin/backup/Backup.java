@@ -2,9 +2,11 @@ package database.plugin.backup;
 
 import javax.swing.text.BadLocationException;
 import com.google.gson.Gson;
+import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
+import database.plugin.FormatterProvider;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 
@@ -45,18 +47,18 @@ public class Backup {
 		return changes;
 	}
 
-	protected void restore() throws BadLocationException, InterruptedException {
+	protected void restore(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
 		Gson gson = new Gson();
 		if (newState != null) {
 			if (oldState != null) {
 				String temp = oldState;
-				instancePlugin.remove(gson.fromJson(newState, instancePlugin.getInstanceClass()));
+				instancePlugin.remove(gson.fromJson(newState, instancePlugin.instanceClass));
 				instancePlugin.createAndAdd(oldState);
 				oldState = newState;
 				newState = temp;
 			}
 			else {
-				instancePlugin.remove(gson.fromJson(newState, instancePlugin.getInstanceClass()));
+				instancePlugin.remove(gson.fromJson(newState, instancePlugin.instanceClass));
 				oldState = newState;
 				newState = null;
 			}
@@ -69,9 +71,9 @@ public class Backup {
 			changes = !isChanged();
 		}
 		else {
-			Terminal.printLine("no command to cancel", StringType.SOLUTION, StringFormat.STANDARD);
-			Terminal.waitForInput();
+			terminal.printLine("no command to cancel", StringType.SOLUTION, StringFormat.STANDARD);
+			terminal.waitForInput();
 		}
-		Terminal.update();
+		terminal.update(pluginContainer, formatterProvider);
 	}
 }

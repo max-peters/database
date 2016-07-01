@@ -16,9 +16,19 @@ import java.util.stream.Stream;
 import database.plugin.Command;
 import database.plugin.OutputFormatter;
 
-public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
+public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 	private Map<String, Integer>	categoryAmount	= new HashMap<String, Integer>();
 	private Map<String, Integer>	nameAmount		= new HashMap<String, Integer>();
+
+	@Override public String getInitialOutput(Iterable<Expense> iterable) {
+		return "todo";
+	}
+
+	public void initialise(Iterable<Expense> iterable) {
+		for (Expense expense : iterable) {
+			addExpense(expense);
+		}
+	}
 
 	@Command(tag = "average") public String outputAverage(Iterable<Expense> iterable) {
 		Expense first = iterable.iterator().next();
@@ -169,7 +179,7 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 		return builder.toString();
 	}
 
-	protected void addExpense(Expense expense, Iterable<Expense> iterable) {
+	protected void addExpense(Expense expense) {
 		if (!categoryAmount.containsKey(expense.category)) {
 			categoryAmount.put(expense.category, 1);
 		}
@@ -191,10 +201,6 @@ public class ExpenseOutputFormatter extends OutputFormatter<Expense> {
 			}
 		}
 		return name;
-	}
-
-	@Override protected String getInitialOutput(Iterable<Expense> iterable) {
-		return "todo";
 	}
 
 	protected String getMostUsedCategoryByPrefixAndName(String prefix, String name, Iterable<Expense> iterable) {

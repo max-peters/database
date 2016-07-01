@@ -20,22 +20,12 @@ import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
 import database.plugin.Plugin;
-import database.plugin.Storage;
 
 public class WriterReader {
-	private final File		localStorage;
-	private PluginContainer	pluginContainer;
-	private final File		remoteStorage;
-	private Storage			storage;
+	private final File	localStorage	= new File(System.getProperty("user.home") + "/Documents/storage.xml");
+	private final File	remoteStorage	= new File("Z:/storage.xml");
 
-	public WriterReader(PluginContainer pluginContainer, Storage storage) {
-		this.storage = storage;
-		this.pluginContainer = pluginContainer;
-		localStorage = new File(System.getProperty("user.home") + "/Documents/storage.xml");
-		remoteStorage = new File("Z:/storage.xml");
-	}
-
-	public Document createDocument() throws ParserConfigurationException {
+	public Document createDocument(PluginContainer pluginContainer) throws ParserConfigurationException {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		Document document = documentBuilder.newDocument();
@@ -43,23 +33,23 @@ public class WriterReader {
 		Element element = document.createElement("storage");
 		document.appendChild(database);
 		pluginContainer.addToDocument(document, database);
-		storage.print(document, element);
+		pluginContainer.getStorage().print(document, element);
 		database.appendChild(element);
 		return document;
 	}
 
-	public void read() throws InterruptedException, IOException, SAXException, ParserConfigurationException {
+	public void read(PluginContainer pluginContainer) throws InterruptedException, IOException, SAXException, ParserConfigurationException {
 		if (!localStorage.exists()) {
 			if (remoteStorage.exists() || connect() == 0) {
-				readFile(remoteStorage);
+				readFile(pluginContainer, remoteStorage);
 			}
 		}
 		else {
-			readFile(localStorage);
+			readFile(pluginContainer, localStorage);
 		}
 	}
 
-	public void readDocument(Document document) throws ParserConfigurationException {
+	public void readDocument(PluginContainer pluginContainer, Document document) throws ParserConfigurationException {
 		NodeList nList = document.getElementsByTagName("*");
 		for (int i = 0; i < nList.getLength(); i++) {
 			Plugin plugin = pluginContainer.getPlugin(nList.item(i).getParentNode().getNodeName());
@@ -67,28 +57,29 @@ public class WriterReader {
 				plugin.read(nList.item(i));
 			}
 			else if (nList.item(i).getParentNode().getNodeName().equals("storage")) {
-				storage.read(nList.item(i));
+				pluginContainer.getStorage().read(nList.item(i));
 			}
 		}
 	}
 
-	public void updateStorage() throws InterruptedException, IOException, SAXException, TransformerException, ParserConfigurationException, BadLocationException {
+	public void updateStorage(Terminal terminal, PluginContainer pluginContainer)	throws InterruptedException, IOException, SAXException, TransformerException,
+																					ParserConfigurationException, BadLocationException {
 		if ((remoteStorage.exists() || connect() == 0) && localStorage.exists()) {
 			File newestFile = remoteStorage.lastModified() < localStorage.lastModified() ? localStorage : remoteStorage;
-			Terminal.printLine("loading " + newestFile.getPath(), StringType.REQUEST, StringFormat.ITALIC);
+			terminal.printLine("loading " + newestFile.getPath(), StringType.REQUEST, StringFormat.ITALIC);
 			pluginContainer.clear();
-			readFile(newestFile);
-			writeFile(localStorage);
-			writeFile(remoteStorage);
-			Terminal.printLine(newestFile.getPath() + " loaded", StringType.REQUEST, StringFormat.ITALIC);
+			readFile(pluginContainer, newestFile);
+			writeFile(pluginContainer, localStorage);
+			writeFile(pluginContainer, remoteStorage);
+			terminal.printLine(newestFile.getPath() + " loaded", StringType.REQUEST, StringFormat.ITALIC);
 		}
 		else {
-			Terminal.printLine("connection failed", StringType.REQUEST, StringFormat.ITALIC);
+			terminal.printLine("connection failed", StringType.REQUEST, StringFormat.ITALIC);
 		}
 	}
 
-	public void write() throws ParserConfigurationException, TransformerException {
-		writeFile(localStorage);
+	public void write(PluginContainer pluginContainer) throws ParserConfigurationException, TransformerException {
+		writeFile(pluginContainer, localStorage);
 	}
 
 	private int connect() throws InterruptedException, IOException {
@@ -96,16 +87,16 @@ public class WriterReader {
 		return connection.waitFor();
 	}
 
-	private void readFile(File file) throws ParserConfigurationException, SAXException, IOException {
+	private void readFile(PluginContainer pluginContainer, File file) throws ParserConfigurationException, SAXException, IOException {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document document = dBuilder.parse(file);
 		document.getDocumentElement().normalize();
-		readDocument(document);
+		readDocument(pluginContainer, document);
 	}
 
-	private void writeFile(File file) throws ParserConfigurationException, TransformerException {
-		DOMSource domSource = new DOMSource(createDocument());
+	private void writeFile(PluginContainer pluginContainer, File file) throws ParserConfigurationException, TransformerException {
+		DOMSource domSource = new DOMSource(createDocument(pluginContainer));
 		StreamResult streamResult = new StreamResult(file);
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer serializer = tf.newTransformer();

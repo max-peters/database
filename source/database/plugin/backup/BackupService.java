@@ -2,54 +2,53 @@ package database.plugin.backup;
 
 import java.util.LinkedList;
 import javax.swing.text.BadLocationException;
+import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
+import database.plugin.FormatterProvider;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 
 public class BackupService {
-	private static LinkedList<Backup>	backups	= new LinkedList<Backup>();
-	private static boolean				changes;
+	private LinkedList<Backup>	backups	= new LinkedList<Backup>();
+	private boolean				changes;
 
-	public static void backupChangeAfter(Instance newState, InstancePlugin<?> instancePlugin) {
+	public void backupChangeAfter(Instance newState, InstancePlugin<?> instancePlugin) {
 		if (backups.size() != 1) {
 			throw new IllegalStateException();
 		}
 		backups.get(0).backupChangeAfter(newState, instancePlugin);
 	}
 
-	public static void backupChangeBefor(Instance oldState, InstancePlugin<?> instancePlugin) {
+	public void backupChangeBefor(Instance oldState, InstancePlugin<?> instancePlugin) {
 		Backup b = new Backup();
 		clear();
 		b.backupChangeBefor(oldState, instancePlugin);
 		backups.add(b);
 	}
 
-	public static void backupCreation(Instance instance, InstancePlugin<?> instancePlugin) {
+	public void backupCreation(Instance instance, InstancePlugin<?> instancePlugin) {
 		Backup b = new Backup();
 		clear();
 		b.backupCreation(instance, instancePlugin);
 		backups.add(b);
 	}
 
-	public static void backupRelatedCreation(Instance instance, InstancePlugin<?> instancePlugin) {
-		if (backups.size() == 0) {
-			throw new IllegalStateException();
-		}
+	public void backupRelatedCreation(Instance instance, InstancePlugin<?> instancePlugin) {
 		Backup b = new Backup();
 		b.backupCreation(instance, instancePlugin);
 		backups.add(b);
 	}
 
-	public static void backupRemoval(Instance instance, InstancePlugin<?> instancePlugin) {
+	public void backupRemoval(Instance instance, InstancePlugin<?> instancePlugin) {
 		Backup b = new Backup();
 		clear();
 		b.backupRemoval(instance, instancePlugin);
 		backups.add(b);
 	}
 
-	public static boolean isChanged() {
+	public boolean isChanged() {
 		for (Backup backup : backups) {
 			if (backup.isChanged()) {
 				return true;
@@ -58,22 +57,22 @@ public class BackupService {
 		return changes;
 	}
 
-	public static void restore() throws BadLocationException, InterruptedException {
+	public void restore(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
 		if (backups.size() == 0) {
-			Terminal.printLine("no command to cancel", StringType.SOLUTION, StringFormat.STANDARD);
-			Terminal.waitForInput();
+			terminal.printLine("no command to cancel", StringType.SOLUTION, StringFormat.STANDARD);
+			terminal.waitForInput();
 		}
 		for (Backup backup : backups) {
-			backup.restore();
+			backup.restore(terminal, pluginContainer, formatterProvider);
 		}
 	}
 
-	public static void save() {
+	public void save() {
 		backups.clear();
 		changes = false;
 	}
 
-	private static void clear() {
+	private void clear() {
 		for (Backup backup : backups) {
 			if (backup.isChanged()) {
 				changes = true;

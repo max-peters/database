@@ -7,15 +7,14 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.userInterface.Terminal;
-import database.plugin.Storage;
 import database.plugin.backup.BackupService;
 import database.plugin.event.Event;
 import database.plugin.event.EventPluginExtension;
 import database.plugin.event.appointment.Appointment;
 
 public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppointment> {
-	public MultiDayAppointmentPlugin(Storage storage) {
-		super("multidayappointment", storage, MultiDayAppointment.class);
+	public MultiDayAppointmentPlugin() {
+		super("multidayappointment", MultiDayAppointment.class);
 	}
 
 	@Override public void add(MultiDayAppointment multiDayAppointment) {
@@ -24,30 +23,30 @@ public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppo
 		}
 	}
 
-	@Override public void createRequest() throws InterruptedException, BadLocationException {
+	@Override public void createRequest(Terminal terminal, BackupService backupService) throws InterruptedException, BadLocationException {
 		String name;
 		String temp = "";
 		LocalTime begin;
 		LocalTime end;
 		LocalDate firstDay;
 		LocalDate lastDay;
-		name = Terminal.request("name", ".+");
-		temp = Terminal.request("first day", "DATE");
+		name = terminal.request("name", ".+");
+		temp = terminal.request("first day", "DATE");
 		firstDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		temp = Terminal.request("begin", "TIME");
+		temp = terminal.request("begin", "TIME");
 		begin = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
-		temp = Terminal.request("last day", "DATE");
+		temp = terminal.request("last day", "DATE");
 		lastDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		while (!lastDay.isAfter(firstDay)) {
-			Terminal.errorMessage();
-			temp = Terminal.request("last day", "DATE");
+			terminal.errorMessage();
+			temp = terminal.request("last day", "DATE");
 			lastDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		}
-		temp = Terminal.request("end", "TIME");
+		temp = terminal.request("end", "TIME");
 		end = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
 		MultiDayAppointment multiDayAppointment = new MultiDayAppointment(name, firstDay, begin, lastDay, end);
 		add(multiDayAppointment);
-		BackupService.backupCreation(multiDayAppointment, this);
+		backupService.backupCreation(multiDayAppointment, this);
 	}
 
 	@Override public List<Event> getEvents(LocalDate date) {

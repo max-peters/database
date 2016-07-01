@@ -4,7 +4,22 @@ import java.util.Iterator;
 import database.plugin.Command;
 import database.plugin.OutputFormatter;
 
-public class RefillingOutputFormatter extends OutputFormatter<Refilling> {
+public class RefillingOutputFormatter implements OutputFormatter<Refilling> {
+	@Override public String getInitialOutput(Iterable<Refilling> iterable) {
+		String output = "";
+		if (iterable.iterator().hasNext()) {
+			int sum = 0;
+			Iterator<Refilling> it = iterable.iterator();
+			while (it.hasNext()) {
+				sum++;
+				it.next();
+			}
+			output = "["+ sum + "] " + "distance: " + "[" + getDistanceTotal(iterable) + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal(iterable) + " l" + "] "
+						+ "averageConsumption: " + "[" + getAverageConsumptionTotal(iterable) + " l/km" + "]";
+		}
+		return output;
+	}
+
 	@Command(tag = "all") public String outputAll(Iterable<Refilling> iterable) {
 		StringBuilder builder = new StringBuilder();
 		if (!iterable.iterator().hasNext()) {
@@ -55,21 +70,6 @@ public class RefillingOutputFormatter extends OutputFormatter<Refilling> {
 			}
 		}
 		return Math.round(10.0 * highestRefuelAmount) / 10.0;
-	}
-
-	@Override protected String getInitialOutput(Iterable<Refilling> iterable) {
-		String output = "";
-		if (iterable.iterator().hasNext()) {
-			int sum = 0;
-			Iterator<Refilling> it = iterable.iterator();
-			while (it.hasNext()) {
-				sum++;
-				it.next();
-			}
-			output = "["+ sum + "] " + "distance: " + "[" + getDistanceTotal(iterable) + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal(iterable) + " l" + "] "
-						+ "averageConsumption: " + "[" + getAverageConsumptionTotal(iterable) + " l/km" + "]";
-		}
-		return output;
 	}
 
 	private double getAverageConsumptionTotal(Iterable<Refilling> iterable) {

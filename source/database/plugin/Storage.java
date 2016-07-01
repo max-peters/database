@@ -5,6 +5,7 @@ import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import database.main.PluginContainer;
 import database.main.userInterface.Terminal;
 
 public class Storage {
@@ -30,11 +31,12 @@ public class Storage {
 		storage.add(node.getTextContent());
 	}
 
-	public void store(InstancePlugin<? extends Instance> instancePlugin) throws BadLocationException, InterruptedException {
+	public void store(	InstancePlugin<? extends Instance> instancePlugin, Terminal terminal, PluginContainer pluginContainer,
+						FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
 		for (Instance instance : instancePlugin.getIterable()) {
 			storage.add(instance.toString());
 		}
 		instancePlugin.clearList();
-		Terminal.update();
+		terminal.update(pluginContainer, formatterProvider);
 	}
 }

@@ -3,15 +3,16 @@ package database.plugin.expense;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
+import database.main.PluginContainer;
 import database.main.userInterface.Terminal;
 import database.plugin.Command;
+import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
-import database.plugin.Storage;
 import database.plugin.backup.BackupService;
 
 public class ExpensePlugin extends InstancePlugin<Expense> {
-	public ExpensePlugin(Storage storage) {
-		super("expense", storage, new ExpenseOutputFormatter(), Expense.class);
+	public ExpensePlugin() {
+		super("expense", Expense.class);
 	}
 
 	@Override public void add(Expense expense) {
@@ -20,27 +21,28 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 			i--;
 		}
 		list.add(i, expense);
-		((ExpenseOutputFormatter) formatter).addExpense(expense, list);
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException {
-		ExpenseOutputFormatter formatter = (ExpenseOutputFormatter) this.formatter;
-		String name = formatter.getNameByString(Terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", (String input) -> {
+	@Command(tag = "new") public void createRequest(Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
+		ExpenseOutputFormatter formatter = (ExpenseOutputFormatter) formatterProvider.getFormatter(Expense.class);
+		String name = formatter.getNameByString(terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", (String input) -> {
 			return formatter.getMostUsedNameByPrefix(input, list);
 		}), list);
-		String category = formatter.getCategoryByString(Terminal.request(	"category", "[A-ZÖÄÜa-zöäüß\\- ]+", formatter.getMostUsedCategoryByPrefixAndName("", name, list),
+		String category = formatter.getCategoryByString(terminal.request(	"category", "[A-ZÖÄÜa-zöäüß\\- ]+", formatter.getMostUsedCategoryByPrefixAndName("", name, list),
 																			(String input) -> {
 																				return formatter.getMostUsedCategoryByPrefixAndName(input, "", list);
 																			}),
 														list);
-		Double value = Double.valueOf(Terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
-		String temp = Terminal.request("date", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+		Double value = Double.valueOf(terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
+		String temp = terminal.request("date", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		Expense expense = new Expense(name, category, value, date);
 		add(expense);
-		BackupService.backupCreation(expense, this);
-		if (getDisplay()) {
-			Terminal.update();
+		formatter.addExpense(expense);
+		backupService.backupCreation(expense, this);
+		if (display) {
+			terminal.update(pluginContainer, formatterProvider);
 		}
 	}
 }

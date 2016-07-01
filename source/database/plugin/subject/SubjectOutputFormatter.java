@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 import database.plugin.Command;
 import database.plugin.OutputFormatter;
 
-public class SubjectOutputFormatter extends OutputFormatter<Subject> {
+public class SubjectOutputFormatter implements OutputFormatter<Subject> {
 	@Command(tag = "average") public String getAverage(Iterable<Subject> iterable) {
 		double sumPercentages = 0;
 		double averagePercentage;
@@ -16,6 +16,10 @@ public class SubjectOutputFormatter extends OutputFormatter<Subject> {
 		averagePercentage = sumPercentages / currentCounter;
 		averagePercentage = Math.round(100.0 * averagePercentage) / 100.0;
 		return "average percentage : " + averagePercentage + "%";
+	}
+
+	@Override public String getInitialOutput(Iterable<Subject> iterable) {
+		return outputAll(iterable);
 	}
 
 	@Command(tag = "all") public String outputAll(Iterable<Subject> iterable) {
@@ -59,9 +63,5 @@ public class SubjectOutputFormatter extends OutputFormatter<Subject> {
 			}
 		}
 		return builder.toString();
-	}
-
-	@Override protected String getInitialOutput(Iterable<Subject> iterable) {
-		return outputAll(iterable);
 	}
 }

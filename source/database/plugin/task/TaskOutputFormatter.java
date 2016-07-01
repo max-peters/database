@@ -5,7 +5,15 @@ import java.util.Collections;
 import java.util.List;
 import database.plugin.OutputFormatter;
 
-public class TaskOutputFormatter extends OutputFormatter<Task> {
+public class TaskOutputFormatter implements OutputFormatter<Task> {
+	@Override public String getInitialOutput(Iterable<Task> iterable) {
+		String output = "";
+		for (String string : formatOutput(iterable)) {
+			output += " \u2610 " + string + System.getProperty("line.separator");
+		}
+		return output;
+	}
+
 	protected List<String> formatOutput(Iterable<Task> iterable) {
 		List<String> output = new ArrayList<String>();
 		List<String> categories = new ArrayList<String>();
@@ -30,14 +38,6 @@ public class TaskOutputFormatter extends OutputFormatter<Task> {
 					output.add(task.category + blanks + "- " + task.name);
 				}
 			}
-		}
-		return output;
-	}
-
-	@Override protected String getInitialOutput(Iterable<Task> iterable) {
-		String output = "";
-		for (String string : formatOutput(iterable)) {
-			output += " \u2610 " + string + System.getProperty("line.separator");
 		}
 		return output;
 	}

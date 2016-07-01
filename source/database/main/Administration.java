@@ -8,31 +8,26 @@ import javax.xml.transform.TransformerException;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.main.userInterface.Terminal;
+import database.plugin.FormatterProvider;
 import database.plugin.Plugin;
 import database.plugin.backup.BackupService;
 
 public class Administration {
-	private PluginContainer	pluginContainer;
-	private WriterReader	writerReader;
-
-	public Administration(PluginContainer pluginContainer, WriterReader writerReader) {
-		this.pluginContainer = pluginContainer;
-		this.writerReader = writerReader;
-	}
-
-	public void request() throws Exception {
+	public void request(Terminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer,
+						FormatterProvider formatterProvider) throws Exception {
 		while (true) {
-			inputRequestAdministration();
+			inputRequestAdministration(terminal, backupService, writerReader, pluginContainer, formatterProvider);
 		}
 	}
 
-	private void exit() throws InterruptedException, BadLocationException, TransformerException, ParserConfigurationException {
-		if (BackupService.isChanged()) {
+	private void exit(	Terminal terminal, BackupService backupService, WriterReader writerReader,
+						PluginContainer pluginContainer) throws InterruptedException, BadLocationException, TransformerException, ParserConfigurationException {
+		if (backupService.isChanged()) {
 			String command;
-			command = Terminal.request("there are unsaved changes - exit", "(y|n|s)");
+			command = terminal.request("there are unsaved changes - exit", "(y|n|s)");
 			switch (command) {
 				case "s":
-					save();
+					save(terminal, backupService, writerReader, pluginContainer);
 					//$FALL-THROUGH$
 				case "y":
 					System.exit(0);
@@ -43,26 +38,27 @@ public class Administration {
 		}
 	}
 
-	private void inputRequestAdministration() throws Exception {
+	private void inputRequestAdministration(Terminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer,
+											FormatterProvider formatterProvider) throws Exception {
 		String command = null;
 		try {
-			command = Terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "cancel|exit|save)", 1);
+			command = terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "cancel|exit|save)", 1);
 			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx())) {
 				Plugin plugin = pluginContainer.getPlugin(command);
-				command = Terminal.request(command, plugin.getCommandTags(plugin.getClass()));
-				plugin.conduct(command);
+				command = terminal.request(command, plugin.getCommandTags(plugin.getClass()));
+				plugin.conduct(command, terminal, backupService, pluginContainer, writerReader, formatterProvider);
 			}
 			else if (command.matches("(exit|cancel|save)")) {
 				switch (command) {
 					case "save":
-						save();
-						Terminal.waitForInput();
+						save(terminal, backupService, writerReader, pluginContainer);
+						terminal.waitForInput();
 						break;
 					case "exit":
-						exit();
+						exit(terminal, backupService, writerReader, pluginContainer);
 						break;
 					case "cancel":
-						BackupService.restore();
+						backupService.restore(terminal, pluginContainer, formatterProvider);
 						break;
 				}
 			}
@@ -77,11 +73,12 @@ public class Administration {
 		}
 	}
 
-	private void save() throws BadLocationException, TransformerException, ParserConfigurationException {
-		Terminal.blockInput();
-		Terminal.printLine("saving", StringType.REQUEST, StringFormat.ITALIC);
-		writerReader.write();
-		BackupService.save();
-		Terminal.printLine("saved", StringType.REQUEST, StringFormat.ITALIC);
+	private void save(Terminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer)	throws BadLocationException, TransformerException,
+																																	ParserConfigurationException {
+		terminal.blockInput();
+		terminal.printLine("saving", StringType.REQUEST, StringFormat.ITALIC);
+		writerReader.write(pluginContainer);
+		backupService.save();
+		terminal.printLine("saved", StringType.REQUEST, StringFormat.ITALIC);
 	}
 }
