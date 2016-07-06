@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.FormatterProvider;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
@@ -47,7 +47,7 @@ public class Backup {
 		return changes;
 	}
 
-	protected void restore(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+	protected void restore(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
 		Gson gson = new Gson();
 		if (newState != null) {
 			if (oldState != null) {

@@ -6,7 +6,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import database.main.PluginContainer;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 
 public class Storage {
 	private ArrayList<String> storage;
@@ -31,7 +31,7 @@ public class Storage {
 		storage.add(node.getTextContent());
 	}
 
-	public void store(	InstancePlugin<? extends Instance> instancePlugin, Terminal terminal, PluginContainer pluginContainer,
+	public void store(	InstancePlugin<? extends Instance> instancePlugin, ITerminal terminal, PluginContainer pluginContainer,
 						FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
 		for (Instance instance : instancePlugin.getIterable()) {
 			storage.add(instance.toString());

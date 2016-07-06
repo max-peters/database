@@ -13,7 +13,7 @@ import com.google.gson.Gson;
 import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 
 public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	protected LinkedList<T>	list;
@@ -41,7 +41,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		return new LinkedList<T>(list);
 	}
 
-	@Override public void initialOutput(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
+	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
 		OutputFormatter<T> formatter = (OutputFormatter<T>) formatterProvider.getFormatter(instanceClass);
 		String initialOutput = formatter.getInitialOutput(getIterable());
 		if (!initialOutput.isEmpty()) {
@@ -74,7 +74,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		list.remove(toRemove);
 	}
 
-	@Command(tag = "show") public void show(Terminal terminal, FormatterProvider formatterProvider)	throws InterruptedException, BadLocationException, IllegalAccessException,
+	@Command(tag = "show") public void show(ITerminal terminal, FormatterProvider formatterProvider)	throws InterruptedException, BadLocationException, IllegalAccessException,
 																									IllegalArgumentException, InvocationTargetException {
 		OutputFormatter<T> formatter = (OutputFormatter<T>) formatterProvider.getFormatter(instanceClass);
 		String command = terminal.request("show", getCommandTags(formatter.getClass()));
@@ -88,7 +88,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		}
 	}
 
-	@Command(tag = "store") public void store(PluginContainer pluginContainer, Terminal terminal, FormatterProvider formatterProvider)	throws BadLocationException,
+	@Command(tag = "store") public void store(PluginContainer pluginContainer, ITerminal terminal, FormatterProvider formatterProvider)	throws BadLocationException,
 																																		InterruptedException {
 		if (Boolean.valueOf(terminal.request("do you want to store all entries", "(true|false)"))) {
 			pluginContainer.getStorage().store(this, terminal, pluginContainer, formatterProvider);

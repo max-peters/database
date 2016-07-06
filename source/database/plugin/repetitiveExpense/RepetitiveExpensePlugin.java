@@ -8,7 +8,7 @@ import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
@@ -25,13 +25,13 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 		super.add(repetitiveExpense);
 	}
 
-	public void createExpense(Terminal terminal, ExpensePlugin expensePlugin, BackupService backupService) {
+	public void createExpense(ITerminal terminal, ExpensePlugin expensePlugin, BackupService backupService) {
 		for (RepetitiveExpense repetitiveExpense : list) {
 			createExpense(repetitiveExpense, terminal, expensePlugin, backupService);
 		}
 	}
 
-	@Command(tag = "new") public void createRequest(Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
 													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException, NumberFormatException {
 		String name = terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		String category = terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
@@ -47,15 +47,15 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 		terminal.update(pluginContainer, formatterProvider);
 	}
 
-	@Override public void display(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) {
+	@Override public void display(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) {
 		// nothing to display here
 	}
 
-	@Override public void show(Terminal terminal, FormatterProvider formatterProvider) {
+	@Override public void show(ITerminal terminal, FormatterProvider formatterProvider) {
 		// nothing to show here
 	}
 
-	@Command(tag = "stop") public void stopRequest(	Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+	@Command(tag = "stop") public void stopRequest(	ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
 													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
 		List<String> strings = new ArrayList<String>();
 		for (Expense expense : getIterable()) {
@@ -71,7 +71,7 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 		terminal.update(pluginContainer, formatterProvider);
 	}
 
-	@Override public void store(PluginContainer pluginContainer, Terminal terminal, FormatterProvider formatterProvider) {
+	@Override public void store(PluginContainer pluginContainer, ITerminal terminal, FormatterProvider formatterProvider) {
 		// nothing to store here
 	}
 
@@ -90,7 +90,7 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 		return date;
 	}
 
-	private void createExpense(RepetitiveExpense repetitiveExpense, Terminal terminal, ExpensePlugin expensePlugin, BackupService backupService) {
+	private void createExpense(RepetitiveExpense repetitiveExpense, ITerminal terminal, ExpensePlugin expensePlugin, BackupService backupService) {
 		Expense expense = new Expense(repetitiveExpense.name, repetitiveExpense.category, repetitiveExpense.value, repetitiveExpense.date);
 		expense.date = adjustDate(expense.date.getMonthValue(), expense.date.getYear(), repetitiveExpense.executionDay);
 		while (expense.date.isBefore(LocalDate.now()) || expense.date.isEqual(LocalDate.now())) {

@@ -5,7 +5,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import database.main.PluginContainer;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.FormatterProvider;
 import database.plugin.Plugin;
@@ -17,7 +17,7 @@ public class Settings extends Plugin {
 		super("settings");
 	}
 
-	@Override public void display(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) {
+	@Override public void display(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) {
 		// nothing to display
 	}
 
@@ -25,7 +25,7 @@ public class Settings extends Plugin {
 		return eventDisplayRange;
 	}
 
-	@Override public void initialOutput(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
+	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
 		// no initial output
 	}
 
@@ -41,7 +41,7 @@ public class Settings extends Plugin {
 		}
 	}
 
-	@Command(tag = "days") public void setDisplayedDays(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws InterruptedException,
+	@Command(tag = "days") public void setDisplayedDays(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws InterruptedException,
 																																					BadLocationException {
 		eventDisplayRange = Integer.valueOf(terminal.request("enter event display range [days]", "[0-9]{1,13}"));
 		terminal.update(pluginContainer, formatterProvider);

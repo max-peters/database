@@ -7,20 +7,20 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.FormatterProvider;
 import database.plugin.Plugin;
 import database.plugin.backup.BackupService;
 
 public class Administration {
-	public void request(Terminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer,
+	public void request(ITerminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer,
 						FormatterProvider formatterProvider) throws Exception {
 		while (true) {
 			inputRequestAdministration(terminal, backupService, writerReader, pluginContainer, formatterProvider);
 		}
 	}
 
-	private void exit(	Terminal terminal, BackupService backupService, WriterReader writerReader,
+	private void exit(	ITerminal terminal, BackupService backupService, WriterReader writerReader,
 						PluginContainer pluginContainer) throws InterruptedException, BadLocationException, TransformerException, ParserConfigurationException {
 		if (backupService.isChanged()) {
 			String command;
@@ -38,7 +38,7 @@ public class Administration {
 		}
 	}
 
-	private void inputRequestAdministration(Terminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer,
+	private void inputRequestAdministration(ITerminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer,
 											FormatterProvider formatterProvider) throws Exception {
 		String command = null;
 		try {
@@ -73,7 +73,7 @@ public class Administration {
 		}
 	}
 
-	private void save(Terminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer)	throws BadLocationException, TransformerException,
+	private void save(ITerminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer)	throws BadLocationException, TransformerException,
 																																	ParserConfigurationException {
 		terminal.blockInput();
 		terminal.printLine("saving", StringType.REQUEST, StringFormat.ITALIC);

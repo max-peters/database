@@ -15,7 +15,7 @@ import database.main.PluginContainer;
 import database.main.WriterReader;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.FormatterProvider;
 import database.plugin.Plugin;
@@ -28,7 +28,7 @@ public class UtilityPlugin extends Plugin {
 		news = new News();
 	}
 
-	@Command(tag = "days") public void calculateDayNumber(Terminal terminal) throws BadLocationException, InterruptedException {
+	@Command(tag = "days") public void calculateDayNumber(ITerminal terminal) throws BadLocationException, InterruptedException {
 		String temp = terminal.request("first date", "DATE");
 		LocalDate firstDate = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		temp = terminal.request("second date", "DATE");
@@ -39,7 +39,7 @@ public class UtilityPlugin extends Plugin {
 		terminal.waitForInput();
 	}
 
-	@Command(tag = "status") public void getLoLStatus(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws BadLocationException,
+	@Command(tag = "status") public void getLoLStatus(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws BadLocationException,
 																																				InterruptedException {
 		terminal.blockInput();
 		Thread gatherer = new Thread(() -> {
@@ -75,7 +75,7 @@ public class UtilityPlugin extends Plugin {
 		}
 	}
 
-	@Override public void initialOutput(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
+	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
 		// no initial output
 	}
 
@@ -87,7 +87,7 @@ public class UtilityPlugin extends Plugin {
 		// no reading
 	}
 
-	@Command(tag = "update") public void updateStorage(	Terminal terminal, PluginContainer pluginContainer, WriterReader writerReader,
+	@Command(tag = "update") public void updateStorage(	ITerminal terminal, PluginContainer pluginContainer, WriterReader writerReader,
 														FormatterProvider formatterProvider)	throws BadLocationException, InterruptedException, IOException, SAXException,
 																								TransformerException, ParserConfigurationException {
 		terminal.printLine("connecting...", StringType.REQUEST, StringFormat.ITALIC);

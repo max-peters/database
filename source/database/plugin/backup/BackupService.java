@@ -5,7 +5,7 @@ import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.FormatterProvider;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
@@ -57,7 +57,7 @@ public class BackupService {
 		return changes;
 	}
 
-	public void restore(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+	public void restore(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
 		if (backups.size() == 0) {
 			terminal.printLine("no command to cancel", StringType.SOLUTION, StringFormat.STANDARD);
 			terminal.waitForInput();

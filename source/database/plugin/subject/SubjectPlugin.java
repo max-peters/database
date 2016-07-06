@@ -2,7 +2,7 @@ package database.plugin.subject;
 
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
@@ -13,7 +13,7 @@ public class SubjectPlugin extends InstancePlugin<Subject> {
 		super("subject", Subject.class);
 	}
 
-	@Command(tag = "add") public void addRequest(	Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+	@Command(tag = "add") public void addRequest(	ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
 													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
 		Subject toChange = getSubject(terminal.request("add", getTagsAsRegex()));
 		backupService.backupChangeBefor(toChange, this);
@@ -23,7 +23,7 @@ public class SubjectPlugin extends InstancePlugin<Subject> {
 		terminal.update(pluginContainer, formatterProvider);
 	}
 
-	@Command(tag = "new") public void createRequest(Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
 													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
 		Subject subject = new Subject(terminal.request("name", "[A-ZÖÄÜ].*"), terminal.request("tag", "[a-zöäüß]*"), 0.0, 0.0, 0);
 		add(subject);

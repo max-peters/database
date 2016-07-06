@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.backup.BackupService;
 import database.plugin.event.EventPluginExtension;
 
@@ -25,7 +25,7 @@ public class WeeklyAppointmentPlugin extends EventPluginExtension<WeeklyAppointm
 		super.add(weeklyAppointment);
 	}
 
-	@Override public void createRequest(Terminal terminal, BackupService backupService) throws InterruptedException, BadLocationException {
+	@Override public void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException {
 		String name;
 		String temp = "";
 		LocalTime begin;

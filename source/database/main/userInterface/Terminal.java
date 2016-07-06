@@ -11,7 +11,7 @@ import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.plugin.FormatterProvider;
 
-public class Terminal {
+public class Terminal implements ITerminal {
 	private Map<OutputInformation, String>	collectedLines;
 	private GraphicalUserInterface			graphicalUserInterface;
 	private StringUtility					stringUtility;
@@ -67,26 +67,6 @@ public class Terminal {
 
 	public synchronized void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
-	}
-
-	public String request(String printOut, String regex) throws InterruptedException, BadLocationException {
-		return request(printOut, regex, "", null, 0);
-	}
-
-	public String request(String printOut, String regex, Completeable completeable) throws InterruptedException, BadLocationException {
-		return request(printOut, regex, "", completeable, 0);
-	}
-
-	public String request(String printOut, String regex, int levenshteinDistance) throws InterruptedException, BadLocationException {
-		return request(printOut, regex, "", null, levenshteinDistance);
-	}
-
-	public String request(String printOut, String regex, String inputText) throws InterruptedException, BadLocationException {
-		return request(printOut, regex, inputText, null, 0);
-	}
-
-	public String request(String printOut, String regex, String inputText, Completeable completeable) throws InterruptedException, BadLocationException {
-		return request(printOut, regex, inputText, completeable, 0);
 	}
 
 	public String request(String printOut, String regex, String inputText, Completeable completeable, int levenshteinDistance) throws InterruptedException, BadLocationException {

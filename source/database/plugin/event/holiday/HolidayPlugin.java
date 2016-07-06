@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.userInterface.StringFormat;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.backup.BackupService;
 import database.plugin.event.EventPluginExtension;
 
@@ -21,11 +21,11 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 		super("holiday", Holiday.class);
 	}
 
-	@Override public void createRequest(Terminal terminal, BackupService backupService) throws InterruptedException, BadLocationException {
+	@Override public void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException {
 		// no create request
 	}
 
-	public void updateHolidays(Terminal terminal) throws BadLocationException, InterruptedException {
+	public void updateHolidays(ITerminal terminal) throws BadLocationException, InterruptedException {
 		if (!getIterable().iterator().hasNext()) {
 			connectAndSetList(terminal);
 		}
@@ -40,7 +40,7 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 		getHolidays();
 	}
 
-	private void connectAndSetList(Terminal terminal) {
+	private void connectAndSetList(ITerminal terminal) {
 		String line;
 		InputStreamReader isr;
 		lines.clear();

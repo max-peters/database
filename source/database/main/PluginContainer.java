@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
@@ -70,7 +70,7 @@ public class PluginContainer {
 		return storage;
 	}
 
-	public void initialOutput(Terminal terminal, FormatterProvider formatterProvider) throws BadLocationException {
+	public void initialOutput(ITerminal terminal, FormatterProvider formatterProvider) throws BadLocationException {
 		for (Plugin plugin : plugins) {
 			if (plugin.display) {
 				plugin.initialOutput(terminal, this, formatterProvider);

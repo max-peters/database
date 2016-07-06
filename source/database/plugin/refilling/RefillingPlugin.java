@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
@@ -25,7 +25,7 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 		list.add(i, refilling);
 	}
 
-	@Command(tag = "new") public void createRequest(Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
 													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
 		Double distance = Double.valueOf(terminal.request("distance", "[0-9]{1,13}(\\.[0-9]*)?"));
 		Double refuelAmount = Double.valueOf(terminal.request("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?"));

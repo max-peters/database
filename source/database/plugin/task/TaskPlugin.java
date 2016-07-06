@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
@@ -17,7 +17,7 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		super("task", Task.class);
 	}
 
-	@Command(tag = "edit") public void changeRequest(	Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+	@Command(tag = "edit") public void changeRequest(	ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
 														FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
 		Task task = getTaskByCheckRequest(terminal, pluginContainer, formatterProvider);
 		if (task != null) {
@@ -28,7 +28,7 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		}
 	}
 
-	@Command(tag = "check") public void checkRequest(	Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+	@Command(tag = "check") public void checkRequest(	ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
 														FormatterProvider formatterProvider) throws InterruptedException, BadLocationException, IOException {
 		Task task = getTaskByCheckRequest(terminal, pluginContainer, formatterProvider);
 		if (task != null) {
@@ -38,7 +38,7 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		}
 	}
 
-	@Command(tag = "new") public void createRequest(Terminal terminal, BackupService backupService, PluginContainer pluginContainer,
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
 													FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
 		String name = terminal.request("name", ".+");
 		String category = terminal.request("category", ".+");
@@ -55,11 +55,11 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		terminal.update(pluginContainer, formatterProvider);
 	}
 
-	@Override public void show(Terminal terminal, FormatterProvider formatterProvider) {
+	@Override public void show(ITerminal terminal, FormatterProvider formatterProvider) {
 		// nothing to show here
 	}
 
-	private Task getTaskByCheckRequest(Terminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
+	private Task getTaskByCheckRequest(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
 		boolean displayTemp = display;
 		String string;
 		String[] splitResult;

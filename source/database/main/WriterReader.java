@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.Terminal;
+import database.main.userInterface.ITerminal;
 import database.plugin.Plugin;
 
 public class WriterReader {
@@ -62,7 +62,7 @@ public class WriterReader {
 		}
 	}
 
-	public void updateStorage(Terminal terminal, PluginContainer pluginContainer)	throws InterruptedException, IOException, SAXException, TransformerException,
+	public void updateStorage(ITerminal terminal, PluginContainer pluginContainer)	throws InterruptedException, IOException, SAXException, TransformerException,
 																					ParserConfigurationException, BadLocationException {
 		if ((remoteStorage.exists() || connect() == 0) && localStorage.exists()) {
 			File newestFile = remoteStorage.lastModified() < localStorage.lastModified() ? localStorage : remoteStorage;
