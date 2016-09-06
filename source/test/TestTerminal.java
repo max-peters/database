@@ -10,6 +10,8 @@ import database.main.userInterface.StringType;
 import database.plugin.FormatterProvider;
 
 public class TestTerminal implements ITerminal {
+	public String s;
+
 	public TestTerminal() {
 		// TODO Auto-generated constructor stub
 	}
@@ -40,7 +42,7 @@ public class TestTerminal implements ITerminal {
 	}
 
 	@Override public void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
-		// TODO Auto-generated method stub
+		s = object.toString();
 	}
 
 	@Override public String request(String printOut, String regex, String inputText, Completeable completeable, int levenshteinDistance)	throws InterruptedException,

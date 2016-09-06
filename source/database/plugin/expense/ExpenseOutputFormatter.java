@@ -17,8 +17,8 @@ import database.plugin.Command;
 import database.plugin.OutputFormatter;
 
 public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
-	private Map<String, Integer>	categoryAmount	= new HashMap<String, Integer>();
-	private Map<String, Integer>	nameAmount		= new HashMap<String, Integer>();
+	private Map<String, Integer>	categoryAmount	= new HashMap<>();
+	private Map<String, Integer>	nameAmount		= new HashMap<>();
 
 	@Override public String getInitialOutput(Iterable<Expense> iterable) {
 		return "todo";
@@ -31,31 +31,40 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 	}
 
 	@Command(tag = "average") public String outputAverage(Iterable<Expense> iterable) {
-		Expense first = iterable.iterator().next();
-		DecimalFormat format = new DecimalFormat("#0.00");
-		double totalValue = 0.0;
-		String yearAverage;
-		String monthAverage;
-		String dayAverage;
-		for (Expense expense : iterable) {
-			if (!(expense.date.getMonthValue() == LocalDate.now().getMonthValue() && expense.date.getYear() == LocalDate.now().getYear())) {
-				totalValue += expense.value;
+		String string = "no entries";
+		if (iterable.iterator().hasNext()) {
+			Expense first = iterable.iterator().next();
+			DecimalFormat format = new DecimalFormat("#0.00");
+			double totalValue = 0.0;
+			String yearAverage;
+			String monthAverage;
+			String dayAverage;
+			for (Expense expense : iterable) {
+				if (!(expense.date.getMonthValue() == LocalDate.now().getMonthValue() && expense.date.getYear() == LocalDate.now().getYear())) {
+					totalValue += expense.value;
+				}
+			}
+			if (totalValue == 0) {
+				string = "not enough data";
+			}
+			else {
+				monthAverage = " - month : " + format.format(totalValue / ChronoUnit.MONTHS.between(first.date, LocalDate.now())) + "€";
+				dayAverage = " - day   : " + format.format(totalValue / ChronoUnit.DAYS.between(first.date, LocalDate.now())) + "€";
+				yearAverage = " - year  : "	+ format.format((totalValue / ChronoUnit.MONTHS.between(first.date, LocalDate.now()) * 12
+																+ totalValue / ChronoUnit.DAYS.between(first.date, LocalDate.now()) * 365.25)
+															/ 2)
+								+ "€";
+				while (yearAverage.length() > monthAverage.length()) {
+					monthAverage = monthAverage.replaceFirst(": ", ":  ");
+				}
+				while (monthAverage.length() > dayAverage.length()) {
+					dayAverage = dayAverage.replaceFirst(": ", ":  ");
+				}
+				string = " average value per"	+ System.getProperty("line.separator") + dayAverage + System.getProperty("line.separator") + monthAverage
+							+ System.getProperty("line.separator") + yearAverage;
 			}
 		}
-		monthAverage = " - month : " + format.format(totalValue / ChronoUnit.MONTHS.between(first.date, LocalDate.now())) + "€";
-		dayAverage = " - day   : " + format.format(totalValue / ChronoUnit.DAYS.between(first.date, LocalDate.now())) + "€";
-		yearAverage = " - year  : " + format.format((totalValue / ChronoUnit.MONTHS.between(first.date, LocalDate.now()) * 12
-														+ totalValue / ChronoUnit.DAYS.between(first.date, LocalDate.now()) * 365.25)
-													/ 2)
-						+ "€";
-		while (yearAverage.length() > monthAverage.length()) {
-			monthAverage = monthAverage.replaceFirst(": ", ":  ");
-		}
-		while (monthAverage.length() > dayAverage.length()) {
-			dayAverage = dayAverage.replaceFirst(": ", ":  ");
-		}
-		return " average value per"+ System.getProperty("line.separator") + dayAverage + System.getProperty("line.separator") + monthAverage + System.getProperty("line.separator")
-				+ yearAverage;
+		return string;
 	}
 
 	@Command(tag = "category") public String outputCategory(Iterable<Expense> iterable) {
@@ -67,7 +76,10 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 		int longestValue = 0;
 		int longestLine = 0;
 		String name = null;
-		Map<String, Double> categories = new TreeMap<String, Double>();
+		Map<String, Double> categories = new TreeMap<>();
+		if (!iterable.iterator().hasNext()) {
+			return "no entries";
+		}
 		for (Expense expense : iterable) {
 			if (!categories.containsKey(expense.category)) {
 				categories.put(expense.category, 0.0);
@@ -124,9 +136,12 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 	}
 
 	@Command(tag = "month") public String outputMonth(Iterable<Expense> iterable) {
-		Map<String, Double> map = new LinkedHashMap<String, Double>();
+		Map<String, Double> map = new LinkedHashMap<>();
 		int valueLength = 0;
 		String output = "";
+		if (!iterable.iterator().hasNext()) {
+			return "no entries";
+		}
 		for (Expense expense : iterable) {
 			String key = new DecimalFormat("00").format(expense.date.getMonthValue()) + "/" + String.valueOf(expense.date.getYear()).replaceFirst("20", "");
 			map.put(key, map.getOrDefault(key, 0.0) + expense.value);
@@ -146,16 +161,18 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 	}
 
 	@Command(tag = "all") public String printAll(Iterable<Expense> iterable) {
-		String print = outputAll(iterable);
-		if (print.length() == 0) {
-			print = "no entries";
+		if (!iterable.iterator().hasNext()) {
+			return "no entries";
 		}
-		return print;
+		return outputAll(iterable);
 	}
 
 	@Command(tag = "current") public String printCurrent(Iterable<Expense> iterable) {
 		StringBuilder builder = new StringBuilder();
 		int longestValue = 0;
+		if (!iterable.iterator().hasNext()) {
+			return "no entries";
+		}
 		for (Expense expense : iterable) {
 			if (expense.date.getMonthValue() == LocalDate.now().getMonthValue() && expense.date.getYear() == LocalDate.now().getYear()) {
 				if (new DecimalFormat("#0.00").format(expense.value).length() > longestValue) {
@@ -260,7 +277,7 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 		int blankCounter;
 		String blanks;
 		String toReturn = "";
-		ArrayList<String> categories = new ArrayList<String>();
+		ArrayList<String> categories = new ArrayList<>();
 		Map<String, Double> names;
 		for (Expense expense : iterable) {
 			if (!categories.contains(expense.category)) {
@@ -276,7 +293,7 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 		Collections.sort(categories);
 		for (String current : categories) {
 			toReturn = toReturn + current + ":" + System.getProperty("line.separator");
-			names = new LinkedHashMap<String, Double>();
+			names = new LinkedHashMap<>();
 			for (Expense expense : iterable) {
 				if (expense.category.equals(current)) {
 					names.put(expense.name, 0.0);
@@ -289,7 +306,7 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 					}
 				}
 			}
-			Map<String, Double> map = new LinkedHashMap<String, Double>();
+			Map<String, Double> map = new LinkedHashMap<>();
 			Stream<Map.Entry<String, Double>> st = names.entrySet().stream();
 			st.sorted(Map.Entry.comparingByValue()).forEachOrdered(e -> map.put(e.getKey(), e.getValue()));
 			for (Entry<String, Double> entry : map.entrySet()) {

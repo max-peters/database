@@ -14,9 +14,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import database.main.PluginContainer;
+import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
@@ -49,7 +49,7 @@ public class EventPlugin extends Plugin {
 		MultiDayAppointmentPlugin multiDayAppointmentPlugin = (MultiDayAppointmentPlugin) pluginContainer.getPlugin("multidayappointment");
 		AppointmentPlugin appointmentPlugin = (AppointmentPlugin) pluginContainer.getPlugin("appointment");
 		WeeklyAppointmentPlugin weeklyAppointmentPlugin = (WeeklyAppointmentPlugin) pluginContainer.getPlugin("weeklyappointment");
-		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>();
+		List<EventPluginExtension<? extends Event>> list = new LinkedList<>();
 		list.add(appointmentPlugin);
 		list.add(weeklyAppointmentPlugin);
 		list.add(multiDayAppointmentPlugin);
@@ -87,10 +87,10 @@ public class EventPlugin extends Plugin {
 	@Command(tag = "check") public void check(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws InterruptedException,
 																																		BadLocationException {
 		boolean displayTemp = display;
-		List<EventPluginExtension<? extends Event>> list = new LinkedList<EventPluginExtension<? extends Event>>(getExtensionMap(pluginContainer).values());
+		List<EventPluginExtension<? extends Event>> list = new LinkedList<>(getExtensionMap(pluginContainer).values());
 		String temp = terminal.request("date", "DATE");
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		List<Event> eventList = new LinkedList<Event>();
+		List<Event> eventList = new LinkedList<>();
 		String output = null;
 		for (EventPluginExtension<? extends Event> plugin : list) {
 			eventList.addAll(plugin.getEvents(date));
@@ -118,7 +118,7 @@ public class EventPlugin extends Plugin {
 
 	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
 													FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
-		List<String> list = new ArrayList<String>(getExtensionMap(pluginContainer).keySet());
+		List<String> list = new ArrayList<>(getExtensionMap(pluginContainer).keySet());
 		list.remove("holiday");
 		EventPluginExtension<? extends Event> extension = chooseType(list, terminal, pluginContainer);
 		if (extension != null) {
@@ -129,7 +129,7 @@ public class EventPlugin extends Plugin {
 
 	@Override @Command(tag = "display") public void display(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws InterruptedException,
 																																						BadLocationException {
-		EventPluginExtension<? extends Event> extension = chooseType(new ArrayList<String>(getExtensionMap(pluginContainer).keySet()), terminal, pluginContainer);
+		EventPluginExtension<? extends Event> extension = chooseType(new ArrayList<>(getExtensionMap(pluginContainer).keySet()), terminal, pluginContainer);
 		if (extension != null) {
 			extension.display(terminal, pluginContainer, formatterProvider);
 			terminal.update(pluginContainer, formatterProvider);
@@ -137,7 +137,7 @@ public class EventPlugin extends Plugin {
 	}
 
 	public Iterable<Event> getIterable(Iterable<EventPluginExtension<? extends Event>> extensionList) {
-		List<Event> list = new LinkedList<Event>();
+		List<Event> list = new LinkedList<>();
 		for (InstancePlugin<? extends Event> extension : extensionList) {
 			if (extension.display) {
 				for (Event event : extension.getIterable()) {
@@ -192,7 +192,7 @@ public class EventPlugin extends Plugin {
 
 	@Command(tag = "store") public void store(PluginContainer pluginContainer, ITerminal terminal, FormatterProvider formatterProvider)	throws BadLocationException,
 																																		InterruptedException {
-		List<String> list = new ArrayList<String>(getExtensionMap(pluginContainer).keySet());
+		List<String> list = new ArrayList<>(getExtensionMap(pluginContainer).keySet());
 		list.remove("holiday");
 		EventPluginExtension<? extends Event> extension = chooseType(list, terminal, pluginContainer);
 		if (extension != null) {
@@ -202,18 +202,20 @@ public class EventPlugin extends Plugin {
 	}
 
 	private Iterable<Event> addTaskDates(Iterable<Event> iterable, TaskPlugin taskPlugin) {
-		List<Event> list = new LinkedList<Event>();
+		List<Event> list = new LinkedList<>();
 		for (Event event : iterable) {
 			list.add(event);
 		}
-		for (Task task : taskPlugin.getIterable()) {
-			if (task.date != null) {
-				int i = list.size();
-				Appointment appointment = new Appointment(task.name, task.date, null, null);
-				while (i > 0 && list.get(i - 1).compareTo(appointment) > 0) {
-					i--;
+		if (taskPlugin.display) {
+			for (Task task : taskPlugin.getIterable()) {
+				if (task.date != null) {
+					int i = list.size();
+					Appointment appointment = new Appointment(task.name, task.date, null, null);
+					while (i > 0 && list.get(i - 1).compareTo(appointment) > 0) {
+						i--;
+					}
+					list.add(i, appointment);
 				}
-				list.add(i, appointment);
 			}
 		}
 		return list;
@@ -230,7 +232,7 @@ public class EventPlugin extends Plugin {
 	}
 
 	private List<String> formatOutput(Iterable<? extends Event> iterable) {
-		List<String> output = new ArrayList<String>();
+		List<String> output = new ArrayList<>();
 		int longestNameLength = 0;
 		for (Event event : iterable) {
 			if (event.updateYear().getYear() == LocalDate.now().getYear()) {
@@ -253,7 +255,7 @@ public class EventPlugin extends Plugin {
 	}
 
 	private Map<String, EventPluginExtension<? extends Event>> getExtensionMap(PluginContainer pluginContainer) {
-		Map<String, EventPluginExtension<? extends Event>> extensionMap = new LinkedHashMap<String, EventPluginExtension<? extends Event>>();
+		Map<String, EventPluginExtension<? extends Event>> extensionMap = new LinkedHashMap<>();
 		DayPlugin dayPlugin = (DayPlugin) pluginContainer.getPlugin("day");
 		BirthdayPlugin birthdayPlugin = (BirthdayPlugin) pluginContainer.getPlugin("birthday");
 		HolidayPlugin holidayPlugin = (HolidayPlugin) pluginContainer.getPlugin("holiday");
@@ -270,9 +272,9 @@ public class EventPlugin extends Plugin {
 	}
 
 	private ArrayList<Event> getNearEvents(Iterable<? extends Event> iterable, int displayRange) {
-		ArrayList<Event> nearEvents = new ArrayList<Event>();
+		ArrayList<Event> nearEvents = new ArrayList<>();
 		for (Event event : iterable) {
-			if (ChronoUnit.DAYS.between(LocalDate.now(), event.updateYear()) <= displayRange) {
+			if (!event.updateYear().isBefore(LocalDate.now()) && ChronoUnit.DAYS.between(LocalDate.now(), event.updateYear()) <= displayRange) {
 				nearEvents.add(event);
 			}
 		}
