@@ -208,7 +208,7 @@ public class EventPlugin extends Plugin {
 		}
 		if (taskPlugin.display) {
 			for (Task task : taskPlugin.getIterable()) {
-				if (task.date != null) {
+				if (task.date != null && !task.date.isBefore(LocalDate.now())) {
 					int i = list.size();
 					Appointment appointment = new Appointment(task.name, task.date, null, null);
 					while (i > 0 && list.get(i - 1).compareTo(appointment) > 0) {
