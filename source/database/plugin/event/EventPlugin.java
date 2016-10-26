@@ -54,7 +54,7 @@ public class EventPlugin extends Plugin {
 		list.add(weeklyAppointmentPlugin);
 		list.add(multiDayAppointmentPlugin);
 		Iterable<Event> iterable = getNearEvents(getIterable(list), ((Settings) pluginContainer.getPlugin("settings")).getDisplayedDays());
-		List<String> stringList = formatOutput(iterable);
+		List<String> stringList = formatOutput(iterable, LocalDate.now().getYear());
 		display = false;
 		terminal.update(pluginContainer, formatterProvider);
 		position = terminal.checkRequest(stringList);
@@ -108,7 +108,7 @@ public class EventPlugin extends Plugin {
 		terminal.update(pluginContainer, formatterProvider);
 		terminal.printLine("event", StringType.REQUEST, StringFormat.BOLD);
 		terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
-		for (String string : formatOutput(eventList)) {
+		for (String string : formatOutput(eventList, LocalDate.now().getYear())) {
 			terminal.printLine(" ->" + string, StringType.SOLUTION, StringFormat.STANDARD);
 		}
 		terminal.waitForInput();
@@ -154,8 +154,9 @@ public class EventPlugin extends Plugin {
 
 	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
 		String output = "";
-		for (String string : formatOutput(getNearEvents(addTaskDates(getIterable(getExtensionMap(pluginContainer).values()), (TaskPlugin) pluginContainer.getPlugin("task")),
-														((Settings) pluginContainer.getPlugin("settings")).getDisplayedDays()))) {
+		for (String string : formatOutput(	getNearEvents(addTaskDates(getIterable(getExtensionMap(pluginContainer).values()), (TaskPlugin) pluginContainer.getPlugin("task")),
+														((Settings) pluginContainer.getPlugin("settings")).getDisplayedDays()),
+											LocalDate.now().getYear())) {
 			output += string + System.getProperty("line.separator");
 		}
 		if (!output.isEmpty()) {
@@ -181,10 +182,12 @@ public class EventPlugin extends Plugin {
 																					IllegalArgumentException, InvocationTargetException {
 		boolean displayTemp = display;
 		display = false;
+		String yearString = terminal.request("enter year", "|\\d{4}");
+		int year = yearString.isEmpty() ? LocalDate.now().getYear() : Integer.valueOf(yearString);
 		terminal.update(pluginContainer, formatterProvider);
 		terminal.getLineOfCharacters('-', StringType.SOLUTION);
-		terminal.printLine(	printAll(addTaskDates(getIterable(getExtensionMap(pluginContainer).values()), (TaskPlugin) pluginContainer.getPlugin("task"))), StringType.SOLUTION,
-							StringFormat.STANDARD);
+		terminal.printLine(	printAll(addTaskDates(getIterable(getExtensionMap(pluginContainer).values()), (TaskPlugin) pluginContainer.getPlugin("task")), year),
+							StringType.SOLUTION, StringFormat.STANDARD);
 		terminal.waitForInput();
 		display = displayTemp;
 		terminal.update(pluginContainer, formatterProvider);
@@ -231,18 +234,18 @@ public class EventPlugin extends Plugin {
 		return toReturn;
 	}
 
-	private List<String> formatOutput(Iterable<? extends Event> iterable) {
+	private List<String> formatOutput(Iterable<? extends Event> iterable, int year) {
 		List<String> output = new ArrayList<>();
 		int longestNameLength = 0;
 		for (Event event : iterable) {
-			if (event.updateYear().getYear() == LocalDate.now().getYear()) {
+			if (event.updateYear().getYear() == year) {
 				if ((event.updateYear() + " - " + event.name).length() > longestNameLength) {
 					longestNameLength = (event.updateYear().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) + " - " + event.name).length();
 				}
 			}
 		}
 		for (Event event : iterable) {
-			if (event.updateYear().getYear() == LocalDate.now().getYear()) {
+			if (event.updateYear().getYear() == year) {
 				String line = event.updateYear().isEqual(LocalDate.now())	? "TODAY      - " + event.name
 																			: event.updateYear().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) + " - " + event.name;
 				for (int i = line.length(); i < longestNameLength + 3; i++) {
@@ -281,9 +284,9 @@ public class EventPlugin extends Plugin {
 		return nearEvents;
 	}
 
-	private String printAll(Iterable<Event> iterable) throws BadLocationException {
+	private String printAll(Iterable<Event> iterable, int year) throws BadLocationException {
 		String output = "";
-		for (String string : formatOutput(iterable)) {
+		for (String string : formatOutput(iterable, year)) {
 			output += string + System.getProperty("line.separator");
 		}
 		return output;
