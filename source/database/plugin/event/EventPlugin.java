@@ -251,7 +251,7 @@ public class EventPlugin extends Plugin {
 				for (int i = line.length(); i < longestNameLength + 3; i++) {
 					line += " ";
 				}
-				output.add(" " + line + event.getAdditionToOutput());
+				output.add(" " + line + event.getAdditionToOutput(year));
 			}
 		}
 		return output;

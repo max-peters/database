@@ -12,7 +12,7 @@ public class Holiday extends Event {
 		return date;
 	}
 
-	@Override protected String getAdditionToOutput() {
+	@Override protected String getAdditionToOutput(int year) {
 		return "";
 	}
 }

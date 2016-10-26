@@ -18,11 +18,11 @@ public class Birthday extends Event {
 		}
 	}
 
-	@Override protected String getAdditionToOutput() {
-		return "[" + getAge() + "]";
+	@Override protected String getAdditionToOutput(int year) {
+		return "[" + getAge(year) + "]";
 	}
 
-	private int getAge() {
-		return LocalDate.now().getYear() - date.getYear();
+	private int getAge(int year) {
+		return year - date.getYear();
 	}
 }

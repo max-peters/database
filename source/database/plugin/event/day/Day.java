@@ -18,7 +18,7 @@ public class Day extends Event {
 		}
 	}
 
-	@Override protected String getAdditionToOutput() {
+	@Override protected String getAdditionToOutput(int year) {
 		return "(" + date.getYear() + ")";
 	}
 }

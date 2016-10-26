@@ -13,7 +13,7 @@ public class MultiDayAppointment extends Appointment {
 		this.lastDay = lastDay;
 	}
 
-	@Override protected String getAdditionToOutput() {
+	@Override protected String getAdditionToOutput(int year) {
 		String string = "";
 		if (begin != null) {
 			string = "[" + begin + " UHR ";

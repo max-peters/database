@@ -3,9 +3,9 @@ package database.plugin.backup;
 import javax.swing.text.BadLocationException;
 import com.google.gson.Gson;
 import database.main.PluginContainer;
+import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.ITerminal;
 import database.plugin.FormatterProvider;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
@@ -56,11 +56,17 @@ public class Backup {
 				instancePlugin.createAndAdd(oldState);
 				oldState = newState;
 				newState = temp;
+				terminal.update(pluginContainer, formatterProvider);
+				terminal.printLine("reverted change of " + formatJSON(oldState) + System.lineSeparator() + "to" + formatJSON(newState), StringType.SOLUTION, StringFormat.STANDARD);
+				terminal.waitForInput();
 			}
 			else {
 				instancePlugin.remove(gson.fromJson(newState, instancePlugin.instanceClass));
 				oldState = newState;
 				newState = null;
+				terminal.update(pluginContainer, formatterProvider);
+				terminal.printLine("removed " + formatJSON(oldState), StringType.SOLUTION, StringFormat.STANDARD);
+				terminal.waitForInput();
 			}
 			changes = !isChanged();
 		}
@@ -69,11 +75,17 @@ public class Backup {
 			newState = oldState;
 			oldState = null;
 			changes = !isChanged();
+			terminal.update(pluginContainer, formatterProvider);
+			terminal.printLine("added " + formatJSON(newState), StringType.SOLUTION, StringFormat.STANDARD);
+			terminal.waitForInput();
 		}
 		else {
 			terminal.printLine("no command to cancel", StringType.SOLUTION, StringFormat.STANDARD);
 			terminal.waitForInput();
 		}
-		terminal.update(pluginContainer, formatterProvider);
+	}
+
+	private String formatJSON(String json) {
+		return System.lineSeparator() + json.replace(",", "," + System.lineSeparator()).replace("{", "").replace("}", "");
 	}
 }
