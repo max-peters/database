@@ -34,7 +34,7 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 		String temp = terminal.request("date", "DATE");
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		Refilling refilling = new Refilling(distance, refuelAmount, cost, date);
-		Expense expense = new Expense("Auto - Tankstelle", "Fahrtkosten", refilling.cost, refilling.date);
+		Expense expense = new Expense("Tankstelle", "Fahrtkosten", refilling.cost, refilling.date);
 		add(refilling);
 		expensePlugin.add(expense);
 		backupService.backupCreation(refilling, this);
