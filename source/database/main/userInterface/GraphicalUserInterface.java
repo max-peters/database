@@ -203,6 +203,10 @@ public class GraphicalUserInterface {
 					current--;
 				}
 			}
+			else {
+				int temp = findString(current, collection);
+				current = temp == current ? findString(0, collection) : temp;
+			}
 		}
 		if (current != 0) {
 			position = current - 1;
@@ -298,6 +302,17 @@ public class GraphicalUserInterface {
 		}
 		while ((pressedKey == 38 || pressedKey == 40) && input.getY() > 520);
 		input.setCaretColor(Color.WHITE);
+	}
+
+	private int findString(int index, Collection<String> collection) {
+		int i = 1;
+		for (String string : collection) {
+			if (i > index && Character.compare(Character.toUpperCase(string.charAt(0)), Character.toUpperCase((char) pressedKey)) == 0) {
+				return i;
+			}
+			i++;
+		}
+		return index;
 	}
 
 	private String formatCheckLine(Collection<String> collection, int currentLine) {

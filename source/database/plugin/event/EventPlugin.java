@@ -123,8 +123,8 @@ public class EventPlugin extends Plugin {
 		EventPluginExtension<? extends Event> extension = chooseType(list, terminal, pluginContainer);
 		if (extension != null) {
 			extension.createRequest(terminal, backupService);
-			terminal.update(pluginContainer, formatterProvider);
 		}
+		terminal.update(pluginContainer, formatterProvider);
 	}
 
 	@Override @Command(tag = "display") public void display(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws InterruptedException,
