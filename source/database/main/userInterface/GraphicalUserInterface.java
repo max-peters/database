@@ -180,8 +180,8 @@ public class GraphicalUserInterface {
 		int position = -1;
 		int current = 0;
 		pressedKey = 0;
-		printLine("check:", StringType.MAIN, StringFormat.ITALIC);
 		if (collection.isEmpty()) {
+			printLine("check:", StringType.REQUEST, StringFormat.ITALIC);
 			printLine("no entries", StringType.SOLUTION, StringFormat.STANDARD);
 			waitForInput();
 			return position;
@@ -189,7 +189,8 @@ public class GraphicalUserInterface {
 		input.setEditable(false);
 		input.setCaretColor(Color.BLACK);
 		while (pressedKey != 10) {
-			printLine(formatCheckLine(collection, current), StringType.REQUEST, StringFormat.STANDARD);
+			printLine("check:", StringType.REQUEST, StringFormat.ITALIC);
+			printLine(formatCheckLine(collection, current), StringType.SOLUTION, StringFormat.STANDARD);
 			synchronized (synchronizerKeyPressed) {
 				synchronizerKeyPressed.wait();
 			}
@@ -203,7 +204,7 @@ public class GraphicalUserInterface {
 					current--;
 				}
 			}
-			else {
+			else if (pressedKey != 10) {
 				int temp = findString(current, collection);
 				current = temp == current ? findString(0, collection) : temp;
 			}
@@ -211,14 +212,17 @@ public class GraphicalUserInterface {
 		if (current != 0) {
 			position = current - 1;
 		}
-		update();
-		pressedKey = 0;
 		releaseInput();
 		return position;
 	}
 
 	protected void clearInput() {
 		input.setText("");
+	}
+
+	protected synchronized void clearOutput() throws BadLocationException {
+		output.setText("");
+		currentLineNumber = 0;
 	}
 
 	protected void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
@@ -285,11 +289,6 @@ public class GraphicalUserInterface {
 			stackTrace += System.getProperty("line.separator") + element;
 		}
 		JOptionPane.showMessageDialog(frame, stackTrace, e.getClass().getName(), JOptionPane.INFORMATION_MESSAGE);
-	}
-
-	protected synchronized void update() throws BadLocationException {
-		output.setText("");
-		currentLineNumber = 0;
 	}
 
 	protected void waitForInput() throws InterruptedException {

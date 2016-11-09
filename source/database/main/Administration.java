@@ -5,9 +5,9 @@ import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.ITerminal;
 import database.plugin.FormatterProvider;
 import database.plugin.Plugin;
 import database.plugin.backup.BackupService;
@@ -42,7 +42,7 @@ public class Administration {
 											FormatterProvider formatterProvider) throws Exception {
 		String command = null;
 		try {
-			command = terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "cancel|exit|save)", 1);
+			command = terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "cancel|exit|save)", 2);
 			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx())) {
 				Plugin plugin = pluginContainer.getPlugin(command);
 				command = terminal.request(command, plugin.getCommandTags(plugin.getClass()));
@@ -73,8 +73,8 @@ public class Administration {
 		}
 	}
 
-	private void save(ITerminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer)	throws BadLocationException, TransformerException,
-																																	ParserConfigurationException {
+	private void save(	ITerminal terminal, BackupService backupService, WriterReader writerReader,
+						PluginContainer pluginContainer) throws BadLocationException, TransformerException, ParserConfigurationException {
 		terminal.blockInput();
 		terminal.printLine("saving", StringType.REQUEST, StringFormat.ITALIC);
 		writerReader.write(pluginContainer);

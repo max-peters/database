@@ -14,12 +14,12 @@ public class AppointmentPlugin extends EventPluginExtension<Appointment> {
 	}
 
 	@Override public void add(Appointment appointment) {
-		if (!appointment.date.isBefore(LocalDate.now()) && !appointment.date.isEqual(LocalDate.now())|| appointment.date.isEqual(LocalDate.now()) && appointment.begin == null
+		if (!appointment.date.isBefore(LocalDate.now()) && !appointment.date.isEqual(LocalDate.now())	|| appointment.date.isEqual(LocalDate.now()) && appointment.begin == null
 			|| appointment.date.isEqual(LocalDate.now()) && appointment.begin != null && appointment.end == null && !appointment.begin.isBefore(LocalTime.now())
 			|| appointment.date.isEqual(LocalDate.now()) && appointment.begin != null && appointment.end != null && !appointment.end.isBefore(LocalTime.now())) {
 			int i = list.size();
 			while (i > 0 && list.get(i - 1).date.isAfter(appointment.date)
-					|| i > 0&& list.get(i - 1).date.isEqual(appointment.date)
+					|| i > 0	&& list.get(i - 1).date.isEqual(appointment.date)
 						&& (list.get(i - 1).begin != null	? list.get(i - 1).begin
 															: LocalTime.parse(	"00:00",
 																				DateTimeFormatter.ofPattern("HH:mm"))).isAfter(appointment.begin != null	? appointment.begin

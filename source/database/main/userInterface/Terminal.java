@@ -114,7 +114,7 @@ public class Terminal implements ITerminal {
 	}
 
 	public void update(PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
-		graphicalUserInterface.update();
+		graphicalUserInterface.clearOutput();
 		graphicalUserInterface.blockInput();
 		pluginContainer.initialOutput(this, formatterProvider);
 		graphicalUserInterface.releaseInput();

@@ -8,7 +8,7 @@ import java.time.format.DateTimeParseException;
 public class StringUtility {
 	public String getElementWithDistance(String input, String[] splitResult, int levenshteinDistance) {
 		for (String string : splitResult) {
-			if (levenshteinDistance(input, string) <= levenshteinDistance) {
+			if (levenshteinDistance(input, string) < levenshteinDistance) {
 				return string;
 			}
 		}
