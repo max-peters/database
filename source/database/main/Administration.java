@@ -1,6 +1,8 @@
 package database.main;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -42,8 +44,8 @@ public class Administration {
 											FormatterProvider formatterProvider) throws Exception {
 		String command = null;
 		try {
-			command = terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx().replace(")", "|") + "cancel|exit|save)", 2);
-			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx())) {
+			command = terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx(new ArrayList<>(Arrays.asList(new String[] { "cancel", "exit", "save" }))), 2);
+			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx(new ArrayList<String>()))) {
 				Plugin plugin = pluginContainer.getPlugin(command);
 				command = terminal.request(command, plugin.getCommandTags(plugin.getClass()));
 				plugin.conduct(command, terminal, backupService, pluginContainer, writerReader, formatterProvider);
@@ -64,7 +66,8 @@ public class Administration {
 			}
 		}
 		catch (InvocationTargetException | CancellationException e) {
-			if (e.getClass().equals(CancellationException.class) || e.getCause().getClass().equals(CancellationException.class)) {
+			if (e.getClass().equals(CancellationException.class)	|| e.getCause().getClass().equals(CancellationException.class)
+				|| e.getCause().getCause().getClass().equals(CancellationException.class)) {
 				return;
 			}
 			else {

@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -29,7 +30,7 @@ public abstract class Plugin {
 		for (Method method : this.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class)) {
 				if (method.getAnnotation(Command.class).tag().equals(command)) {
-					List<Object> parameter = new ArrayList<Object>();
+					List<Object> parameter = new ArrayList<>();
 					for (Parameter p : method.getParameters()) {
 						if (p.getType().equals(ITerminal.class)) {
 							parameter.add(terminal);
@@ -65,12 +66,13 @@ public abstract class Plugin {
 
 	public String getCommandTags(Class<?> classWithMethods) {
 		String regex = "(";
-		ArrayList<String> strings = new ArrayList<String>();
+		ArrayList<String> strings = new ArrayList<>();
 		for (Method method : classWithMethods.getMethods()) {
 			if (method.isAnnotationPresent(Command.class)) {
 				strings.add(method.getAnnotation(Command.class).tag());
 			}
 		}
+		Collections.sort(strings);
 		for (String string : strings) {
 			regex += string + "|";
 		}

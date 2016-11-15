@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
 public class StringUtility {
 	public String getElementWithDistance(String input, String[] splitResult, int levenshteinDistance) {
@@ -69,6 +70,38 @@ public class StringUtility {
 		catch (DateTimeParseException e) {
 			return false;
 		}
+	}
+
+	public String arrangeInCollums(List<List<String>> list, int gapSize) {
+		int lenght = 0;
+		int size = 0;
+		StringBuilder sb = new StringBuilder();
+		for (List<String> innerList : list) {
+			if (innerList.size() > size) {
+				size = innerList.size();
+			}
+			for (String string : innerList) {
+				if (string.length() > lenght) {
+					lenght = string.length();
+				}
+			}
+		}
+		for (List<String> innerList : list) {
+			while (innerList.size() < size) {
+				innerList.add("");
+			}
+		}
+		for (int j = 0; j < size; j++) {
+			for (List<String> innerList : list) {
+				String temp = innerList.get(j);
+				while (temp.length() < lenght + gapSize) {
+					temp += " ";
+				}
+				sb.append(temp);
+			}
+			sb.append(System.lineSeparator());
+		}
+		return sb.toString();
 	}
 
 	private String fill(String string, int k) {

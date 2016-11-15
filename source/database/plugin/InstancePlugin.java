@@ -2,7 +2,10 @@ package database.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.DOMException;
@@ -11,9 +14,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import com.google.gson.Gson;
 import database.main.PluginContainer;
+import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.ITerminal;
 
 public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	protected LinkedList<T>	list;
@@ -21,7 +24,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 
 	public InstancePlugin(String identity, Class<T> instanceClass) {
 		super(identity);
-		this.list = new LinkedList<T>();
+		this.list = new LinkedList<>();
 		this.instanceClass = instanceClass;
 	}
 
@@ -38,7 +41,7 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	}
 
 	public Iterable<T> getIterable() {
-		return new LinkedList<T>(list);
+		return new LinkedList<>(list);
 	}
 
 	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
@@ -75,13 +78,20 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	}
 
 	@Command(tag = "show") public void show(ITerminal terminal, FormatterProvider formatterProvider)	throws InterruptedException, BadLocationException, IllegalAccessException,
-																									IllegalArgumentException, InvocationTargetException {
+																										IllegalArgumentException, InvocationTargetException {
 		OutputFormatter<T> formatter = (OutputFormatter<T>) formatterProvider.getFormatter(instanceClass);
 		String command = terminal.request("show", getCommandTags(formatter.getClass()));
 		for (Method method : formatter.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
-				Object output = method.invoke(formatter, getIterable());
-				terminal.getLineOfCharacters('-', StringType.SOLUTION);
+				List<Object> parameter = new ArrayList<>();
+				parameter.add(getIterable());
+				for (Parameter p : method.getParameters()) {
+					if (p.getType().equals(ITerminal.class)) {
+						parameter.add(terminal);
+					}
+				}
+				Object output = method.invoke(formatter, parameter.toArray());
+				terminal.getLineOfCharacters('-', StringType.REQUEST);
 				terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
 				terminal.waitForInput();
 			}

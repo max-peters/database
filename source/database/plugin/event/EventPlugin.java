@@ -157,7 +157,7 @@ public class EventPlugin extends Plugin {
 		for (String string : formatOutput(	getNearEvents(addTaskDates(getIterable(getExtensionMap(pluginContainer).values()), (TaskPlugin) pluginContainer.getPlugin("task")),
 														((Settings) pluginContainer.getPlugin("settings")).getDisplayedDays()),
 											LocalDate.now().getYear())) {
-			output += string + System.getProperty("line.separator");
+			output += " " + string + System.getProperty("line.separator");
 		}
 		if (!output.isEmpty()) {
 			terminal.printLine(identity, StringType.MAIN, StringFormat.BOLD);
@@ -251,7 +251,7 @@ public class EventPlugin extends Plugin {
 				for (int i = line.length(); i < longestNameLength + 3; i++) {
 					line += " ";
 				}
-				output.add(" " + line + event.getAdditionToOutput(year));
+				output.add(line + event.getAdditionToOutput(year));
 			}
 		}
 		return output;
@@ -287,7 +287,7 @@ public class EventPlugin extends Plugin {
 	private String printAll(Iterable<Event> iterable, int year) throws BadLocationException {
 		String output = "";
 		for (String string : formatOutput(iterable, year)) {
-			output += string + System.getProperty("line.separator");
+			output += " " + string + System.getProperty("line.separator");
 		}
 		return output;
 	}

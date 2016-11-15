@@ -8,11 +8,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Stream;
+import javax.swing.text.BadLocationException;
+import database.main.userInterface.ITerminal;
+import database.main.userInterface.StringFormat;
+import database.main.userInterface.StringType;
+import database.main.userInterface.StringUtility;
 import database.plugin.Command;
 import database.plugin.OutputFormatter;
 
@@ -135,14 +142,22 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 		return builder.toString();
 	}
 
-	@Command(tag = "month") public String outputMonth(Iterable<Expense> iterable) {
-		Map<String, Double> map = new LinkedHashMap<>();
+	@Command(tag = "months") public String outputMonth(Iterable<Expense> iterable) {
+		Map<Integer, Map<String, Double>> yearMap = new LinkedHashMap<>();
+		List<List<String>> returnList = new ArrayList<>();
 		int valueLength = 0;
-		String output = "";
+		Iterator<List<String>> iterator;
 		if (!iterable.iterator().hasNext()) {
 			return "no entries";
 		}
 		for (Expense expense : iterable) {
+			if (!yearMap.containsKey(expense.date.getYear())) {
+				yearMap.put(expense.date.getYear(), new LinkedHashMap<String, Double>());
+				returnList.add(new ArrayList<String>());
+			}
+		}
+		for (Expense expense : iterable) {
+			Map<String, Double> map = yearMap.get(expense.date.getYear());
 			String key = new DecimalFormat("00").format(expense.date.getMonthValue()) + "/" + String.valueOf(expense.date.getYear()).replaceFirst("20", "");
 			map.put(key, map.getOrDefault(key, 0.0) + expense.value);
 			int length = new DecimalFormat("#0.00").format(map.get(key)).length();
@@ -150,14 +165,21 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 				valueLength = length;
 			}
 		}
-		for (Entry<String, Double> entry : map.entrySet()) {
-			String value = new DecimalFormat("#0.00").format(entry.getValue());
-			while (value.length() < valueLength) {
-				value = " " + value;
+		iterator = returnList.iterator();
+		for (Map<String, Double> entryMap : yearMap.values()) {
+			List<String> list = iterator.next();
+			for (Entry<String, Double> entry : entryMap.entrySet()) {
+				String value = new DecimalFormat("#0.00").format(entry.getValue());
+				while (value.length() < valueLength) {
+					value = " " + value;
+				}
+				list.add(" " + entry.getKey() + " : " + value + "€");
 			}
-			output += " " + entry.getKey() + " : " + value + "€" + System.getProperty("line.separator");
 		}
-		return output;
+		while (returnList.get(0).size() < 12) {
+			returnList.get(0).add(0, "");
+		}
+		return new StringUtility().arrangeInCollums(returnList, 3);
 	}
 
 	@Command(tag = "all") public String printAll(Iterable<Expense> iterable) {
@@ -167,32 +189,49 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 		return outputAll(iterable);
 	}
 
-	@Command(tag = "current") public String printCurrent(Iterable<Expense> iterable) {
+	@Command(tag = "month") public String printCurrent(Iterable<Expense> iterable, ITerminal terminal) throws InterruptedException, BadLocationException {
 		StringBuilder builder = new StringBuilder();
+		StringUtility stringUtility = new StringUtility();
+		ArrayList<Expense> list = new ArrayList<>();
 		int longestValue = 0;
-		if (!iterable.iterator().hasNext()) {
+		LocalDate inputDate;
+		String dateString;
+		while (true) {
+			dateString = terminal.request("enter month and year", ".*");
+			dateString = stringUtility.parseDateString(dateString.isEmpty() ? LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) : "01." + dateString);
+			if (!stringUtility.testDateString(dateString)) {
+				terminal.errorMessage();
+			}
+			else {
+				break;
+			}
+		}
+		inputDate = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		for (Expense expense : iterable) {
+			if (expense.date.getMonthValue() == inputDate.getMonthValue() && expense.date.getYear() == inputDate.getYear()) {
+				list.add(expense);
+			}
+		}
+		if (list.isEmpty()) {
 			return "no entries";
 		}
-		for (Expense expense : iterable) {
-			if (expense.date.getMonthValue() == LocalDate.now().getMonthValue() && expense.date.getYear() == LocalDate.now().getYear()) {
-				if (new DecimalFormat("#0.00").format(expense.value).length() > longestValue) {
-					longestValue = new DecimalFormat("#0.00").format(expense.value).length();
-				}
+		for (Expense expense : list) {
+			if (new DecimalFormat("#0.00").format(expense.value).length() > longestValue) {
+				longestValue = new DecimalFormat("#0.00").format(expense.value).length();
 			}
 		}
-		for (Expense expense : iterable) {
-			if (expense.date.getMonthValue() == LocalDate.now().getMonthValue() && expense.date.getYear() == LocalDate.now().getYear()) {
-				String name = expense.name;
-				String value = new DecimalFormat("#0.00").format(expense.value) + "€";
-				while (name.length() < 66) {
-					name += " ";
-				}
-				while (value.length() <= longestValue) {
-					value = " " + value;
-				}
-				builder.append(" \u2022 " + expense.date.format(DateTimeFormatter.ofPattern("dd/MM")) + " - " + name + " " + value + System.getProperty("line.separator"));
+		for (Expense expense : list) {
+			String name = expense.name;
+			String value = new DecimalFormat("#0.00").format(expense.value) + "€";
+			while (name.length() < 66) {
+				name += " ";
 			}
+			while (value.length() <= longestValue) {
+				value = " " + value;
+			}
+			builder.append(" \u2022 " + expense.date.format(DateTimeFormatter.ofPattern("dd/MM")) + " - " + name + " " + value + System.getProperty("line.separator"));
 		}
+		terminal.printLine("show", StringType.REQUEST, StringFormat.ITALIC);
 		return builder.toString();
 	}
 

@@ -1,5 +1,6 @@
 package test;
 
+import javax.swing.text.BadLocationException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,11 +23,10 @@ public class TestExpensePlugin {
 		expensePlugin = null;
 	}
 
-	@Test public void NoEntriesTest() {
+	@Test public void NoEntriesTest() throws InterruptedException, BadLocationException {
 		Assert.assertEquals(expenseFormatter.outputAverage(expensePlugin.getIterable()), "no entries");
 		Assert.assertEquals(expenseFormatter.outputCategory(expensePlugin.getIterable()), "no entries");
 		Assert.assertEquals(expenseFormatter.outputMonth(expensePlugin.getIterable()), "no entries");
 		Assert.assertEquals(expenseFormatter.printAll(expensePlugin.getIterable()), "no entries");
-		Assert.assertEquals(expenseFormatter.printCurrent(expensePlugin.getIterable()), "no entries");
 	}
 }

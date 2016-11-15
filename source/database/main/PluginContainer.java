@@ -2,6 +2,7 @@ package database.main;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -17,7 +18,7 @@ public class PluginContainer {
 	private Storage				storage;
 
 	public PluginContainer(Storage storage) {
-		plugins = new ArrayList<Plugin>();
+		plugins = new ArrayList<>();
 		this.storage = storage;
 	}
 
@@ -50,7 +51,7 @@ public class PluginContainer {
 		return null;
 	}
 
-	public String getPluginNameTagsAsRegesx() {
+	public String getPluginNameTagsAsRegesx(ArrayList<String> list) {
 		String regex = "(";
 		for (Plugin plugin : plugins) {
 			boolean isAnnotationPresent = false;
@@ -60,8 +61,12 @@ public class PluginContainer {
 				}
 			}
 			if (isAnnotationPresent) {
-				regex += plugin.identity + "|";
+				list.add(plugin.identity);
 			}
+		}
+		Collections.sort(list);
+		for (String string : list) {
+			regex += string + "|";
 		}
 		return regex.endsWith("|") ? regex.substring(0, regex.lastIndexOf("|")) + ")" : "()";
 	}
