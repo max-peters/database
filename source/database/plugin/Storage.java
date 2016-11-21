@@ -12,7 +12,7 @@ public class Storage {
 	private ArrayList<String> storage;
 
 	public Storage() {
-		storage = new ArrayList<String>();
+		storage = new ArrayList<>();
 	}
 
 	public void clearList() {
@@ -31,12 +31,11 @@ public class Storage {
 		storage.add(node.getTextContent());
 	}
 
-	public void store(	InstancePlugin<? extends Instance> instancePlugin, ITerminal terminal, PluginContainer pluginContainer,
-						FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+	public void store(InstancePlugin<? extends Instance> instancePlugin, ITerminal terminal, PluginContainer pluginContainer) throws BadLocationException, InterruptedException {
 		for (Instance instance : instancePlugin.getIterable()) {
 			storage.add(instance.toString());
 		}
 		instancePlugin.clearList();
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 	}
 }

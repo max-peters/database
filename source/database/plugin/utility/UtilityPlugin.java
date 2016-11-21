@@ -12,12 +12,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import database.main.PluginContainer;
+import database.main.UserCancelException;
 import database.main.WriterReader;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.plugin.Command;
-import database.plugin.FormatterProvider;
 import database.plugin.Plugin;
 
 public class UtilityPlugin extends Plugin {
@@ -25,7 +25,7 @@ public class UtilityPlugin extends Plugin {
 		super("utility");
 	}
 
-	@Command(tag = "days") public void calculateDayNumber(ITerminal terminal) throws BadLocationException, InterruptedException {
+	@Command(tag = "days") public void calculateDayNumber(ITerminal terminal) throws BadLocationException, InterruptedException, UserCancelException {
 		String temp = terminal.request("first date", "DATE");
 		LocalDate firstDate = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		temp = terminal.request("second date", "DATE");
@@ -36,7 +36,7 @@ public class UtilityPlugin extends Plugin {
 		terminal.waitForInput();
 	}
 
-	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
+	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer) throws BadLocationException {
 		// no initial output
 	}
 
@@ -48,13 +48,13 @@ public class UtilityPlugin extends Plugin {
 		// no reading
 	}
 
-	@Command(tag = "update") public void updateStorage(	ITerminal terminal, PluginContainer pluginContainer, WriterReader writerReader,
-														FormatterProvider formatterProvider)	throws BadLocationException, InterruptedException, IOException, SAXException,
-																								TransformerException, ParserConfigurationException {
+	@Command(tag = "update") public void updateStorage(	ITerminal terminal, PluginContainer pluginContainer,
+														WriterReader writerReader)	throws BadLocationException, InterruptedException, IOException, SAXException,
+																					TransformerException, ParserConfigurationException {
 		terminal.printLine("connecting...", StringType.REQUEST, StringFormat.ITALIC);
 		terminal.blockInput();
 		writerReader.updateStorage(terminal, pluginContainer);
 		terminal.waitForInput();
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 	}
 }

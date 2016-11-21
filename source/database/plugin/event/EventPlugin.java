@@ -14,11 +14,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import database.main.PluginContainer;
+import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.plugin.Command;
-import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
 import database.plugin.Plugin;
 import database.plugin.backup.BackupService;
@@ -40,8 +40,8 @@ public class EventPlugin extends Plugin {
 		super("event");
 	}
 
-	@Command(tag = "cancel") public void cancel(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
-												FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+	@Command(tag = "cancel") public void cancel(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer)	throws BadLocationException,
+																																	InterruptedException {
 		boolean displayTemp = display;
 		int i = 0;
 		int position;
@@ -56,7 +56,7 @@ public class EventPlugin extends Plugin {
 		Iterable<Event> iterable = getNearEvents(getIterable(list), ((Settings) pluginContainer.getPlugin("settings")).getDisplayedDays());
 		List<String> stringList = formatOutput(iterable, LocalDate.now().getYear());
 		display = false;
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 		position = terminal.checkRequest(stringList);
 		if (position >= 0) {
 			for (Event event : iterable) {
@@ -81,11 +81,10 @@ public class EventPlugin extends Plugin {
 			}
 		}
 		display = displayTemp;
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 	}
 
-	@Command(tag = "check") public void check(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws InterruptedException,
-																																		BadLocationException {
+	@Command(tag = "check") public void check(ITerminal terminal, PluginContainer pluginContainer) throws InterruptedException, BadLocationException, UserCancelException {
 		boolean displayTemp = display;
 		List<EventPluginExtension<? extends Event>> list = new LinkedList<>(getExtensionMap(pluginContainer).values());
 		String temp = terminal.request("date", "DATE");
@@ -105,7 +104,7 @@ public class EventPlugin extends Plugin {
 			output = " there are appointments for this date:";
 		}
 		display = false;
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 		terminal.printLine("event", StringType.REQUEST, StringFormat.BOLD);
 		terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
 		for (String string : formatOutput(eventList, LocalDate.now().getYear())) {
@@ -113,26 +112,26 @@ public class EventPlugin extends Plugin {
 		}
 		terminal.waitForInput();
 		display = displayTemp;
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 	}
 
-	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
-													FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer)	throws BadLocationException,
+																																		InterruptedException, UserCancelException {
 		List<String> list = new ArrayList<>(getExtensionMap(pluginContainer).keySet());
 		list.remove("holiday");
 		EventPluginExtension<? extends Event> extension = chooseType(list, terminal, pluginContainer);
 		if (extension != null) {
 			extension.createRequest(terminal, backupService);
 		}
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 	}
 
-	@Override @Command(tag = "display") public void display(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws InterruptedException,
-																																						BadLocationException {
+	@Override @Command(tag = "display") public void display(ITerminal terminal, PluginContainer pluginContainer)	throws InterruptedException, BadLocationException,
+																													UserCancelException {
 		EventPluginExtension<? extends Event> extension = chooseType(new ArrayList<>(getExtensionMap(pluginContainer).keySet()), terminal, pluginContainer);
 		if (extension != null) {
-			extension.display(terminal, pluginContainer, formatterProvider);
-			terminal.update(pluginContainer, formatterProvider);
+			extension.display(terminal, pluginContainer);
+			terminal.update(pluginContainer);
 		}
 	}
 
@@ -152,7 +151,7 @@ public class EventPlugin extends Plugin {
 		return list;
 	}
 
-	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
+	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer) throws BadLocationException {
 		String output = "";
 		for (String string : formatOutput(	getNearEvents(addTaskDates(getIterable(getExtensionMap(pluginContainer).values()), (TaskPlugin) pluginContainer.getPlugin("task")),
 														((Settings) pluginContainer.getPlugin("settings")).getDisplayedDays()),
@@ -177,30 +176,28 @@ public class EventPlugin extends Plugin {
 		}
 	}
 
-	@Command(tag = "show") public void show(ITerminal terminal, PluginContainer pluginContainer,
-											FormatterProvider formatterProvider)	throws InterruptedException, BadLocationException, IllegalAccessException,
-																					IllegalArgumentException, InvocationTargetException {
+	@Command(tag = "show") public void show(ITerminal terminal, PluginContainer pluginContainer)	throws InterruptedException, BadLocationException, IllegalAccessException,
+																									IllegalArgumentException, InvocationTargetException, UserCancelException {
 		boolean displayTemp = display;
 		display = false;
 		String yearString = terminal.request("enter year", "|\\d{4}");
 		int year = yearString.isEmpty() ? LocalDate.now().getYear() : Integer.valueOf(yearString);
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 		terminal.getLineOfCharacters('-', StringType.SOLUTION);
 		terminal.printLine(	printAll(addTaskDates(getIterable(getExtensionMap(pluginContainer).values()), (TaskPlugin) pluginContainer.getPlugin("task")), year),
 							StringType.SOLUTION, StringFormat.STANDARD);
 		terminal.waitForInput();
 		display = displayTemp;
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 	}
 
-	@Command(tag = "store") public void store(PluginContainer pluginContainer, ITerminal terminal, FormatterProvider formatterProvider)	throws BadLocationException,
-																																		InterruptedException {
+	@Command(tag = "store") public void store(PluginContainer pluginContainer, ITerminal terminal) throws BadLocationException, InterruptedException, UserCancelException {
 		List<String> list = new ArrayList<>(getExtensionMap(pluginContainer).keySet());
 		list.remove("holiday");
 		EventPluginExtension<? extends Event> extension = chooseType(list, terminal, pluginContainer);
 		if (extension != null) {
-			extension.store(pluginContainer, terminal, formatterProvider);
-			terminal.update(pluginContainer, formatterProvider);
+			extension.store(pluginContainer, terminal);
+			terminal.update(pluginContainer);
 		}
 	}
 

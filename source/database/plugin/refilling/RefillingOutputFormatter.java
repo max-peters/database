@@ -14,7 +14,7 @@ public class RefillingOutputFormatter implements OutputFormatter<Refilling> {
 				sum++;
 				it.next();
 			}
-			output = "["+ sum + "] " + "distance: " + "[" + getDistanceTotal(iterable) + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal(iterable) + " l" + "] "
+			output = "["	+ sum + "] " + "distance: " + "[" + getDistanceTotal(iterable) + " km" + "] " + "refuelAmount: " + "[" + getRefuelAmountTotal(iterable) + " l" + "] "
 						+ "averageConsumption: " + "[" + getAverageConsumptionTotal(iterable) + " l/km" + "]";
 		}
 		return output;
@@ -27,13 +27,13 @@ public class RefillingOutputFormatter implements OutputFormatter<Refilling> {
 		}
 		else {
 			for (Refilling refilling : iterable) {
-				builder.append(" \u25AA distance: ["+ String.format("%" + String.valueOf(getHighestDistance(iterable)).length() + "s", refilling.distance)
+				builder.append(" \u25AA distance: ["	+ String.format("%" + String.valueOf(getHighestDistance(iterable)).length() + "s", refilling.distance)
 								+ " km] refuelAmount: [");
-				builder.append(String.format("%"+ String.valueOf(String.format("%.1f", getHighestRefuelAmount(iterable))).length() + "s",
+				builder.append(String	.format("%"	+ String.valueOf(String.format("%.1f", getHighestRefuelAmount(iterable))).length() + "s",
 												String.format("%.1f", refilling.refuelAmount))
 										.replace(",", "."));
 				builder.append(" l] averageConsumption: ["
-								+ String.format("%" + String.valueOf(getHighestAverageConsumption(iterable)).length() + "s", refilling.calcAverageConsumption()) + " l/km]"
+									+ String.format("%" + String.valueOf(getHighestAverageConsumption(iterable)).length() + "s", refilling.calcAverageConsumption()) + " l/km]"
 								+ System.getProperty("line.separator"));
 			}
 		}

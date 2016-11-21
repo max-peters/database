@@ -14,18 +14,21 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import com.google.gson.Gson;
 import database.main.PluginContainer;
+import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 
 public abstract class InstancePlugin<T extends Instance> extends Plugin {
-	protected LinkedList<T>	list;
-	public Class<T>			instanceClass;
+	protected LinkedList<T>			list;
+	protected OutputFormatter<T>	formatter;
+	public Class<T>					type;
 
-	public InstancePlugin(String identity, Class<T> instanceClass) {
+	public InstancePlugin(String identity, OutputFormatter<T> formatter, Class<T> type) {
 		super(identity);
 		this.list = new LinkedList<>();
-		this.instanceClass = instanceClass;
+		this.formatter = formatter;
+		this.type = type;
 	}
 
 	public void add(T instance) {
@@ -37,15 +40,14 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	}
 
 	public void createAndAdd(String json) {
-		add(new Gson().fromJson(json, instanceClass));
+		add(new Gson().fromJson(json, type));
 	}
 
 	public Iterable<T> getIterable() {
 		return new LinkedList<>(list);
 	}
 
-	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
-		OutputFormatter<T> formatter = (OutputFormatter<T>) formatterProvider.getFormatter(instanceClass);
+	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer) throws BadLocationException {
 		String initialOutput = formatter.getInitialOutput(getIterable());
 		if (!initialOutput.isEmpty()) {
 			terminal.printLine(identity, StringType.MAIN, StringFormat.BOLD);
@@ -77,9 +79,8 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		list.remove(toRemove);
 	}
 
-	@Command(tag = "show") public void show(ITerminal terminal, FormatterProvider formatterProvider)	throws InterruptedException, BadLocationException, IllegalAccessException,
-																										IllegalArgumentException, InvocationTargetException {
-		OutputFormatter<T> formatter = (OutputFormatter<T>) formatterProvider.getFormatter(instanceClass);
+	@Command(tag = "show") public void show(ITerminal terminal)	throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException,
+																InvocationTargetException, UserCancelException {
 		String command = terminal.request("show", getCommandTags(formatter.getClass()));
 		for (Method method : formatter.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
@@ -98,10 +99,9 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		}
 	}
 
-	@Command(tag = "store") public void store(PluginContainer pluginContainer, ITerminal terminal, FormatterProvider formatterProvider)	throws BadLocationException,
-																																		InterruptedException {
+	@Command(tag = "store") public void store(PluginContainer pluginContainer, ITerminal terminal) throws BadLocationException, InterruptedException, UserCancelException {
 		if (Boolean.valueOf(terminal.request("do you want to store all entries", "(true|false)"))) {
-			pluginContainer.getStorage().store(this, terminal, pluginContainer, formatterProvider);
+			pluginContainer.getStorage().store(this, terminal, pluginContainer);
 		}
 	}
 }

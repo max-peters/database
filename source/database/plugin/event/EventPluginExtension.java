@@ -5,14 +5,14 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
+import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
-import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
 import database.plugin.backup.BackupService;
 
 public abstract class EventPluginExtension<T extends Event> extends InstancePlugin<T> {
-	public EventPluginExtension(String identity, Class<T> instanceClass) {
-		super(identity, instanceClass);
+	public EventPluginExtension(String identity, Class<T> type) {
+		super(identity, null, type);
 	}
 
 	@Override public void add(T event) {
@@ -23,14 +23,14 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 		list.add(i, event);
 	}
 
-	public abstract void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException;
+	public abstract void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException, UserCancelException;
 
-	@Override public void display(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
-		super.display(terminal, pluginContainer, formatterProvider);
+	@Override public void display(ITerminal terminal, PluginContainer pluginContainer) throws InterruptedException, BadLocationException, UserCancelException {
+		super.display(terminal, pluginContainer);
 	}
 
 	public List<Event> getEvents(LocalDate date) {
-		List<Event> eventList = new LinkedList<Event>();
+		List<Event> eventList = new LinkedList<>();
 		for (Event event : getIterable()) {
 			if (event.updateYear().isEqual(date)) {
 				eventList.add(event);
@@ -39,15 +39,15 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 		return eventList;
 	}
 
-	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException {
+	@Override public void initialOutput(ITerminal terminal, PluginContainer pluginContainer) throws BadLocationException {
 		// no initial output here
 	}
 
-	@Override public void show(ITerminal terminal, FormatterProvider formatterProvider) {
+	@Override public void show(ITerminal terminal) {
 		// nothing to show here
 	}
 
-	@Override public void store(PluginContainer pluginContainer, ITerminal terminal, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
-		super.store(pluginContainer, terminal, formatterProvider);
+	@Override public void store(PluginContainer pluginContainer, ITerminal terminal) throws BadLocationException, InterruptedException, UserCancelException {
+		super.store(pluginContainer, terminal);
 	}
 }

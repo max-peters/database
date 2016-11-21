@@ -2,33 +2,33 @@ package database.plugin.subject;
 
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
+import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.plugin.Command;
-import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
 import database.plugin.backup.BackupService;
 
 public class SubjectPlugin extends InstancePlugin<Subject> {
 	public SubjectPlugin() {
-		super("subject", Subject.class);
+		super("subject", new SubjectOutputFormatter(), Subject.class);
 	}
 
-	@Command(tag = "add") public void addRequest(	ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
-													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
+	@Command(tag = "add") public void addRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer)	throws InterruptedException,
+																																	BadLocationException, UserCancelException {
 		Subject toChange = getSubject(terminal.request("add", getTagsAsRegex()));
 		backupService.backupChangeBefor(toChange, this);
 		toChange.setGrade(	Double.parseDouble(terminal.request("score", "[0-9]{1,13}(\\.[0-9]*)?")),
 							Double.parseDouble(terminal.request("maximum points", "[0-9]{1,13}(\\.[0-9]*)?")));
 		backupService.backupChangeAfter(toChange, this);
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 	}
 
-	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
-													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer)	throws InterruptedException,
+																																		BadLocationException, UserCancelException {
 		Subject subject = new Subject(terminal.request("name", "[A-ZÖÄÜ].*"), terminal.request("tag", "[a-zöäüß]*"), 0.0, 0.0, 0);
 		add(subject);
 		backupService.backupCreation(subject, this);
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 	}
 
 	private Subject getSubject(String tag) {

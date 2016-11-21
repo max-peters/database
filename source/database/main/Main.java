@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.JOptionPane;
 import database.main.userInterface.GraphicalUserInterface;
 import database.main.userInterface.Terminal;
-import database.plugin.FormatterProvider;
 import database.plugin.Storage;
 import database.plugin.backup.BackupService;
 import database.plugin.event.EventPlugin;
@@ -14,19 +13,11 @@ import database.plugin.event.day.DayPlugin;
 import database.plugin.event.holiday.HolidayPlugin;
 import database.plugin.event.multiDayAppointment.MultiDayAppointmentPlugin;
 import database.plugin.event.weeklyAppointment.WeeklyAppointmentPlugin;
-import database.plugin.expense.Expense;
-import database.plugin.expense.ExpenseOutputFormatter;
 import database.plugin.expense.ExpensePlugin;
-import database.plugin.refilling.Refilling;
-import database.plugin.refilling.RefillingOutputFormatter;
 import database.plugin.refilling.RefillingPlugin;
 import database.plugin.repetitiveExpense.RepetitiveExpensePlugin;
 import database.plugin.settings.Settings;
-import database.plugin.subject.Subject;
-import database.plugin.subject.SubjectOutputFormatter;
 import database.plugin.subject.SubjectPlugin;
-import database.plugin.task.Task;
-import database.plugin.task.TaskOutputFormatter;
 import database.plugin.task.TaskPlugin;
 import database.plugin.utility.UtilityPlugin;
 
@@ -64,15 +55,6 @@ public class Main {
 			MultiDayAppointmentPlugin multiDayAppointmentPlugin = new MultiDayAppointmentPlugin();
 			EventPlugin eventPlugin = new EventPlugin();
 			UtilityPlugin utilityPlugin = new UtilityPlugin();
-			FormatterProvider formatterProvider = new FormatterProvider();
-			ExpenseOutputFormatter expenseOutputFormatter = new ExpenseOutputFormatter();
-			RefillingOutputFormatter refillingOutputFormatter = new RefillingOutputFormatter();
-			SubjectOutputFormatter subjectOutputFormatter = new SubjectOutputFormatter();
-			TaskOutputFormatter taskOutputFormatter = new TaskOutputFormatter();
-			formatterProvider.register(taskOutputFormatter, Task.class);
-			formatterProvider.register(subjectOutputFormatter, Subject.class);
-			formatterProvider.register(refillingOutputFormatter, Refilling.class);
-			formatterProvider.register(expenseOutputFormatter, Expense.class);
 			pluginContainer.addPlugin(settings);
 			pluginContainer.addPlugin(utilityPlugin);
 			pluginContainer.addPlugin(subjectPlugin);
@@ -90,11 +72,10 @@ public class Main {
 			writerReader.read(pluginContainer);
 			holidayPlugin.updateHolidays(terminal);
 			repetitiveExpensePlugin.createExpense(terminal, expensePlugin, backupService);
-			expenseOutputFormatter.initialise(expensePlugin.getIterable());
 			guiThread.join();
 			graphicalUserInterface.setVisible(true);
-			terminal.update(pluginContainer, formatterProvider);
-			administration.request(terminal, backupService, writerReader, pluginContainer, formatterProvider);
+			terminal.update(pluginContainer);
+			administration.request(terminal, backupService, writerReader, pluginContainer);
 		}
 		catch (Throwable e) {
 			String stackTrace = "";

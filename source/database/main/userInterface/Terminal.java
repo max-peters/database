@@ -6,10 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
-import database.plugin.FormatterProvider;
+import database.main.UserCancelException;
 
 public class Terminal implements ITerminal {
 	private Map<OutputInformation, String>	collectedLines;
@@ -18,7 +17,7 @@ public class Terminal implements ITerminal {
 
 	public Terminal(GraphicalUserInterface graphicalUserInterface) {
 		this.graphicalUserInterface = graphicalUserInterface;
-		collectedLines = new LinkedHashMap<OutputInformation, String>();
+		collectedLines = new LinkedHashMap<>();
 		stringUtility = new StringUtility();
 	}
 
@@ -46,7 +45,7 @@ public class Terminal implements ITerminal {
 	public void printCollectedLines() throws InterruptedException, BadLocationException {
 		if (!collectedLines.isEmpty()) {
 			getLineOfCharacters('-', StringType.SOLUTION);
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			for (String string : collectedLines.values()) {
 				if (!list.contains(string)) {
 					list.add(string);
@@ -69,7 +68,8 @@ public class Terminal implements ITerminal {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 
-	public String request(String printOut, String regex, String inputText, Completeable completeable, int levenshteinDistance) throws InterruptedException, BadLocationException {
+	public String request(String printOut, String regex, String inputText, Completeable completeable, int levenshteinDistance)	throws InterruptedException, BadLocationException,
+																																UserCancelException {
 		boolean request = true;
 		String result = null;
 		String input = null;
@@ -82,7 +82,7 @@ public class Terminal implements ITerminal {
 			input = completeable != null ? graphicalUserInterface.autocomplete(completeable) : graphicalUserInterface.readLine();
 			graphicalUserInterface.clearInput();
 			if (input.equals("back")) {
-				throw new CancellationException();
+				throw new UserCancelException();
 			}
 			else if (input.equals("help")) {
 				printLine(regex, StringType.SOLUTION, StringFormat.STANDARD);
@@ -113,10 +113,10 @@ public class Terminal implements ITerminal {
 		return result;
 	}
 
-	public void update(PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+	public void update(PluginContainer pluginContainer) throws BadLocationException, InterruptedException {
 		graphicalUserInterface.clearOutput();
 		graphicalUserInterface.blockInput();
-		pluginContainer.initialOutput(this, formatterProvider);
+		pluginContainer.initialOutput(this);
 		graphicalUserInterface.releaseInput();
 		printCollectedLines();
 	}

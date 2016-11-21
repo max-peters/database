@@ -6,7 +6,6 @@ import database.main.PluginContainer;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.plugin.FormatterProvider;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 
@@ -47,24 +46,24 @@ public class Backup {
 		return changes;
 	}
 
-	protected void restore(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+	protected void restore(ITerminal terminal, PluginContainer pluginContainer) throws BadLocationException, InterruptedException {
 		Gson gson = new Gson();
 		if (newState != null) {
 			if (oldState != null) {
 				String temp = oldState;
-				instancePlugin.remove(gson.fromJson(newState, instancePlugin.instanceClass));
+				instancePlugin.remove(gson.fromJson(newState, instancePlugin.type));
 				instancePlugin.createAndAdd(oldState);
 				oldState = newState;
 				newState = temp;
-				terminal.update(pluginContainer, formatterProvider);
+				terminal.update(pluginContainer);
 				terminal.printLine("reverted change of " + formatJSON(oldState) + System.lineSeparator() + "to" + formatJSON(newState), StringType.SOLUTION, StringFormat.STANDARD);
 				terminal.waitForInput();
 			}
 			else {
-				instancePlugin.remove(gson.fromJson(newState, instancePlugin.instanceClass));
+				instancePlugin.remove(gson.fromJson(newState, instancePlugin.type));
 				oldState = newState;
 				newState = null;
-				terminal.update(pluginContainer, formatterProvider);
+				terminal.update(pluginContainer);
 				terminal.printLine("removed " + formatJSON(oldState), StringType.SOLUTION, StringFormat.STANDARD);
 				terminal.waitForInput();
 			}
@@ -75,7 +74,7 @@ public class Backup {
 			newState = oldState;
 			oldState = null;
 			changes = !isChanged();
-			terminal.update(pluginContainer, formatterProvider);
+			terminal.update(pluginContainer);
 			terminal.printLine("added " + formatJSON(newState), StringType.SOLUTION, StringFormat.STANDARD);
 			terminal.waitForInput();
 		}

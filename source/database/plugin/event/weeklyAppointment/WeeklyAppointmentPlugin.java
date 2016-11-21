@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
+import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.plugin.backup.BackupService;
 import database.plugin.event.EventPluginExtension;
@@ -15,17 +16,17 @@ public class WeeklyAppointmentPlugin extends EventPluginExtension<WeeklyAppointm
 
 	@Override public void add(WeeklyAppointment weeklyAppointment) {
 		while (weeklyAppointment.date.isBefore(LocalDate.now()) && !weeklyAppointment.date.isEqual(LocalDate.now())
-				|| weeklyAppointment.date.isEqual(LocalDate.now()) && weeklyAppointment.begin == null
-				|| weeklyAppointment.date.isEqual(LocalDate.now())&& weeklyAppointment.begin != null && weeklyAppointment.end == null
+					|| weeklyAppointment.date.isEqual(LocalDate.now()) && weeklyAppointment.begin == null
+				|| weeklyAppointment.date.isEqual(LocalDate.now())	&& weeklyAppointment.begin != null && weeklyAppointment.end == null
 					&& !weeklyAppointment.begin.isAfter(LocalTime.now())
-				|| weeklyAppointment.date.isEqual(LocalDate.now())&& weeklyAppointment.begin != null && weeklyAppointment.end != null
+				|| weeklyAppointment.date.isEqual(LocalDate.now())	&& weeklyAppointment.begin != null && weeklyAppointment.end != null
 					&& !weeklyAppointment.end.isAfter(LocalTime.now())) {
 			weeklyAppointment.date = weeklyAppointment.date.plusDays(7);
 		}
 		super.add(weeklyAppointment);
 	}
 
-	@Override public void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException {
+	@Override public void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException, UserCancelException {
 		String name;
 		String temp = "";
 		LocalTime begin;

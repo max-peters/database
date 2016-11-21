@@ -13,6 +13,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import database.main.PluginContainer;
+import database.main.UserCancelException;
 import database.main.WriterReader;
 import database.main.userInterface.ITerminal;
 import database.plugin.backup.BackupService;
@@ -25,8 +26,8 @@ public abstract class Plugin {
 		this.identity = identity;
 	}
 
-	public void conduct(String command, ITerminal terminal, BackupService backupService, PluginContainer pluginContainer, WriterReader writerReader,
-						FormatterProvider formatterProvider) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void conduct(String command, ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
+						WriterReader writerReader) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		for (Method method : this.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class)) {
 				if (method.getAnnotation(Command.class).tag().equals(command)) {
@@ -44,9 +45,6 @@ public abstract class Plugin {
 						else if (p.getType().equals(WriterReader.class)) {
 							parameter.add(writerReader);
 						}
-						else if (p.getType().equals(FormatterProvider.class)) {
-							parameter.add(formatterProvider);
-						}
 						else {
 							throw new InvalidParameterException();
 						}
@@ -58,10 +56,9 @@ public abstract class Plugin {
 		}
 	}
 
-	@Command(tag = "display") public void display(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider)	throws InterruptedException,
-																																			BadLocationException {
+	@Command(tag = "display") public void display(ITerminal terminal, PluginContainer pluginContainer) throws InterruptedException, BadLocationException, UserCancelException {
 		display = Boolean.valueOf(terminal.request("display", "(true|false)"));
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 	}
 
 	public String getCommandTags(Class<?> classWithMethods) {
@@ -79,7 +76,7 @@ public abstract class Plugin {
 		return regex.endsWith("|") ? regex.substring(0, regex.lastIndexOf("|")) + ")" : "()";
 	}
 
-	public abstract void initialOutput(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException;
+	public abstract void initialOutput(ITerminal terminal, PluginContainer pluginContainer) throws BadLocationException;
 
 	public abstract void print(Document document, Element appendTo);
 

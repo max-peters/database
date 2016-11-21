@@ -4,15 +4,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
+import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.plugin.Command;
-import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
 import database.plugin.backup.BackupService;
 
 public class ExpensePlugin extends InstancePlugin<Expense> {
 	public ExpensePlugin() {
-		super("expense", Expense.class);
+		super("expense", new ExpenseOutputFormatter(), Expense.class);
 	}
 
 	@Override public void add(Expense expense) {
@@ -21,11 +21,12 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 			i--;
 		}
 		list.add(i, expense);
+		((ExpenseOutputFormatter) formatter).addExpense(expense);
 	}
 
-	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
-													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
-		ExpenseOutputFormatter formatter = (ExpenseOutputFormatter) formatterProvider.getFormatter(Expense.class);
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer)	throws InterruptedException,
+																																		BadLocationException, UserCancelException {
+		ExpenseOutputFormatter formatter = (ExpenseOutputFormatter) this.formatter;
 		String name = formatter.getNameByString(terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", (String input) -> {
 			return formatter.getMostUsedNameByPrefix(input, list);
 		}), list);
@@ -39,10 +40,9 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		Expense expense = new Expense(name, category, value, date);
 		add(expense);
-		formatter.addExpense(expense);
 		backupService.backupCreation(expense, this);
 		if (display) {
-			terminal.update(pluginContainer, formatterProvider);
+			terminal.update(pluginContainer);
 		}
 	}
 }

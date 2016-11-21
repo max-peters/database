@@ -9,13 +9,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.text.BadLocationException;
-import database.main.userInterface.StringFormat;
 import database.main.userInterface.ITerminal;
+import database.main.userInterface.StringFormat;
 import database.plugin.backup.BackupService;
 import database.plugin.event.EventPluginExtension;
 
 public class HolidayPlugin extends EventPluginExtension<Holiday> {
-	private List<String> lines = new ArrayList<String>();
+	private List<String> lines = new ArrayList<>();
 
 	public HolidayPlugin() {
 		super("holiday", Holiday.class);

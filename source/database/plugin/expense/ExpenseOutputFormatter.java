@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 import javax.swing.text.BadLocationException;
+import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
@@ -28,13 +29,7 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 	private Map<String, Integer>	nameAmount		= new HashMap<>();
 
 	@Override public String getInitialOutput(Iterable<Expense> iterable) {
-		return "todo";
-	}
-
-	public void initialise(Iterable<Expense> iterable) {
-		for (Expense expense : iterable) {
-			addExpense(expense);
-		}
+		return "not implemented";
 	}
 
 	@Command(tag = "average") public String outputAverage(Iterable<Expense> iterable) {
@@ -189,7 +184,7 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 		return outputAll(iterable);
 	}
 
-	@Command(tag = "month") public String printCurrent(Iterable<Expense> iterable, ITerminal terminal) throws InterruptedException, BadLocationException {
+	@Command(tag = "month") public String printCurrent(Iterable<Expense> iterable, ITerminal terminal) throws InterruptedException, BadLocationException, UserCancelException {
 		StringBuilder builder = new StringBuilder();
 		StringUtility stringUtility = new StringUtility();
 		ArrayList<Expense> list = new ArrayList<>();

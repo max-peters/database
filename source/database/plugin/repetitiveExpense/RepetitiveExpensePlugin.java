@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
-import database.main.userInterface.StringFormat;
+import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
+import database.main.userInterface.StringFormat;
 import database.plugin.Command;
-import database.plugin.FormatterProvider;
 import database.plugin.InstancePlugin;
 import database.plugin.backup.BackupService;
 import database.plugin.expense.Expense;
@@ -18,7 +18,7 @@ import database.plugin.expense.ExpensePlugin;
 
 public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 	public RepetitiveExpensePlugin() {
-		super("repetitiveexpense", RepetitiveExpense.class);
+		super("repetitiveexpense", null, RepetitiveExpense.class);
 	}
 
 	@Override public void add(RepetitiveExpense repetitiveExpense) {
@@ -31,8 +31,8 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 		}
 	}
 
-	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
-													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException, NumberFormatException {
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService,
+													PluginContainer pluginContainer) throws InterruptedException, BadLocationException, NumberFormatException, UserCancelException {
 		String name = terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		String category = terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		Double value = Double.valueOf(terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
@@ -44,20 +44,20 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 		add(repetitiveExpense);
 		backupService.backupCreation(repetitiveExpense, this);
 		createExpense(repetitiveExpense, terminal, (ExpensePlugin) pluginContainer.getPlugin("expense"), backupService);
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 	}
 
-	@Override public void display(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) {
+	@Override public void display(ITerminal terminal, PluginContainer pluginContainer) {
 		// nothing to display here
 	}
 
-	@Override public void show(ITerminal terminal, FormatterProvider formatterProvider) {
+	@Override public void show(ITerminal terminal) {
 		// nothing to show here
 	}
 
-	@Command(tag = "stop") public void stopRequest(	ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
-													FormatterProvider formatterProvider) throws InterruptedException, BadLocationException {
-		List<String> strings = new ArrayList<String>();
+	@Command(tag = "stop") public void stopRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer)	throws InterruptedException,
+																																		BadLocationException {
+		List<String> strings = new ArrayList<>();
 		for (Expense expense : getIterable()) {
 			strings.add(expense.name + " - " + expense.category);
 		}
@@ -68,10 +68,10 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 		RepetitiveExpense repetitiveExpense = list.get(position);
 		remove(repetitiveExpense);
 		backupService.backupRemoval(repetitiveExpense, this);
-		terminal.update(pluginContainer, formatterProvider);
+		terminal.update(pluginContainer);
 	}
 
-	@Override public void store(PluginContainer pluginContainer, ITerminal terminal, FormatterProvider formatterProvider) {
+	@Override public void store(PluginContainer pluginContainer, ITerminal terminal) {
 		// nothing to store here
 	}
 
@@ -99,7 +99,7 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 				Expense newExpense = new Expense(expense.name, expense.category, expense.value, expense.date);
 				expensePlugin.add(newExpense);
 				backupService.backupRelatedCreation(newExpense, expensePlugin);
-				terminal.collectLine(" + "+ expense.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.name + " (" + expense.category + ") " + expense.value
+				terminal.collectLine(" + "	+ expense.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.name + " (" + expense.category + ") " + expense.value
 										+ "€", StringFormat.STANDARD, "expense");
 			}
 			if (expense.date.getMonthValue() == 12) {

@@ -3,15 +3,14 @@ package database.plugin.backup;
 import java.util.LinkedList;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
+import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.ITerminal;
-import database.plugin.FormatterProvider;
 import database.plugin.Instance;
 import database.plugin.InstancePlugin;
 
 public class BackupService {
-	private LinkedList<Backup>	backups	= new LinkedList<Backup>();
+	private LinkedList<Backup>	backups	= new LinkedList<>();
 	private boolean				changes;
 
 	public void backupChangeAfter(Instance newState, InstancePlugin<?> instancePlugin) {
@@ -57,13 +56,13 @@ public class BackupService {
 		return changes;
 	}
 
-	public void restore(ITerminal terminal, PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+	public void restore(ITerminal terminal, PluginContainer pluginContainer) throws BadLocationException, InterruptedException {
 		if (backups.size() == 0) {
 			terminal.printLine("no command to cancel", StringType.SOLUTION, StringFormat.STANDARD);
 			terminal.waitForInput();
 		}
 		for (Backup backup : backups) {
-			backup.restore(terminal, pluginContainer, formatterProvider);
+			backup.restore(terminal, pluginContainer);
 		}
 	}
 

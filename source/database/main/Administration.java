@@ -3,27 +3,25 @@ package database.main;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.CancellationException;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.plugin.FormatterProvider;
 import database.plugin.Plugin;
 import database.plugin.backup.BackupService;
 
 public class Administration {
-	public void request(ITerminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer,
-						FormatterProvider formatterProvider) throws Exception {
+	public void request(ITerminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer) throws Exception {
 		while (true) {
-			inputRequestAdministration(terminal, backupService, writerReader, pluginContainer, formatterProvider);
+			inputRequestAdministration(terminal, backupService, writerReader, pluginContainer);
 		}
 	}
 
 	private void exit(	ITerminal terminal, BackupService backupService, WriterReader writerReader,
-						PluginContainer pluginContainer) throws InterruptedException, BadLocationException, TransformerException, ParserConfigurationException {
+						PluginContainer pluginContainer)	throws InterruptedException, BadLocationException, TransformerException, ParserConfigurationException,
+															UserCancelException {
 		if (backupService.isChanged()) {
 			String command;
 			command = terminal.request("there are unsaved changes - exit", "(y|n|s)");
@@ -40,15 +38,14 @@ public class Administration {
 		}
 	}
 
-	private void inputRequestAdministration(ITerminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer,
-											FormatterProvider formatterProvider) throws Exception {
+	private void inputRequestAdministration(ITerminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer) throws Exception {
 		String command = null;
 		try {
 			command = terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx(new ArrayList<>(Arrays.asList(new String[] { "cancel", "exit", "save" }))), 2);
 			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx(new ArrayList<String>()))) {
 				Plugin plugin = pluginContainer.getPlugin(command);
 				command = terminal.request(command, plugin.getCommandTags(plugin.getClass()));
-				plugin.conduct(command, terminal, backupService, pluginContainer, writerReader, formatterProvider);
+				plugin.conduct(command, terminal, backupService, pluginContainer, writerReader);
 			}
 			else if (command.matches("(exit|cancel|save)")) {
 				switch (command) {
@@ -60,14 +57,14 @@ public class Administration {
 						exit(terminal, backupService, writerReader, pluginContainer);
 						break;
 					case "cancel":
-						backupService.restore(terminal, pluginContainer, formatterProvider);
+						backupService.restore(terminal, pluginContainer);
 						break;
 				}
 			}
 		}
-		catch (InvocationTargetException | CancellationException e) {
-			if (e.getClass().equals(CancellationException.class)	|| e.getCause().getClass().equals(CancellationException.class)
-				|| e.getCause().getCause().getClass().equals(CancellationException.class)) {
+		catch (InvocationTargetException | UserCancelException e) {
+			if (e.getClass().equals(UserCancelException.class)	|| e.getCause().getClass().equals(UserCancelException.class)
+				|| e.getCause().getCause().getClass().equals(UserCancelException.class)) {
 				return;
 			}
 			else {

@@ -7,7 +7,6 @@ import database.main.userInterface.Completeable;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.plugin.FormatterProvider;
 
 public class TestTerminal implements ITerminal {
 	public String s;
@@ -51,7 +50,7 @@ public class TestTerminal implements ITerminal {
 		return null;
 	}
 
-	@Override public void update(PluginContainer pluginContainer, FormatterProvider formatterProvider) throws BadLocationException, InterruptedException {
+	@Override public void update(PluginContainer pluginContainer) throws BadLocationException, InterruptedException {
 		// TODO Auto-generated method stub
 	}
 

@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.text.BadLocationException;
+import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.plugin.backup.BackupService;
 import database.plugin.event.Event;
@@ -23,7 +24,7 @@ public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppo
 		}
 	}
 
-	@Override public void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException {
+	@Override public void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException, UserCancelException {
 		String name;
 		String temp = "";
 		LocalTime begin;
@@ -50,7 +51,7 @@ public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppo
 	}
 
 	@Override public List<Event> getEvents(LocalDate date) {
-		List<Event> eventList = new LinkedList<Event>();
+		List<Event> eventList = new LinkedList<>();
 		for (MultiDayAppointment event : getIterable()) {
 			if ((event.date.isBefore(date) || event.date.isEqual(date)) && (event.lastDay.isAfter(date) || event.lastDay.isEqual(date))) {
 				eventList.add(new Appointment(event.name, date, null, null));
