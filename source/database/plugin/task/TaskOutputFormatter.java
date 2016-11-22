@@ -15,8 +15,8 @@ public class TaskOutputFormatter implements OutputFormatter<Task> {
 	}
 
 	protected List<String> formatOutput(Iterable<Task> iterable) {
-		List<String> output = new ArrayList<String>();
-		List<String> categories = new ArrayList<String>();
+		List<String> output = new ArrayList<>();
+		List<String> categories = new ArrayList<>();
 		String blanks;
 		int longestCategory = 0;
 		for (Task task : iterable) {

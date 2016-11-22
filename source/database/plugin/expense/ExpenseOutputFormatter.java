@@ -46,16 +46,16 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 					totalValue += expense.value;
 				}
 			}
+			LocalDate referenceDate = LocalDate.now().minusDays(LocalDate.now().getDayOfMonth());
+			long monthsCount = ChronoUnit.MONTHS.between(first.date, referenceDate) + 1;
+			long daysCount = ChronoUnit.DAYS.between(first.date, referenceDate) + 1;
 			if (totalValue == 0) {
 				string = "not enough data";
 			}
 			else {
-				monthAverage = " - month : " + format.format(totalValue / ChronoUnit.MONTHS.between(first.date, LocalDate.now())) + "€";
-				dayAverage = " - day   : " + format.format(totalValue / ChronoUnit.DAYS.between(first.date, LocalDate.now())) + "€";
-				yearAverage = " - year  : "	+ format.format((totalValue / ChronoUnit.MONTHS.between(first.date, LocalDate.now()) * 12
-																+ totalValue / ChronoUnit.DAYS.between(first.date, LocalDate.now()) * 365.25)
-															/ 2)
-								+ "€";
+				monthAverage = " - month : " + format.format(totalValue / monthsCount) + "€";
+				dayAverage = " - day   : " + format.format(totalValue / daysCount) + "€";
+				yearAverage = " - year : " + format.format((totalValue / monthsCount * 12 + totalValue / daysCount * 365.25) / 2) + "€";
 				while (yearAverage.length() > monthAverage.length()) {
 					monthAverage = monthAverage.replaceFirst(": ", ":  ");
 				}

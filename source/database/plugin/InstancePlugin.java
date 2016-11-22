@@ -20,9 +20,9 @@ import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 
 public abstract class InstancePlugin<T extends Instance> extends Plugin {
-	protected LinkedList<T>			list;
-	protected OutputFormatter<T>	formatter;
 	public Class<T>					type;
+	protected OutputFormatter<T>	formatter;
+	protected LinkedList<T>			list;
 
 	public InstancePlugin(String identity, OutputFormatter<T> formatter, Class<T> type) {
 		super(identity);

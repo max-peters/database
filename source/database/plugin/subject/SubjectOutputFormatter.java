@@ -49,7 +49,7 @@ public class SubjectOutputFormatter implements OutputFormatter<Subject> {
 				for (int i = subject.name.length(); i < nameLength + 4; i++) {
 					builder.append(" ");
 				}
-				builder.append("["+ String.format("%" + allGradesLength + "s", oneDecimalPlace.format(subject.score)) + "/"
+				builder.append("["	+ String.format("%" + allGradesLength + "s", oneDecimalPlace.format(subject.score)) + "/"
 								+ String.format("%" + allGradesTotalLength + "s", oneDecimalPlace.format(subject.maxPoints)) + " - "
 								+ String.format("%" + percentLength + "s", twoDecimalPlace.format(subject.calcPercent())) + "%" + "]" + " in ["
 								+ String.format("%" + counterLength + "s", subject.counter).replace(' ', '0') + "] ");

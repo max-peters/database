@@ -21,28 +21,28 @@ public class Terminal implements ITerminal {
 		stringUtility = new StringUtility();
 	}
 
-	public void blockInput() {
+	@Override public void blockInput() {
 		graphicalUserInterface.blockInput();
 	}
 
-	public int checkRequest(Collection<String> collection) throws InterruptedException, BadLocationException {
+	@Override public int checkRequest(Collection<String> collection) throws InterruptedException, BadLocationException {
 		return graphicalUserInterface.checkRequest(collection);
 	}
 
-	public void collectLine(Object output, StringFormat stringFormat, String headline) {
+	@Override public void collectLine(Object output, StringFormat stringFormat, String headline) {
 		collectedLines.put(new OutputInformation(output, StringType.SOLUTION, stringFormat), headline);
 	}
 
-	public void errorMessage() throws BadLocationException, InterruptedException {
+	@Override public void errorMessage() throws BadLocationException, InterruptedException {
 		graphicalUserInterface.printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
 		graphicalUserInterface.waitForInput();
 	}
 
-	public void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
+	@Override public void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
 		graphicalUserInterface.getLineOfCharacters(character, stringType);
 	}
 
-	public void printCollectedLines() throws InterruptedException, BadLocationException {
+	@Override public void printCollectedLines() throws InterruptedException, BadLocationException {
 		if (!collectedLines.isEmpty()) {
 			getLineOfCharacters('-', StringType.SOLUTION);
 			List<String> list = new ArrayList<>();
@@ -64,12 +64,12 @@ public class Terminal implements ITerminal {
 		}
 	}
 
-	public synchronized void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
+	@Override public synchronized void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 
-	public String request(String printOut, String regex, String inputText, Completeable completeable, int levenshteinDistance)	throws InterruptedException, BadLocationException,
-																																UserCancelException {
+	@Override public String request(String printOut, String regex, String inputText, Completeable completeable,
+									int levenshteinDistance) throws InterruptedException, BadLocationException, UserCancelException {
 		boolean request = true;
 		String result = null;
 		String input = null;
@@ -113,7 +113,7 @@ public class Terminal implements ITerminal {
 		return result;
 	}
 
-	public void update(PluginContainer pluginContainer) throws BadLocationException, InterruptedException {
+	@Override public void update(PluginContainer pluginContainer) throws BadLocationException, InterruptedException {
 		graphicalUserInterface.clearOutput();
 		graphicalUserInterface.blockInput();
 		pluginContainer.initialOutput(this);
@@ -121,7 +121,7 @@ public class Terminal implements ITerminal {
 		printCollectedLines();
 	}
 
-	public void waitForInput() throws InterruptedException {
+	@Override public void waitForInput() throws InterruptedException {
 		graphicalUserInterface.waitForInput();
 	}
 }

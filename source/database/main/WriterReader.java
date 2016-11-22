@@ -16,9 +16,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
-import database.main.userInterface.ITerminal;
 import database.plugin.Plugin;
 
 public class WriterReader {
