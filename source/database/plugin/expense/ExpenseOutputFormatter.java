@@ -130,7 +130,7 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 			builder.append("-");
 		}
 		builder.append(System.getProperty("line.separator"));
-		for (int i = 0; i < name.length(); i++) {
+		for (int i = 0; i < longestName + 7 + longestValue - formatValue.format(totalSum).length(); i++) {
 			builder.append(" ");
 		}
 		builder.append(formatValue.format(totalSum) + "€");
