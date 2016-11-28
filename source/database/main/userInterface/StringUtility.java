@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Collection;
 import java.util.List;
 
 public class StringUtility {
@@ -37,6 +38,33 @@ public class StringUtility {
 			sb.append(System.lineSeparator());
 		}
 		return sb.toString();
+	}
+
+	public int findString(int index, char firstLetter, Collection<String> collection) {
+		int i = 1;
+		for (String string : collection) {
+			if (i > index && Character.toUpperCase(string.charAt(0)) == Character.toUpperCase(firstLetter)) {
+				return i;
+			}
+			i++;
+		}
+		return index;
+	}
+
+	public String formatCheckLine(Collection<String> collection, int currentLine) {
+		String output = "";
+		int counter = 1;
+		for (String string : collection) {
+			if (counter == currentLine) {
+				output += " \u2611 ";
+			}
+			else {
+				output += " \u2610 ";
+			}
+			output += string + System.getProperty("line.separator");
+			counter++;
+		}
+		return output;
 	}
 
 	public String getElementWithDistance(String input, String[] splitResult, int levenshteinDistance) {

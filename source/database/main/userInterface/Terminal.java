@@ -26,7 +26,41 @@ public class Terminal implements ITerminal {
 	}
 
 	@Override public int checkRequest(Collection<String> collection) throws InterruptedException, BadLocationException {
-		return graphicalUserInterface.checkRequest(collection);
+		StringUtility su = new StringUtility();
+		int position = -1;
+		int current = 0;
+		int lastKey = 0;
+		if (collection.isEmpty()) {
+			printLine("check:", StringType.REQUEST, StringFormat.ITALIC);
+			printLine("no entries", StringType.SOLUTION, StringFormat.STANDARD);
+			waitForInput();
+			return position;
+		}
+		blockInput();
+		while (lastKey != 10) {
+			printLine("check:", StringType.REQUEST, StringFormat.ITALIC);
+			printLine(su.formatCheckLine(collection, current), StringType.SOLUTION, StringFormat.STANDARD);
+			lastKey = graphicalUserInterface.waitAndReturnKeyInput();
+			if (lastKey == 40) {
+				if (!(current == collection.size())) {
+					current++;
+				}
+			}
+			else if (lastKey == 38) {
+				if (!(current == 0)) {
+					current--;
+				}
+			}
+			else if (lastKey != 10) {
+				int temp = su.findString(current, (char) lastKey, collection);
+				current = temp == current ? su.findString(0, (char) lastKey, collection) : temp;
+			}
+		}
+		if (current != 0) {
+			position = current - 1;
+		}
+		graphicalUserInterface.releaseInput();
+		return position;
 	}
 
 	@Override public void collectLine(Object output, StringFormat stringFormat, String headline) {
@@ -39,7 +73,11 @@ public class Terminal implements ITerminal {
 	}
 
 	@Override public void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
-		graphicalUserInterface.getLineOfCharacters(character, stringType);
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < graphicalUserInterface.getNumberOfCharsPerLine(character); i++) {
+			builder.append(character);
+		}
+		printLine(builder.toString(), stringType, StringFormat.STANDARD);
 	}
 
 	@Override public void printCollectedLines() throws InterruptedException, BadLocationException {
@@ -52,10 +90,10 @@ public class Terminal implements ITerminal {
 				}
 			}
 			for (String string : list) {
-				graphicalUserInterface.printLine(new OutputInformation(string, StringType.SOLUTION, StringFormat.BOLD));
+				graphicalUserInterface.printLine(string, StringType.SOLUTION, StringFormat.BOLD);
 				for (Entry<OutputInformation, String> entry : collectedLines.entrySet()) {
 					if (entry.getValue().equals(string)) {
-						graphicalUserInterface.printLine(entry.getKey());
+						graphicalUserInterface.printLine(entry.getKey().getOutput(), entry.getKey().getStringType(), entry.getKey().getStringFormat());
 					}
 				}
 			}
