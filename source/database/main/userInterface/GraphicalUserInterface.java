@@ -30,10 +30,14 @@ import javax.swing.text.StyledDocument;
 
 public class GraphicalUserInterface {
 	private int					currentLineNumber;
+	private DocumentListener	documentListener;
 	private Font				font;
 	private JFrame				frame;
+	private int					frameHeight;
+	private int					frameWidht;
 	private Image				icon;
 	private JTextField			input;
+	private KeyListener			keyListener;
 	private JTextPane			output;
 	private JPanel				panel;
 	private int					pressedKey;
@@ -43,11 +47,11 @@ public class GraphicalUserInterface {
 	private Object				synchronizerKeyPressed;
 	private JTextField			time;
 	private Timer				timer;
-	private DocumentListener	documentListener;
-	private KeyListener			keyListener;
 	private TimerTask			timerTask;
 
 	public GraphicalUserInterface() {
+		frameHeight = 530;
+		frameWidht = 800;
 		frame = new JFrame("Database");
 		input = new JTextField();
 		output = new JTextPane();
@@ -148,8 +152,8 @@ public class GraphicalUserInterface {
 		for (StringFormat format : StringFormat.values()) {
 			format.initialise(styledDocument);
 		}
-		frame.setSize(800, 530);
-		input.setSize(770, input.getFontMetrics(font).getHeight());
+		frame.setSize(frameWidht, frameHeight);
+		input.setSize(frameWidht - 30, input.getFontMetrics(font).getHeight());
 		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 	}
 
@@ -167,8 +171,20 @@ public class GraphicalUserInterface {
 		currentLineNumber = 0;
 	}
 
+	protected String getInputText() {
+		return input.getText();
+	}
+
+	protected int getLastKeyInput() {
+		return pressedKey;
+	}
+
 	protected int getNumberOfCharsPerLine(char character) {
 		return frame.getWidth() / output.getFontMetrics(font).charWidth(character);
+	}
+
+	protected boolean isScrollable() {
+		return input.getY() > frameHeight - 10;
 	}
 
 	protected void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
@@ -190,10 +206,6 @@ public class GraphicalUserInterface {
 		moveTextField(output.getText().contains(System.getProperty("line.separator")) ? output.getText().split(System.getProperty("line.separator")).length : 0);
 	}
 
-	protected String getInputText() {
-		return input.getText();
-	}
-
 	protected void releaseInput() {
 		input.setEditable(true);
 		input.setFocusable(true);
@@ -201,19 +213,16 @@ public class GraphicalUserInterface {
 		input.setCaretColor(Color.WHITE);
 	}
 
-	protected void setAndSelectInputText(String string, String selection) {
-		input.setText(string + selection);
-		input.select(string.length(), (string + selection).length());
+	protected void selectInputText(int first, int last) {
+		input.select(first, last);
 	}
 
-	protected int getLastKeyInput() {
-		return pressedKey;
+	protected void setInputCaretColor(Color color) {
+		input.setCaretColor(color);
 	}
 
-	protected void waitForKeyInput() throws InterruptedException {
-		synchronized (synchronizerKeyPressed) {
-			synchronizerKeyPressed.wait();
-		}
+	protected void setInputText(String inputText) {
+		input.setText(inputText);
 	}
 
 	protected void waitForDocumentInput() throws InterruptedException {
@@ -222,12 +231,10 @@ public class GraphicalUserInterface {
 		}
 	}
 
-	protected boolean isScrollable() {
-		return input.getY() > 520;
-	}
-
-	protected void setInputCaretColor(Color color) {
-		input.setCaretColor(color);
+	protected void waitForKeyInput() throws InterruptedException {
+		synchronized (synchronizerKeyPressed) {
+			synchronizerKeyPressed.wait();
+		}
 	}
 
 	private void moveTextField(int steps) {

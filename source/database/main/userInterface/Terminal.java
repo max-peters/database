@@ -115,12 +115,13 @@ public class Terminal implements ITerminal {
 		String input = null;
 		String[] splitResult = regex.substring(1, regex.length() - 1).split("\\|");
 		if (!inputText.isEmpty()) {
-			graphicalUserInterface.setAndSelectInputText("", inputText);
+			graphicalUserInterface.setInputText(inputText);
+			graphicalUserInterface.selectInputText(0, inputText.length());
 		}
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
 			input = completeable != null ? autocomplete(completeable) : readLine();
-			graphicalUserInterface.setAndSelectInputText("", "");
+			graphicalUserInterface.setInputText("");
 			if (input.equals("back")) {
 				throw new UserCancelException();
 			}
@@ -153,29 +154,6 @@ public class Terminal implements ITerminal {
 		return result;
 	}
 
-	private String readLine() throws InterruptedException {
-		int lastKey = 0;
-		while (lastKey != 10) {
-			graphicalUserInterface.waitForKeyInput();
-			lastKey = graphicalUserInterface.getLastKeyInput();
-		}
-		return graphicalUserInterface.getInputText();
-	}
-
-	private String autocomplete(Completeable completeable) throws InterruptedException {
-		String inputString = null;
-		String string;
-		int lastKey = 0;
-		while (lastKey != 10) {
-			graphicalUserInterface.waitForDocumentInput();
-			inputString = graphicalUserInterface.getInputText();
-			string = graphicalUserInterface.getInputText();
-			graphicalUserInterface.setAndSelectInputText(string, completeable.getNewInput(inputString));
-			lastKey = graphicalUserInterface.getLastKeyInput();
-		}
-		return inputString;
-	}
-
 	@Override public void update(PluginContainer pluginContainer) throws BadLocationException, InterruptedException {
 		graphicalUserInterface.clearOutput();
 		graphicalUserInterface.blockInput();
@@ -192,5 +170,31 @@ public class Terminal implements ITerminal {
 		}
 		while ((graphicalUserInterface.getLastKeyInput() == 38 || graphicalUserInterface.getLastKeyInput() == 40) && graphicalUserInterface.isScrollable());
 		graphicalUserInterface.setInputCaretColor(Color.WHITE);
+	}
+
+	private String autocomplete(Completeable completeable) throws InterruptedException {
+		String inputString = null;
+		String inputText;
+		String selection;
+		int lastKey = 0;
+		while (lastKey != 10) {
+			graphicalUserInterface.waitForDocumentInput();
+			inputString = graphicalUserInterface.getInputText();
+			inputText = graphicalUserInterface.getInputText();
+			selection = completeable.getNewInput(inputString);
+			graphicalUserInterface.setInputText(inputText + selection);
+			graphicalUserInterface.selectInputText(inputText.length(), (inputText + selection).length());
+			lastKey = graphicalUserInterface.getLastKeyInput();
+		}
+		return inputString;
+	}
+
+	private String readLine() throws InterruptedException {
+		int lastKey = 0;
+		while (lastKey != 10) {
+			graphicalUserInterface.waitForKeyInput();
+			lastKey = graphicalUserInterface.getLastKeyInput();
+		}
+		return graphicalUserInterface.getInputText();
 	}
 }
