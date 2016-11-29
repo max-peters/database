@@ -157,26 +157,9 @@ public class GraphicalUserInterface {
 		frame.setVisible(visible);
 	}
 
-	protected String autocomplete(Completeable completeable) throws InterruptedException {
-		String inputString = null;
-		pressedKey = 0;
-		while (pressedKey != 10) {
-			synchronized (synchronizerKeyInput) {
-				synchronizerKeyInput.wait();
-			}
-			inputString = input.getText();
-			setInputText(completeable.getNewInput(inputString));
-		}
-		return inputString;
-	}
-
 	protected void blockInput() {
 		input.setEditable(false);
 		input.setCaretColor(Color.BLACK);
-	}
-
-	protected void clearInput() {
-		input.setText("");
 	}
 
 	protected void clearOutput() throws BadLocationException {
@@ -207,11 +190,7 @@ public class GraphicalUserInterface {
 		moveTextField(output.getText().contains(System.getProperty("line.separator")) ? output.getText().split(System.getProperty("line.separator")).length : 0);
 	}
 
-	protected String readLine() throws InterruptedException {
-		int lastKey = 0;
-		while (lastKey != 10) {
-			lastKey = waitAndReturnKeyInput();
-		}
+	protected String getInputText() {
 		return input.getText();
 	}
 
@@ -222,28 +201,33 @@ public class GraphicalUserInterface {
 		input.setCaretColor(Color.WHITE);
 	}
 
-	protected void setInputText(String string) {
-		String inputText = input.getText();
-		input.setText(inputText + string);
-		input.select(inputText.length(), (inputText + string).length());
+	protected void setAndSelectInputText(String string, String selection) {
+		input.setText(string + selection);
+		input.select(string.length(), (string + selection).length());
 	}
 
-	protected int waitAndReturnKeyInput() throws InterruptedException {
-		synchronized (synchronizerKeyPressed) {
-			synchronizerKeyPressed.wait();
-		}
+	protected int getLastKeyInput() {
 		return pressedKey;
 	}
 
-	protected void waitForInput() throws InterruptedException {
-		int lastKey = 0;
-		releaseInput();
-		input.setCaretColor(Color.BLACK);
-		do {
-			lastKey = waitAndReturnKeyInput();
+	protected void waitForKeyInput() throws InterruptedException {
+		synchronized (synchronizerKeyPressed) {
+			synchronizerKeyPressed.wait();
 		}
-		while ((lastKey == 38 || lastKey == 40) && input.getY() > 520);
-		input.setCaretColor(Color.WHITE);
+	}
+
+	protected void waitForDocumentInput() throws InterruptedException {
+		synchronized (synchronizerKeyInput) {
+			synchronizerKeyInput.wait();
+		}
+	}
+
+	protected boolean isScrollable() {
+		return input.getY() > 520;
+	}
+
+	protected void setInputCaretColor(Color color) {
+		input.setCaretColor(color);
 	}
 
 	private void moveTextField(int steps) {

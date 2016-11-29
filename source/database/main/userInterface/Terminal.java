@@ -1,5 +1,6 @@
 package database.main.userInterface;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -40,7 +41,8 @@ public class Terminal implements ITerminal {
 		while (lastKey != 10) {
 			printLine("check:", StringType.REQUEST, StringFormat.ITALIC);
 			printLine(su.formatCheckLine(collection, current), StringType.SOLUTION, StringFormat.STANDARD);
-			lastKey = graphicalUserInterface.waitAndReturnKeyInput();
+			graphicalUserInterface.waitForKeyInput();
+			lastKey = graphicalUserInterface.getLastKeyInput();
 			if (lastKey == 40) {
 				if (!(current == collection.size())) {
 					current++;
@@ -69,7 +71,7 @@ public class Terminal implements ITerminal {
 
 	@Override public void errorMessage() throws BadLocationException, InterruptedException {
 		graphicalUserInterface.printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
-		graphicalUserInterface.waitForInput();
+		waitForInput();
 	}
 
 	@Override public void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
@@ -102,7 +104,7 @@ public class Terminal implements ITerminal {
 		}
 	}
 
-	@Override public synchronized void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
+	@Override public void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 
@@ -113,12 +115,12 @@ public class Terminal implements ITerminal {
 		String input = null;
 		String[] splitResult = regex.substring(1, regex.length() - 1).split("\\|");
 		if (!inputText.isEmpty()) {
-			graphicalUserInterface.setInputText(inputText);
+			graphicalUserInterface.setAndSelectInputText("", inputText);
 		}
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
-			input = completeable != null ? graphicalUserInterface.autocomplete(completeable) : graphicalUserInterface.readLine();
-			graphicalUserInterface.clearInput();
+			input = completeable != null ? autocomplete(completeable) : readLine();
+			graphicalUserInterface.setAndSelectInputText("", "");
 			if (input.equals("back")) {
 				throw new UserCancelException();
 			}
@@ -151,6 +153,29 @@ public class Terminal implements ITerminal {
 		return result;
 	}
 
+	private String readLine() throws InterruptedException {
+		int lastKey = 0;
+		while (lastKey != 10) {
+			graphicalUserInterface.waitForKeyInput();
+			lastKey = graphicalUserInterface.getLastKeyInput();
+		}
+		return graphicalUserInterface.getInputText();
+	}
+
+	private String autocomplete(Completeable completeable) throws InterruptedException {
+		String inputString = null;
+		String string;
+		int lastKey = 0;
+		while (lastKey != 10) {
+			graphicalUserInterface.waitForDocumentInput();
+			inputString = graphicalUserInterface.getInputText();
+			string = graphicalUserInterface.getInputText();
+			graphicalUserInterface.setAndSelectInputText(string, completeable.getNewInput(inputString));
+			lastKey = graphicalUserInterface.getLastKeyInput();
+		}
+		return inputString;
+	}
+
 	@Override public void update(PluginContainer pluginContainer) throws BadLocationException, InterruptedException {
 		graphicalUserInterface.clearOutput();
 		graphicalUserInterface.blockInput();
@@ -160,6 +185,12 @@ public class Terminal implements ITerminal {
 	}
 
 	@Override public void waitForInput() throws InterruptedException {
-		graphicalUserInterface.waitForInput();
+		graphicalUserInterface.releaseInput();
+		graphicalUserInterface.setInputCaretColor(Color.BLACK);
+		do {
+			graphicalUserInterface.waitForKeyInput();
+		}
+		while ((graphicalUserInterface.getLastKeyInput() == 38 || graphicalUserInterface.getLastKeyInput() == 40) && graphicalUserInterface.isScrollable());
+		graphicalUserInterface.setInputCaretColor(Color.WHITE);
 	}
 }
