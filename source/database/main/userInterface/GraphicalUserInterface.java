@@ -221,6 +221,14 @@ public class GraphicalUserInterface {
 		input.setCaretColor(color);
 	}
 
+	protected int getInputCaretPosition() {
+		return input.getCaretPosition();
+	}
+
+	protected void setInputCaretPosition(int caretPosition) {
+		input.setCaretPosition(caretPosition);
+	}
+
 	protected void setInputText(String inputText) {
 		input.setText(inputText);
 	}

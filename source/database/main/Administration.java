@@ -64,7 +64,7 @@ public class Administration {
 		}
 		catch (InvocationTargetException | UserCancelException e) {
 			if (e.getClass().equals(UserCancelException.class)	|| e.getCause().getClass().equals(UserCancelException.class)
-				|| e.getCause().getCause().getClass().equals(UserCancelException.class)) {
+				|| (e.getCause().getCause() != null && e.getCause().getCause().getClass().equals(UserCancelException.class))) {
 				return;
 			}
 			else {
