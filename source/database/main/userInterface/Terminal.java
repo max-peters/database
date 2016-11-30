@@ -176,18 +176,22 @@ public class Terminal implements ITerminal {
 		String inputString = "";
 		String selection;
 		int inputCaretPosition;
+		graphicalUserInterface.addKeyListenerForAutocompletition();
 		while (true) {
 			graphicalUserInterface.waitForDocumentInput();
 			inputString = graphicalUserInterface.getInputText();
-			if (graphicalUserInterface.getLastKeyInput() == 10)
+			if (graphicalUserInterface.getLastKeyInput() == 10) {
 				break;
+			}
 			inputCaretPosition = graphicalUserInterface.getInputCaretPosition();
 			selection = completeable.getNewInput(inputString);
 			graphicalUserInterface.setInputText(inputString + selection);
 			graphicalUserInterface.selectInputText(inputString.length(), (inputString + selection).length());
-			if (selection.isEmpty() && !graphicalUserInterface.getInputText().isEmpty())
+			if (selection.isEmpty() && !graphicalUserInterface.getInputText().isEmpty()) {
 				graphicalUserInterface.setInputCaretPosition(inputCaretPosition + 1);
+			}
 		}
+		graphicalUserInterface.removeKeyListenerForAutocompletition();
 		return inputString;
 	}
 

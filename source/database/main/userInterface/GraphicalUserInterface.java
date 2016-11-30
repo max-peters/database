@@ -38,6 +38,7 @@ public class GraphicalUserInterface {
 	private Image				icon;
 	private JTextField			input;
 	private KeyListener			keyListener;
+	private KeyListener			keyListenerAutocompletition;
 	private JTextPane			output;
 	private JPanel				panel;
 	private int					pressedKey;
@@ -76,16 +77,24 @@ public class GraphicalUserInterface {
 		keyListener = new KeyListener() {
 			@Override public void keyPressed(KeyEvent e) {
 				pressedKey = e.getExtendedKeyCode();
-				if (e.getExtendedKeyCode() == 8) {
-					input.replaceSelection("");
-				}
-				else if (e.getExtendedKeyCode() == 10) {
+				if (e.getExtendedKeyCode() == 10) {
 					synchronized (synchronizerKeyInput) {
 						synchronizerKeyInput.notify();
 					}
 				}
 				synchronized (synchronizerKeyPressed) {
 					synchronizerKeyPressed.notify();
+				}
+			}
+
+			@Override public void keyReleased(KeyEvent e) {}
+
+			@Override public void keyTyped(KeyEvent e) {}
+		};
+		keyListenerAutocompletition = new KeyListener() {
+			@Override public void keyPressed(KeyEvent e) {
+				if (e.getExtendedKeyCode() == 8) {
+					input.replaceSelection("");
 				}
 			}
 
@@ -100,6 +109,10 @@ public class GraphicalUserInterface {
 				time.setText(dateFormat.format(Calendar.getInstance().getTime()) + " " + timeFormat.format(Calendar.getInstance().getTime()));
 			}
 		};
+	}
+
+	public void addKeyListenerForAutocompletition() {
+		input.addKeyListener(keyListenerAutocompletition);
 	}
 
 	public void initialise() throws FontFormatException, IOException {
@@ -157,6 +170,10 @@ public class GraphicalUserInterface {
 		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 	}
 
+	public void removeKeyListenerForAutocompletition() {
+		input.removeKeyListener(keyListenerAutocompletition);
+	}
+
 	public void setVisible(boolean visible) {
 		frame.setVisible(visible);
 	}
@@ -169,6 +186,10 @@ public class GraphicalUserInterface {
 	protected void clearOutput() throws BadLocationException {
 		output.setText("");
 		currentLineNumber = 0;
+	}
+
+	protected int getInputCaretPosition() {
+		return input.getCaretPosition();
 	}
 
 	protected String getInputText() {
@@ -219,10 +240,6 @@ public class GraphicalUserInterface {
 
 	protected void setInputCaretColor(Color color) {
 		input.setCaretColor(color);
-	}
-
-	protected int getInputCaretPosition() {
-		return input.getCaretPosition();
 	}
 
 	protected void setInputCaretPosition(int caretPosition) {
