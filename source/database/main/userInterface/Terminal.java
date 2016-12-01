@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.UserCancelException;
+import database.main.autocompletition.Autocomplete;
 
 public class Terminal implements ITerminal {
 	private Map<OutputInformation, String>	collectedLines;
@@ -108,7 +109,7 @@ public class Terminal implements ITerminal {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 
-	@Override public String request(String printOut, String regex, String inputText, Completeable completeable,
+	@Override public String request(String printOut, String regex, String inputText, Autocomplete autocomplete,
 									int levenshteinDistance) throws InterruptedException, BadLocationException, UserCancelException {
 		boolean request = true;
 		String result = null;
@@ -120,7 +121,7 @@ public class Terminal implements ITerminal {
 		}
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
-			input = completeable != null ? autocomplete(completeable) : readLine();
+			input = autocomplete != null ? autocomplete(autocomplete) : readLine();
 			graphicalUserInterface.setInputText("");
 			if (input.equals("back")) {
 				throw new UserCancelException();
@@ -172,7 +173,7 @@ public class Terminal implements ITerminal {
 		graphicalUserInterface.setInputCaretColor(Color.WHITE);
 	}
 
-	private String autocomplete(Completeable completeable) throws InterruptedException {
+	private String autocomplete(Autocomplete autocomplete) throws InterruptedException {
 		String inputString = "";
 		String selection;
 		int inputCaretPosition;
@@ -184,7 +185,7 @@ public class Terminal implements ITerminal {
 				break;
 			}
 			inputCaretPosition = graphicalUserInterface.getInputCaretPosition();
-			selection = completeable.getNewInput(inputString);
+			selection = autocomplete.getMostUsedString(inputString, "");
 			graphicalUserInterface.setInputText(inputString + selection);
 			graphicalUserInterface.selectInputText(inputString.length(), (inputString + selection).length());
 			if (selection.isEmpty() && !graphicalUserInterface.getInputText().isEmpty()) {

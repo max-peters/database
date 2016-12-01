@@ -1,11 +1,10 @@
 package database.main;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import database.main.autocompletition.Autocomplete;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
@@ -14,8 +13,10 @@ import database.plugin.backup.BackupService;
 
 public class Administration {
 	public void request(ITerminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer) throws Exception {
+		Autocomplete autocomplete = new Autocomplete(pluginContainer.getPluginNameTagsAsRegesx(new String[] { "cancel", "exit", "save" }));
+		autocomplete.add("expense");
 		while (true) {
-			inputRequestAdministration(terminal, backupService, writerReader, pluginContainer);
+			inputRequestAdministration(terminal, backupService, writerReader, pluginContainer, autocomplete);
 		}
 	}
 
@@ -38,13 +39,15 @@ public class Administration {
 		}
 	}
 
-	private void inputRequestAdministration(ITerminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer) throws Exception {
+	private void inputRequestAdministration(ITerminal terminal, BackupService backupService, WriterReader writerReader, PluginContainer pluginContainer,
+											Autocomplete autocomplete) throws Exception {
 		String command = null;
 		try {
-			command = terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx(new ArrayList<>(Arrays.asList(new String[] { "cancel", "exit", "save" }))), 2);
-			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx(new ArrayList<String>()))) {
+			command = terminal.request("command", pluginContainer.getPluginNameTagsAsRegesx(new String[] { "cancel", "exit", "save" }), autocomplete, 2);
+			if (command.matches(pluginContainer.getPluginNameTagsAsRegesx(new String[] {}))) {
 				Plugin plugin = pluginContainer.getPlugin(command);
-				command = terminal.request(command, plugin.getCommandTags(plugin.getClass()));
+				String regex = plugin.getCommandTags(plugin.getClass());
+				command = terminal.request(command, regex, new Autocomplete(regex));
 				plugin.conduct(command, terminal, backupService, pluginContainer, writerReader);
 			}
 			else if (command.matches("(exit|cancel|save)")) {

@@ -1,7 +1,0 @@
-income - aktion mensch check
-expense - mensa request // bei eingabe in vorderen wortteil springt curser an schluss
-accept similar strings for command request // string autocompletion
-event - termine über zeitraum // zugriff auf eventplugin in formatter
-utility - difference between dates and events and events and events
-increase interaction between plugins.. (show lol decay date in event, add task date and show as event)
-

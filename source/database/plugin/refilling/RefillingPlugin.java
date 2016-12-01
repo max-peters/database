@@ -31,7 +31,7 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 		Double refuelAmount = Double.valueOf(terminal.request("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?"));
 		Double cost = Double.valueOf(terminal.request("cost", "[0-9]{1,13}(\\.[0-9]*)?"));
 		ExpensePlugin expensePlugin = (ExpensePlugin) pluginContainer.getPlugin("expense");
-		String temp = terminal.request("date", "DATE");
+		String temp = terminal.request("date", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		Refilling refilling = new Refilling(distance, refuelAmount, cost, date);
 		Expense expense = new Expense("Tankstelle", "Fahrtkosten", refilling.cost, refilling.date);

@@ -7,7 +7,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,9 +24,6 @@ import database.plugin.Command;
 import database.plugin.OutputFormatter;
 
 public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
-	private Map<String, Integer>	categoryAmount	= new HashMap<>();
-	private Map<String, Integer>	nameAmount		= new HashMap<>();
-
 	@Override public String getInitialOutput(Iterable<Expense> iterable) {
 		return "not implemented";
 	}
@@ -178,10 +174,58 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 	}
 
 	@Command(tag = "all") public String printAll(Iterable<Expense> iterable) {
+		DecimalFormat format = new DecimalFormat("#0.00");
+		int nameLength = 0;
+		int valueLength = 0;
+		int blankCounter;
+		String blanks;
+		String toReturn = "";
+		ArrayList<String> categories = new ArrayList<>();
+		Map<String, Double> names;
 		if (!iterable.iterator().hasNext()) {
 			return "no entries";
 		}
-		return outputAll(iterable);
+		for (Expense expense : iterable) {
+			if (!categories.contains(expense.category)) {
+				categories.add(expense.category);
+			}
+			if (expense.name.length() > nameLength) {
+				nameLength = expense.name.length();
+			}
+			if (format.format(expense.value).length() > valueLength) {
+				valueLength = format.format(expense.value).length();
+			}
+		}
+		Collections.sort(categories);
+		for (String current : categories) {
+			toReturn = toReturn + current + ":" + System.getProperty("line.separator");
+			names = new LinkedHashMap<>();
+			for (Expense expense : iterable) {
+				if (expense.category.equals(current)) {
+					names.put(expense.name, 0.0);
+				}
+			}
+			for (String name : names.keySet()) {
+				for (Expense expense : iterable) {
+					if (expense.category.equals(current) && expense.name.equals(name)) {
+						names.replace(name, names.get(name) + expense.value);
+					}
+				}
+			}
+			Map<String, Double> map = new LinkedHashMap<>();
+			Stream<Map.Entry<String, Double>> st = names.entrySet().stream();
+			st.sorted(Map.Entry.comparingByValue()).forEachOrdered(e -> map.put(e.getKey(), e.getValue()));
+			for (Entry<String, Double> entry : map.entrySet()) {
+				blanks = "       ";
+				toReturn = toReturn + "  - " + entry.getKey();
+				blankCounter = nameLength - entry.getKey().length() + 1 + valueLength - format.format(entry.getValue()).length();
+				for (int i = 0; i < blankCounter; i++) {
+					blanks = blanks + " ";
+				}
+				toReturn = toReturn + blanks + format.format(entry.getValue()) + "€" + System.getProperty("line.separator");
+			}
+		}
+		return toReturn;
 	}
 
 	@Command(tag = "month") public String printCurrent(Iterable<Expense> iterable, ITerminal terminal) throws InterruptedException, BadLocationException, UserCancelException {
@@ -228,131 +272,5 @@ public class ExpenseOutputFormatter implements OutputFormatter<Expense> {
 		}
 		terminal.printLine("show", StringType.REQUEST, StringFormat.ITALIC);
 		return builder.toString();
-	}
-
-	protected void addExpense(Expense expense) {
-		if (!categoryAmount.containsKey(expense.category)) {
-			categoryAmount.put(expense.category, 1);
-		}
-		else {
-			categoryAmount.replace(expense.category, categoryAmount.get(expense.category) + 1);
-		}
-		if (!nameAmount.containsKey(expense.name)) {
-			nameAmount.put(expense.name, 1);
-		}
-		else {
-			nameAmount.replace(expense.name, nameAmount.get(expense.name) + 1);
-		}
-	}
-
-	protected String getCategoryByString(String name, Iterable<Expense> iterable) {
-		for (Expense expense : iterable) {
-			if (expense.category.equalsIgnoreCase(name)) {
-				return expense.category;
-			}
-		}
-		return name;
-	}
-
-	protected String getMostUsedCategoryByPrefixAndName(String prefix, String name, Iterable<Expense> iterable) {
-		String mostUsedCategory = "";
-		for (Entry<String, Integer> entry : categoryAmount.entrySet()) {
-			if (categoryContainsName(entry.getKey(), name, iterable)) {
-				if (entry.getKey().toLowerCase().startsWith(prefix.toLowerCase())
-					&& (categoryAmount.get(mostUsedCategory) == null || entry.getValue() > categoryAmount.get(mostUsedCategory))) {
-					mostUsedCategory = entry.getKey();
-				}
-			}
-		}
-		return !nameExists(name, iterable) && prefix.isEmpty() ? "" : mostUsedCategory.isEmpty() ? "" : mostUsedCategory.substring(prefix.length());
-	}
-
-	protected String getMostUsedNameByPrefix(String prefix, Iterable<Expense> iterable) {
-		String mostUsedName = "";
-		for (Entry<String, Integer> entry : nameAmount.entrySet()) {
-			if (entry.getKey().toLowerCase().startsWith(prefix.toLowerCase()) && (nameAmount.get(mostUsedName) == null || entry.getValue() > nameAmount.get(mostUsedName))) {
-				mostUsedName = entry.getKey();
-			}
-		}
-		return prefix.isEmpty() ? "" : mostUsedName.isEmpty() ? "" : mostUsedName.substring(prefix.length());
-	}
-
-	protected String getNameByString(String name, Iterable<Expense> iterable) {
-		for (Expense expense : iterable) {
-			if (expense.name.equalsIgnoreCase(name)) {
-				return expense.name;
-			}
-		}
-		return name;
-	}
-
-	private boolean categoryContainsName(String category, String name, Iterable<Expense> iterable) {
-		for (Expense expense : iterable) {
-			if (expense.category.equals(category) && expense.name.equals(name)) {
-				return true;
-			}
-		}
-		return !nameExists(name, iterable);
-	}
-
-	private boolean nameExists(String name, Iterable<Expense> iterable) {
-		for (Expense expense : iterable) {
-			if (expense.name.equals(name)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private String outputAll(Iterable<Expense> iterable) {
-		DecimalFormat format = new DecimalFormat("#0.00");
-		int nameLength = 0;
-		int valueLength = 0;
-		int blankCounter;
-		String blanks;
-		String toReturn = "";
-		ArrayList<String> categories = new ArrayList<>();
-		Map<String, Double> names;
-		for (Expense expense : iterable) {
-			if (!categories.contains(expense.category)) {
-				categories.add(expense.category);
-			}
-			if (expense.name.length() > nameLength) {
-				nameLength = expense.name.length();
-			}
-			if (format.format(expense.value).length() > valueLength) {
-				valueLength = format.format(expense.value).length();
-			}
-		}
-		Collections.sort(categories);
-		for (String current : categories) {
-			toReturn = toReturn + current + ":" + System.getProperty("line.separator");
-			names = new LinkedHashMap<>();
-			for (Expense expense : iterable) {
-				if (expense.category.equals(current)) {
-					names.put(expense.name, 0.0);
-				}
-			}
-			for (String name : names.keySet()) {
-				for (Expense expense : iterable) {
-					if (expense.category.equals(current) && expense.name.equals(name)) {
-						names.replace(name, names.get(name) + expense.value);
-					}
-				}
-			}
-			Map<String, Double> map = new LinkedHashMap<>();
-			Stream<Map.Entry<String, Double>> st = names.entrySet().stream();
-			st.sorted(Map.Entry.comparingByValue()).forEachOrdered(e -> map.put(e.getKey(), e.getValue()));
-			for (Entry<String, Double> entry : map.entrySet()) {
-				blanks = "       ";
-				toReturn = toReturn + "  - " + entry.getKey();
-				blankCounter = nameLength - entry.getKey().length() + 1 + valueLength - format.format(entry.getValue()).length();
-				for (int i = 0; i < blankCounter; i++) {
-					blanks = blanks + " ";
-				}
-				toReturn = toReturn + blanks + format.format(entry.getValue()) + "€" + System.getProperty("line.separator");
-			}
-		}
-		return toReturn;
 	}
 }

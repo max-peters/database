@@ -15,6 +15,7 @@ import org.w3c.dom.Node;
 import com.google.gson.Gson;
 import database.main.PluginContainer;
 import database.main.UserCancelException;
+import database.main.autocompletition.Autocomplete;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
@@ -81,7 +82,8 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 
 	@Command(tag = "show") public void show(ITerminal terminal)	throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException,
 																InvocationTargetException, UserCancelException {
-		String command = terminal.request("show", getCommandTags(formatter.getClass()));
+		String regex = getCommandTags(formatter.getClass());
+		String command = terminal.request("show", regex, new Autocomplete(regex));
 		for (Method method : formatter.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
 				List<Object> parameter = new ArrayList<>();
