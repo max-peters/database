@@ -8,6 +8,24 @@ import java.util.Collection;
 import java.util.List;
 
 public class StringUtility {
+	public String formatDouble(Double d, int decimalPlace) {
+		return String.format("%." + decimalPlace + "f", d);
+	}
+
+	public String postIncrementTo(String s, int i, char c) {
+		while (s.length() < i) {
+			s += c;
+		}
+		return s;
+	}
+
+	public String preIncrementTo(String s, int i, char c) {
+		while (s.length() < i) {
+			s = c + s;
+		}
+		return s;
+	}
+
 	public String arrangeInCollums(List<List<String>> list, int gapSize) {
 		int lenght = 0;
 		int size = 0;

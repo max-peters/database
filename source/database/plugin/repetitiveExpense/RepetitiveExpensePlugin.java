@@ -1,5 +1,6 @@
 package database.plugin.repetitiveExpense;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -15,6 +16,7 @@ import database.plugin.InstancePlugin;
 import database.plugin.backup.BackupService;
 import database.plugin.expense.Expense;
 import database.plugin.expense.ExpensePlugin;
+import database.services.database.IDatabase;
 
 public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 	public RepetitiveExpensePlugin() {
@@ -31,8 +33,9 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 		}
 	}
 
-	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService,
-													PluginContainer pluginContainer) throws InterruptedException, BadLocationException, NumberFormatException, UserCancelException {
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer)	throws InterruptedException,
+																																		BadLocationException, NumberFormatException,
+																																		UserCancelException, SQLException {
 		String name = terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		String category = terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
 		Double value = Double.valueOf(terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
@@ -51,7 +54,7 @@ public class RepetitiveExpensePlugin extends InstancePlugin<RepetitiveExpense> {
 		// nothing to display here
 	}
 
-	@Override public void show(ITerminal terminal) {
+	@Override public void show(ITerminal terminal, IDatabase database) {
 		// nothing to show here
 	}
 

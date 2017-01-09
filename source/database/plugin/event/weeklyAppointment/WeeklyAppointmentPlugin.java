@@ -1,5 +1,6 @@
 package database.plugin.event.weeklyAppointment;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -26,7 +27,7 @@ public class WeeklyAppointmentPlugin extends EventPluginExtension<WeeklyAppointm
 		super.add(weeklyAppointment);
 	}
 
-	@Override public void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException, UserCancelException {
+	@Override public void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		String name;
 		String temp = "";
 		LocalTime begin;

@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class Autocomplete {
+public class HashMapAutocomplete implements IAutocomplete {
 	private Map<Tupel<String, String>, Integer> map;
 
-	public Autocomplete() {
+	public HashMapAutocomplete() {
 		map = new HashMap<>();
 	}
 
-	public Autocomplete(String regex) {
+	public HashMapAutocomplete(String regex) {
 		map = new HashMap<>();
 		for (String s : regex.replace("(", "").replace(")", "").split("\\|")) {
 			add(s);

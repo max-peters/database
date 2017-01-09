@@ -1,5 +1,6 @@
 package database.plugin.event.multiDayAppointment;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -24,7 +25,7 @@ public class MultiDayAppointmentPlugin extends EventPluginExtension<MultiDayAppo
 		}
 	}
 
-	@Override public void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException, UserCancelException {
+	@Override public void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		String name;
 		String temp = "";
 		LocalTime begin;

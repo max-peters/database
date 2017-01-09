@@ -262,6 +262,10 @@ public class GraphicalUserInterface {
 		}
 	}
 
+	protected String getSelectedText() {
+		return input.getSelectedText() == null ? "" : input.getSelectedText();
+	}
+
 	private void moveTextField(int steps) {
 		input.setLocation(0, steps * input.getFontMetrics(font).getHeight());
 	}

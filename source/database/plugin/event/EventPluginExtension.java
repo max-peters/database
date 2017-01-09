@@ -1,5 +1,6 @@
 package database.plugin.event;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +10,7 @@ import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.plugin.InstancePlugin;
 import database.plugin.backup.BackupService;
+import database.services.database.IDatabase;
 
 public abstract class EventPluginExtension<T extends Event> extends InstancePlugin<T> {
 	public EventPluginExtension(String identity, Class<T> type) {
@@ -23,9 +25,9 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 		list.add(i, event);
 	}
 
-	public abstract void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException, UserCancelException;
+	public abstract void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException, UserCancelException, SQLException;
 
-	@Override public void display(ITerminal terminal, PluginContainer pluginContainer) throws InterruptedException, BadLocationException, UserCancelException {
+	@Override public void display(ITerminal terminal, PluginContainer pluginContainer) throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		super.display(terminal, pluginContainer);
 	}
 
@@ -43,11 +45,11 @@ public abstract class EventPluginExtension<T extends Event> extends InstancePlug
 		// no initial output here
 	}
 
-	@Override public void show(ITerminal terminal) {
+	@Override public void show(ITerminal terminal, IDatabase database) {
 		// nothing to show here
 	}
 
-	@Override public void store(PluginContainer pluginContainer, ITerminal terminal) throws BadLocationException, InterruptedException, UserCancelException {
+	@Override public void store(PluginContainer pluginContainer, ITerminal terminal) throws BadLocationException, InterruptedException, UserCancelException, SQLException {
 		super.store(pluginContainer, terminal);
 	}
 }

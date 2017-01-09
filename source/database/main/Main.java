@@ -20,6 +20,7 @@ import database.plugin.settings.Settings;
 import database.plugin.subject.SubjectPlugin;
 import database.plugin.task.TaskPlugin;
 import database.plugin.utility.UtilityPlugin;
+import database.services.database.MySQLDatabase;
 
 public class Main {
 	public static void main(String[] args) {
@@ -42,8 +43,9 @@ public class Main {
 			WriterReader writerReader = new WriterReader();
 			Administration administration = new Administration();
 			Settings settings = new Settings();
+			MySQLDatabase database = new MySQLDatabase();
 			SubjectPlugin subjectPlugin = new SubjectPlugin();
-			ExpensePlugin expensePlugin = new ExpensePlugin();
+			ExpensePlugin expensePlugin = new ExpensePlugin(database);
 			RepetitiveExpensePlugin repetitiveExpensePlugin = new RepetitiveExpensePlugin();
 			RefillingPlugin refillingPlugin = new RefillingPlugin();
 			TaskPlugin taskPlugin = new TaskPlugin();
@@ -75,7 +77,7 @@ public class Main {
 			guiThread.join();
 			graphicalUserInterface.setVisible(true);
 			terminal.update(pluginContainer);
-			administration.request(terminal, backupService, writerReader, pluginContainer);
+			administration.request(terminal, backupService, writerReader, pluginContainer, database);
 		}
 		catch (Throwable e) {
 			String stackTrace = "";

@@ -1,6 +1,7 @@
 package database.plugin.utility;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -25,7 +26,7 @@ public class UtilityPlugin extends Plugin {
 		super("utility");
 	}
 
-	@Command(tag = "days") public void calculateDayNumber(ITerminal terminal) throws BadLocationException, InterruptedException, UserCancelException {
+	@Command(tag = "days") public void calculateDayNumber(ITerminal terminal) throws BadLocationException, InterruptedException, UserCancelException, SQLException {
 		String temp = terminal.request("first date", "DATE");
 		LocalDate firstDate = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		temp = terminal.request("second date", "DATE");

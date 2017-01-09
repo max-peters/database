@@ -1,24 +1,27 @@
 package database.plugin.expense;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.UserCancelException;
-import database.main.autocompletition.Autocomplete;
+import database.main.autocompletition.IAutocomplete;
+import database.main.autocompletition.ResultSetAutocomplete;
 import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.backup.BackupService;
+import database.services.database.IDatabase;
 
 public class ExpensePlugin extends InstancePlugin<Expense> {
-	private Autocomplete	categoryAutocomplete;
-	private Autocomplete	nameAutocomplete;
+	private IAutocomplete	categoryAutocomplete;
+	private IAutocomplete	nameAutocomplete;
 
-	public ExpensePlugin() {
+	public ExpensePlugin(IDatabase database) throws SQLException {
 		super("expense", new ExpenseOutputFormatter(), Expense.class);
-		nameAutocomplete = new Autocomplete();
-		categoryAutocomplete = new Autocomplete();
+		nameAutocomplete = new ResultSetAutocomplete(database.execute(ExpenseSQLStatements.AUTOCOMPLETE_NAME));
+		categoryAutocomplete = new ResultSetAutocomplete(database.execute(ExpenseSQLStatements.AUTOCOMPLETE_CATEGORY));
 	}
 
 	@Override public void add(Expense expense) {
@@ -27,12 +30,10 @@ public class ExpensePlugin extends InstancePlugin<Expense> {
 			i--;
 		}
 		list.add(i, expense);
-		nameAutocomplete.add(expense.name);
-		categoryAutocomplete.add(expense.category, expense.name);
 	}
 
-	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer)	throws InterruptedException,
-																																		BadLocationException, UserCancelException {
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService,
+													PluginContainer pluginContainer) throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		String name = getNameByString(terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+", nameAutocomplete));
 		String category = getCategoryByString(terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+", categoryAutocomplete.getMostUsedString("", name), categoryAutocomplete));
 		Double value = Double.valueOf(terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));

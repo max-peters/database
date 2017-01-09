@@ -44,5 +44,5 @@ public abstract class Event extends Instance implements Comparable<Event> {
 
 	public abstract LocalDate updateYear();
 
-	protected abstract String getAdditionToOutput(int year);
+	protected abstract String getAdditionToOutput();
 }

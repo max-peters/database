@@ -1,6 +1,7 @@
 package database.main.userInterface;
 
 import java.awt.Color;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -10,7 +11,7 @@ import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
 import database.main.PluginContainer;
 import database.main.UserCancelException;
-import database.main.autocompletition.Autocomplete;
+import database.main.autocompletition.IAutocomplete;
 
 public class Terminal implements ITerminal {
 	private Map<OutputInformation, String>	collectedLines;
@@ -109,8 +110,8 @@ public class Terminal implements ITerminal {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 
-	@Override public String request(String printOut, String regex, String inputText, Autocomplete autocomplete,
-									int levenshteinDistance) throws InterruptedException, BadLocationException, UserCancelException {
+	@Override public String request(String printOut, String regex, String inputText, IAutocomplete autocomplete,
+									int levenshteinDistance) throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		boolean request = true;
 		String result = null;
 		String input = null;
@@ -123,10 +124,10 @@ public class Terminal implements ITerminal {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
 			input = autocomplete != null ? autocomplete(autocomplete) : readLine();
 			graphicalUserInterface.setInputText("");
-			if (input.equals("back")) {
+			if (input.equalsIgnoreCase("back")) {
 				throw new UserCancelException();
 			}
-			else if (input.equals("help")) {
+			else if (input.equalsIgnoreCase("help")) {
 				printLine(regex, StringType.SOLUTION, StringFormat.STANDARD);
 				waitForInput();
 			}
@@ -173,23 +174,26 @@ public class Terminal implements ITerminal {
 		graphicalUserInterface.setInputCaretColor(Color.WHITE);
 	}
 
-	private String autocomplete(Autocomplete autocomplete) throws InterruptedException {
+	private String autocomplete(IAutocomplete autocomplete) throws InterruptedException, SQLException {
 		String inputString = "";
 		String selection;
 		int inputCaretPosition;
 		graphicalUserInterface.addKeyListenerForAutocompletition();
 		while (true) {
-			graphicalUserInterface.waitForDocumentInput();
 			inputString = graphicalUserInterface.getInputText();
-			if (graphicalUserInterface.getLastKeyInput() == 10) {
-				break;
-			}
 			inputCaretPosition = graphicalUserInterface.getInputCaretPosition();
 			selection = autocomplete.getMostUsedString(inputString, "");
-			graphicalUserInterface.setInputText(inputString + selection);
-			graphicalUserInterface.selectInputText(inputString.length(), (inputString + selection).length());
-			if (selection.isEmpty() && !graphicalUserInterface.getInputText().isEmpty()) {
-				graphicalUserInterface.setInputCaretPosition(inputCaretPosition + 1);
+			if (inputString.isEmpty() || !graphicalUserInterface.getSelectedText().equals(inputString) || !selection.isEmpty()) {
+				graphicalUserInterface.setInputText(inputString + selection);
+				graphicalUserInterface.selectInputText(inputString.length(), (inputString + selection).length());
+				if (selection.isEmpty() && graphicalUserInterface.getInputText().length() > 1) {
+					graphicalUserInterface.setInputCaretPosition(inputCaretPosition + 1);
+				}
+			}
+			graphicalUserInterface.waitForDocumentInput();
+			if (graphicalUserInterface.getLastKeyInput() == 10) {
+				inputString = graphicalUserInterface.getInputText();
+				break;
 			}
 		}
 		graphicalUserInterface.removeKeyListenerForAutocompletition();

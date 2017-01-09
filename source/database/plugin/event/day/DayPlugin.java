@@ -1,5 +1,6 @@
 package database.plugin.event.day;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
@@ -13,7 +14,8 @@ public class DayPlugin extends EventPluginExtension<Day> {
 		super("day", Day.class);
 	}
 
-	@Override public void createRequest(ITerminal terminal, BackupService backupService) throws InterruptedException, BadLocationException, UserCancelException {
+	@Override public void createRequest(ITerminal terminal, BackupService backupService)	throws InterruptedException, BadLocationException, UserCancelException,
+																							SQLException {
 		String name = terminal.request("name", ".+");
 		String temp = terminal.request("date", "DATE");
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));

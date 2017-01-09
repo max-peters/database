@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.plugin.backup.BackupService;
 import database.plugin.event.EventPluginExtension;
+import database.services.database.MySQLDatabase;
 
 public class HolidayPlugin extends EventPluginExtension<Holiday> {
 	private List<String> lines = new ArrayList<>();
@@ -92,5 +94,17 @@ public class HolidayPlugin extends EventPluginExtension<Holiday> {
 				}
 			}
 		}
+	}
+
+	@Override public void add(Holiday event) {
+		System.out.println(event.name);
+		try {
+			MySQLDatabase.add(event);
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		super.add(event);
 	}
 }

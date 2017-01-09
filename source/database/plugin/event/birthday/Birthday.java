@@ -10,7 +10,8 @@ public class Birthday extends Event {
 
 	@Override public LocalDate updateYear() {
 		LocalDate currentDate = LocalDate.now();
-		if (currentDate.getMonthValue() > date.getMonthValue() || currentDate.getMonthValue() == date.getMonthValue() && currentDate.getDayOfMonth() > date.getDayOfMonth()) {
+		if (currentDate.getMonthValue() > date.getMonthValue()
+			|| currentDate.getMonthValue() == date.getMonthValue() && currentDate.getDayOfMonth() > date.getDayOfMonth()) {
 			return date.withYear(currentDate.getYear() + 1);
 		}
 		else {
@@ -18,11 +19,7 @@ public class Birthday extends Event {
 		}
 	}
 
-	@Override protected String getAdditionToOutput(int year) {
-		return "[" + getAge(year) + "]";
-	}
-
-	private int getAge(int year) {
-		return year - date.getYear();
+	@Override protected String getAdditionToOutput() {
+		return "[" + (updateYear().getYear() - this.date.getYear()) + "]";
 	}
 }

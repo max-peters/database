@@ -1,5 +1,6 @@
 package database.plugin.refilling;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
@@ -25,8 +26,9 @@ public class RefillingPlugin extends InstancePlugin<Refilling> {
 		list.add(i, refilling);
 	}
 
-	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService,
-													PluginContainer pluginContainer) throws InterruptedException, BadLocationException, NumberFormatException, UserCancelException {
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer)	throws InterruptedException,
+																																		BadLocationException, NumberFormatException,
+																																		UserCancelException, SQLException {
 		Double distance = Double.valueOf(terminal.request("distance", "[0-9]{1,13}(\\.[0-9]*)?"));
 		Double refuelAmount = Double.valueOf(terminal.request("refuelAmount", "[0-9]{1,13}(\\.[0-9]*)?"));
 		Double cost = Double.valueOf(terminal.request("cost", "[0-9]{1,13}(\\.[0-9]*)?"));

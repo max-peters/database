@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.security.InvalidParameterException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +18,7 @@ import database.main.UserCancelException;
 import database.main.WriterReader;
 import database.main.userInterface.ITerminal;
 import database.plugin.backup.BackupService;
+import database.services.database.IDatabase;
 
 public abstract class Plugin {
 	public boolean	display;
@@ -26,8 +28,8 @@ public abstract class Plugin {
 		this.identity = identity;
 	}
 
-	public void conduct(String command, ITerminal terminal, BackupService backupService, PluginContainer pluginContainer,
-						WriterReader writerReader) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void conduct(String command, ITerminal terminal, BackupService backupService, PluginContainer pluginContainer, WriterReader writerReader,
+						IDatabase database) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		for (Method method : this.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class)) {
 				if (method.getAnnotation(Command.class).tag().equals(command)) {
@@ -45,6 +47,9 @@ public abstract class Plugin {
 						else if (p.getType().equals(WriterReader.class)) {
 							parameter.add(writerReader);
 						}
+						else if (p.getType().equals(IDatabase.class)) {
+							parameter.add(database);
+						}
 						else {
 							throw new InvalidParameterException();
 						}
@@ -56,7 +61,8 @@ public abstract class Plugin {
 		}
 	}
 
-	@Command(tag = "display") public void display(ITerminal terminal, PluginContainer pluginContainer) throws InterruptedException, BadLocationException, UserCancelException {
+	@Command(tag = "display") public void display(ITerminal terminal, PluginContainer pluginContainer)	throws InterruptedException, BadLocationException, UserCancelException,
+																										SQLException {
 		display = Boolean.valueOf(terminal.request("display", "(true|false)"));
 		terminal.update(pluginContainer);
 	}

@@ -3,6 +3,8 @@ package database.plugin;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.security.InvalidParameterException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,10 +17,11 @@ import org.w3c.dom.Node;
 import com.google.gson.Gson;
 import database.main.PluginContainer;
 import database.main.UserCancelException;
-import database.main.autocompletition.Autocomplete;
+import database.main.autocompletition.HashMapAutocomplete;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
+import database.services.database.IDatabase;
 
 public abstract class InstancePlugin<T extends Instance> extends Plugin {
 	public Class<T>					type;
@@ -80,17 +83,25 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		list.remove(toRemove);
 	}
 
-	@Command(tag = "show") public void show(ITerminal terminal)	throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException,
-																InvocationTargetException, UserCancelException {
+	@Command(tag = "show") public void show(ITerminal terminal, IDatabase database)	throws InterruptedException, BadLocationException, IllegalAccessException,
+																					IllegalArgumentException, InvocationTargetException, UserCancelException, SQLException {
 		String regex = getCommandTags(formatter.getClass());
-		String command = terminal.request("show", regex, new Autocomplete(regex));
+		String command = terminal.request("show", regex, new HashMapAutocomplete(regex));
 		for (Method method : formatter.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && method.getAnnotation(Command.class).tag().equals(command)) {
 				List<Object> parameter = new ArrayList<>();
-				parameter.add(getIterable());
 				for (Parameter p : method.getParameters()) {
 					if (p.getType().equals(ITerminal.class)) {
 						parameter.add(terminal);
+					}
+					else if (p.getType().equals(IDatabase.class)) {
+						parameter.add(database);
+					}
+					else if (p.getType().equals(Iterable.class)) {
+						parameter.add(getIterable());
+					}
+					else {
+						throw new InvalidParameterException();
 					}
 				}
 				Object output = method.invoke(formatter, parameter.toArray());
@@ -101,7 +112,8 @@ public abstract class InstancePlugin<T extends Instance> extends Plugin {
 		}
 	}
 
-	@Command(tag = "store") public void store(PluginContainer pluginContainer, ITerminal terminal) throws BadLocationException, InterruptedException, UserCancelException {
+	@Command(tag = "store") public void store(PluginContainer pluginContainer, ITerminal terminal)	throws BadLocationException, InterruptedException, UserCancelException,
+																									SQLException {
 		if (Boolean.valueOf(terminal.request("do you want to store all entries", "(true|false)"))) {
 			pluginContainer.getStorage().store(this, terminal, pluginContainer);
 		}

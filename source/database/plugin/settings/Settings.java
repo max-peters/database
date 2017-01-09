@@ -1,5 +1,6 @@
 package database.plugin.settings;
 
+import java.sql.SQLException;
 import javax.swing.text.BadLocationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,7 +43,7 @@ public class Settings extends Plugin {
 	}
 
 	@Command(tag = "days") public void setDisplayedDays(ITerminal terminal, PluginContainer pluginContainer)	throws InterruptedException, BadLocationException,
-																												NumberFormatException, UserCancelException {
+																												NumberFormatException, UserCancelException, SQLException {
 		eventDisplayRange = Integer.valueOf(terminal.request("enter event display range [days]", "[0-9]{1,13}"));
 		terminal.update(pluginContainer);
 	}

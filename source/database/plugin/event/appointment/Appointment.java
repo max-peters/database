@@ -18,7 +18,7 @@ public class Appointment extends Event {
 		return date;
 	}
 
-	@Override protected String getAdditionToOutput(int year) {
+	@Override protected String getAdditionToOutput() {
 		String string = "";
 		if (begin != null) {
 			string = "[" + begin + " UHR";

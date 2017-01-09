@@ -10,7 +10,8 @@ public class Day extends Event {
 
 	@Override public LocalDate updateYear() {
 		LocalDate currentDate = LocalDate.now();
-		if (currentDate.getMonthValue() > date.getMonthValue() || currentDate.getMonthValue() == date.getMonthValue() && currentDate.getDayOfMonth() > date.getDayOfMonth()) {
+		if (currentDate.getMonthValue() > date.getMonthValue()
+			|| currentDate.getMonthValue() == date.getMonthValue() && currentDate.getDayOfMonth() > date.getDayOfMonth()) {
 			return date.withYear(currentDate.getYear() + 1);
 		}
 		else {
@@ -18,7 +19,7 @@ public class Day extends Event {
 		}
 	}
 
-	@Override protected String getAdditionToOutput(int year) {
+	@Override protected String getAdditionToOutput() {
 		return "(" + date.getYear() + ")";
 	}
 }

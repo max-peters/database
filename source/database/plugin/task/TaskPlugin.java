@@ -1,6 +1,7 @@
 package database.plugin.task;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -11,14 +12,15 @@ import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.InstancePlugin;
 import database.plugin.backup.BackupService;
+import database.services.database.IDatabase;
 
 public class TaskPlugin extends InstancePlugin<Task> {
 	public TaskPlugin() {
 		super("task", new TaskOutputFormatter(), Task.class);
 	}
 
-	@Command(tag = "edit") public void changeRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer)	throws InterruptedException,
-																																		BadLocationException, UserCancelException {
+	@Command(tag = "edit") public void changeRequest(	ITerminal terminal, BackupService backupService,
+														PluginContainer pluginContainer) throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		Task task = getTaskByCheckRequest(terminal, pluginContainer);
 		if (task != null) {
 			backupService.backupChangeBefor(task, this);
@@ -38,8 +40,8 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		}
 	}
 
-	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService, PluginContainer pluginContainer)	throws BadLocationException,
-																																		InterruptedException, UserCancelException {
+	@Command(tag = "new") public void createRequest(ITerminal terminal, BackupService backupService,
+													PluginContainer pluginContainer) throws BadLocationException, InterruptedException, UserCancelException, SQLException {
 		String name = terminal.request("name", ".+");
 		String category = terminal.request("category", ".+");
 		String temp = terminal.request("date", "DATE");
@@ -55,7 +57,7 @@ public class TaskPlugin extends InstancePlugin<Task> {
 		terminal.update(pluginContainer);
 	}
 
-	@Override public void show(ITerminal terminal) {
+	@Override public void show(ITerminal terminal, IDatabase database) {
 		// nothing to show here
 	}
 
