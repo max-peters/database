@@ -2,69 +2,48 @@ package database.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.security.InvalidParameterException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
-import database.main.PluginContainer;
 import database.main.UserCancelException;
-import database.main.WriterReader;
+import database.main.autocompletition.HashMapAutocomplete;
 import database.main.userInterface.ITerminal;
-import database.plugin.backup.BackupService;
-import database.services.database.IDatabase;
+import database.main.userInterface.StringFormat;
+import database.main.userInterface.StringType;
+import database.services.ServiceRegistry;
+import database.services.writerReader.IWriterReader;
 
 public abstract class Plugin {
-	public boolean	display;
-	public String	identity;
+	public boolean			display;
+	public String			identity;
+	private IOutputHandler	dataHandler;
 
-	public Plugin(String identity) {
+	public Plugin(String identity, IOutputHandler dataHandler) {
 		this.identity = identity;
+		this.dataHandler = dataHandler;
 	}
 
-	public void conduct(String command, ITerminal terminal, BackupService backupService, PluginContainer pluginContainer, WriterReader writerReader,
-						IDatabase database) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void conduct(String command) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		for (Method method : this.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class)) {
 				if (method.getAnnotation(Command.class).tag().equals(command)) {
-					List<Object> parameter = new ArrayList<>();
-					for (Parameter p : method.getParameters()) {
-						if (p.getType().equals(ITerminal.class)) {
-							parameter.add(terminal);
-						}
-						else if (p.getType().equals(BackupService.class)) {
-							parameter.add(backupService);
-						}
-						else if (p.getType().equals(PluginContainer.class)) {
-							parameter.add(pluginContainer);
-						}
-						else if (p.getType().equals(WriterReader.class)) {
-							parameter.add(writerReader);
-						}
-						else if (p.getType().equals(IDatabase.class)) {
-							parameter.add(database);
-						}
-						else {
-							throw new InvalidParameterException();
-						}
-					}
-					method.invoke(this, parameter.toArray());
+					method.invoke(this);
 					return;
 				}
 			}
 		}
 	}
 
-	@Command(tag = "display") public void display(ITerminal terminal, PluginContainer pluginContainer)	throws InterruptedException, BadLocationException, UserCancelException,
-																										SQLException {
-		display = Boolean.valueOf(terminal.request("display", "(true|false)"));
-		terminal.update(pluginContainer);
+	@Command(tag = "display") public void display() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
+		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
+		String regex = "(true|false)";
+		HashMapAutocomplete autocomplete = new HashMapAutocomplete(regex);
+		display = Boolean.valueOf(terminal.request("display", regex, autocomplete));
+		terminal.update();
 	}
 
 	public String getCommandTags(Class<?> classWithMethods) {
@@ -82,9 +61,46 @@ public abstract class Plugin {
 		return regex.endsWith("|") ? regex.substring(0, regex.lastIndexOf("|")) + ")" : "()";
 	}
 
-	public abstract void initialOutput(ITerminal terminal, PluginContainer pluginContainer) throws BadLocationException;
+	public IOutputHandler getDataHandler() {
+		return dataHandler;
+	}
 
-	public abstract void print(Document document, Element appendTo);
+	public void initialOutput() throws SQLException, BadLocationException {
+		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
+		String initialOutput = dataHandler.getInitialOutput();
+		if (!initialOutput.isEmpty()) {
+			terminal.printLine(identity, StringType.MAIN, StringFormat.BOLD);
+			terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
+		}
+	}
 
-	public abstract void read(Node node) throws ParserConfigurationException;
+	public void read(Node node) throws ParserConfigurationException, DOMException {
+		if (node.getNodeName().equals("display")) {
+			display = Boolean.valueOf(node.getTextContent());
+		}
+	}
+
+	@Command(tag = "show") public void show()	throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException,
+												InvocationTargetException, UserCancelException, SQLException {
+		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
+		String regex = getCommandTags(dataHandler.getClass());
+		String command = "";
+		if (regex.split("\\|").length > 1) {
+			command = terminal.request("show", regex, new HashMapAutocomplete(regex));
+		}
+		for (Method method : dataHandler.getClass().getMethods()) {
+			if (method.isAnnotationPresent(Command.class) && (command.isEmpty() || method.getAnnotation(Command.class).tag().equals(command))) {
+				Object output = method.invoke(dataHandler);
+				terminal.getLineOfCharacters('-', StringType.REQUEST);
+				terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
+				terminal.waitForInput();
+				break;
+			}
+		}
+	}
+
+	public void write() {
+		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
+		writerReader.add(identity, "display", String.valueOf(display));
+	}
 }

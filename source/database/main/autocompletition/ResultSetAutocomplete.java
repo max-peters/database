@@ -10,6 +10,18 @@ public class ResultSetAutocomplete implements IAutocomplete {
 		this.resultSet = resultSet;
 	}
 
+	@Override public String getCorrespondingString(String s) throws SQLException {
+		int i = resultSet.getRow();
+		resultSet.beforeFirst();
+		while (resultSet.next()) {
+			if (resultSet.getString("first").equalsIgnoreCase(s)) {
+				return resultSet.getString("first");
+			}
+		}
+		resultSet.absolute(i);
+		return s;
+	}
+
 	@Override public String getMostUsedString(String prefix, String second) throws SQLException {
 		String string = "";
 		int count = 0;

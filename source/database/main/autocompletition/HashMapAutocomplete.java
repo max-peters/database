@@ -30,7 +30,16 @@ public class HashMapAutocomplete implements IAutocomplete {
 		map.put(t, map.getOrDefault(t, 0) + 1);
 	}
 
-	public String getMostUsedString(String prefix, String second) {
+	@Override public String getCorrespondingString(String s) {
+		for (Tupel<String, String> tupel : map.keySet()) {
+			if (tupel.first.equalsIgnoreCase(s)) {
+				return tupel.first;
+			}
+		}
+		return s;
+	}
+
+	@Override public String getMostUsedString(String prefix, String second) {
 		Tupel<String, String> t = new Tupel<>("", "");
 		for (Entry<Tupel<String, String>, Integer> entry : map.entrySet()) {
 			if (second.isEmpty() || containsPair(entry.getKey().first, second)) {

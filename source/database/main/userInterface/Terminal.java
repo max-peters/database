@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
-import database.main.PluginContainer;
 import database.main.UserCancelException;
 import database.main.autocompletition.IAutocomplete;
+import database.services.ServiceRegistry;
+import database.services.pluginRegistry.IPluginRegistry;
+import database.services.stringUtility.StringUtility;
 
 public class Terminal implements ITerminal {
 	private Map<OutputInformation, String>	collectedLines;
@@ -28,20 +30,20 @@ public class Terminal implements ITerminal {
 		graphicalUserInterface.blockInput();
 	}
 
-	@Override public int checkRequest(Collection<String> collection) throws InterruptedException, BadLocationException {
+	@Override public int checkRequest(Collection<String> collection, String request) throws InterruptedException, BadLocationException {
 		StringUtility su = new StringUtility();
 		int position = -1;
 		int current = 0;
 		int lastKey = 0;
 		if (collection.isEmpty()) {
-			printLine("check:", StringType.REQUEST, StringFormat.ITALIC);
+			printLine(request, StringType.REQUEST, StringFormat.ITALIC);
 			printLine("no entries", StringType.SOLUTION, StringFormat.STANDARD);
 			waitForInput();
 			return position;
 		}
 		blockInput();
 		while (lastKey != 10) {
-			printLine("check:", StringType.REQUEST, StringFormat.ITALIC);
+			printLine(request, StringType.REQUEST, StringFormat.ITALIC);
 			printLine(su.formatCheckLine(collection, current), StringType.SOLUTION, StringFormat.STANDARD);
 			graphicalUserInterface.waitForKeyInput();
 			lastKey = graphicalUserInterface.getLastKeyInput();
@@ -156,22 +158,22 @@ public class Terminal implements ITerminal {
 		return result;
 	}
 
-	@Override public void update(PluginContainer pluginContainer) throws BadLocationException, InterruptedException {
+	@Override public void update() throws BadLocationException, InterruptedException, SQLException {
 		graphicalUserInterface.clearOutput();
 		graphicalUserInterface.blockInput();
-		pluginContainer.initialOutput(this);
+		ServiceRegistry.Instance().get(IPluginRegistry.class).initialOutput();
 		graphicalUserInterface.releaseInput();
 		printCollectedLines();
 	}
 
 	@Override public void waitForInput() throws InterruptedException {
 		graphicalUserInterface.releaseInput();
-		graphicalUserInterface.setInputCaretColor(Color.BLACK);
+		graphicalUserInterface.setInputColor(Color.BLACK);
 		do {
 			graphicalUserInterface.waitForKeyInput();
 		}
 		while ((graphicalUserInterface.getLastKeyInput() == 38 || graphicalUserInterface.getLastKeyInput() == 40) && graphicalUserInterface.isScrollable());
-		graphicalUserInterface.setInputCaretColor(Color.WHITE);
+		graphicalUserInterface.setInputColor(Color.WHITE);
 	}
 
 	private String autocomplete(IAutocomplete autocomplete) throws InterruptedException, SQLException {
@@ -186,7 +188,7 @@ public class Terminal implements ITerminal {
 			if (inputString.isEmpty() || !graphicalUserInterface.getSelectedText().equals(inputString) || !selection.isEmpty()) {
 				graphicalUserInterface.setInputText(inputString + selection);
 				graphicalUserInterface.selectInputText(inputString.length(), (inputString + selection).length());
-				if (selection.isEmpty() && graphicalUserInterface.getInputText().length() > 1) {
+				if (selection.isEmpty() && graphicalUserInterface.getInputText().length() > inputCaretPosition + 1) {
 					graphicalUserInterface.setInputCaretPosition(inputCaretPosition + 1);
 				}
 			}

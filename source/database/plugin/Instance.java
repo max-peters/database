@@ -9,6 +9,7 @@ public abstract class Instance {
 	}
 
 	@Override public String toString() {
-		return new Gson().toJson(this);
+		String gson = new Gson().toJson(this);
+		return gson.replace("{", "").replace("}", "").replace(",", System.lineSeparator());
 	}
 }

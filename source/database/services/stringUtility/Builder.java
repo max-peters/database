@@ -1,28 +1,67 @@
 package database.services.stringUtility;
 
-public class Builder {
-	private String string = "";
+import java.util.LinkedList;
+import java.util.List;
 
-	public void append(String s) {
-		string += s;
+public class Builder {
+	private LinkedList<String> list;
+
+	public Builder() {
+		list = new LinkedList<>();
 	}
 
-	public void newLine() {
-		string += System.lineSeparator();
+	public void append(String s) {
+		if (isEmpty()) {
+			list.add(s);
+		}
+		else {
+			list.addLast(list.removeLast() + s);
+		}
 	}
 
 	public String build() {
-		return string;
+		String s = "";
+		if (!isEmpty()) {
+			while (list.getLast().isEmpty()) {
+				list.removeLast();
+			}
+		}
+		for (int i = 0; i < list.size(); i++) {
+			s += list.get(i);
+			if (i < list.size() - 1) {
+				s += System.lineSeparator();
+			}
+		}
+		return s;
 	}
 
 	public int getLongestLine() {
 		int length = 0;
-		String[] sr = string.split(System.lineSeparator());
-		for (int i = 0; i < sr.length; i++) {
-			if (sr[i].length() > length) {
-				length = sr[i].length();
+		for (String string : list) {
+			if (string.length() > length) {
+				length = string.length();
 			}
 		}
 		return length;
+	}
+
+	public boolean isEmpty() {
+		return list.isEmpty();
+	}
+
+	public void newLine() {
+		if (isEmpty()) {
+			list.add("");
+		}
+		list.add("");
+	}
+
+	public List<String> toStringList() {
+		if (!isEmpty()) {
+			while (list.getLast().isEmpty()) {
+				list.removeLast();
+			}
+		}
+		return list;
 	}
 }

@@ -204,6 +204,16 @@ public class GraphicalUserInterface {
 		return frame.getWidth() / output.getFontMetrics(font).charWidth(character);
 	}
 
+	protected String getSelectedText() {
+		String selectedText = input.getSelectedText();
+		if (selectedText == null) {
+			return "";
+		}
+		else {
+			return selectedText;
+		}
+	}
+
 	protected boolean isScrollable() {
 		return input.getY() > frameHeight - 10;
 	}
@@ -238,12 +248,13 @@ public class GraphicalUserInterface {
 		input.select(first, last);
 	}
 
-	protected void setInputCaretColor(Color color) {
-		input.setCaretColor(color);
-	}
-
 	protected void setInputCaretPosition(int caretPosition) {
 		input.setCaretPosition(caretPosition);
+	}
+
+	protected void setInputColor(Color color) {
+		input.setForeground(color);
+		input.setCaretColor(color);
 	}
 
 	protected void setInputText(String inputText) {
@@ -260,10 +271,6 @@ public class GraphicalUserInterface {
 		synchronized (synchronizerKeyPressed) {
 			synchronizerKeyPressed.wait();
 		}
-	}
-
-	protected String getSelectedText() {
-		return input.getSelectedText() == null ? "" : input.getSelectedText();
 	}
 
 	private void moveTextField(int steps) {
