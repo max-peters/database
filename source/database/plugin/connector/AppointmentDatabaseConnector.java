@@ -22,10 +22,6 @@ public class AppointmentDatabaseConnector implements IDatabaseConnector<Appointm
 			resultSet.getInt("daysTilRepeat"));
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.APPOINTMENT_SELECT;
-	}
-
 	@Override public PreparedStatement prepareStatement(Appointment appointment, QueryType type) throws SQLException {
 		String sql = null;
 		Time beginTime;
@@ -67,5 +63,9 @@ public class AppointmentDatabaseConnector implements IDatabaseConnector<Appointm
 		preparedStatement.setTime(5, endTime);
 		preparedStatement.setInt(6, appointment.daysTilRepeat);
 		return preparedStatement;
+	}
+
+	@Override public String selectQuery() throws SQLException {
+		return SQLStatements.APPOINTMENT_SELECT;
 	}
 }

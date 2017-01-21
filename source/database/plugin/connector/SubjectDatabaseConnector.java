@@ -16,10 +16,6 @@ public class SubjectDatabaseConnector implements IDatabaseConnector<Subject> {
 		return new Subject(resultSet.getString("name"), resultSet.getDouble("score"), resultSet.getDouble("maxPoints"), resultSet.getInt("counter"));
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.SUBJECT_SELECT;
-	}
-
 	@Override public PreparedStatement prepareStatement(Subject subject, QueryType type) throws SQLException {
 		String sql = null;
 		PreparedStatement preparedStatement;
@@ -39,5 +35,9 @@ public class SubjectDatabaseConnector implements IDatabaseConnector<Subject> {
 		preparedStatement.setDouble(3, subject.maxPoints);
 		preparedStatement.setInt(4, subject.counter);
 		return preparedStatement;
+	}
+
+	@Override public String selectQuery() throws SQLException {
+		return SQLStatements.SUBJECT_SELECT;
 	}
 }

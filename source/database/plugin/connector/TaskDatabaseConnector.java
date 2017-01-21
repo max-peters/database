@@ -16,10 +16,6 @@ public class TaskDatabaseConnector implements IDatabaseConnector<Task> {
 		return new Task(resultSet.getString("name"));
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.TASK_SELECT;
-	}
-
 	@Override public PreparedStatement prepareStatement(Task task, QueryType type) throws SQLException {
 		String sql = null;
 		PreparedStatement preparedStatement;
@@ -36,5 +32,9 @@ public class TaskDatabaseConnector implements IDatabaseConnector<Task> {
 		preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(sql);
 		preparedStatement.setString(1, task.name);
 		return preparedStatement;
+	}
+
+	@Override public String selectQuery() throws SQLException {
+		return SQLStatements.TASK_SELECT;
 	}
 }

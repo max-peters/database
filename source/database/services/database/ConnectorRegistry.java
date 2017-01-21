@@ -11,11 +11,11 @@ public class ConnectorRegistry implements IConnectorRegistry {
 		map = new HashMap<>();
 	}
 
-	public <I> IDatabaseConnector<I> get(Class<I> type) throws SQLException {
+	@Override public <I> IDatabaseConnector<I> get(Class<I> type) throws SQLException {
 		return (IDatabaseConnector<I>) map.get(type);
 	}
 
-	public <I> void register(Class<I> type, IDatabaseConnector<I> connector) {
+	@Override public <I> void register(Class<I> type, IDatabaseConnector<I> connector) {
 		map.put(type, connector);
 	}
 }

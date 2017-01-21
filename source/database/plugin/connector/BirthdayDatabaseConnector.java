@@ -17,10 +17,6 @@ public class BirthdayDatabaseConnector implements IDatabaseConnector<Birthday> {
 		return new Birthday(resultSet.getString("name"), resultSet.getDate("date").toLocalDate());
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.BIRTHDAY_SELECT;
-	}
-
 	@Override public PreparedStatement prepareStatement(Birthday birthday, QueryType type) throws SQLException {
 		String sql = null;
 		PreparedStatement preparedStatement;
@@ -39,5 +35,9 @@ public class BirthdayDatabaseConnector implements IDatabaseConnector<Birthday> {
 		preparedStatement.setDate(2, Date.valueOf(birthday.getDate()));
 		preparedStatement.setString(3, "birthday");
 		return preparedStatement;
+	}
+
+	@Override public String selectQuery() throws SQLException {
+		return SQLStatements.BIRTHDAY_SELECT;
 	}
 }

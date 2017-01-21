@@ -19,10 +19,6 @@ public class RepetitiveExpenseDatabaseConnector implements IDatabaseConnector<Re
 			ExecutionDay.getExecutionDay(resultSet.getString("executionDay")), resultSet.getInt("repeatInterval"));
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.REPETITITVEEXPENSE_SELECT;
-	}
-
 	@Override public PreparedStatement prepareStatement(RepetitiveExpense repetitiveExpense, QueryType type) throws SQLException {
 		String sql = null;
 		PreparedStatement preparedStatement;
@@ -44,5 +40,9 @@ public class RepetitiveExpenseDatabaseConnector implements IDatabaseConnector<Re
 		preparedStatement.setString(5, repetitiveExpense.executionDay.toString());
 		preparedStatement.setInt(6, repetitiveExpense.interval);
 		return preparedStatement;
+	}
+
+	@Override public String selectQuery() throws SQLException {
+		return SQLStatements.REPETITITVEEXPENSE_SELECT;
 	}
 }

@@ -33,7 +33,7 @@ public class ExpenseOutputHandler implements IOutputHandler {
 	}
 
 	@Override public String getInitialOutput() {
-		return "not implemented";
+		return " not implemented";
 	}
 
 	@Command(tag = "average") public String outputAverage() throws SQLException {

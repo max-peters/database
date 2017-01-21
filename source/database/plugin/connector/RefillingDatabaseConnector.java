@@ -17,10 +17,6 @@ public class RefillingDatabaseConnector implements IDatabaseConnector<Refilling>
 		return new Refilling(resultSet.getDouble("distance"), resultSet.getDouble("refuelAmount"), resultSet.getDouble("cost"), resultSet.getDate("date").toLocalDate());
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.REFILLING_SELECT;
-	}
-
 	@Override public PreparedStatement prepareStatement(Refilling refilling, QueryType type) throws SQLException {
 		String sql = null;
 		PreparedStatement preparedStatement;
@@ -40,5 +36,9 @@ public class RefillingDatabaseConnector implements IDatabaseConnector<Refilling>
 		preparedStatement.setDouble(3, refilling.distance);
 		preparedStatement.setDouble(4, refilling.refuelAmount);
 		return preparedStatement;
+	}
+
+	@Override public String selectQuery() throws SQLException {
+		return SQLStatements.REFILLING_SELECT;
 	}
 }

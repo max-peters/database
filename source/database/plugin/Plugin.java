@@ -24,7 +24,7 @@ public abstract class Plugin {
 
 	public Plugin(String identity, IOutputHandler dataHandler) {
 		this.identity = identity;
-		this.outputHandler = dataHandler;
+		outputHandler = dataHandler;
 	}
 
 	public void conduct(String command) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {

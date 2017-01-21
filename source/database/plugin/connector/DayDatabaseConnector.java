@@ -17,10 +17,6 @@ public class DayDatabaseConnector implements IDatabaseConnector<Day> {
 		return new Day(resultSet.getString("name"), resultSet.getDate("date").toLocalDate());
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.DAY_SELECT;
-	}
-
 	@Override public PreparedStatement prepareStatement(Day day, QueryType type) throws SQLException {
 		String sql = null;
 		PreparedStatement preparedStatement;
@@ -39,5 +35,9 @@ public class DayDatabaseConnector implements IDatabaseConnector<Day> {
 		preparedStatement.setDate(2, Date.valueOf(day.getDate()));
 		preparedStatement.setString(3, "day");
 		return preparedStatement;
+	}
+
+	@Override public String selectQuery() throws SQLException {
+		return SQLStatements.DAY_SELECT;
 	}
 }

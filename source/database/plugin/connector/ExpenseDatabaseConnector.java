@@ -25,10 +25,6 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 		return new Expense(resultSet.getString("name"), resultSet.getString("category"), resultSet.getDouble("value"), resultSet.getDate("date").toLocalDate());
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.EXPENSE_SELECT;
-	}
-
 	@Override public PreparedStatement prepareStatement(Expense expense, QueryType type) throws SQLException {
 		String sql = null;
 		PreparedStatement preparedStatement;
@@ -49,5 +45,9 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 		preparedStatement.setDate(3, Date.valueOf(expense.date));
 		preparedStatement.setDouble(4, expense.value);
 		return preparedStatement;
+	}
+
+	@Override public String selectQuery() throws SQLException {
+		return SQLStatements.EXPENSE_SELECT;
 	}
 }

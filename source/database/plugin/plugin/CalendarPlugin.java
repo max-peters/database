@@ -130,15 +130,20 @@ public class CalendarPlugin extends Plugin {
 				int daysTilRepetition;
 				temp = terminal.request("begin", "TIME");
 				begin = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
-				temp = terminal.request("until", "DATE");
+				temp = terminal.request("until", "DATE", date.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 				lastDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-				while (!lastDay.isAfter(date)) {
+				while (lastDay.isBefore(date)) {
 					terminal.errorMessage();
-					temp = terminal.request("until", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
+					temp = terminal.request("until", "DATE", date.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 					lastDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 				}
 				temp = terminal.request("end", "TIME");
 				end = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
+				while (end != null && (lastDay.isEqual(date) && !end.isAfter(begin))) {
+					terminal.errorMessage();
+					temp = terminal.request("end", "TIME");
+					end = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
+				}
 				daysTilRepetition = Integer.valueOf(terminal.request("days til repetition", "[0-9]{0,8}", "0"));
 				element = new Appointment(name, date, begin, lastDay, end, daysTilRepetition);
 				break;

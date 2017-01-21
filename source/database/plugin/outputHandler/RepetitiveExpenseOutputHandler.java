@@ -5,6 +5,6 @@ import database.plugin.IOutputHandler;
 
 public class RepetitiveExpenseOutputHandler implements IOutputHandler {
 	@Override public String getInitialOutput() throws SQLException {
-		return "";
+		return " not implemented";
 	}
 }

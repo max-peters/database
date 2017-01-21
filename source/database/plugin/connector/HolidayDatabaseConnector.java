@@ -17,10 +17,6 @@ public class HolidayDatabaseConnector implements IDatabaseConnector<Holiday> {
 		return new Holiday(resultSet.getString("name"), resultSet.getDate("date").toLocalDate());
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.HOLIDAY_SELECT;
-	}
-
 	@Override public PreparedStatement prepareStatement(Holiday holiday, QueryType type) throws SQLException {
 		String sql = null;
 		PreparedStatement preparedStatement;
@@ -39,5 +35,9 @@ public class HolidayDatabaseConnector implements IDatabaseConnector<Holiday> {
 		preparedStatement.setDate(2, Date.valueOf(holiday.getDate()));
 		preparedStatement.setString(3, "holiday");
 		return preparedStatement;
+	}
+
+	@Override public String selectQuery() throws SQLException {
+		return SQLStatements.HOLIDAY_SELECT;
 	}
 }

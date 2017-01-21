@@ -17,7 +17,7 @@ public class RefillingOutputHandler implements IOutputHandler {
 		Builder builder = new Builder();
 		ResultSet resultSet = database.execute(SQLStatements.REFILLING_SELECT_INITIAL_OUTPUT);
 		if (resultSet.next()) {
-			builder.append("[" + resultSet.getInt("count") + "] ");
+			builder.append(" [" + resultSet.getInt("count") + "] ");
 			builder.append("distance: " + "[" + stringUtility.formatDouble(resultSet.getDouble("distance"), 1) + " km" + "] ");
 			builder.append("refuelAmount: " + "[" + stringUtility.formatDouble(resultSet.getDouble("refuelAmount"), 1) + " l" + "] ");
 			builder.append("averageConsumption: " + "[" + stringUtility.formatDouble(resultSet.getDouble("average"), 1) + " l/km" + "]");
