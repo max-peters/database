@@ -25,8 +25,9 @@ public class SubjectPlugin extends Plugin {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String regex = getSubjectsAsRegex();
 		Subject toChange = getSubject(terminal.request("add", regex, new HashMapAutocomplete(regex)));
-		Subject changed = toChange.withNewGrade(Double.parseDouble(terminal.request("score", "[0-9]{1,13}(\\.[0-9]*)?")),
-			Double.parseDouble(terminal.request("maximum points", "[0-9]{1,13}(\\.[0-9]*)?")));
+		Double newScore = Double.parseDouble(terminal.request("score", "[0-9]{1,13}(\\.[0-9]*)?"));
+		Double newMaxPoint = Double.parseDouble(terminal.request("maximum points", "[0-9]{1,13}(\\.[0-9]*)?"));
+		Subject changed = new Subject(toChange.name, toChange.score + newScore, toChange.maxPoints + newMaxPoint, toChange.counter + 1);
 		CommandHandler.Instance().executeCommand(new ChangeCommand(toChange, changed));
 	}
 

@@ -14,8 +14,4 @@ public class Subject extends Instance {
 		this.maxPoints = maxPoints;
 		this.counter = counter;
 	}
-
-	public Subject withNewGrade(double newScore, double newMaxPoint) {
-		return new Subject(name, score + newScore, maxPoints + newMaxPoint, counter + 1);
-	}
 }

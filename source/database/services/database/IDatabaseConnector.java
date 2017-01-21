@@ -24,5 +24,7 @@ public interface IDatabaseConnector<I> {
 
 	public PreparedStatement insertQuery(I insert) throws SQLException;
 
-	public abstract String selectQuery() throws SQLException;
+	public String selectQuery() throws SQLException;
+
+	public PreparedStatement prepareStatement(I element, QueryType type) throws SQLException;
 }
