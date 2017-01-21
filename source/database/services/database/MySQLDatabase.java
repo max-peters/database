@@ -27,7 +27,7 @@ public class MySQLDatabase implements IDatabase {
 
 	@Override public void insert(Instance instance) throws SQLException {
 		ConnectorRegistry registry = ServiceRegistry.Instance().get(ConnectorRegistry.class);
-		PreparedStatement preparedStatement = registry.get((Class<Instance>) instance.getClass()).insertQuery(instance);
+		PreparedStatement preparedStatement = registry.get((Class<Instance>) instance.getClass()).prepareStatement(instance, QueryType.INSERT);
 		preparedStatement.executeUpdate();
 		preparedStatement.close();
 	}
@@ -38,7 +38,7 @@ public class MySQLDatabase implements IDatabase {
 
 	@Override public void remove(Instance instance) throws SQLException {
 		ConnectorRegistry registry = ServiceRegistry.Instance().get(ConnectorRegistry.class);
-		PreparedStatement preparedStatement = registry.get((Class<Instance>) instance.getClass()).deleteQuery(instance);
+		PreparedStatement preparedStatement = registry.get((Class<Instance>) instance.getClass()).prepareStatement(instance, QueryType.DELETE);
 		preparedStatement.executeUpdate();
 		preparedStatement.close();
 	}

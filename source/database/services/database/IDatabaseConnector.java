@@ -8,9 +8,7 @@ import java.util.List;
 import database.services.ServiceRegistry;
 
 public interface IDatabaseConnector<I> {
-	public abstract I create(ResultSet resultSet) throws SQLException;
-
-	public PreparedStatement deleteQuery(I delete) throws SQLException;
+	public I create(ResultSet resultSet) throws SQLException;
 
 	public default List<I> getList() throws SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
@@ -21,8 +19,6 @@ public interface IDatabaseConnector<I> {
 		}
 		return list;
 	}
-
-	public PreparedStatement insertQuery(I insert) throws SQLException;
 
 	public String selectQuery() throws SQLException;
 
