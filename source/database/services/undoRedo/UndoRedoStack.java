@@ -8,11 +8,11 @@ import database.main.userInterface.StringType;
 import database.services.ServiceRegistry;
 import database.services.undoRedo.command.UndoableCommand;
 
-public class UndoRedoStackService implements IUndoRedoService {
+public class UndoRedoStack implements IUndoRedo {
 	private BoundedStack<UndoableCommand>	redoStack;
 	private BoundedStack<UndoableCommand>	undoStack;
 
-	public UndoRedoStackService(int limit) {
+	public UndoRedoStack(int limit) {
 		undoStack = new BoundedStack<>(limit);
 		redoStack = new BoundedStack<>(limit);
 	}

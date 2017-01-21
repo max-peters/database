@@ -14,13 +14,13 @@ import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.plugin.element.Holiday;
 import database.services.ServiceRegistry;
-import database.services.database.ConnectorRegistry;
+import database.services.database.IConnectorRegistry;
 import database.services.database.IDatabase;
 
 public class HolidayURLConnector {
 	public void getHolidays() throws BadLocationException, InterruptedException, SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
-		HolidayDatabaseConnector holidayConnector = (HolidayDatabaseConnector) ServiceRegistry.Instance().get(ConnectorRegistry.class).get(Holiday.class);
+		HolidayDatabaseConnector holidayConnector = (HolidayDatabaseConnector) ServiceRegistry.Instance().get(IConnectorRegistry.class).get(Holiday.class);
 		List<String> lines = connectAndSetList();
 		Iterable<Holiday> iterable;
 		String temp;

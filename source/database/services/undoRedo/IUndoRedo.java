@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import javax.swing.text.BadLocationException;
 import database.services.undoRedo.command.UndoableCommand;
 
-public interface IUndoRedoService {
+public interface IUndoRedo {
 	public void addUndoableCommand(UndoableCommand command);
 
 	public boolean isChanged();

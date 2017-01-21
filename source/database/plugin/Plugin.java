@@ -20,11 +20,11 @@ import database.services.writerReader.IWriterReader;
 public abstract class Plugin {
 	public boolean			display;
 	public String			identity;
-	private IOutputHandler	dataHandler;
+	private IOutputHandler	outputHandler;
 
 	public Plugin(String identity, IOutputHandler dataHandler) {
 		this.identity = identity;
-		this.dataHandler = dataHandler;
+		this.outputHandler = dataHandler;
 	}
 
 	public void conduct(String command) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -61,13 +61,13 @@ public abstract class Plugin {
 		return regex.endsWith("|") ? regex.substring(0, regex.lastIndexOf("|")) + ")" : "()";
 	}
 
-	public IOutputHandler getDataHandler() {
-		return dataHandler;
+	public IOutputHandler getOutputHandler() {
+		return outputHandler;
 	}
 
 	public void initialOutput() throws SQLException, BadLocationException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		String initialOutput = dataHandler.getInitialOutput();
+		String initialOutput = outputHandler.getInitialOutput();
 		if (!initialOutput.isEmpty()) {
 			terminal.printLine(identity, StringType.MAIN, StringFormat.BOLD);
 			terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
@@ -83,14 +83,14 @@ public abstract class Plugin {
 	@Command(tag = "show") public void show()	throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException,
 												InvocationTargetException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		String regex = getCommandTags(dataHandler.getClass());
+		String regex = getCommandTags(outputHandler.getClass());
 		String command = "";
 		if (regex.split("\\|").length > 1) {
 			command = terminal.request("show", regex, new HashMapAutocomplete(regex));
 		}
-		for (Method method : dataHandler.getClass().getMethods()) {
+		for (Method method : outputHandler.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && (command.isEmpty() || method.getAnnotation(Command.class).tag().equals(command))) {
-				Object output = method.invoke(dataHandler);
+				Object output = method.invoke(outputHandler);
 				terminal.getLineOfCharacters('-', StringType.REQUEST);
 				terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
 				terminal.waitForInput();

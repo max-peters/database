@@ -18,7 +18,7 @@ import database.plugin.element.CalendarElement;
 import database.plugin.element.Day;
 import database.plugin.element.Holiday;
 import database.services.ServiceRegistry;
-import database.services.database.ConnectorRegistry;
+import database.services.database.IConnectorRegistry;
 import database.services.settings.Settings;
 import database.services.stringUtility.Builder;
 import database.services.stringUtility.StringUtility;
@@ -54,7 +54,7 @@ public class CalendarOutputHandler implements IOutputHandler {
 	}
 
 	public Iterable<CalendarElement> getSortedIterable(int days) throws SQLException {
-		ConnectorRegistry registry = ServiceRegistry.Instance().get(ConnectorRegistry.class);
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
 		AppointmentDatabaseConnector appointmentConnector = (AppointmentDatabaseConnector) registry.get(Appointment.class);
 		BirthdayDatabaseConnector birthdayConnector = (BirthdayDatabaseConnector) registry.get(Birthday.class);
 		DayDatabaseConnector dayConnector = (DayDatabaseConnector) registry.get(Day.class);

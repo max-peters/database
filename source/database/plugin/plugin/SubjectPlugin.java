@@ -11,7 +11,7 @@ import database.plugin.connector.SubjectDatabaseConnector;
 import database.plugin.element.Subject;
 import database.plugin.outputHandler.SubjectOutputHandler;
 import database.services.ServiceRegistry;
-import database.services.database.ConnectorRegistry;
+import database.services.database.IConnectorRegistry;
 import database.services.undoRedo.CommandHandler;
 import database.services.undoRedo.command.ChangeCommand;
 import database.services.undoRedo.command.InsertCommand;
@@ -38,7 +38,7 @@ public class SubjectPlugin extends Plugin {
 	}
 
 	private Subject getSubject(String name) throws SQLException {
-		ConnectorRegistry registry = ServiceRegistry.Instance().get(ConnectorRegistry.class);
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
 		SubjectDatabaseConnector subjectConnector = (SubjectDatabaseConnector) registry.get(Subject.class);
 		Subject wanted = null;
 		for (Subject subject : subjectConnector.getList()) {
@@ -50,7 +50,7 @@ public class SubjectPlugin extends Plugin {
 	}
 
 	private String getSubjectsAsRegex() throws SQLException {
-		ConnectorRegistry registry = ServiceRegistry.Instance().get(ConnectorRegistry.class);
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
 		SubjectDatabaseConnector subjectConnector = (SubjectDatabaseConnector) registry.get(Subject.class);
 		String regex = "(";
 		for (Subject subject : subjectConnector.getList()) {

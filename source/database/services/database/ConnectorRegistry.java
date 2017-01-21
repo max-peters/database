@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConnectorRegistry {
+public class ConnectorRegistry implements IConnectorRegistry {
 	private Map<Class<?>, IDatabaseConnector<?>> map;
 
 	public ConnectorRegistry() {

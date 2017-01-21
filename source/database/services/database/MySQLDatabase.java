@@ -26,10 +26,7 @@ public class MySQLDatabase implements IDatabase {
 	}
 
 	@Override public void insert(Instance instance) throws SQLException {
-		ConnectorRegistry registry = ServiceRegistry.Instance().get(ConnectorRegistry.class);
-		PreparedStatement preparedStatement = registry.get((Class<Instance>) instance.getClass()).prepareStatement(instance, QueryType.INSERT);
-		preparedStatement.executeUpdate();
-		preparedStatement.close();
+		executeQuery(instance, QueryType.INSERT);
 	}
 
 	@Override public PreparedStatement prepareStatement(String sql) throws SQLException {
@@ -37,8 +34,12 @@ public class MySQLDatabase implements IDatabase {
 	}
 
 	@Override public void remove(Instance instance) throws SQLException {
-		ConnectorRegistry registry = ServiceRegistry.Instance().get(ConnectorRegistry.class);
-		PreparedStatement preparedStatement = registry.get((Class<Instance>) instance.getClass()).prepareStatement(instance, QueryType.DELETE);
+		executeQuery(instance, QueryType.DELETE);
+	}
+
+	private void executeQuery(Instance instance, QueryType type) throws SQLException {
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
+		PreparedStatement preparedStatement = registry.get((Class<Instance>) instance.getClass()).prepareStatement(instance, type);
 		preparedStatement.executeUpdate();
 		preparedStatement.close();
 	}

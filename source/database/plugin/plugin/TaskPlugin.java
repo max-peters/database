@@ -13,7 +13,7 @@ import database.plugin.connector.TaskDatabaseConnector;
 import database.plugin.element.Task;
 import database.plugin.outputHandler.OutputHandlerFormatter;
 import database.services.ServiceRegistry;
-import database.services.database.ConnectorRegistry;
+import database.services.database.IConnectorRegistry;
 import database.services.undoRedo.CommandHandler;
 import database.services.undoRedo.command.ChangeCommand;
 import database.services.undoRedo.command.DeleteCommand;
@@ -49,7 +49,7 @@ public class TaskPlugin extends Plugin {
 
 	private Task getTaskByCheckRequest() throws InterruptedException, BadLocationException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		ConnectorRegistry registry = ServiceRegistry.Instance().get(ConnectorRegistry.class);
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
 		TaskDatabaseConnector taskConnector = (TaskDatabaseConnector) registry.get(Task.class);
 		boolean displayTemp = display;
 		int position;

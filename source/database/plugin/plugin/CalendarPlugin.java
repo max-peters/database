@@ -26,7 +26,7 @@ import database.plugin.element.Day;
 import database.plugin.element.Holiday;
 import database.plugin.outputHandler.CalendarOutputHandler;
 import database.services.ServiceRegistry;
-import database.services.database.ConnectorRegistry;
+import database.services.database.IConnectorRegistry;
 import database.services.database.IDatabase;
 import database.services.settings.Settings;
 import database.services.undoRedo.CommandHandler;
@@ -43,7 +43,8 @@ public class CalendarPlugin extends Plugin {
 	@Command(tag = "cancel") public void cancel() throws BadLocationException, InterruptedException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		Settings settings = ServiceRegistry.Instance().get(Settings.class);
-		AppointmentDatabaseConnector appointmentConnector = (AppointmentDatabaseConnector) ServiceRegistry.Instance().get(ConnectorRegistry.class).get(Appointment.class);
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
+		AppointmentDatabaseConnector appointmentConnector = (AppointmentDatabaseConnector) registry.get(Appointment.class);
 		boolean displayTemp = display;
 		int position;
 		Appointment appointment = null;
@@ -52,7 +53,7 @@ public class CalendarPlugin extends Plugin {
 		list.addAll(appointmentConnector.getList());
 		list.removeIf(c -> !c.isNear(settings.eventDisplayRange));
 		Collections.sort(list);
-		List<String> stringList = getDataHandler().formatOutput(list).toStringList();
+		List<String> stringList = getOutputHandler().formatOutput(list).toStringList();
 		display = false;
 		terminal.update();
 		position = terminal.checkRequest(stringList, "choose event to cancel");
@@ -81,7 +82,7 @@ public class CalendarPlugin extends Plugin {
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		List<CalendarElement> list = new LinkedList<>();
 		String output = null;
-		for (CalendarElement element : getDataHandler().getSortedIterable(-1)) {
+		for (CalendarElement element : getOutputHandler().getSortedIterable(-1)) {
 			if (element.updateYear().isEqual(date)) {
 				list.add(element);
 			}
@@ -99,7 +100,7 @@ public class CalendarPlugin extends Plugin {
 		terminal.update();
 		terminal.printLine("event", StringType.REQUEST, StringFormat.BOLD);
 		terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
-		for (String string : getDataHandler().formatOutput(list).toStringList()) {
+		for (String string : getOutputHandler().formatOutput(list).toStringList()) {
 			terminal.printLine(" ->" + string, StringType.SOLUTION, StringFormat.STANDARD);
 		}
 		terminal.waitForInput();
@@ -151,8 +152,8 @@ public class CalendarPlugin extends Plugin {
 		CommandHandler.Instance().executeCommand(new InsertCommand(element));
 	}
 
-	@Override public CalendarOutputHandler getDataHandler() {
-		return (CalendarOutputHandler) super.getDataHandler();
+	@Override public CalendarOutputHandler getOutputHandler() {
+		return (CalendarOutputHandler) super.getOutputHandler();
 	}
 
 	@Override @Command(tag = "show") public void show()	throws SQLException, BadLocationException, InterruptedException, IllegalAccessException, IllegalArgumentException,
@@ -167,8 +168,9 @@ public class CalendarPlugin extends Plugin {
 	}
 
 	public void updateCalendar() throws SQLException, BadLocationException, InterruptedException {
-		AppointmentDatabaseConnector appointmentConnector = (AppointmentDatabaseConnector) ServiceRegistry.Instance().get(ConnectorRegistry.class).get(Appointment.class);
-		HolidayDatabaseConnector holidayConnector = (HolidayDatabaseConnector) ServiceRegistry.Instance().get(ConnectorRegistry.class).get(Holiday.class);
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
+		AppointmentDatabaseConnector appointmentConnector = (AppointmentDatabaseConnector) registry.get(Appointment.class);
+		HolidayDatabaseConnector holidayConnector = (HolidayDatabaseConnector) registry.get(Holiday.class);
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		HolidayURLConnector connector = new HolidayURLConnector();
 		List<Holiday> holidayList = holidayConnector.getList();

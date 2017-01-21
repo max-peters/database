@@ -13,7 +13,7 @@ public class CommandHandler {
 
 	public void executeCommand(UndoableCommand command) throws SQLException, BadLocationException, InterruptedException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		IUndoRedoService undoRedoService = ServiceRegistry.Instance().get(IUndoRedoService.class);
+		IUndoRedo undoRedoService = ServiceRegistry.Instance().get(IUndoRedo.class);
 		if (command != null) {
 			command.execute();
 			undoRedoService.addUndoableCommand(command);

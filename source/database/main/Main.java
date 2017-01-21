@@ -31,13 +31,14 @@ import database.plugin.plugin.SubjectPlugin;
 import database.plugin.plugin.TaskPlugin;
 import database.services.ServiceRegistry;
 import database.services.database.ConnectorRegistry;
+import database.services.database.IConnectorRegistry;
 import database.services.database.IDatabase;
 import database.services.database.MySQLDatabase;
 import database.services.pluginRegistry.HashMapPluginRegistry;
 import database.services.pluginRegistry.IPluginRegistry;
 import database.services.settings.Settings;
-import database.services.undoRedo.IUndoRedoService;
-import database.services.undoRedo.UndoRedoStackService;
+import database.services.undoRedo.IUndoRedo;
+import database.services.undoRedo.UndoRedoStack;
 import database.services.writerReader.IWriterReader;
 import database.services.writerReader.XmlWriterReader;
 
@@ -58,19 +59,19 @@ public class Main {
 			guiThread.start();
 			// register services
 			Settings settings = new Settings();
-			ConnectorRegistry connectorRegistry = new ConnectorRegistry();
+			IConnectorRegistry connectorRegistry = new ConnectorRegistry();
 			IDatabase database = new MySQLDatabase();
 			ITerminal terminal = new Terminal(graphicalUserInterface);
 			IWriterReader writerReader = new XmlWriterReader(settings.storageDirectory);
 			IPluginRegistry pluginRegistry = new HashMapPluginRegistry();
-			IUndoRedoService undoRedoService = new UndoRedoStackService(settings.revertStackSize);
+			IUndoRedo undoRedoService = new UndoRedoStack(settings.revertStackSize);
 			ServiceRegistry.Instance().register(Settings.class, settings);
 			ServiceRegistry.Instance().register(IDatabase.class, database);
 			ServiceRegistry.Instance().register(ITerminal.class, terminal);
 			ServiceRegistry.Instance().register(IWriterReader.class, writerReader);
 			ServiceRegistry.Instance().register(IPluginRegistry.class, pluginRegistry);
-			ServiceRegistry.Instance().register(IUndoRedoService.class, undoRedoService);
-			ServiceRegistry.Instance().register(ConnectorRegistry.class, connectorRegistry);
+			ServiceRegistry.Instance().register(IUndoRedo.class, undoRedoService);
+			ServiceRegistry.Instance().register(IConnectorRegistry.class, connectorRegistry);
 			// register plugins
 			connectorRegistry.register(Appointment.class, new AppointmentDatabaseConnector());
 			connectorRegistry.register(Birthday.class, new BirthdayDatabaseConnector());

@@ -10,7 +10,7 @@ public class CancelHelper {
 		lastUndo = false;
 	}
 
-	public void cancel(IUndoRedoService undoRedo) throws InterruptedException, SQLException, BadLocationException {
+	public void cancel(IUndoRedo undoRedo) throws InterruptedException, SQLException, BadLocationException {
 		if (lastUndo) {
 			undoRedo.redoCommand();
 			lastUndo = false;

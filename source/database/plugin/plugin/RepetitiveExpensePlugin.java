@@ -20,7 +20,7 @@ import database.plugin.element.Expense;
 import database.plugin.element.RepetitiveExpense;
 import database.plugin.outputHandler.RepetitiveExpenseOutputHandler;
 import database.services.ServiceRegistry;
-import database.services.database.ConnectorRegistry;
+import database.services.database.IConnectorRegistry;
 import database.services.database.IDatabase;
 import database.services.undoRedo.CommandHandler;
 import database.services.undoRedo.command.DeleteCommand;
@@ -32,7 +32,7 @@ public class RepetitiveExpensePlugin extends Plugin {
 	}
 
 	public void createExpense() throws SQLException {
-		ConnectorRegistry registry = ServiceRegistry.Instance().get(ConnectorRegistry.class);
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		RepetitiveExpenseDatabaseConnector repetitiveExpenseConnector = (RepetitiveExpenseDatabaseConnector) registry.get(RepetitiveExpense.class);
@@ -70,7 +70,7 @@ public class RepetitiveExpensePlugin extends Plugin {
 	}
 
 	@Command(tag = "stop") public void stopRequest() throws InterruptedException, BadLocationException, SQLException {
-		ConnectorRegistry registry = ServiceRegistry.Instance().get(ConnectorRegistry.class);
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
 		RepetitiveExpenseDatabaseConnector repetitiveExpenseConnector = (RepetitiveExpenseDatabaseConnector) registry.get(RepetitiveExpense.class);
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		List<String> strings = new ArrayList<>();
@@ -101,8 +101,9 @@ public class RepetitiveExpensePlugin extends Plugin {
 	}
 
 	private List<Expense> createExpense(RepetitiveExpense repetitiveExpense) throws SQLException {
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
+		ExpenseDatabaseConnector connector = (ExpenseDatabaseConnector) registry.get(Expense.class);
 		List<Expense> list = new LinkedList<>();
-		ExpenseDatabaseConnector connector = (ExpenseDatabaseConnector) ServiceRegistry.Instance().get(ConnectorRegistry.class).get(Expense.class);
 		Expense expense = new Expense(repetitiveExpense.name, repetitiveExpense.category, repetitiveExpense.value, repetitiveExpense.date);
 		expense.date = adjustDate(expense.date.getMonthValue(), expense.date.getYear(), repetitiveExpense.executionDay);
 		while (expense.date.isBefore(LocalDate.now()) || expense.date.isEqual(LocalDate.now())) {

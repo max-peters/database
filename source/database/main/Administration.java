@@ -13,14 +13,14 @@ import database.services.ServiceRegistry;
 import database.services.database.IDatabase;
 import database.services.pluginRegistry.IPluginRegistry;
 import database.services.undoRedo.CancelHelper;
-import database.services.undoRedo.IUndoRedoService;
+import database.services.undoRedo.IUndoRedo;
 
 public class Administration {
 	public void request() throws Exception {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		IPluginRegistry pluginRegistry = ServiceRegistry.Instance().get(IPluginRegistry.class);
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
-		IUndoRedoService undoRedoService = ServiceRegistry.Instance().get(IUndoRedoService.class);
+		IUndoRedo undoRedo = ServiceRegistry.Instance().get(IUndoRedo.class);
 		String commands = pluginRegistry.getPluginNameTagsAsRegex("cancel", "exit", "save");
 		HashMapAutocomplete autocomplete = new HashMapAutocomplete(commands);
 		CancelHelper helper = new CancelHelper();
@@ -39,12 +39,12 @@ public class Administration {
 						System.exit(0);
 						break;
 					case "cancel":
-						helper.cancel(undoRedoService);
+						helper.cancel(undoRedo);
 						break;
 					default:
 						Plugin plugin = pluginRegistry.getPlugin(command);
 						String regex = plugin.getCommandTags(plugin.getClass());
-						if (plugin.getCommandTags(plugin.getDataHandler().getClass()).equals("()")) {
+						if (plugin.getCommandTags(plugin.getOutputHandler().getClass()).equals("()")) {
 							regex = regex.replace("show", "").replace("||", "|");
 						}
 						command = terminal.request(command, regex, new HashMapAutocomplete(regex));
