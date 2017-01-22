@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
+import database.main.userInterface.RequestRegexPattern;
 import database.main.userInterface.StringFormat;
 import database.plugin.Command;
 import database.plugin.ExecutionDay;
@@ -51,13 +52,13 @@ public class RepetitiveExpensePlugin extends Plugin {
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, NumberFormatException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		DependingInsertCommand command;
-		String name = terminal.request("name", "[A-ZÖÄÜa-zöäüß\\- ]+");
-		String category = terminal.request("category", "[A-ZÖÄÜa-zöäüß\\- ]+");
-		Double value = Double.valueOf(terminal.request("value", "[0-9]{1,13}(\\.[0-9]{0,2})?"));
-		String temp = terminal.request("date", "DATE");
+		String name = terminal.request("name", RequestRegexPattern.NAME);
+		String category = terminal.request("category", RequestRegexPattern.NAME);
+		Double value = Double.valueOf(terminal.request("value", RequestRegexPattern.DOUBLE));
+		String temp = terminal.request("date", RequestRegexPattern.DATE);
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		ExecutionDay executionDay = ExecutionDay.getExecutionDay(terminal.request("executionday", "(first|mid|last)"));
-		int interval = Integer.valueOf(terminal.request("interval", "[0-9]{1,13}"));
+		ExecutionDay executionDay = ExecutionDay.getExecutionDay(terminal.request("executionday", RequestRegexPattern.EXECUTIONDAY));
+		int interval = Integer.valueOf(terminal.request("interval", RequestRegexPattern.INTEGER));
 		RepetitiveExpense repetitiveExpense = new RepetitiveExpense(name, category, value, date, executionDay, interval);
 		command = new DependingInsertCommand(repetitiveExpense);
 		for (Expense expense : createExpense(repetitiveExpense)) {

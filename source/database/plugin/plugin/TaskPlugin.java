@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
+import database.main.userInterface.RequestRegexPattern;
 import database.plugin.Command;
 import database.plugin.Plugin;
 import database.plugin.connector.TaskDatabaseConnector;
@@ -28,7 +29,7 @@ public class TaskPlugin extends Plugin {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		Task task = getTaskByCheckRequest();
 		if (task != null) {
-			String newName = terminal.request("new name", ".+", task.name);
+			String newName = terminal.request("new name", RequestRegexPattern.NAME_NUMBER, task.name);
 			CommandHandler.Instance().executeCommand(new ChangeCommand(task, new Task(newName)));
 		}
 	}
@@ -42,7 +43,7 @@ public class TaskPlugin extends Plugin {
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		String name = terminal.request("name", ".+");
+		String name = terminal.request("name", RequestRegexPattern.NAME_NUMBER);
 		Task task = new Task(name);
 		CommandHandler.Instance().executeCommand(new InsertCommand(task));
 	}
