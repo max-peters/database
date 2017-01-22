@@ -3,7 +3,6 @@ package database.plugin.plugin;
 import java.sql.SQLException;
 import javax.swing.text.BadLocationException;
 import database.main.UserCancelException;
-import database.main.autocompletition.HashMapAutocomplete;
 import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.Plugin;
@@ -12,6 +11,7 @@ import database.plugin.element.Subject;
 import database.plugin.outputHandler.SubjectOutputHandler;
 import database.services.ServiceRegistry;
 import database.services.database.IConnectorRegistry;
+import database.services.stringComplete.HashMapStringComplete;
 import database.services.undoRedo.CommandHandler;
 import database.services.undoRedo.command.ChangeCommand;
 import database.services.undoRedo.command.InsertCommand;
@@ -24,7 +24,7 @@ public class SubjectPlugin extends Plugin {
 	@Command(tag = "add") public void addRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String regex = getSubjectsAsRegex();
-		Subject toChange = getSubject(terminal.request("add", regex, new HashMapAutocomplete(regex)));
+		Subject toChange = getSubject(terminal.request("add", regex, new HashMapStringComplete(regex)));
 		Double newScore = Double.parseDouble(terminal.request("score", "[0-9]{1,13}(\\.[0-9]*)?"));
 		Double newMaxPoint = Double.parseDouble(terminal.request("maximum points", "[0-9]{1,13}(\\.[0-9]*)?"));
 		Subject changed = new Subject(toChange.name, toChange.score + newScore, toChange.maxPoints + newMaxPoint, toChange.counter + 1);

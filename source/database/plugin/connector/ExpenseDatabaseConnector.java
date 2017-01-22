@@ -10,8 +10,19 @@ import database.services.database.IDatabase;
 import database.services.database.IDatabaseConnector;
 import database.services.database.QueryType;
 import database.services.database.SQLStatements;
+import database.services.stringComplete.IStringComplete;
+import database.services.stringComplete.ResultSetStringComplete;
 
 public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
+	public IStringComplete	categoryStringComplete;
+	public IStringComplete	nameStringComplete;
+
+	public ExpenseDatabaseConnector() throws SQLException {
+		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
+		nameStringComplete = new ResultSetStringComplete(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
+		categoryStringComplete = new ResultSetStringComplete(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
+	}
+
 	public boolean contains(Expense expense) throws SQLException {
 		PreparedStatement preparedStatement = prepareStatement(expense, QueryType.CONTAINS);
 		ResultSet resultSet = preparedStatement.executeQuery();
@@ -45,6 +56,12 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 		preparedStatement.setDate(3, Date.valueOf(expense.date));
 		preparedStatement.setDouble(4, expense.value);
 		return preparedStatement;
+	}
+
+	public void refreshStringComplete() throws SQLException {
+		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
+		((ResultSetStringComplete) nameStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
+		((ResultSetStringComplete) nameStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
 	}
 
 	@Override public String selectQuery() throws SQLException {

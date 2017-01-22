@@ -72,7 +72,7 @@ public class Appointment extends CalendarElement {
 	}
 
 	@Override public LocalDateTime orderDate() {
-		return getBeginDateTime();
+		return getBeginDateTime().withHour(0).withMinute(0);
 	}
 
 	public Appointment repeat() {

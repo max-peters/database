@@ -10,11 +10,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import database.main.UserCancelException;
-import database.main.autocompletition.HashMapAutocomplete;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.services.ServiceRegistry;
+import database.services.stringComplete.HashMapStringComplete;
 import database.services.writerReader.IWriterReader;
 
 public abstract class Plugin {
@@ -41,8 +41,8 @@ public abstract class Plugin {
 	@Command(tag = "display") public void display() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String regex = "(true|false)";
-		HashMapAutocomplete autocomplete = new HashMapAutocomplete(regex);
-		display = Boolean.valueOf(terminal.request("display", regex, autocomplete));
+		HashMapStringComplete stringComplete = new HashMapStringComplete(regex);
+		display = Boolean.valueOf(terminal.request("display", regex, stringComplete));
 		terminal.update();
 	}
 
@@ -86,7 +86,7 @@ public abstract class Plugin {
 		String regex = getCommandTags(outputHandler.getClass());
 		String command = "";
 		if (regex.split("\\|").length > 1) {
-			command = terminal.request("show", regex, new HashMapAutocomplete(regex));
+			command = terminal.request("show", regex, new HashMapStringComplete(regex));
 		}
 		for (Method method : outputHandler.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && (command.isEmpty() || method.getAnnotation(Command.class).tag().equals(command))) {

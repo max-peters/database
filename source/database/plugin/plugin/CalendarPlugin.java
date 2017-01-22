@@ -29,6 +29,7 @@ import database.services.ServiceRegistry;
 import database.services.database.IConnectorRegistry;
 import database.services.database.IDatabase;
 import database.services.settings.Settings;
+import database.services.stringComplete.IFrequentStringComplete;
 import database.services.undoRedo.CommandHandler;
 import database.services.undoRedo.command.ChangeCommand;
 import database.services.undoRedo.command.DeleteCommand;
@@ -38,6 +39,7 @@ import database.services.undoRedo.command.UndoableCommand;
 public class CalendarPlugin extends Plugin {
 	public CalendarPlugin() throws SQLException, BadLocationException, InterruptedException {
 		super("event", new CalendarOutputHandler());
+		ServiceRegistry.Instance().get(IFrequentStringComplete.class).create("appointment");
 	}
 
 	@Command(tag = "cancel") public void cancel() throws BadLocationException, InterruptedException, SQLException {
@@ -70,8 +72,12 @@ public class CalendarPlugin extends Plugin {
 						break;
 				}
 			}
+			else {
+				command = new DeleteCommand(appointment);
+			}
 		}
 		display = displayTemp;
+		terminal.update();
 		CommandHandler.Instance().executeCommand(command);
 	}
 
@@ -119,15 +125,17 @@ public class CalendarPlugin extends Plugin {
 		if (position == -1) {
 			return;
 		}
-		name = terminal.request("name", ".+");
-		temp = terminal.request("date", "DATE");
-		date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		switch (types.get(position)) {
 			case "appointment":
+				IFrequentStringComplete frequentStringComplement = ServiceRegistry.Instance().get(IFrequentStringComplete.class);
 				LocalTime begin;
 				LocalTime end;
 				LocalDate lastDay;
 				int daysTilRepetition;
+				temp = terminal.request("name", ".+", frequentStringComplement.get("appointment"));
+				name = frequentStringComplement.get("appointment").getCorrespondingString(temp);
+				temp = terminal.request("date", "DATE");
+				date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 				temp = terminal.request("begin", "TIME");
 				begin = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
 				temp = terminal.request("until", "DATE", date.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
@@ -139,18 +147,25 @@ public class CalendarPlugin extends Plugin {
 				}
 				temp = terminal.request("end", "TIME");
 				end = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
-				while (end != null && (lastDay.isEqual(date) && !end.isAfter(begin))) {
+				while (end != null && lastDay.isEqual(date) && !end.isAfter(begin)) {
 					terminal.errorMessage();
 					temp = terminal.request("end", "TIME");
 					end = temp.isEmpty() ? null : LocalTime.parse(temp, DateTimeFormatter.ofPattern("HH:mm"));
 				}
 				daysTilRepetition = Integer.valueOf(terminal.request("days til repetition", "[0-9]{0,8}", "0"));
 				element = new Appointment(name, date, begin, lastDay, end, daysTilRepetition);
+				frequentStringComplement.insert(name, "appointment");
 				break;
 			case "birthday":
+				name = terminal.request("name", ".+");
+				temp = terminal.request("date", "DATE");
+				date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 				element = new Birthday(name, date);
 				break;
 			case "day":
+				name = terminal.request("name", ".+");
+				temp = terminal.request("date", "DATE");
+				date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 				element = new Day(name, date);
 				break;
 		}

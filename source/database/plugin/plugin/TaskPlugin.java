@@ -11,7 +11,7 @@ import database.plugin.Command;
 import database.plugin.Plugin;
 import database.plugin.connector.TaskDatabaseConnector;
 import database.plugin.element.Task;
-import database.plugin.outputHandler.OutputHandlerFormatter;
+import database.plugin.outputHandler.TaskOutputHandler;
 import database.services.ServiceRegistry;
 import database.services.database.IConnectorRegistry;
 import database.services.undoRedo.CommandHandler;
@@ -21,7 +21,7 @@ import database.services.undoRedo.command.InsertCommand;
 
 public class TaskPlugin extends Plugin {
 	public TaskPlugin() {
-		super("task", new OutputHandlerFormatter());
+		super("task", new TaskOutputHandler());
 	}
 
 	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {

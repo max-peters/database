@@ -37,6 +37,8 @@ import database.services.database.MySQLDatabase;
 import database.services.pluginRegistry.HashMapPluginRegistry;
 import database.services.pluginRegistry.IPluginRegistry;
 import database.services.settings.Settings;
+import database.services.stringComplete.IFrequentStringComplete;
+import database.services.stringComplete.ResultSetFrequentStringComplete;
 import database.services.undoRedo.IUndoRedo;
 import database.services.undoRedo.UndoRedoStack;
 import database.services.writerReader.IWriterReader;
@@ -65,6 +67,7 @@ public class Main {
 			IWriterReader writerReader = new XmlWriterReader(settings.storageDirectory);
 			IPluginRegistry pluginRegistry = new HashMapPluginRegistry();
 			IUndoRedo undoRedoService = new UndoRedoStack(settings.revertStackSize);
+			IFrequentStringComplete frequentStringComplement = new ResultSetFrequentStringComplete();
 			ServiceRegistry.Instance().register(Settings.class, settings);
 			ServiceRegistry.Instance().register(IDatabase.class, database);
 			ServiceRegistry.Instance().register(ITerminal.class, terminal);
@@ -72,6 +75,7 @@ public class Main {
 			ServiceRegistry.Instance().register(IPluginRegistry.class, pluginRegistry);
 			ServiceRegistry.Instance().register(IUndoRedo.class, undoRedoService);
 			ServiceRegistry.Instance().register(IConnectorRegistry.class, connectorRegistry);
+			ServiceRegistry.Instance().register(IFrequentStringComplete.class, frequentStringComplement);
 			// register plugins
 			connectorRegistry.register(Appointment.class, new AppointmentDatabaseConnector());
 			connectorRegistry.register(Birthday.class, new BirthdayDatabaseConnector());

@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
 import database.main.UserCancelException;
-import database.main.autocompletition.IAutocomplete;
-import database.main.autocompletition.ResultSetAutocomplete;
 import database.main.userInterface.ITerminal;
 import database.plugin.Command;
 import database.plugin.IOutputHandler;
@@ -22,14 +20,10 @@ import database.services.stringUtility.Builder;
 import database.services.stringUtility.StringUtility;
 
 public class ExpenseOutputHandler implements IOutputHandler {
-	public IAutocomplete	categoryAutocomplete;
-	public IAutocomplete	nameAutocomplete;
-	private IDatabase		database;
+	private IDatabase database;
 
 	public ExpenseOutputHandler() throws SQLException {
 		database = ServiceRegistry.Instance().get(IDatabase.class);
-		nameAutocomplete = new ResultSetAutocomplete(database.execute(SQLStatements.EXPENSE_SELECT_AUTOCOMPLETE_NAME));
-		categoryAutocomplete = new ResultSetAutocomplete(database.execute(SQLStatements.EXPENSE_SELECT_AUTOCOMPLETE_CATEGORY));
 	}
 
 	@Override public String getInitialOutput() {

@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import javax.swing.text.BadLocationException;
 import database.main.UserCancelException;
-import database.main.autocompletition.IAutocomplete;
+import database.services.stringComplete.IStringComplete;
 
 public interface ITerminal {
 	public void blockInput();
@@ -25,31 +25,31 @@ public interface ITerminal {
 		return request(printOut, regex, "", null, 0);
 	}
 
-	public default String request(String printOut, String regex, IAutocomplete autocomplete)	throws InterruptedException, BadLocationException, UserCancelException,
-																								SQLException {
-		return request(printOut, regex, "", autocomplete, 0);
-	}
-
-	public default String request(String printOut, String regex, IAutocomplete autocomplete, int levenshteinDistance)	throws InterruptedException, BadLocationException,
-																														UserCancelException, SQLException {
-		return request(printOut, regex, "", autocomplete, levenshteinDistance);
-	}
-
 	public default String request(String printOut, String regex, int levenshteinDistance)	throws InterruptedException, BadLocationException, UserCancelException,
 																							SQLException {
 		return request(printOut, regex, "", null, levenshteinDistance);
+	}
+
+	public default String request(String printOut, String regex, IStringComplete stringComplete)	throws InterruptedException, BadLocationException, UserCancelException,
+																									SQLException {
+		return request(printOut, regex, "", stringComplete, 0);
+	}
+
+	public default String request(	String printOut, String regex, IStringComplete stringComplete,
+									int levenshteinDistance) throws InterruptedException, BadLocationException, UserCancelException, SQLException {
+		return request(printOut, regex, "", stringComplete, levenshteinDistance);
 	}
 
 	public default String request(String printOut, String regex, String inputText) throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		return request(printOut, regex, inputText, null, 0);
 	}
 
-	public default String request(String printOut, String regex, String inputText, IAutocomplete autocomplete)	throws InterruptedException, BadLocationException,
-																												UserCancelException, SQLException {
-		return request(printOut, regex, inputText, autocomplete, 0);
+	public default String request(String printOut, String regex, String inputText, IStringComplete stringComplete)	throws InterruptedException, BadLocationException,
+																													UserCancelException, SQLException {
+		return request(printOut, regex, inputText, stringComplete, 0);
 	}
 
-	public String request(	String printOut, String regex, String inputText, IAutocomplete autocomplete,
+	public String request(	String printOut, String regex, String inputText, IStringComplete stringComplete,
 							int levenshteinDistance) throws InterruptedException, BadLocationException, UserCancelException, SQLException;
 
 	public void update() throws BadLocationException, InterruptedException, SQLException;

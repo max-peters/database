@@ -1,12 +1,12 @@
-package database.main.autocompletition;
+package database.services.stringComplete;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ResultSetAutocomplete implements IAutocomplete {
+public class ResultSetStringComplete implements IStringComplete {
 	private ResultSet resultSet;
 
-	public ResultSetAutocomplete(ResultSet resultSet) throws SQLException {
+	public ResultSetStringComplete(ResultSet resultSet) throws SQLException {
 		this.resultSet = resultSet;
 	}
 
@@ -35,6 +35,10 @@ public class ResultSetAutocomplete implements IAutocomplete {
 			}
 		}
 		return second.isEmpty() && prefix.isEmpty() ? "" : string.isEmpty() ? "" : string.substring(prefix.length());
+	}
+
+	public void refresh(ResultSet resultSet) throws SQLException {
+		this.resultSet = resultSet;
 	}
 
 	private boolean containsPair(String first, String second) throws SQLException {

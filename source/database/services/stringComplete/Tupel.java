@@ -1,4 +1,4 @@
-package database.main.autocompletition;
+package database.services.stringComplete;
 
 public class Tupel<T1, T2> {
 	public T1	first;

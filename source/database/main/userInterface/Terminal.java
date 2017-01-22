@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.swing.text.BadLocationException;
 import database.main.UserCancelException;
-import database.main.autocompletition.IAutocomplete;
 import database.services.ServiceRegistry;
 import database.services.pluginRegistry.IPluginRegistry;
+import database.services.stringComplete.IStringComplete;
 import database.services.stringUtility.StringUtility;
 
 public class Terminal implements ITerminal {
@@ -112,7 +112,7 @@ public class Terminal implements ITerminal {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 
-	@Override public String request(String printOut, String regex, String inputText, IAutocomplete autocomplete,
+	@Override public String request(String printOut, String regex, String inputText, IStringComplete stringComplete,
 									int levenshteinDistance) throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		boolean request = true;
 		String result = null;
@@ -124,7 +124,7 @@ public class Terminal implements ITerminal {
 		}
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
-			input = autocomplete != null ? autocomplete(autocomplete) : readLine();
+			input = stringComplete != null ? completeString(stringComplete) : readLine();
 			graphicalUserInterface.setInputText("");
 			if (input.equalsIgnoreCase("back")) {
 				throw new UserCancelException();
@@ -176,7 +176,7 @@ public class Terminal implements ITerminal {
 		graphicalUserInterface.setInputColor(Color.WHITE);
 	}
 
-	private String autocomplete(IAutocomplete autocomplete) throws InterruptedException, SQLException {
+	private String completeString(IStringComplete stringComplete) throws InterruptedException, SQLException {
 		String inputString = "";
 		String selection;
 		int inputCaretPosition;
@@ -184,7 +184,7 @@ public class Terminal implements ITerminal {
 		while (true) {
 			inputString = graphicalUserInterface.getInputText();
 			inputCaretPosition = graphicalUserInterface.getInputCaretPosition();
-			selection = autocomplete.getMostUsedString(inputString, "");
+			selection = stringComplete.getMostUsedString(inputString, "");
 			if (inputString.isEmpty() || !graphicalUserInterface.getSelectedText().equals(inputString) || !selection.isEmpty()) {
 				graphicalUserInterface.setInputText(inputString + selection);
 				graphicalUserInterface.selectInputText(inputString.length(), (inputString + selection).length());

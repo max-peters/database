@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import database.main.autocompletition.HashMapAutocomplete;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
@@ -12,6 +11,7 @@ import database.plugin.Plugin;
 import database.services.ServiceRegistry;
 import database.services.database.IDatabase;
 import database.services.pluginRegistry.IPluginRegistry;
+import database.services.stringComplete.HashMapStringComplete;
 import database.services.undoRedo.CancelHelper;
 import database.services.undoRedo.IUndoRedo;
 
@@ -22,13 +22,13 @@ public class Administration {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		IUndoRedo undoRedo = ServiceRegistry.Instance().get(IUndoRedo.class);
 		String commands = pluginRegistry.getPluginNameTagsAsRegex("cancel", "exit", "save");
-		HashMapAutocomplete autocomplete = new HashMapAutocomplete(commands);
+		HashMapStringComplete stringComplete = new HashMapStringComplete(commands);
 		CancelHelper helper = new CancelHelper();
-		autocomplete.add("expense");
+		stringComplete.add("expense");
 		String command = null;
 		while (true) {
 			try {
-				command = terminal.request("command", commands, autocomplete, 2);
+				command = terminal.request("command", commands, stringComplete, 2);
 				switch (command) {
 					case "save":
 						save();
@@ -47,7 +47,7 @@ public class Administration {
 						if (plugin.getCommandTags(plugin.getOutputHandler().getClass()).equals("()")) {
 							regex = regex.replace("show", "").replace("||", "|");
 						}
-						command = terminal.request(command, regex, new HashMapAutocomplete(regex));
+						command = terminal.request(command, regex, new HashMapStringComplete(regex));
 						plugin.conduct(command);
 				}
 			}

@@ -1,17 +1,17 @@
-package database.main.autocompletition;
+package database.services.stringComplete;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class HashMapAutocomplete implements IAutocomplete {
+public class HashMapStringComplete implements IStringComplete {
 	private Map<Tupel<String, String>, Integer> map;
 
-	public HashMapAutocomplete() {
+	public HashMapStringComplete() {
 		map = new HashMap<>();
 	}
 
-	public HashMapAutocomplete(String regex) {
+	public HashMapStringComplete(String regex) {
 		map = new HashMap<>();
 		for (String s : regex.replace("(", "").replace(")", "").split("\\|")) {
 			add(s);
