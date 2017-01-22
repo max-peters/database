@@ -29,7 +29,7 @@ public class TaskPlugin extends Plugin {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		Task task = getTaskByCheckRequest();
 		if (task != null) {
-			String newName = terminal.request("new name", RequestType.NAME_NUMBER, task.name);
+			String newName = terminal.request("change task to", RequestType.NAME_NUMBER, task.name);
 			CommandHandler.Instance().executeCommand(new ChangeCommand(task, new Task(newName)));
 		}
 	}
@@ -43,7 +43,7 @@ public class TaskPlugin extends Plugin {
 
 	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		String name = terminal.request("name", RequestType.NAME_NUMBER);
+		String name = terminal.request("enter new task", RequestType.NAME_NUMBER);
 		Task task = new Task(name);
 		CommandHandler.Instance().executeCommand(new InsertCommand(task));
 	}

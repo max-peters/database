@@ -11,6 +11,7 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
+import database.main.userInterface.RequestType;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.services.ServiceRegistry;
@@ -40,9 +41,8 @@ public abstract class Plugin {
 
 	@Command(tag = "display") public void display() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		String regex = "(true|false)";
-		HashMapStringComplete stringComplete = new HashMapStringComplete(regex);
-		display = Boolean.valueOf(terminal.request("display", regex, stringComplete));
+		HashMapStringComplete stringComplete = new HashMapStringComplete(RequestType.BOOLEAN);
+		display = Boolean.valueOf(terminal.request("display", RequestType.BOOLEAN, stringComplete));
 		terminal.update();
 	}
 
@@ -91,8 +91,7 @@ public abstract class Plugin {
 		for (Method method : outputHandler.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class) && (command.isEmpty() || method.getAnnotation(Command.class).tag().equals(command))) {
 				Object output = method.invoke(outputHandler);
-				terminal.getLineOfCharacters('-', StringType.REQUEST);
-				terminal.printLine(output, StringType.SOLUTION, StringFormat.STANDARD);
+				terminal.printLine(output, StringType.REQUEST, StringFormat.STANDARD);
 				terminal.waitForInput();
 				break;
 			}

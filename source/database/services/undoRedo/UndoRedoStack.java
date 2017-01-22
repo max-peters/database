@@ -22,31 +22,31 @@ public class UndoRedoStack implements IUndoRedo {
 		redoStack.clear();
 	}
 
-	@Override public boolean isChanged() {
-		return !undoStack.isEmpty();
-	}
-
 	@Override public void redoCommand() throws SQLException, BadLocationException, InterruptedException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		if (!redoStack.isEmpty()) {
-			UndoableCommand command = redoStack.pop();
-			command.execute();
-			terminal.update();
-			terminal.printLine(command.executeLog(), StringType.SOLUTION, StringFormat.ITALIC);
-			terminal.waitForInput();
-			undoStack.push(command);
-		}
+		UndoableCommand command = redoStack.pop();
+		command.execute();
+		terminal.update();
+		terminal.printLine(command.executeLog(), StringType.REQUEST, StringFormat.ITALIC);
+		terminal.waitForInput();
+		undoStack.push(command);
 	}
 
 	@Override public void undoCommand() throws SQLException, InterruptedException, BadLocationException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		if (!undoStack.isEmpty()) {
-			UndoableCommand command = undoStack.pop();
-			command.revert();
-			terminal.update();
-			terminal.printLine(command.revertLog(), StringType.SOLUTION, StringFormat.ITALIC);
-			terminal.waitForInput();
-			redoStack.push(command);
-		}
+		UndoableCommand command = undoStack.pop();
+		command.revert();
+		terminal.update();
+		terminal.printLine(command.revertLog(), StringType.REQUEST, StringFormat.ITALIC);
+		terminal.waitForInput();
+		redoStack.push(command);
+	}
+
+	@Override public boolean canUndo() {
+		return !undoStack.isEmpty();
+	}
+
+	@Override public boolean canRedo() {
+		return !redoStack.isEmpty();
 	}
 }

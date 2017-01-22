@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import database.main.userInterface.ITerminal;
+import database.main.userInterface.StringType;
 import database.plugin.Command;
 import database.plugin.Plugin;
 import database.services.ServiceRegistry;
@@ -58,11 +60,13 @@ public class HashMapPluginRegistry implements IPluginRegistry {
 	}
 
 	@Override public void initialOutput() throws BadLocationException, SQLException {
+		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		for (Plugin plugin : map.values()) {
 			if (plugin.display) {
 				plugin.initialOutput();
 			}
 		}
+		terminal.getLineOfCharacters('-', StringType.MAIN);
 	}
 
 	@Override public void register(Plugin plugin) {

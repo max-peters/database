@@ -52,13 +52,13 @@ public class RepetitiveExpensePlugin extends Plugin {
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, NumberFormatException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		DependingInsertCommand command;
-		String name = terminal.request("name", RequestType.NAME);
-		String category = terminal.request("category", RequestType.NAME);
-		Double value = Double.valueOf(terminal.request("value", RequestType.DOUBLE));
-		String temp = terminal.request("date", RequestType.DATE);
+		String name = terminal.request("enter expense name", RequestType.NAME);
+		String category = terminal.request("enter category", RequestType.NAME);
+		Double value = Double.valueOf(terminal.request("enter value", RequestType.DOUBLE));
+		String temp = terminal.request("enter date", RequestType.DATE);
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		ExecutionDay executionDay = ExecutionDay.getExecutionDay(terminal.request("executionday", RequestType.EXECUTIONDAY));
-		int interval = Integer.valueOf(terminal.request("interval", RequestType.INTEGER));
+		ExecutionDay executionDay = ExecutionDay.getExecutionDay(terminal.request("enter day of execution", RequestType.EXECUTIONDAY));
+		int interval = Integer.valueOf(terminal.request("enter repeat period in months", RequestType.INTEGER));
 		RepetitiveExpense repetitiveExpense = new RepetitiveExpense(name, category, value, date, executionDay, interval);
 		command = new DependingInsertCommand(repetitiveExpense);
 		for (Expense expense : createExpense(repetitiveExpense)) {

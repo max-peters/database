@@ -31,13 +31,13 @@ public class ExpensePlugin extends Plugin {
 		String category;
 		Double value;
 		LocalDate date;
-		requestResult = terminal.request("name", RequestType.NAME, connector.nameStringComplete);
+		requestResult = terminal.request("enter expense name", RequestType.NAME, connector.nameStringComplete);
 		name = connector.nameStringComplete.getCorrespondingString(requestResult);
-		requestResult = terminal.request("category", RequestType.NAME, connector.categoryStringComplete.getMostUsedString("", name),
+		requestResult = terminal.request("enter category", RequestType.NAME, connector.categoryStringComplete.getMostUsedString("", name),
 			connector.categoryStringComplete);
 		category = connector.categoryStringComplete.getCorrespondingString(requestResult);
-		value = Double.valueOf(terminal.request("value", RequestType.DOUBLE));
-		requestResult = terminal.request("date", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+		value = Double.valueOf(terminal.request("enter value", RequestType.DOUBLE));
+		requestResult = terminal.request("enter date", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 		date = requestResult.isEmpty() ? LocalDate.now() : LocalDate.parse(requestResult, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		CommandHandler.Instance().executeCommand(new InsertCommand(new Expense(name, category, value, date)));
 		connector.refreshStringComplete();

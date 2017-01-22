@@ -25,16 +25,16 @@ public class SubjectPlugin extends Plugin {
 	@Command(tag = "add") public void addRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String regex = getSubjectsAsRegex();
-		Subject toChange = getSubject(terminal.request("add", regex, new HashMapStringComplete(regex)));
-		Double newScore = Double.parseDouble(terminal.request("score", RequestType.DOUBLE));
-		Double newMaxPoint = Double.parseDouble(terminal.request("maximum points", RequestType.DOUBLE));
+		Subject toChange = getSubject(terminal.request("enter subject", regex, new HashMapStringComplete(regex)));
+		Double newScore = Double.parseDouble(terminal.request("enter score", RequestType.DOUBLE));
+		Double newMaxPoint = Double.parseDouble(terminal.request("enter maximum points", RequestType.DOUBLE));
 		Subject changed = new Subject(toChange.name, toChange.score + newScore, toChange.maxPoints + newMaxPoint, toChange.counter + 1);
 		CommandHandler.Instance().executeCommand(new ChangeCommand(toChange, changed));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		Subject subject = new Subject(terminal.request("name", RequestType.NAME), 0.0, 0.0, 0);
+		Subject subject = new Subject(terminal.request("enter subject name", RequestType.NAME), 0.0, 0.0, 0);
 		CommandHandler.Instance().executeCommand(new InsertCommand(subject));
 	}
 
