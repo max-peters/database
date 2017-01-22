@@ -12,7 +12,7 @@ import java.util.List;
 import javax.swing.text.BadLocationException;
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
-import database.main.userInterface.RequestRegexPattern;
+import database.main.userInterface.RequestType;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.plugin.Command;
@@ -85,7 +85,7 @@ public class CalendarPlugin extends Plugin {
 	@Command(tag = "check") public void check() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		boolean displayTemp = display;
-		String temp = terminal.request("date", RequestRegexPattern.DATE);
+		String temp = terminal.request("date", RequestType.DATE);
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		List<CalendarElement> list = new LinkedList<>();
 		String output = null;
@@ -135,39 +135,39 @@ public class CalendarPlugin extends Plugin {
 				LocalTime end;
 				LocalDate lastDay;
 				int daysTilRepetition;
-				temp = terminal.request("name", RequestRegexPattern.NAME, frequentStringComplement.get("appointment"));
+				temp = terminal.request("name", RequestType.NAME, frequentStringComplement.get("appointment"));
 				name = frequentStringComplement.get("appointment").getCorrespondingString(temp);
-				temp = terminal.request("date", RequestRegexPattern.DATE);
+				temp = terminal.request("date", RequestType.DATE);
 				date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, dateFormatter);
-				temp = terminal.request("begin", RequestRegexPattern.TIME);
+				temp = terminal.request("begin", RequestType.TIME);
 				begin = temp.isEmpty() ? null : LocalTime.parse(temp, timeFormatter);
-				temp = terminal.request("until", RequestRegexPattern.DATE, date.format(dateFormatter));
+				temp = terminal.request("until", RequestType.DATE, date.format(dateFormatter));
 				lastDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, dateFormatter);
 				while (lastDay.isBefore(date)) {
 					terminal.errorMessage();
-					temp = terminal.request("until", RequestRegexPattern.DATE, date.format(dateFormatter));
+					temp = terminal.request("until", RequestType.DATE, date.format(dateFormatter));
 					lastDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, dateFormatter);
 				}
-				temp = terminal.request("end", RequestRegexPattern.TIME);
+				temp = terminal.request("end", RequestType.TIME);
 				end = temp.isEmpty() ? null : LocalTime.parse(temp, timeFormatter);
 				while (end != null && lastDay.isEqual(date) && !end.isAfter(begin)) {
 					terminal.errorMessage();
-					temp = terminal.request("end", RequestRegexPattern.TIME);
+					temp = terminal.request("end", RequestType.TIME);
 					end = temp.isEmpty() ? null : LocalTime.parse(temp, timeFormatter);
 				}
-				daysTilRepetition = Integer.valueOf(terminal.request("days til repetition", RequestRegexPattern.INTEGER, "0"));
+				daysTilRepetition = Integer.valueOf(terminal.request("days til repetition", RequestType.INTEGER, "0"));
 				element = new Appointment(name, date, begin, lastDay, end, daysTilRepetition);
 				frequentStringComplement.insert(name, "appointment");
 				break;
 			case "birthday":
-				name = terminal.request("name", RequestRegexPattern.NAME);
-				temp = terminal.request("date", RequestRegexPattern.DATE);
+				name = terminal.request("name", RequestType.NAME);
+				temp = terminal.request("date", RequestType.DATE);
 				date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, dateFormatter);
 				element = new Birthday(name, date);
 				break;
 			case "day":
-				name = terminal.request("name", RequestRegexPattern.NAME_NUMBER);
-				temp = terminal.request("date", RequestRegexPattern.DATE);
+				name = terminal.request("name", RequestType.NAME_NUMBER);
+				temp = terminal.request("date", RequestType.DATE);
 				date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, dateFormatter);
 				element = new Day(name, date);
 				break;

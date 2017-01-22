@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
-import database.main.userInterface.RequestRegexPattern;
+import database.main.userInterface.RequestType;
 import database.plugin.Command;
 import database.plugin.Plugin;
 import database.plugin.element.Expense;
@@ -23,10 +23,10 @@ public class RefillingPlugin extends Plugin {
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, NumberFormatException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		Double distance = Double.valueOf(terminal.request("distance", RequestRegexPattern.DOUBLE));
-		Double refuelAmount = Double.valueOf(terminal.request("refuelAmount", RequestRegexPattern.DOUBLE));
-		Double cost = Double.valueOf(terminal.request("cost", RequestRegexPattern.DOUBLE));
-		String temp = terminal.request("date", RequestRegexPattern.DATE, LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+		Double distance = Double.valueOf(terminal.request("distance", RequestType.DOUBLE));
+		Double refuelAmount = Double.valueOf(terminal.request("refuelAmount", RequestType.DOUBLE));
+		Double cost = Double.valueOf(terminal.request("cost", RequestType.DOUBLE));
+		String temp = terminal.request("date", RequestType.DATE, LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		Refilling refilling = new Refilling(distance, refuelAmount, cost, date);
 		Expense expense = new Expense("Tankstelle", "Fahrtkosten", refilling.cost, refilling.date);

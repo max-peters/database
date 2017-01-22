@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.text.BadLocationException;
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
-import database.main.userInterface.RequestRegexPattern;
+import database.main.userInterface.RequestType;
 import database.plugin.Command;
 import database.plugin.Plugin;
 import database.plugin.connector.ExpenseDatabaseConnector;
@@ -31,12 +31,12 @@ public class ExpensePlugin extends Plugin {
 		String category;
 		Double value;
 		LocalDate date;
-		requestResult = terminal.request("name", RequestRegexPattern.NAME, connector.nameStringComplete);
+		requestResult = terminal.request("name", RequestType.NAME, connector.nameStringComplete);
 		name = connector.nameStringComplete.getCorrespondingString(requestResult);
-		requestResult = terminal.request("category", RequestRegexPattern.NAME, connector.categoryStringComplete.getMostUsedString("", name),
+		requestResult = terminal.request("category", RequestType.NAME, connector.categoryStringComplete.getMostUsedString("", name),
 			connector.categoryStringComplete);
 		category = connector.categoryStringComplete.getCorrespondingString(requestResult);
-		value = Double.valueOf(terminal.request("value", RequestRegexPattern.DOUBLE));
+		value = Double.valueOf(terminal.request("value", RequestType.DOUBLE));
 		requestResult = terminal.request("date", "DATE", LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 		date = requestResult.isEmpty() ? LocalDate.now() : LocalDate.parse(requestResult, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		CommandHandler.Instance().executeCommand(new InsertCommand(new Expense(name, category, value, date)));

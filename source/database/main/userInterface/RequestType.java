@@ -1,6 +1,6 @@
 package database.main.userInterface;
 
-public class RequestRegexPattern {
+public class RequestType {
 	public static final String	DATE			= "DATE";
 	public static final String	TIME			= "TIME";
 	public static final String	NAME			= "[A-ZÖÄÜa-zöäüß\\-\\. ]+";

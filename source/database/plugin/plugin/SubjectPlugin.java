@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import javax.swing.text.BadLocationException;
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
-import database.main.userInterface.RequestRegexPattern;
+import database.main.userInterface.RequestType;
 import database.plugin.Command;
 import database.plugin.Plugin;
 import database.plugin.connector.SubjectDatabaseConnector;
@@ -26,15 +26,15 @@ public class SubjectPlugin extends Plugin {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String regex = getSubjectsAsRegex();
 		Subject toChange = getSubject(terminal.request("add", regex, new HashMapStringComplete(regex)));
-		Double newScore = Double.parseDouble(terminal.request("score", RequestRegexPattern.DOUBLE));
-		Double newMaxPoint = Double.parseDouble(terminal.request("maximum points", RequestRegexPattern.DOUBLE));
+		Double newScore = Double.parseDouble(terminal.request("score", RequestType.DOUBLE));
+		Double newMaxPoint = Double.parseDouble(terminal.request("maximum points", RequestType.DOUBLE));
 		Subject changed = new Subject(toChange.name, toChange.score + newScore, toChange.maxPoints + newMaxPoint, toChange.counter + 1);
 		CommandHandler.Instance().executeCommand(new ChangeCommand(toChange, changed));
 	}
 
 	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		Subject subject = new Subject(terminal.request("name", RequestRegexPattern.NAME), 0.0, 0.0, 0);
+		Subject subject = new Subject(terminal.request("name", RequestType.NAME), 0.0, 0.0, 0);
 		CommandHandler.Instance().executeCommand(new InsertCommand(subject));
 	}
 
