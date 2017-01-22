@@ -16,8 +16,6 @@ public class CancelHelper {
 
 	public void cancel(IUndoRedo undoRedo) throws InterruptedException, SQLException, BadLocationException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		System.out.println(undoRedo.canRedo());
-		System.out.println(undoRedo.canUndo());
 		if (lastUndo && undoRedo.canRedo()) {
 			undoRedo.redoCommand();
 			lastUndo = false;
