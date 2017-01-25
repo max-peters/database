@@ -18,16 +18,16 @@ public class Appointment extends CalendarElement {
 		this.beginDate = beginDate;
 		this.beginTime = beginTime;
 		this.endDate = endDate;
-		this.endTime = endTime;
+		this.endTime = endTime.equals(LocalTime.of(23, 59, 59)) ? LocalTime.MAX : endTime;
 		this.daysTilRepeat = daysTilRepeat;
 	}
 
 	@Override public String getAdditionToOutput() {
 		String string = "";
-		if (beginTime != null) {
+		if (!beginTime.equals(LocalTime.MIN)) {
 			string = "[" + beginTime + " UHR";
 			if (beginDate.isEqual(endDate)) {
-				if (endTime != null) {
+				if (!endTime.equals(LocalTime.MAX)) {
 					string += " to " + endTime + " UHR]";
 				}
 				else {
@@ -36,7 +36,7 @@ public class Appointment extends CalendarElement {
 			}
 			else {
 				string += " until " + endDate.format(DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-				if (endTime != null) {
+				if (!endTime.equals(LocalTime.MAX)) {
 					string += " " + endTime + " UHR]";
 				}
 				else {
@@ -56,10 +56,10 @@ public class Appointment extends CalendarElement {
 	}
 
 	@Override public boolean isPast() {
-		if (beginTime != null && endTime == null && beginDate.isEqual(endDate) && LocalDateTime.now().isAfter(getBeginDateTime())) {
+		if (!beginTime.equals(LocalTime.MIN) && endTime.equals(LocalTime.MAX) && beginDate.isEqual(endDate) && LocalDateTime.now().isAfter(beginDate.atTime(beginTime))) {
 			return true;
 		}
-		else if (LocalDateTime.now().isAfter(getEndDateTime())) {
+		else if (LocalDateTime.now().isAfter(endDate.atTime(endTime))) {
 			return true;
 		}
 		else {
@@ -72,7 +72,7 @@ public class Appointment extends CalendarElement {
 	}
 
 	@Override public LocalDateTime orderDate() {
-		return getBeginDateTime().withHour(0).withMinute(0);
+		return beginDate.atTime(beginTime);
 	}
 
 	public Appointment repeat() {
@@ -81,27 +81,5 @@ public class Appointment extends CalendarElement {
 
 	@Override public LocalDate updateYear() {
 		return beginDate;
-	}
-
-	private LocalDateTime getBeginDateTime() {
-		LocalDateTime dateTime;
-		if (beginTime != null) {
-			dateTime = beginDate.atTime(beginTime);
-		}
-		else {
-			dateTime = beginDate.atTime(23, 59);
-		}
-		return dateTime;
-	}
-
-	private LocalDateTime getEndDateTime() {
-		LocalDateTime dateTime;
-		if (endTime != null) {
-			dateTime = endDate.atTime(endTime);
-		}
-		else {
-			dateTime = endDate.atTime(23, 59);
-		}
-		return dateTime;
 	}
 }

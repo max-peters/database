@@ -61,7 +61,7 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 	public void refreshStringComplete() throws SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		((ResultSetStringComplete) nameStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
-		((ResultSetStringComplete) nameStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
+		((ResultSetStringComplete) categoryStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
 	}
 
 	@Override public String selectQuery() throws SQLException {

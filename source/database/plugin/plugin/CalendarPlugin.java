@@ -139,7 +139,7 @@ public class CalendarPlugin extends Plugin {
 				temp = terminal.request("enter date", RequestType.DATE);
 				date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, dateFormatter);
 				temp = terminal.request("enter begin time", RequestType.TIME);
-				begin = temp.isEmpty() ? null : LocalTime.parse(temp, timeFormatter);
+				begin = temp.isEmpty() ? LocalTime.MIN : LocalTime.parse(temp, timeFormatter);
 				temp = terminal.request("until which date", RequestType.DATE, date.format(dateFormatter));
 				lastDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, dateFormatter);
 				while (lastDay.isBefore(date)) {
@@ -148,11 +148,11 @@ public class CalendarPlugin extends Plugin {
 					lastDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, dateFormatter);
 				}
 				temp = terminal.request("enter end time", RequestType.TIME);
-				end = temp.isEmpty() ? null : LocalTime.parse(temp, timeFormatter);
-				while (end != null && lastDay.isEqual(date) && !end.isAfter(begin)) {
+				end = temp.isEmpty() ? LocalTime.MAX : LocalTime.parse(temp, timeFormatter);
+				while (!end.equals(LocalTime.MAX) && lastDay.isEqual(date) && !end.isAfter(begin)) {
 					terminal.errorMessage();
 					temp = terminal.request("enter end time", RequestType.TIME);
-					end = temp.isEmpty() ? null : LocalTime.parse(temp, timeFormatter);
+					end = temp.isEmpty() ? LocalTime.MAX : LocalTime.parse(temp, timeFormatter);
 				}
 				daysTilRepetition = Integer.valueOf(terminal.request("enter days til repetition", RequestType.INTEGER, "0"));
 				element = new Appointment(name, date, begin, lastDay, end, daysTilRepetition);

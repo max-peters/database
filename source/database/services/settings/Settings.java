@@ -11,7 +11,7 @@ import database.plugin.element.Holiday;
 public class Settings {
 	public final int												eventDisplayRange	= 7;
 	public final int												revertStackSize		= 1;
-	public final String												storageDirectory	= System.getProperty("user.home") + "/Documents/storage1.xml";
+	public final String												storageDirectory	= System.getProperty("user.home") + "/Documents/storage.xml";
 	private final Map<Class<? extends CalendarElement>, Integer>	map;
 
 	public Settings() {
