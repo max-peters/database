@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import database.services.stringUtility.Builder;
 
 public class Appointment extends CalendarElement {
 	public LocalDate	beginDate;
@@ -18,33 +19,24 @@ public class Appointment extends CalendarElement {
 		this.beginDate = beginDate;
 		this.beginTime = beginTime;
 		this.endDate = endDate;
-		this.endTime = endTime.equals(LocalTime.of(23, 59, 59)) ? LocalTime.MAX : endTime;
+		this.endTime = endTime;
 		this.daysTilRepeat = daysTilRepeat;
 	}
 
 	@Override public String getAdditionToOutput() {
-		String string = "";
+		Builder builder = new Builder();
+		builder.append("[");
 		if (!beginTime.equals(LocalTime.MIN)) {
-			string = "[" + beginTime + " UHR";
-			if (beginDate.isEqual(endDate)) {
-				if (!endTime.equals(LocalTime.MAX)) {
-					string += " to " + endTime + " UHR]";
-				}
-				else {
-					string += "]";
-				}
-			}
-			else {
-				string += " until " + endDate.format(DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-				if (!endTime.equals(LocalTime.MAX)) {
-					string += " " + endTime + " UHR]";
-				}
-				else {
-					string += "]";
-				}
-			}
+			builder.append(beginTime + "UHR");
 		}
-		return string;
+		if (!beginDate.isEqual(endDate)) {
+			builder.append("until" + endDate.format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
+		}
+		if (!endTime.equals(LocalTime.MIN)) {
+			builder.append("to" + endTime + "UHR");
+		}
+		builder.append("]");
+		return builder.build().replace("[]", "").replaceAll("(?<=[A-Z])(?=[a-z])|(?<=[A-Za-z])(?=[0-9])|(?<=[0-9])(?=[A-Za-z])", " ");
 	}
 
 	@Override public LocalDate getDate() {
@@ -56,14 +48,16 @@ public class Appointment extends CalendarElement {
 	}
 
 	@Override public boolean isPast() {
-		if (!beginTime.equals(LocalTime.MIN) && endTime.equals(LocalTime.MAX) && beginDate.isEqual(endDate) && LocalDateTime.now().isAfter(beginDate.atTime(beginTime))) {
-			return true;
-		}
-		else if (LocalDateTime.now().isAfter(endDate.atTime(endTime))) {
-			return true;
+		if (endTime.equals(LocalTime.MIN)) {
+			if (beginTime.equals(LocalTime.MIN) || !beginDate.isEqual(endDate)) {
+				return LocalDate.now().isAfter(endDate);
+			}
+			else {
+				return LocalDateTime.now().isAfter(beginDate.atTime(beginTime));
+			}
 		}
 		else {
-			return false;
+			return LocalDateTime.now().isAfter(endDate.atTime(endTime));
 		}
 	}
 

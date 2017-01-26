@@ -1,5 +1,5 @@
 package database.services.database;
 
 public enum QueryType {
-	CONTAINS, DELETE, INSERT;
+	CONTAINS, DELETE, INSERT, SELECT;
 }

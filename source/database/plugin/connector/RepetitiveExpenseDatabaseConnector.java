@@ -19,20 +19,8 @@ public class RepetitiveExpenseDatabaseConnector implements IDatabaseConnector<Re
 			ExecutionDay.getExecutionDay(resultSet.getString("executionDay")), resultSet.getInt("repeatInterval"));
 	}
 
-	@Override public PreparedStatement prepareStatement(RepetitiveExpense repetitiveExpense, QueryType type) throws SQLException {
-		String sql = null;
-		PreparedStatement preparedStatement;
-		switch (type) {
-			case DELETE:
-				sql = SQLStatements.REPETITITVEEXPENSE_DELETE;
-				break;
-			case INSERT:
-				sql = SQLStatements.REPETITITVEEXPENSE_INSERT;
-				break;
-			default:
-				throw new InvalidParameterException();
-		}
-		preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(sql);
+	@Override public PreparedStatement prepareStatement(RepetitiveExpense repetitiveExpense, String query) throws SQLException {
+		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
 		preparedStatement.setString(1, repetitiveExpense.name);
 		preparedStatement.setString(2, repetitiveExpense.category);
 		preparedStatement.setDouble(3, repetitiveExpense.value);
@@ -42,7 +30,16 @@ public class RepetitiveExpenseDatabaseConnector implements IDatabaseConnector<Re
 		return preparedStatement;
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.REPETITITVEEXPENSE_SELECT;
+	@Override public String getQuery(QueryType type) throws SQLException {
+		switch (type) {
+			case DELETE:
+				return SQLStatements.REPETITITVEEXPENSE_DELETE;
+			case INSERT:
+				return SQLStatements.REPETITITVEEXPENSE_INSERT;
+			case SELECT:
+				return SQLStatements.REPETITITVEEXPENSE_SELECT;
+			default:
+				throw new InvalidParameterException();
+		}
 	}
 }

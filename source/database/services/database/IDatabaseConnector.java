@@ -13,14 +13,14 @@ public interface IDatabaseConnector<I> {
 	public default List<I> getList() throws SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		List<I> list = new LinkedList<>();
-		ResultSet resultSet = database.execute(selectQuery());
+		ResultSet resultSet = database.execute(getQuery(QueryType.SELECT));
 		while (resultSet.next()) {
 			list.add(create(resultSet));
 		}
 		return list;
 	}
 
-	public PreparedStatement prepareStatement(I element, QueryType type) throws SQLException;
+	public PreparedStatement prepareStatement(I element, String query) throws SQLException;
 
-	public String selectQuery() throws SQLException;
+	public String getQuery(QueryType type) throws SQLException;
 }

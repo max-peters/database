@@ -1,5 +1,6 @@
 package database.plugin.connector;
 
+import java.security.InvalidParameterException;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,7 +25,7 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 	}
 
 	public boolean contains(Expense expense) throws SQLException {
-		PreparedStatement preparedStatement = prepareStatement(expense, QueryType.CONTAINS);
+		PreparedStatement preparedStatement = prepareStatement(expense, getQuery(QueryType.CONTAINS));
 		ResultSet resultSet = preparedStatement.executeQuery();
 		boolean isContained = resultSet.first();
 		preparedStatement.close();
@@ -36,21 +37,8 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 		return new Expense(resultSet.getString("name"), resultSet.getString("category"), resultSet.getDouble("value"), resultSet.getDate("date").toLocalDate());
 	}
 
-	@Override public PreparedStatement prepareStatement(Expense expense, QueryType type) throws SQLException {
-		String sql = null;
-		PreparedStatement preparedStatement;
-		switch (type) {
-			case DELETE:
-				sql = SQLStatements.EXPENSE_DELETE;
-				break;
-			case INSERT:
-				sql = SQLStatements.EXPENSE_INSERT;
-				break;
-			case CONTAINS:
-				sql = SQLStatements.EXPENSE_SELECT_CONTAINS;
-				break;
-		}
-		preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(sql);
+	@Override public PreparedStatement prepareStatement(Expense expense, String query) throws SQLException {
+		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
 		preparedStatement.setString(1, expense.name);
 		preparedStatement.setString(2, expense.category);
 		preparedStatement.setDate(3, Date.valueOf(expense.date));
@@ -64,7 +52,18 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 		((ResultSetStringComplete) categoryStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.EXPENSE_SELECT;
+	@Override public String getQuery(QueryType type) throws SQLException {
+		switch (type) {
+			case DELETE:
+				return SQLStatements.EXPENSE_DELETE;
+			case INSERT:
+				return SQLStatements.EXPENSE_INSERT;
+			case SELECT:
+				return SQLStatements.EXPENSE_SELECT;
+			case CONTAINS:
+				return SQLStatements.EXPENSE_SELECT_CONTAINS;
+			default:
+				throw new InvalidParameterException();
+		}
 	}
 }

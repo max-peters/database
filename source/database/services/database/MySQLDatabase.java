@@ -39,7 +39,8 @@ public class MySQLDatabase implements IDatabase {
 
 	private void executeQuery(Instance instance, QueryType type) throws SQLException {
 		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
-		PreparedStatement preparedStatement = registry.get((Class<Instance>) instance.getClass()).prepareStatement(instance, type);
+		IDatabaseConnector<Instance> connector = registry.get((Class<Instance>) instance.getClass());
+		PreparedStatement preparedStatement = connector.prepareStatement(instance, connector.getQuery(type));
 		preparedStatement.executeUpdate();
 		preparedStatement.close();
 	}

@@ -17,20 +17,8 @@ public class RefillingDatabaseConnector implements IDatabaseConnector<Refilling>
 		return new Refilling(resultSet.getDouble("distance"), resultSet.getDouble("refuelAmount"), resultSet.getDouble("cost"), resultSet.getDate("date").toLocalDate());
 	}
 
-	@Override public PreparedStatement prepareStatement(Refilling refilling, QueryType type) throws SQLException {
-		String sql = null;
-		PreparedStatement preparedStatement;
-		switch (type) {
-			case DELETE:
-				sql = SQLStatements.REFILLING_DELETE;
-				break;
-			case INSERT:
-				sql = SQLStatements.REFILLING_INSERT;
-				break;
-			default:
-				throw new InvalidParameterException();
-		}
-		preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(sql);
+	@Override public PreparedStatement prepareStatement(Refilling refilling, String query) throws SQLException {
+		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
 		preparedStatement.setDouble(1, refilling.cost);
 		preparedStatement.setDate(2, Date.valueOf(refilling.date));
 		preparedStatement.setDouble(3, refilling.distance);
@@ -38,7 +26,16 @@ public class RefillingDatabaseConnector implements IDatabaseConnector<Refilling>
 		return preparedStatement;
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.REFILLING_SELECT;
+	@Override public String getQuery(QueryType type) throws SQLException {
+		switch (type) {
+			case DELETE:
+				return SQLStatements.REFILLING_DELETE;
+			case INSERT:
+				return SQLStatements.REFILLING_INSERT;
+			case SELECT:
+				return SQLStatements.REFILLING_SELECT;
+			default:
+				throw new InvalidParameterException();
+		}
 	}
 }

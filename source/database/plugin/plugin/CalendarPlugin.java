@@ -131,7 +131,7 @@ public class CalendarPlugin extends Plugin {
 			case "appointment":
 				IFrequentStringComplete frequentStringComplement = ServiceRegistry.Instance().get(IFrequentStringComplete.class);
 				LocalTime begin;
-				LocalTime end;
+				LocalTime end = LocalTime.MIN;
 				LocalDate lastDay;
 				int daysTilRepetition;
 				temp = terminal.request("enter appointment name", RequestType.NAME, frequentStringComplement.get("appointment"));
@@ -148,11 +148,11 @@ public class CalendarPlugin extends Plugin {
 					lastDay = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, dateFormatter);
 				}
 				temp = terminal.request("enter end time", RequestType.TIME);
-				end = temp.isEmpty() ? LocalTime.MAX : LocalTime.parse(temp, timeFormatter);
-				while (!end.equals(LocalTime.MAX) && lastDay.isEqual(date) && !end.isAfter(begin)) {
+				end = temp.isEmpty() ? LocalTime.MIN : LocalTime.parse(temp, timeFormatter);
+				while (!end.equals(LocalTime.MIN) && lastDay.isEqual(date) && !end.isAfter(begin)) {
 					terminal.errorMessage();
 					temp = terminal.request("enter end time", RequestType.TIME);
-					end = temp.isEmpty() ? LocalTime.MAX : LocalTime.parse(temp, timeFormatter);
+					end = temp.isEmpty() ? LocalTime.MIN : LocalTime.parse(temp, timeFormatter);
 				}
 				daysTilRepetition = Integer.valueOf(terminal.request("enter days til repetition", RequestType.INTEGER, "0"));
 				element = new Appointment(name, date, begin, lastDay, end, daysTilRepetition);

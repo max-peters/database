@@ -16,20 +16,8 @@ public class SubjectDatabaseConnector implements IDatabaseConnector<Subject> {
 		return new Subject(resultSet.getString("name"), resultSet.getDouble("score"), resultSet.getDouble("maxPoints"), resultSet.getInt("counter"));
 	}
 
-	@Override public PreparedStatement prepareStatement(Subject subject, QueryType type) throws SQLException {
-		String sql = null;
-		PreparedStatement preparedStatement;
-		switch (type) {
-			case DELETE:
-				sql = SQLStatements.SUBJECT_DELETE;
-				break;
-			case INSERT:
-				sql = SQLStatements.SUBJECT_INSERT;
-				break;
-			default:
-				throw new InvalidParameterException();
-		}
-		preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(sql);
+	@Override public PreparedStatement prepareStatement(Subject subject, String query) throws SQLException {
+		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
 		preparedStatement.setString(1, subject.name);
 		preparedStatement.setDouble(2, subject.score);
 		preparedStatement.setDouble(3, subject.maxPoints);
@@ -37,7 +25,16 @@ public class SubjectDatabaseConnector implements IDatabaseConnector<Subject> {
 		return preparedStatement;
 	}
 
-	@Override public String selectQuery() throws SQLException {
-		return SQLStatements.SUBJECT_SELECT;
+	@Override public String getQuery(QueryType type) throws SQLException {
+		switch (type) {
+			case DELETE:
+				return SQLStatements.SUBJECT_DELETE;
+			case INSERT:
+				return SQLStatements.SUBJECT_INSERT;
+			case SELECT:
+				return SQLStatements.SUBJECT_SELECT;
+			default:
+				throw new InvalidParameterException();
+		}
 	}
 }
