@@ -120,8 +120,9 @@ public class Main {
 			repetitiveExpensePlugin.createExpense();
 			guiThread.join();
 			graphicalUserInterface.setVisible(true);
-			terminal.update();
 			logger.log("ready");
+			logger.print();
+			terminal.update();
 			administration.request();
 		}
 		catch (Throwable e) {

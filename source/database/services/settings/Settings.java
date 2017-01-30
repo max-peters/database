@@ -12,6 +12,7 @@ public class Settings {
 	public final int												eventDisplayRange	= 7;
 	public final int												revertStackSize		= 1;
 	public final String												storageDirectory	= System.getProperty("user.home") + "/Documents/storage.xml";
+	public boolean													displayLogger		= false;
 	private final Map<Class<? extends CalendarElement>, Integer>	map;
 
 	public Settings() {

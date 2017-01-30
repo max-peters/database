@@ -88,7 +88,6 @@ public class Terminal implements ITerminal {
 
 	@Override public void printCollectedLines() throws InterruptedException, BadLocationException {
 		if (!collectedLines.isEmpty()) {
-			getLineOfCharacters('-', StringType.SOLUTION);
 			List<String> list = new ArrayList<>();
 			for (String string : collectedLines.values()) {
 				if (!list.contains(string)) {
