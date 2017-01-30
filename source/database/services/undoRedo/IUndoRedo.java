@@ -7,11 +7,11 @@ import database.services.undoRedo.command.UndoableCommand;
 public interface IUndoRedo {
 	public void addUndoableCommand(UndoableCommand command);
 
-	public void redoCommand() throws SQLException, BadLocationException, InterruptedException;
-
-	public void undoCommand() throws SQLException, BadLocationException, InterruptedException;
+	public boolean canRedo();
 
 	public boolean canUndo();
 
-	public boolean canRedo();
+	public void redoCommand() throws SQLException, BadLocationException, InterruptedException;
+
+	public void undoCommand() throws SQLException, BadLocationException, InterruptedException;
 }

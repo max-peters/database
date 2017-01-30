@@ -17,14 +17,6 @@ public class DayDatabaseConnector implements IDatabaseConnector<Day> {
 		return new Day(resultSet.getString("name"), resultSet.getDate("date").toLocalDate());
 	}
 
-	@Override public PreparedStatement prepareStatement(Day day, String query) throws SQLException {
-		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setString(1, day.getName());
-		preparedStatement.setDate(2, Date.valueOf(day.getDate()));
-		preparedStatement.setString(3, "day");
-		return preparedStatement;
-	}
-
 	@Override public String getQuery(QueryType type) throws SQLException {
 		switch (type) {
 			case DELETE:
@@ -36,5 +28,13 @@ public class DayDatabaseConnector implements IDatabaseConnector<Day> {
 			default:
 				throw new InvalidParameterException();
 		}
+	}
+
+	@Override public PreparedStatement prepareStatement(Day day, String query) throws SQLException {
+		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
+		preparedStatement.setString(1, day.getName());
+		preparedStatement.setDate(2, Date.valueOf(day.getDate()));
+		preparedStatement.setString(3, "day");
+		return preparedStatement;
 	}
 }

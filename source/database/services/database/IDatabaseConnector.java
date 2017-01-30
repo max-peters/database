@@ -20,7 +20,7 @@ public interface IDatabaseConnector<I> {
 		return list;
 	}
 
-	public PreparedStatement prepareStatement(I element, String query) throws SQLException;
-
 	public String getQuery(QueryType type) throws SQLException;
+
+	public PreparedStatement prepareStatement(I element, String query) throws SQLException;
 }

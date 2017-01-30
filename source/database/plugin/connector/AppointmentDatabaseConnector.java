@@ -19,17 +19,6 @@ public class AppointmentDatabaseConnector implements IDatabaseConnector<Appointm
 			resultSet.getDate("endDate").toLocalDate(), resultSet.getTime("endTime").toLocalTime(), resultSet.getInt("daysTilRepeat"));
 	}
 
-	@Override public PreparedStatement prepareStatement(Appointment appointment, String query) throws SQLException {
-		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setString(1, appointment.name);
-		preparedStatement.setDate(2, Date.valueOf(appointment.beginDate));
-		preparedStatement.setTime(3, Time.valueOf(appointment.beginTime));
-		preparedStatement.setDate(4, Date.valueOf(appointment.endDate));
-		preparedStatement.setTime(5, Time.valueOf(appointment.endTime));
-		preparedStatement.setInt(6, appointment.daysTilRepeat);
-		return preparedStatement;
-	}
-
 	@Override public String getQuery(QueryType type) throws SQLException {
 		switch (type) {
 			case DELETE:
@@ -41,5 +30,16 @@ public class AppointmentDatabaseConnector implements IDatabaseConnector<Appointm
 			default:
 				throw new InvalidParameterException();
 		}
+	}
+
+	@Override public PreparedStatement prepareStatement(Appointment appointment, String query) throws SQLException {
+		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
+		preparedStatement.setString(1, appointment.name);
+		preparedStatement.setDate(2, Date.valueOf(appointment.beginDate));
+		preparedStatement.setTime(3, Time.valueOf(appointment.beginTime));
+		preparedStatement.setDate(4, Date.valueOf(appointment.endDate));
+		preparedStatement.setTime(5, Time.valueOf(appointment.endTime));
+		preparedStatement.setInt(6, appointment.daysTilRepeat);
+		return preparedStatement;
 	}
 }

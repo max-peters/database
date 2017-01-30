@@ -17,14 +17,6 @@ public class HolidayDatabaseConnector implements IDatabaseConnector<Holiday> {
 		return new Holiday(resultSet.getString("name"), resultSet.getDate("date").toLocalDate());
 	}
 
-	@Override public PreparedStatement prepareStatement(Holiday holiday, String query) throws SQLException {
-		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setString(1, holiday.getName());
-		preparedStatement.setDate(2, Date.valueOf(holiday.getDate()));
-		preparedStatement.setString(3, "holiday");
-		return preparedStatement;
-	}
-
 	@Override public String getQuery(QueryType type) throws SQLException {
 		switch (type) {
 			case DELETE:
@@ -36,5 +28,13 @@ public class HolidayDatabaseConnector implements IDatabaseConnector<Holiday> {
 			default:
 				throw new InvalidParameterException();
 		}
+	}
+
+	@Override public PreparedStatement prepareStatement(Holiday holiday, String query) throws SQLException {
+		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
+		preparedStatement.setString(1, holiday.getName());
+		preparedStatement.setDate(2, Date.valueOf(holiday.getDate()));
+		preparedStatement.setString(3, "holiday");
+		return preparedStatement;
 	}
 }

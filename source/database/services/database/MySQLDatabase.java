@@ -15,6 +15,12 @@ public class MySQLDatabase implements IDatabase {
 		connect.close();
 	}
 
+	@Override public void connect() throws SQLException, ClassNotFoundException {
+		Class.forName("com.mysql.jdbc.Driver");
+		connect = DriverManager.getConnection("jdbc:mysql://localhost/DATABASE?useSSL=false", "root", "vfr4");
+		connect.setAutoCommit(true);
+	}
+
 	@Override public ResultSet execute(String sql) throws SQLException {
 		return connect.createStatement().executeQuery(sql);
 	}
@@ -37,11 +43,5 @@ public class MySQLDatabase implements IDatabase {
 		PreparedStatement preparedStatement = connector.prepareStatement(instance, connector.getQuery(type));
 		preparedStatement.executeUpdate();
 		preparedStatement.close();
-	}
-
-	@Override public void connect() throws SQLException, ClassNotFoundException {
-		Class.forName("com.mysql.jdbc.Driver");
-		connect = DriverManager.getConnection("jdbc:mysql://localhost/DATABASE?useSSL=false", "root", "vfr4");
-		connect.setAutoCommit(true);
 	}
 }

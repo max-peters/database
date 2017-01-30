@@ -5,13 +5,19 @@ import java.util.List;
 import database.services.stringComplete.Tupel;
 
 public class Logger {
-	private static Logger				instance;
-	private List<Tupel<Long, String>>	list;
 	private long						beginTime;
+	private List<Tupel<Long, String>>	list;
+	private static Logger				instance;
 
 	private Logger() {
-		this.list = new LinkedList<>();
-		this.beginTime = System.currentTimeMillis();
+		list = new LinkedList<>();
+		beginTime = System.currentTimeMillis();
+	}
+
+	public void log(String string) {
+		long time = System.currentTimeMillis() - beginTime;
+		list.add(new Tupel<>(time, string));
+		System.out.println(time + ": " + string);
 	}
 
 	public static Logger Instance() {
@@ -19,11 +25,5 @@ public class Logger {
 			instance = new Logger();
 		}
 		return instance;
-	}
-
-	public void log(String string) {
-		long time = System.currentTimeMillis() - beginTime;
-		list.add(new Tupel<>(time, string));
-		System.out.println(time + ": " + string);
 	}
 }

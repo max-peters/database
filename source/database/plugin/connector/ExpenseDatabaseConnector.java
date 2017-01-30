@@ -31,6 +31,21 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 		return new Expense(resultSet.getString("name"), resultSet.getString("category"), resultSet.getDouble("value"), resultSet.getDate("date").toLocalDate());
 	}
 
+	@Override public String getQuery(QueryType type) throws SQLException {
+		switch (type) {
+			case DELETE:
+				return SQLStatements.EXPENSE_DELETE;
+			case INSERT:
+				return SQLStatements.EXPENSE_INSERT;
+			case SELECT:
+				return SQLStatements.EXPENSE_SELECT;
+			case CONTAINS:
+				return SQLStatements.EXPENSE_SELECT_CONTAINS;
+			default:
+				throw new InvalidParameterException();
+		}
+	}
+
 	@Override public PreparedStatement prepareStatement(Expense expense, String query) throws SQLException {
 		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
 		preparedStatement.setString(1, expense.name);
@@ -49,21 +64,6 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 		else {
 			nameStringComplete = new ResultSetStringComplete(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
 			categoryStringComplete = new ResultSetStringComplete(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
-		}
-	}
-
-	@Override public String getQuery(QueryType type) throws SQLException {
-		switch (type) {
-			case DELETE:
-				return SQLStatements.EXPENSE_DELETE;
-			case INSERT:
-				return SQLStatements.EXPENSE_INSERT;
-			case SELECT:
-				return SQLStatements.EXPENSE_SELECT;
-			case CONTAINS:
-				return SQLStatements.EXPENSE_SELECT_CONTAINS;
-			default:
-				throw new InvalidParameterException();
 		}
 	}
 }

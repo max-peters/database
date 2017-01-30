@@ -22,6 +22,14 @@ public class UndoRedoStack implements IUndoRedo {
 		redoStack.clear();
 	}
 
+	@Override public boolean canRedo() {
+		return !redoStack.isEmpty();
+	}
+
+	@Override public boolean canUndo() {
+		return !undoStack.isEmpty();
+	}
+
 	@Override public void redoCommand() throws SQLException, BadLocationException, InterruptedException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		UndoableCommand command = redoStack.pop();
@@ -40,13 +48,5 @@ public class UndoRedoStack implements IUndoRedo {
 		terminal.printLine(command.revertLog(), StringType.REQUEST, StringFormat.ITALIC);
 		terminal.waitForInput();
 		redoStack.push(command);
-	}
-
-	@Override public boolean canUndo() {
-		return !undoStack.isEmpty();
-	}
-
-	@Override public boolean canRedo() {
-		return !redoStack.isEmpty();
 	}
 }

@@ -19,17 +19,6 @@ public class RepetitiveExpenseDatabaseConnector implements IDatabaseConnector<Re
 			ExecutionDay.getExecutionDay(resultSet.getString("executionDay")), resultSet.getInt("repeatInterval"));
 	}
 
-	@Override public PreparedStatement prepareStatement(RepetitiveExpense repetitiveExpense, String query) throws SQLException {
-		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setString(1, repetitiveExpense.name);
-		preparedStatement.setString(2, repetitiveExpense.category);
-		preparedStatement.setDouble(3, repetitiveExpense.value);
-		preparedStatement.setDate(4, Date.valueOf(repetitiveExpense.date));
-		preparedStatement.setString(5, repetitiveExpense.executionDay.toString());
-		preparedStatement.setInt(6, repetitiveExpense.interval);
-		return preparedStatement;
-	}
-
 	@Override public String getQuery(QueryType type) throws SQLException {
 		switch (type) {
 			case DELETE:
@@ -41,5 +30,16 @@ public class RepetitiveExpenseDatabaseConnector implements IDatabaseConnector<Re
 			default:
 				throw new InvalidParameterException();
 		}
+	}
+
+	@Override public PreparedStatement prepareStatement(RepetitiveExpense repetitiveExpense, String query) throws SQLException {
+		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
+		preparedStatement.setString(1, repetitiveExpense.name);
+		preparedStatement.setString(2, repetitiveExpense.category);
+		preparedStatement.setDouble(3, repetitiveExpense.value);
+		preparedStatement.setDate(4, Date.valueOf(repetitiveExpense.date));
+		preparedStatement.setString(5, repetitiveExpense.executionDay.toString());
+		preparedStatement.setInt(6, repetitiveExpense.interval);
+		return preparedStatement;
 	}
 }

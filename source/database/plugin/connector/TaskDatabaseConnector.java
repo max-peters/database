@@ -16,12 +16,6 @@ public class TaskDatabaseConnector implements IDatabaseConnector<Task> {
 		return new Task(resultSet.getString("name"));
 	}
 
-	@Override public PreparedStatement prepareStatement(Task task, String query) throws SQLException {
-		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setString(1, task.name);
-		return preparedStatement;
-	}
-
 	@Override public String getQuery(QueryType type) throws SQLException {
 		switch (type) {
 			case DELETE:
@@ -33,5 +27,11 @@ public class TaskDatabaseConnector implements IDatabaseConnector<Task> {
 			default:
 				throw new InvalidParameterException();
 		}
+	}
+
+	@Override public PreparedStatement prepareStatement(Task task, String query) throws SQLException {
+		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
+		preparedStatement.setString(1, task.name);
+		return preparedStatement;
 	}
 }

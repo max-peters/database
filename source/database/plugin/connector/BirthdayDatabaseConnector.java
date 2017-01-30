@@ -17,14 +17,6 @@ public class BirthdayDatabaseConnector implements IDatabaseConnector<Birthday> {
 		return new Birthday(resultSet.getString("name"), resultSet.getDate("date").toLocalDate());
 	}
 
-	@Override public PreparedStatement prepareStatement(Birthday birthday, String query) throws SQLException {
-		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setString(1, birthday.getName());
-		preparedStatement.setDate(2, Date.valueOf(birthday.getDate()));
-		preparedStatement.setString(3, "birthday");
-		return preparedStatement;
-	}
-
 	@Override public String getQuery(QueryType type) throws SQLException {
 		switch (type) {
 			case DELETE:
@@ -36,5 +28,13 @@ public class BirthdayDatabaseConnector implements IDatabaseConnector<Birthday> {
 			default:
 				throw new InvalidParameterException();
 		}
+	}
+
+	@Override public PreparedStatement prepareStatement(Birthday birthday, String query) throws SQLException {
+		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
+		preparedStatement.setString(1, birthday.getName());
+		preparedStatement.setDate(2, Date.valueOf(birthday.getDate()));
+		preparedStatement.setString(3, "birthday");
+		return preparedStatement;
 	}
 }
