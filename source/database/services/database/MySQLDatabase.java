@@ -11,12 +11,6 @@ import database.services.ServiceRegistry;
 public class MySQLDatabase implements IDatabase {
 	private Connection connect = null;
 
-	public MySQLDatabase() throws SQLException, ClassNotFoundException {
-		Class.forName("com.mysql.jdbc.Driver");
-		connect = DriverManager.getConnection("jdbc:mysql://localhost/DATABASE?useSSL=false", "root", "vfr4");
-		connect.setAutoCommit(true);
-	}
-
 	@Override public void close() throws SQLException {
 		connect.close();
 	}
@@ -43,5 +37,11 @@ public class MySQLDatabase implements IDatabase {
 		PreparedStatement preparedStatement = connector.prepareStatement(instance, connector.getQuery(type));
 		preparedStatement.executeUpdate();
 		preparedStatement.close();
+	}
+
+	@Override public void connect() throws SQLException, ClassNotFoundException {
+		Class.forName("com.mysql.jdbc.Driver");
+		connect = DriverManager.getConnection("jdbc:mysql://localhost/DATABASE?useSSL=false", "root", "vfr4");
+		connect.setAutoCommit(true);
 	}
 }

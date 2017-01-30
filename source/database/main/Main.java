@@ -47,22 +47,35 @@ import database.services.writerReader.XmlWriterReader;
 public class Main {
 	public static void main(String[] args) {
 		Thread guiThread;
+		Thread databaseThread;
 		try {
+			Logger logger = Logger.Instance();
+			IDatabase database = new MySQLDatabase();
 			GraphicalUserInterface graphicalUserInterface = new GraphicalUserInterface();
 			Administration administration = new Administration();
+			databaseThread = new Thread(() -> {
+				try {
+					database.connect();
+					logger.log("database connected");
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			});
+			databaseThread.start();
 			guiThread = new Thread(() -> {
 				try {
 					graphicalUserInterface.initialise();
+					logger.log("graphical user interface initialised");
 				}
 				catch (Exception e) {
 					e.printStackTrace();
 				}
 			});
 			guiThread.start();
-			// register services
+			logger.log("threads started");
 			Settings settings = new Settings();
 			IConnectorRegistry connectorRegistry = new ConnectorRegistry();
-			IDatabase database = new MySQLDatabase();
 			ITerminal terminal = new Terminal(graphicalUserInterface);
 			IWriterReader writerReader = new XmlWriterReader(settings.storageDirectory);
 			IPluginRegistry pluginRegistry = new HashMapPluginRegistry();
@@ -76,7 +89,7 @@ public class Main {
 			ServiceRegistry.Instance().register(IUndoRedo.class, undoRedoService);
 			ServiceRegistry.Instance().register(IConnectorRegistry.class, connectorRegistry);
 			ServiceRegistry.Instance().register(IFrequentStringComplete.class, frequentStringComplement);
-			// register plugins
+			logger.log("services registered");
 			connectorRegistry.register(Appointment.class, new AppointmentDatabaseConnector());
 			connectorRegistry.register(Birthday.class, new BirthdayDatabaseConnector());
 			connectorRegistry.register(Day.class, new DayDatabaseConnector());
@@ -98,13 +111,17 @@ public class Main {
 			pluginRegistry.register(refillingPlugin);
 			pluginRegistry.register(taskPlugin);
 			pluginRegistry.register(eventPlugin);
-			// initialise
+			logger.log("plugins registered");
 			writerReader.read();
+			databaseThread.join();
+			((ExpenseDatabaseConnector) ServiceRegistry.Instance().get(IConnectorRegistry.class).get(Expense.class)).refreshStringComplete();
+			ServiceRegistry.Instance().get(IFrequentStringComplete.class).create("appointment");
 			eventPlugin.updateCalendar();
 			repetitiveExpensePlugin.createExpense();
 			guiThread.join();
 			graphicalUserInterface.setVisible(true);
 			terminal.update();
+			logger.log("ready");
 			administration.request();
 		}
 		catch (Throwable e) {

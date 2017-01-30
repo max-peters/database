@@ -18,12 +18,6 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 	public IStringComplete	categoryStringComplete;
 	public IStringComplete	nameStringComplete;
 
-	public ExpenseDatabaseConnector() throws SQLException {
-		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
-		nameStringComplete = new ResultSetStringComplete(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
-		categoryStringComplete = new ResultSetStringComplete(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
-	}
-
 	public boolean contains(Expense expense) throws SQLException {
 		PreparedStatement preparedStatement = prepareStatement(expense, getQuery(QueryType.CONTAINS));
 		ResultSet resultSet = preparedStatement.executeQuery();
@@ -48,8 +42,14 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 
 	public void refreshStringComplete() throws SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
-		((ResultSetStringComplete) nameStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
-		((ResultSetStringComplete) categoryStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
+		if (nameStringComplete != null && categoryStringComplete != null) {
+			((ResultSetStringComplete) nameStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
+			((ResultSetStringComplete) categoryStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
+		}
+		else {
+			nameStringComplete = new ResultSetStringComplete(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
+			categoryStringComplete = new ResultSetStringComplete(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
+		}
 	}
 
 	@Override public String getQuery(QueryType type) throws SQLException {

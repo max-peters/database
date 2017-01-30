@@ -50,7 +50,11 @@ public class GraphicalUserInterface {
 	private Timer				timer;
 	private TimerTask			timerTask;
 
-	public GraphicalUserInterface() {
+	public void addKeyListenerForAutocompletition() {
+		input.addKeyListener(keyListenerAutocompletition);
+	}
+
+	public void initialise() throws FontFormatException, IOException {
 		frameHeight = 530;
 		frameWidht = 800;
 		frame = new JFrame("Database");
@@ -109,13 +113,6 @@ public class GraphicalUserInterface {
 				time.setText(dateFormat.format(Calendar.getInstance().getTime()) + " " + timeFormat.format(Calendar.getInstance().getTime()));
 			}
 		};
-	}
-
-	public void addKeyListenerForAutocompletition() {
-		input.addKeyListener(keyListenerAutocompletition);
-	}
-
-	public void initialise() throws FontFormatException, IOException {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		ClassLoader classLoader = this.getClass().getClassLoader();
 		InputStream inputStream = classLoader.getResourceAsStream("DejaVuSansMono.ttf");

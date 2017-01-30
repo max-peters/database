@@ -40,7 +40,6 @@ import database.services.undoRedo.command.UndoableCommand;
 public class CalendarPlugin extends Plugin {
 	public CalendarPlugin() throws SQLException, BadLocationException, InterruptedException {
 		super("event", new CalendarOutputHandler());
-		ServiceRegistry.Instance().get(IFrequentStringComplete.class).create("appointment");
 	}
 
 	@Command(tag = "cancel") public void cancel() throws BadLocationException, InterruptedException, SQLException {

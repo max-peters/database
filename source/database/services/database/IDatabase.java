@@ -8,6 +8,8 @@ import database.plugin.Instance;
 public interface IDatabase {
 	public void close() throws SQLException;
 
+	public void connect() throws SQLException, ClassNotFoundException;
+
 	public ResultSet execute(String sql) throws SQLException;
 
 	public void insert(Instance instance) throws SQLException;
