@@ -1,5 +1,6 @@
 package database.services.settings;
 
+import java.util.LinkedList;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
@@ -30,7 +31,7 @@ public class SettingsProvider implements ISettingsProvider {
 				internalParameters.revertStackSize = Integer.valueOf(node.getTextContent());
 				break;
 			case "calendarElementPriority":
-				internalParameters.calendarElementPriorityList = new Gson().fromJson(node.getTextContent(), internalParameters.calendarElementPriorityList.getClass());
+				internalParameters.calendarElementPriorityList = new Gson().fromJson(node.getTextContent(), new LinkedList<>().getClass());
 				break;
 		}
 	}
