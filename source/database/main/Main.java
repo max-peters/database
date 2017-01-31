@@ -105,12 +105,12 @@ public class Main {
 			RefillingPlugin refillingPlugin = new RefillingPlugin();
 			TaskPlugin taskPlugin = new TaskPlugin();
 			CalendarPlugin eventPlugin = new CalendarPlugin();
+			pluginRegistry.register(eventPlugin);
+			pluginRegistry.register(taskPlugin);
 			pluginRegistry.register(subjectPlugin);
 			pluginRegistry.register(expensePlugin);
 			pluginRegistry.register(repetitiveExpensePlugin);
 			pluginRegistry.register(refillingPlugin);
-			pluginRegistry.register(taskPlugin);
-			pluginRegistry.register(eventPlugin);
 			logger.log("plugins registered");
 			writerReader.read();
 			databaseThread.join();
@@ -120,7 +120,7 @@ public class Main {
 			repetitiveExpensePlugin.createExpense();
 			guiThread.join();
 			graphicalUserInterface.setVisible(true);
-			logger.log("ready");
+			logger.log("initialisation complete");
 			logger.print();
 			terminal.update();
 			administration.request();

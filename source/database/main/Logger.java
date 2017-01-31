@@ -7,6 +7,7 @@ import database.main.userInterface.StringFormat;
 import database.services.ServiceRegistry;
 import database.services.settings.Settings;
 import database.services.stringComplete.Tupel;
+import database.services.stringUtility.StringUtility;
 
 public class Logger {
 	private long						beginTime;
@@ -34,9 +35,14 @@ public class Logger {
 	public void print() {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		Settings settings = ServiceRegistry.Instance().get(Settings.class);
+		int timeLength = 0;
+		StringUtility stringUtility = new StringUtility();
+		if (!list.isEmpty()) {
+			timeLength = list.get(list.size() - 1).first.toString().length();
+		}
 		if (settings.displayLogger) {
 			for (Tupel<Long, String> tupel : list) {
-				terminal.collectLine(" " + tupel.first + ": " + tupel.second, StringFormat.STANDARD, "logger");
+				terminal.collectLine(" " + stringUtility.preIncrementTo(tupel.first.toString(), timeLength, '0') + ": " + tupel.second, StringFormat.STANDARD, "logger");
 			}
 		}
 	}
