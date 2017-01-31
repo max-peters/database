@@ -1,7 +1,6 @@
 package database.services.writerReader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -26,15 +25,12 @@ public class XmlWriterReader implements IWriterReader {
 	private File					localStorage;
 	private Map<String, IWriteRead>	register;
 
-	public XmlWriterReader(String fileDirectory) throws FileNotFoundException, ParserConfigurationException {
+	public XmlWriterReader(String fileDirectory) throws ParserConfigurationException, IOException, TransformerException {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		localStorage = new File(fileDirectory);
-		setUp();
-		if (!localStorage.exists()) {
-			throw new FileNotFoundException();
-		}
 		register = new LinkedHashMap<>();
+		setUp();
 	}
 
 	@Override public void add(String nodeName, String leaveName, String content) {
@@ -48,14 +44,19 @@ public class XmlWriterReader implements IWriterReader {
 		node.appendChild(leave);
 	}
 
-	@Override public void read() throws ParserConfigurationException, SAXException, IOException {
-		Document document = documentBuilder.parse(localStorage);
-		document.getDocumentElement().normalize();
-		NodeList nList = document.getElementsByTagName("*");
-		for (int i = 0; i < nList.getLength(); i++) {
-			IWriteRead writeRead = register.get(nList.item(i).getParentNode().getNodeName());
-			if (writeRead != null) {
-				writeRead.read(nList.item(i));
+	@Override public void read() throws ParserConfigurationException, SAXException, IOException, TransformerException {
+		if (!localStorage.exists()) {
+			write();
+		}
+		else {
+			Document document = documentBuilder.parse(localStorage);
+			document.getDocumentElement().normalize();
+			NodeList nList = document.getElementsByTagName("*");
+			for (int i = 0; i < nList.getLength(); i++) {
+				IWriteRead writeRead = register.get(nList.item(i).getParentNode().getNodeName());
+				if (writeRead != null) {
+					writeRead.read(nList.item(i));
+				}
 			}
 		}
 	}

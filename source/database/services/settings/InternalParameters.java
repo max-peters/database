@@ -1,14 +1,22 @@
 package database.services.settings;
 
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
 import database.plugin.calendar.CalendarElements;
 
 public class InternalParameters {
-	public List<CalendarElements>	calendarElementPriorityList	= new LinkedList<>();
-	protected boolean				displayLogger				= true;
-	protected int					eventDisplayRange			= 7;
-	protected int					revertStackSize				= 1;
+	protected List<CalendarElements>	calendarElementPriorityList;
+	protected boolean					displayLogger;
+	protected int						eventDisplayRange;
+	protected int						revertStackSize;
+
+	public InternalParameters() {
+		displayLogger = true;
+		eventDisplayRange = 7;
+		revertStackSize = 1;
+		calendarElementPriorityList = Arrays
+			.asList(new CalendarElements[] { CalendarElements.HOLIDAY, CalendarElements.DAY, CalendarElements.BIRTHDAY, CalendarElements.APPOINTMENT });
+	}
 
 	public int getCalendarElementPriority(CalendarElements type) {
 		return calendarElementPriorityList.indexOf(type);

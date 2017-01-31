@@ -8,7 +8,7 @@ import org.xml.sax.SAXException;
 public interface IWriterReader {
 	public void add(String nodeName, String leaveName, String content);
 
-	public void read() throws ParserConfigurationException, SAXException, IOException;
+	public void read() throws ParserConfigurationException, SAXException, IOException, TransformerException;
 
 	public void register(String identifier, IWriteRead writeRead);
 

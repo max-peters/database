@@ -27,7 +27,7 @@ public abstract class Plugin implements IWriteRead {
 	public Plugin(String identity, IOutputHandler dataHandler) {
 		this.identity = identity;
 		outputHandler = dataHandler;
-		display = false;
+		display = true;
 	}
 
 	public void conduct(String command) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
