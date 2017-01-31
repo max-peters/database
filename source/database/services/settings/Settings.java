@@ -9,10 +9,10 @@ import database.plugin.element.Day;
 import database.plugin.element.Holiday;
 
 public class Settings {
+	public boolean													displayLogger		= true;
 	public final int												eventDisplayRange	= 7;
 	public final int												revertStackSize		= 1;
 	public final String												storageDirectory	= System.getProperty("user.home") + "/Documents/storage.xml";
-	public boolean													displayLogger		= true;
 	private final Map<Class<? extends CalendarElement>, Integer>	map;
 
 	public Settings() {

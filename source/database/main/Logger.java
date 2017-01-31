@@ -25,13 +25,6 @@ public class Logger {
 		System.out.println(time + ": " + string);
 	}
 
-	public static Logger Instance() {
-		if (instance == null) {
-			instance = new Logger();
-		}
-		return instance;
-	}
-
 	public void print() {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		Settings settings = ServiceRegistry.Instance().get(Settings.class);
@@ -45,5 +38,12 @@ public class Logger {
 				terminal.collectLine(" " + stringUtility.preIncrementTo(tupel.first.toString(), timeLength, '0') + ": " + tupel.second, StringFormat.STANDARD, "logger");
 			}
 		}
+	}
+
+	public static Logger Instance() {
+		if (instance == null) {
+			instance = new Logger();
+		}
+		return instance;
 	}
 }
