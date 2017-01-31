@@ -10,10 +10,10 @@ public class SQLStatements {
 	public static final String	EVENT_INSERT							= "INSERT INTO event VALUES (?,?,?);";
 	public static final String	EXPENSE_DELETE							= "DELETE FROM expense WHERE name=? AND category=? AND date=? AND value=?;";
 	public static final String	EXPENSE_INSERT							= "INSERT INTO expense VALUES (?,?,?,?);";
-	public static final String	EXPENSE_SELECT							= "SELECT * FROM expense;";
+	public static final String	EXPENSE_SELECT							= "SELECT * FROM expense ORDER BY date;";
 	public static final String	EXPENSE_SELECT_ALL						= "SELECT * FROM expenseall";
 	public static final String	EXPENSE_SELECT_ALL_LENGTH				= "SELECT MAX(LENGTH(name)) AS namelength, MAX(LENGTH(CAST(sum AS DECIMAL (18 , 2 )))) AS sumlength FROM expenseall;";
-	public static final String	EXPENSE_SELECT_AVERAGE					= "SELECT * FROM expenseaverage;";
+	public static final String	EXPENSE_SELECT_AVERAGE					= "SELECT SUM(value) as sum FROM expense WHERE ((MONTH(date) != MONTH(NOW())) OR (YEAR(date) != YEAR(NOW())))";
 	public static final String	EXPENSE_SELECT_CATEGORY					= "SELECT * FROM expensecategories";
 	public static final String	EXPENSE_SELECT_CATEGORY_LENGTH			= "SELECT MAX(LENGTH(category)) AS categorylength, MAX(LENGTH(CAST(sum AS DECIMAL (18 , 2 )))) AS sumlength, MAX(LENGTH(CAST(percentage AS DECIMAL (18 , 2 )))) AS percentagelength FROM expensecategories;";
 	public static final String	EXPENSE_SELECT_CONTAINS					= "SELECT * FROM expense WHERE name=? AND category=? AND date=? AND value=?;";

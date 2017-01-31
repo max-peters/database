@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,18 +35,28 @@ public class ExpenseOutputHandler implements IOutputHandler {
 		StringUtility stringUtility = new StringUtility();
 		Builder builder = new Builder();
 		ResultSet resultSet;
+		LocalDate firstDate = null;
+		long dayCount = 0;
+		long monthCount = 0;
+		resultSet = database.execute(SQLStatements.EXPENSE_SELECT);
+		if (resultSet.next()) {
+			firstDate = resultSet.getDate("date").toLocalDate();
+			dayCount = ChronoUnit.DAYS.between(firstDate, LocalDate.now().minusDays(LocalDate.now().getDayOfMonth()));
+			monthCount = ChronoUnit.MONTHS.between(firstDate, LocalDate.now().minusDays(LocalDate.now().getDayOfMonth())) + 1;
+		}
 		resultSet = database.execute(SQLStatements.EXPENSE_SELECT_AVERAGE);
 		if (resultSet.next()) {
-			double dayAverage = resultSet.getDouble("dayaverage");
-			double monthAverage = resultSet.getDouble("monthaverage");
+			double sum = resultSet.getDouble("sum");
+			double dayAverage = sum / dayCount;
+			double monthAverage = sum / monthCount;
 			String yearAverage = stringUtility.formatDouble((dayAverage * 365.25 + monthAverage * 12) / 2, 2) + "€";
 			builder.append(" average value per");
 			builder.newLine();
-			builder.append("  - day   : " + stringUtility.preIncrementTo(stringUtility.formatDouble(dayAverage, 2) + "€", yearAverage.length(), ' '));
+			builder.append(" - day   : " + stringUtility.preIncrementTo(stringUtility.formatDouble(dayAverage, 2) + "€", yearAverage.length(), ' '));
 			builder.newLine();
-			builder.append("  - month : " + stringUtility.preIncrementTo(stringUtility.formatDouble(monthAverage, 2) + "€", yearAverage.length(), ' '));
+			builder.append(" - month : " + stringUtility.preIncrementTo(stringUtility.formatDouble(monthAverage, 2) + "€", yearAverage.length(), ' '));
 			builder.newLine();
-			builder.append("  - year  : " + yearAverage);
+			builder.append(" - year  : " + yearAverage);
 			builder.newLine();
 		}
 		resultSet.close();
