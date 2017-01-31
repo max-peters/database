@@ -16,16 +16,18 @@ import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
 import database.services.ServiceRegistry;
 import database.services.stringComplete.HashMapStringComplete;
+import database.services.writerReader.IWriteRead;
 import database.services.writerReader.IWriterReader;
 
-public abstract class Plugin {
+public abstract class Plugin implements IWriteRead {
 	public boolean			display;
 	public String			identity;
 	private IOutputHandler	outputHandler;
 
 	public Plugin(String identity, IOutputHandler dataHandler) {
 		this.identity = identity;
-		outputHandler = dataHandler;
+		this.outputHandler = dataHandler;
+		this.display = false;
 	}
 
 	public void conduct(String command) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -74,12 +76,6 @@ public abstract class Plugin {
 		}
 	}
 
-	public void read(Node node) throws ParserConfigurationException, DOMException {
-		if (node.getNodeName().equals("display")) {
-			display = Boolean.valueOf(node.getTextContent());
-		}
-	}
-
 	@Command(tag = "show") public void show()	throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException,
 												InvocationTargetException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
@@ -101,5 +97,11 @@ public abstract class Plugin {
 	public void write() {
 		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
 		writerReader.add(identity, "display", String.valueOf(display));
+	}
+
+	public void read(Node node) throws ParserConfigurationException, DOMException {
+		if (node.getNodeName().equals("display")) {
+			display = Boolean.valueOf(node.getTextContent());
+		}
 	}
 }

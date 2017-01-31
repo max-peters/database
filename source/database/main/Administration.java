@@ -14,6 +14,7 @@ import database.services.pluginRegistry.IPluginRegistry;
 import database.services.stringComplete.HashMapStringComplete;
 import database.services.undoRedo.CancelHelper;
 import database.services.undoRedo.IUndoRedo;
+import database.services.writerReader.IWriterReader;
 
 public class Administration {
 	public void request() throws Exception {
@@ -65,10 +66,10 @@ public class Administration {
 
 	private void save() throws BadLocationException, TransformerException, ParserConfigurationException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		IPluginRegistry pluginRegistry = ServiceRegistry.Instance().get(IPluginRegistry.class);
+		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
 		terminal.blockInput();
 		terminal.printLine("saving", StringType.REQUEST, StringFormat.ITALIC);
-		pluginRegistry.write();
+		writerReader.write();
 		terminal.printLine("saved", StringType.REQUEST, StringFormat.ITALIC);
 	}
 }

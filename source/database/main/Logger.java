@@ -5,7 +5,8 @@ import java.util.List;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.services.ServiceRegistry;
-import database.services.settings.Settings;
+import database.services.settings.ISettingsProvider;
+import database.services.settings.InternalParameters;
 import database.services.stringComplete.Tupel;
 import database.services.stringUtility.StringUtility;
 
@@ -27,13 +28,13 @@ public class Logger {
 
 	public void print() {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		Settings settings = ServiceRegistry.Instance().get(Settings.class);
+		InternalParameters internalParameters = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
 		int timeLength = 0;
 		StringUtility stringUtility = new StringUtility();
 		if (!list.isEmpty()) {
 			timeLength = list.get(list.size() - 1).first.toString().length();
 		}
-		if (settings.displayLogger) {
+		if (internalParameters.getDisplayLogger()) {
 			for (Tupel<Long, String> tupel : list) {
 				terminal.collectLine(" " + stringUtility.preIncrementTo(tupel.first.toString(), timeLength, '0') + ": " + tupel.second, StringFormat.STANDARD, "logger");
 			}

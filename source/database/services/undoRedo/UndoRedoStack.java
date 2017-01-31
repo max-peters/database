@@ -12,9 +12,9 @@ public class UndoRedoStack implements IUndoRedo {
 	private BoundedStack<UndoableCommand>	redoStack;
 	private BoundedStack<UndoableCommand>	undoStack;
 
-	public UndoRedoStack(int limit) {
-		undoStack = new BoundedStack<>(limit);
-		redoStack = new BoundedStack<>(limit);
+	public UndoRedoStack() {
+		undoStack = new BoundedStack<>();
+		redoStack = new BoundedStack<>();
 	}
 
 	@Override public void addUndoableCommand(UndoableCommand command) {

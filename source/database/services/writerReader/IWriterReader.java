@@ -10,5 +10,7 @@ public interface IWriterReader {
 
 	public void read() throws ParserConfigurationException, SAXException, IOException;
 
+	public void register(String identifier, IWriteRead writeRead);
+
 	public void write() throws ParserConfigurationException, TransformerException;
 }

@@ -8,14 +8,11 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.text.BadLocationException;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringType;
 import database.plugin.Command;
 import database.plugin.Plugin;
 import database.services.ServiceRegistry;
-import database.services.writerReader.IWriterReader;
 
 public class HashMapPluginRegistry implements IPluginRegistry {
 	private Map<Class<? extends Plugin>, Plugin> map;
@@ -71,13 +68,5 @@ public class HashMapPluginRegistry implements IPluginRegistry {
 
 	@Override public void register(Plugin plugin) {
 		map.put(plugin.getClass(), plugin);
-	}
-
-	@Override public void write() throws ParserConfigurationException, TransformerException {
-		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
-		for (Plugin plugin : map.values()) {
-			plugin.write();
-		}
-		writerReader.write();
 	}
 }

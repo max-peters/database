@@ -1,13 +1,13 @@
 package database.services.undoRedo;
 
 import java.util.LinkedList;
+import database.services.ServiceRegistry;
+import database.services.settings.ISettingsProvider;
 
 public class BoundedStack<T> {
-	private int				limit;
-	private LinkedList<T>	list;
+	private LinkedList<T> list;
 
-	public BoundedStack(int maxSize) {
-		limit = maxSize;
+	public BoundedStack() {
 		list = new LinkedList<>();
 	}
 
@@ -36,7 +36,8 @@ public class BoundedStack<T> {
 	}
 
 	public void push(T value) {
-		if (list.size() >= limit) {
+		ISettingsProvider settingsProvider = ServiceRegistry.Instance().get(ISettingsProvider.class);
+		if (list.size() >= settingsProvider.getInternalParameters().getRevertStackSize()) {
 			list.removeLast();
 		}
 		list.addFirst(value);

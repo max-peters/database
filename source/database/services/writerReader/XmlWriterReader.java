@@ -3,6 +3,8 @@ package database.services.writerReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,24 +18,23 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import database.plugin.Plugin;
-import database.services.ServiceRegistry;
-import database.services.pluginRegistry.IPluginRegistry;
 
 public class XmlWriterReader implements IWriterReader {
-	private Element			appendTo;
-	private Document		document;
-	private DocumentBuilder	documentBuilder;
-	private File			localStorage;
+	private Element					appendTo;
+	private Document				document;
+	private DocumentBuilder			documentBuilder;
+	private File					localStorage;
+	private Map<String, IWriteRead>	register;
 
 	public XmlWriterReader(String fileDirectory) throws FileNotFoundException, ParserConfigurationException {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		documentBuilder = documentBuilderFactory.newDocumentBuilder();
-		localStorage = new File(fileDirectory);
+		this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		this.localStorage = new File(fileDirectory);
 		setUp();
-		if (!localStorage.exists()) {
+		if (!this.localStorage.exists()) {
 			throw new FileNotFoundException();
 		}
+		this.register = new LinkedHashMap<>();
 	}
 
 	@Override public void add(String nodeName, String leaveName, String content) {
@@ -48,19 +49,21 @@ public class XmlWriterReader implements IWriterReader {
 	}
 
 	@Override public void read() throws ParserConfigurationException, SAXException, IOException {
-		IPluginRegistry pluginRegistry = ServiceRegistry.Instance().get(IPluginRegistry.class);
 		Document document = documentBuilder.parse(localStorage);
 		document.getDocumentElement().normalize();
 		NodeList nList = document.getElementsByTagName("*");
 		for (int i = 0; i < nList.getLength(); i++) {
-			Plugin plugin = pluginRegistry.getPlugin(nList.item(i).getParentNode().getNodeName());
-			if (plugin != null) {
-				plugin.read(nList.item(i));
+			IWriteRead writeRead = register.get(nList.item(i).getParentNode().getNodeName());
+			if (writeRead != null) {
+				writeRead.read(nList.item(i));
 			}
 		}
 	}
 
 	@Override public void write() throws ParserConfigurationException, TransformerException {
+		for (IWriteRead writeRead : register.values()) {
+			writeRead.write();
+		}
 		DOMSource domSource = new DOMSource(document);
 		StreamResult streamResult = new StreamResult(localStorage);
 		TransformerFactory tf = TransformerFactory.newInstance();
@@ -76,5 +79,9 @@ public class XmlWriterReader implements IWriterReader {
 		document = documentBuilder.newDocument();
 		appendTo = document.createElement("database");
 		document.appendChild(appendTo);
+	}
+
+	@Override public void register(String identifier, IWriteRead writeRead) {
+		register.put(identifier, writeRead);
 	}
 }
