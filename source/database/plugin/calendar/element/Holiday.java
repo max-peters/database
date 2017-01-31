@@ -14,11 +14,11 @@ public class Holiday extends Event {
 		return "";
 	}
 
-	@Override public LocalDate updateYear() {
-		return getDate();
-	}
-
 	@Override public int getPriority() {
 		return ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters().getCalendarElementPriority(CalendarElements.HOLIDAY);
+	}
+
+	@Override public LocalDate updateYear() {
+		return getDate();
 	}
 }

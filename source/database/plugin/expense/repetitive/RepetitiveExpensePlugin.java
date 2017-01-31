@@ -39,8 +39,8 @@ public class RepetitiveExpensePlugin extends Plugin {
 		}
 		for (Expense expense : newExpenses) {
 			database.insert(expense);
-			String printOut = " + "	+ expense.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.name + " (" + expense.category + ") " + expense.value
-								+ "€";
+			String printOut = " + "	+ expense.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.getName() + " (" + expense.getCategory() + ") "
+								+ expense.getValue() + "€";
 			terminal.collectLine(printOut, StringFormat.STANDARD, "expense");
 		}
 	}
@@ -59,8 +59,8 @@ public class RepetitiveExpensePlugin extends Plugin {
 		command = new DependingInsertCommand(repetitiveExpense);
 		for (Expense expense : createExpense(repetitiveExpense)) {
 			command.addDependingInstances(expense);
-			String printOut = " + "	+ expense.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.name + " (" + expense.category + ") " + expense.value
-								+ "€";
+			String printOut = " + "	+ expense.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.getName() + " (" + expense.getCategory() + ") "
+								+ expense.getValue() + "€";
 			terminal.collectLine(printOut, StringFormat.STANDARD, "expense");
 		}
 		CommandHandler.Instance().executeCommand(command);
@@ -73,7 +73,7 @@ public class RepetitiveExpensePlugin extends Plugin {
 		List<String> strings = new ArrayList<>();
 		List<RepetitiveExpense> list = repetitiveExpenseConnector.getList();
 		for (Expense expense : list) {
-			strings.add(expense.name + " - " + expense.category);
+			strings.add(expense.getName() + " - " + expense.getCategory());
 		}
 		int position = terminal.checkRequest(strings, "choose expense to stop");
 		if (position < 0) {
@@ -101,18 +101,18 @@ public class RepetitiveExpensePlugin extends Plugin {
 		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
 		ExpenseDatabaseConnector connector = (ExpenseDatabaseConnector) registry.get(Expense.class);
 		List<Expense> list = new LinkedList<>();
-		Expense expense = new Expense(repetitiveExpense.name, repetitiveExpense.category, repetitiveExpense.value, repetitiveExpense.date);
-		expense.date = adjustDate(expense.date.getMonthValue(), expense.date.getYear(), repetitiveExpense.executionDay);
-		while (expense.date.isBefore(LocalDate.now()) || expense.date.isEqual(LocalDate.now())) {
+		Expense expense = new Expense(repetitiveExpense.getName(), repetitiveExpense.getCategory(), repetitiveExpense.getValue(), repetitiveExpense.getDate());
+		expense.setDate(adjustDate(expense.getDate().getMonthValue(), expense.getDate().getYear(), repetitiveExpense.getExecutionDay()));
+		while (expense.getDate().isBefore(LocalDate.now()) || expense.getDate().isEqual(LocalDate.now())) {
 			if (!connector.contains(expense)	&& !list.contains(expense)
-				&& Math.floorMod(ChronoUnit.MONTHS.between(repetitiveExpense.date, expense.date), repetitiveExpense.interval) == 0) {
-				list.add(new Expense(expense.name, expense.category, expense.value, expense.date));
+				&& Math.floorMod(ChronoUnit.MONTHS.between(repetitiveExpense.getDate(), expense.getDate()), repetitiveExpense.getInterval()) == 0) {
+				list.add(new Expense(expense.getName(), expense.getCategory(), expense.getValue(), expense.getDate()));
 			}
-			if (expense.date.getMonthValue() == 12) {
-				expense.date = adjustDate(1, expense.date.getYear() + 1, repetitiveExpense.executionDay);
+			if (expense.getDate().getMonthValue() == 12) {
+				expense.setDate(adjustDate(1, expense.getDate().getYear() + 1, repetitiveExpense.getExecutionDay()));
 			}
 			else {
-				expense.date = adjustDate(expense.date.getMonthValue() + 1, expense.date.getYear(), repetitiveExpense.executionDay);
+				expense.setDate(adjustDate(expense.getDate().getMonthValue() + 1, expense.getDate().getYear(), repetitiveExpense.getExecutionDay()));
 			}
 		}
 		return list;

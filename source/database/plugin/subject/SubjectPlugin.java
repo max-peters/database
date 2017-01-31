@@ -25,7 +25,7 @@ public class SubjectPlugin extends Plugin {
 		Subject toChange = getSubject(terminal.request("enter subject", regex, new HashMapStringComplete(regex)));
 		Double newScore = Double.parseDouble(terminal.request("enter score", RequestType.DOUBLE));
 		Double newMaxPoint = Double.parseDouble(terminal.request("enter maximum points", RequestType.DOUBLE));
-		Subject changed = new Subject(toChange.name, toChange.score + newScore, toChange.maxPoints + newMaxPoint, toChange.counter + 1);
+		Subject changed = new Subject(toChange.getName(), toChange.getScore() + newScore, toChange.getMaxPoints() + newMaxPoint, toChange.getCounter() + 1);
 		CommandHandler.Instance().executeCommand(new ChangeCommand(toChange, changed));
 	}
 
@@ -40,7 +40,7 @@ public class SubjectPlugin extends Plugin {
 		SubjectDatabaseConnector subjectConnector = (SubjectDatabaseConnector) registry.get(Subject.class);
 		Subject wanted = null;
 		for (Subject subject : subjectConnector.getList()) {
-			if (subject.name.equalsIgnoreCase(name)) {
+			if (subject.getName().equalsIgnoreCase(name)) {
 				wanted = subject;
 			}
 		}
@@ -52,9 +52,9 @@ public class SubjectPlugin extends Plugin {
 		SubjectDatabaseConnector subjectConnector = (SubjectDatabaseConnector) registry.get(Subject.class);
 		String regex = "(";
 		for (Subject subject : subjectConnector.getList()) {
-			char c[] = subject.name.toCharArray();
+			char c[] = subject.getName().toCharArray();
 			c[0] = Character.toLowerCase(c[0]);
-			regex += subject.name + "|";
+			regex += subject.getName() + "|";
 			regex += new String(c) + "|";
 		}
 		return regex.substring(0, regex.lastIndexOf("|")) + ")";

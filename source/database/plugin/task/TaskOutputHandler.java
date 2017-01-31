@@ -12,7 +12,7 @@ public class TaskOutputHandler implements IOutputHandler {
 		TaskDatabaseConnector taskConnector = (TaskDatabaseConnector) registry.get(Task.class);
 		Builder builder = new Builder();
 		for (Task task : taskConnector.getList()) {
-			builder.append(" \u2610 " + task.name);
+			builder.append(" \u2610 " + task.getName());
 			builder.newLine();
 		}
 		return builder.build();

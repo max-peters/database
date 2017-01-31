@@ -11,7 +11,11 @@ public class SettingsProvider implements ISettingsProvider {
 	private InternalParameters internalParameters;
 
 	public SettingsProvider() {
-		this.internalParameters = new InternalParameters();
+		internalParameters = new InternalParameters();
+	}
+
+	@Override public InternalParameters getInternalParameters() {
+		return internalParameters;
 	}
 
 	@Override public void read(Node node) throws ParserConfigurationException, DOMException {
@@ -37,9 +41,5 @@ public class SettingsProvider implements ISettingsProvider {
 		writerReader.add("settings", "eventDisplayRange", String.valueOf(internalParameters.eventDisplayRange));
 		writerReader.add("settings", "revertStackSize", String.valueOf(internalParameters.revertStackSize));
 		writerReader.add("settings", "calendarElementPriority", new Gson().toJson(internalParameters.calendarElementPriorityList));
-	}
-
-	@Override public InternalParameters getInternalParameters() {
-		return internalParameters;
 	}
 }

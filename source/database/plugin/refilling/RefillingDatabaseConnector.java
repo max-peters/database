@@ -31,10 +31,10 @@ public class RefillingDatabaseConnector implements IDatabaseConnector<Refilling>
 
 	@Override public PreparedStatement prepareStatement(Refilling refilling, String query) throws SQLException {
 		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setDouble(1, refilling.cost);
-		preparedStatement.setDate(2, Date.valueOf(refilling.date));
-		preparedStatement.setDouble(3, refilling.distance);
-		preparedStatement.setDouble(4, refilling.refuelAmount);
+		preparedStatement.setDouble(1, refilling.getCost());
+		preparedStatement.setDate(2, Date.valueOf(refilling.getDate()));
+		preparedStatement.setDouble(3, refilling.getDistance());
+		preparedStatement.setDouble(4, refilling.getRefuelAmount());
 		return preparedStatement;
 	}
 }

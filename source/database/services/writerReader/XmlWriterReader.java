@@ -28,13 +28,13 @@ public class XmlWriterReader implements IWriterReader {
 
 	public XmlWriterReader(String fileDirectory) throws FileNotFoundException, ParserConfigurationException {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		this.documentBuilder = documentBuilderFactory.newDocumentBuilder();
-		this.localStorage = new File(fileDirectory);
+		documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		localStorage = new File(fileDirectory);
 		setUp();
-		if (!this.localStorage.exists()) {
+		if (!localStorage.exists()) {
 			throw new FileNotFoundException();
 		}
-		this.register = new LinkedHashMap<>();
+		register = new LinkedHashMap<>();
 	}
 
 	@Override public void add(String nodeName, String leaveName, String content) {
@@ -60,6 +60,10 @@ public class XmlWriterReader implements IWriterReader {
 		}
 	}
 
+	@Override public void register(String identifier, IWriteRead writeRead) {
+		register.put(identifier, writeRead);
+	}
+
 	@Override public void write() throws ParserConfigurationException, TransformerException {
 		for (IWriteRead writeRead : register.values()) {
 			writeRead.write();
@@ -79,9 +83,5 @@ public class XmlWriterReader implements IWriterReader {
 		document = documentBuilder.newDocument();
 		appendTo = document.createElement("database");
 		document.appendChild(appendTo);
-	}
-
-	@Override public void register(String identifier, IWriteRead writeRead) {
-		register.put(identifier, writeRead);
 	}
 }

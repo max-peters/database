@@ -47,10 +47,10 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 
 	@Override public PreparedStatement prepareStatement(Expense expense, String query) throws SQLException {
 		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setString(1, expense.name);
-		preparedStatement.setString(2, expense.category);
-		preparedStatement.setDate(3, Date.valueOf(expense.date));
-		preparedStatement.setDouble(4, expense.value);
+		preparedStatement.setString(1, expense.getName());
+		preparedStatement.setString(2, expense.getCategory());
+		preparedStatement.setDate(3, Date.valueOf(expense.getDate()));
+		preparedStatement.setDouble(4, expense.getValue());
 		return preparedStatement;
 	}
 

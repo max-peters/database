@@ -26,8 +26,8 @@ public abstract class Plugin implements IWriteRead {
 
 	public Plugin(String identity, IOutputHandler dataHandler) {
 		this.identity = identity;
-		this.outputHandler = dataHandler;
-		this.display = false;
+		outputHandler = dataHandler;
+		display = false;
 	}
 
 	public void conduct(String command) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
@@ -76,6 +76,12 @@ public abstract class Plugin implements IWriteRead {
 		}
 	}
 
+	@Override public void read(Node node) throws ParserConfigurationException, DOMException {
+		if (node.getNodeName().equals("display")) {
+			display = Boolean.valueOf(node.getTextContent());
+		}
+	}
+
 	@Command(tag = "show") public void show()	throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException,
 												InvocationTargetException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
@@ -94,14 +100,8 @@ public abstract class Plugin implements IWriteRead {
 		}
 	}
 
-	public void write() {
+	@Override public void write() {
 		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
 		writerReader.add(identity, "display", String.valueOf(display));
-	}
-
-	public void read(Node node) throws ParserConfigurationException, DOMException {
-		if (node.getNodeName().equals("display")) {
-			display = Boolean.valueOf(node.getTextContent());
-		}
 	}
 }

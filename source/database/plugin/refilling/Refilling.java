@@ -4,10 +4,10 @@ import java.time.LocalDate;
 import database.plugin.Instance;
 
 public class Refilling extends Instance {
-	public Double		cost;
-	public LocalDate	date;
-	public Double		distance;
-	public Double		refuelAmount;
+	private Double		cost;
+	private LocalDate	date;
+	private Double		distance;
+	private Double		refuelAmount;
 
 	public Refilling(Double distance, Double refuelAmount, Double cost, LocalDate date) {
 		this.distance = distance;
@@ -18,5 +18,21 @@ public class Refilling extends Instance {
 
 	public double calcAverageConsumption() {
 		return Math.round(refuelAmount / distance * 1000) / 10.0;
+	}
+
+	public Double getCost() {
+		return cost;
+	}
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+	public Double getDistance() {
+		return distance;
+	}
+
+	public Double getRefuelAmount() {
+		return refuelAmount;
 	}
 }

@@ -30,10 +30,10 @@ public class SubjectDatabaseConnector implements IDatabaseConnector<Subject> {
 
 	@Override public PreparedStatement prepareStatement(Subject subject, String query) throws SQLException {
 		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setString(1, subject.name);
-		preparedStatement.setDouble(2, subject.score);
-		preparedStatement.setDouble(3, subject.maxPoints);
-		preparedStatement.setInt(4, subject.counter);
+		preparedStatement.setString(1, subject.getName());
+		preparedStatement.setDouble(2, subject.getScore());
+		preparedStatement.setDouble(3, subject.getMaxPoints());
+		preparedStatement.setInt(4, subject.getCounter());
 		return preparedStatement;
 	}
 }

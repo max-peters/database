@@ -27,7 +27,7 @@ public class RefillingPlugin extends Plugin {
 		String temp = terminal.request("enter date", RequestType.DATE, LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		Refilling refilling = new Refilling(distance, refuelAmount, cost, date);
-		Expense expense = new Expense("Tankstelle", "Fahrtkosten", refilling.cost, refilling.date);
+		Expense expense = new Expense("Tankstelle", "Fahrtkosten", cost, date);
 		CommandHandler.Instance().executeCommand(new DependingInsertCommand(refilling, expense));
 	}
 }

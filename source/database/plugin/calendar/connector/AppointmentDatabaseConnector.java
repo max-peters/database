@@ -34,12 +34,12 @@ public class AppointmentDatabaseConnector implements IDatabaseConnector<Appointm
 
 	@Override public PreparedStatement prepareStatement(Appointment appointment, String query) throws SQLException {
 		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setString(1, appointment.name);
-		preparedStatement.setDate(2, Date.valueOf(appointment.beginDate));
-		preparedStatement.setTime(3, Time.valueOf(appointment.beginTime));
-		preparedStatement.setDate(4, Date.valueOf(appointment.endDate));
-		preparedStatement.setTime(5, Time.valueOf(appointment.endTime));
-		preparedStatement.setInt(6, appointment.daysTilRepeat);
+		preparedStatement.setString(1, appointment.getName());
+		preparedStatement.setDate(2, Date.valueOf(appointment.getDate()));
+		preparedStatement.setTime(3, Time.valueOf(appointment.getBeginTime()));
+		preparedStatement.setDate(4, Date.valueOf(appointment.getEndDate()));
+		preparedStatement.setTime(5, Time.valueOf(appointment.getEndTime()));
+		preparedStatement.setInt(6, appointment.getDaysTilRepeat());
 		return preparedStatement;
 	}
 }

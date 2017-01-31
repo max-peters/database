@@ -10,12 +10,12 @@ import database.services.settings.ISettingsProvider;
 import database.services.stringUtility.Builder;
 
 public class Appointment extends CalendarElement {
-	public LocalDate	beginDate;
-	public LocalTime	beginTime;
-	public int			daysTilRepeat;
-	public LocalDate	endDate;
-	public LocalTime	endTime;
-	public String		name;
+	private LocalDate	beginDate;
+	private LocalTime	beginTime;
+	private int			daysTilRepeat;
+	private LocalDate	endDate;
+	private LocalTime	endTime;
+	private String		name;
 
 	public Appointment(String name, LocalDate beginDate, LocalTime beginTime, LocalDate endDate, LocalTime endTime, int daysTilRepeat) {
 		this.name = name;
@@ -42,12 +42,32 @@ public class Appointment extends CalendarElement {
 		return builder.build().replace("[]", "").replaceAll("(?<=[A-Z])(?=[a-z])|(?<=[A-Za-z])(?=[0-9])|(?<=[0-9])(?=[A-Za-z])", " ");
 	}
 
+	public LocalTime getBeginTime() {
+		return beginTime;
+	}
+
 	@Override public LocalDate getDate() {
 		return beginDate;
 	}
 
+	public int getDaysTilRepeat() {
+		return daysTilRepeat;
+	}
+
+	public LocalDate getEndDate() {
+		return endDate;
+	}
+
+	public LocalTime getEndTime() {
+		return endTime;
+	}
+
 	@Override public String getName() {
 		return name;
+	}
+
+	@Override public int getPriority() {
+		return ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters().getCalendarElementPriority(CalendarElements.APPOINTMENT);
 	}
 
 	@Override public boolean isPast() {
@@ -78,9 +98,5 @@ public class Appointment extends CalendarElement {
 
 	@Override public LocalDate updateYear() {
 		return beginDate;
-	}
-
-	@Override public int getPriority() {
-		return ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters().getCalendarElementPriority(CalendarElements.APPOINTMENT);
 	}
 }

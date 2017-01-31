@@ -19,13 +19,13 @@ public abstract class CalendarElement extends Instance implements Comparable<Cal
 		}
 	}
 
-	public abstract int getPriority();
-
 	public abstract String getAdditionToOutput();
 
 	public abstract LocalDate getDate();
 
 	public abstract String getName();
+
+	public abstract int getPriority();
 
 	public boolean isNear(int days) {
 		if (ChronoUnit.DAYS.between(LocalDate.now(), updateYear()) <= days) {

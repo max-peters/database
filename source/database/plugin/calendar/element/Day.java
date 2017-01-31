@@ -14,6 +14,10 @@ public class Day extends Event {
 		return "(" + getDate().getYear() + ")";
 	}
 
+	@Override public int getPriority() {
+		return ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters().getCalendarElementPriority(CalendarElements.DAY);
+	}
+
 	@Override public LocalDate updateYear() {
 		LocalDate currentDate = LocalDate.now();
 		if (currentDate.getMonthValue() > getDate().getMonthValue()
@@ -23,9 +27,5 @@ public class Day extends Event {
 		else {
 			return getDate().withYear(currentDate.getYear());
 		}
-	}
-
-	@Override public int getPriority() {
-		return ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters().getCalendarElementPriority(CalendarElements.DAY);
 	}
 }

@@ -30,7 +30,7 @@ public class TaskDatabaseConnector implements IDatabaseConnector<Task> {
 
 	@Override public PreparedStatement prepareStatement(Task task, String query) throws SQLException {
 		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setString(1, task.name);
+		preparedStatement.setString(1, task.getName());
 		return preparedStatement;
 	}
 }

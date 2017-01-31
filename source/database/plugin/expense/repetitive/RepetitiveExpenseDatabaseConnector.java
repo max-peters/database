@@ -32,12 +32,12 @@ public class RepetitiveExpenseDatabaseConnector implements IDatabaseConnector<Re
 
 	@Override public PreparedStatement prepareStatement(RepetitiveExpense repetitiveExpense, String query) throws SQLException {
 		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
-		preparedStatement.setString(1, repetitiveExpense.name);
-		preparedStatement.setString(2, repetitiveExpense.category);
-		preparedStatement.setDouble(3, repetitiveExpense.value);
-		preparedStatement.setDate(4, Date.valueOf(repetitiveExpense.date));
-		preparedStatement.setString(5, repetitiveExpense.executionDay.toString());
-		preparedStatement.setInt(6, repetitiveExpense.interval);
+		preparedStatement.setString(1, repetitiveExpense.getName());
+		preparedStatement.setString(2, repetitiveExpense.getCategory());
+		preparedStatement.setDouble(3, repetitiveExpense.getValue());
+		preparedStatement.setDate(4, Date.valueOf(repetitiveExpense.getDate()));
+		preparedStatement.setString(5, repetitiveExpense.getExecutionDay().toString());
+		preparedStatement.setInt(6, repetitiveExpense.getInterval());
 		return preparedStatement;
 	}
 }

@@ -26,7 +26,7 @@ public class TaskPlugin extends Plugin {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		Task task = getTaskByCheckRequest();
 		if (task != null) {
-			String newName = terminal.request("change task to", RequestType.NAME_NUMBER, task.name);
+			String newName = terminal.request("change task to", RequestType.NAME_NUMBER, task.getName());
 			CommandHandler.Instance().executeCommand(new ChangeCommand(task, new Task(newName)));
 		}
 	}
@@ -56,7 +56,7 @@ public class TaskPlugin extends Plugin {
 		display = false;
 		terminal.update();
 		for (Task task : taskList) {
-			stringList.add(task.name);
+			stringList.add(task.getName());
 		}
 		position = terminal.checkRequest(stringList, "choose task");
 		display = displayTemp;
