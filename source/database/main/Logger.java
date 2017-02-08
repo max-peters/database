@@ -36,7 +36,7 @@ public class Logger {
 		}
 		if (internalParameters.getDisplayLogger()) {
 			for (Tupel<Long, String> tupel : list) {
-				terminal.collectLine(" " + stringUtility.preIncrementTo(tupel.first.toString(), timeLength, '0') + ": " + tupel.second, StringFormat.STANDARD, "logger");
+				terminal.collectLine(" " + stringUtility.preIncrementTo(tupel.first.toString(), timeLength, ' ') + ": " + tupel.second, StringFormat.STANDARD, "logger");
 			}
 		}
 	}

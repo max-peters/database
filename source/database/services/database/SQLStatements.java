@@ -22,8 +22,8 @@ public class SQLStatements {
 	public static final String	EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY	= "SELECT category AS first, name AS second, COUNT(category) AS count FROM expense GROUP BY name, category;";
 	public static final String	EXPENSE_SELECT_STRINGCOMPLETE_NAME		= "SELECT name AS first, '' AS second, COUNT(name) AS count FROM expense GROUP BY name;";
 	public static final String	EXPENSE_SELECT_TOTAL					= "SELECT SUM(value) AS total FROM expense";
-	public static final String	FREQUENTNAMES_INSERT					= "INSERT INTO frequentnames VALUES (?,?);";
-	public static final String	FREQUENTNAMES_SELECT_STRINGCOMPLETE		= "SELECT name AS first, '' AS second, COUNT(name) - 1 AS count FROM frequentnames WHERE type=? GROUP BY name";
+	public static final String	FREQUENTNAMES_INSERT					= "INSERT INTO frequentnames VALUES (?, ?, 0) ON DUPLICATE KEY UPDATE count = count + 1";
+	public static final String	FREQUENTNAMES_SELECT_STRINGCOMPLETE		= "SELECT name AS first, '' AS second, count FROM frequentnames WHERE type=?";
 	public static final String	HOLIDAY_SELECT							= "SELECT * FROM event where type='holiday';";
 	public static final String	REFILLING_DELETE						= "DELETE FROM refilling WHERE cost=? AND date=? AND distance=? AND refuelAmount=?;";
 	public static final String	REFILLING_INSERT						= "INSERT INTO refilling VALUES (?,?,?,?);";
