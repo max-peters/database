@@ -15,9 +15,9 @@ public class MySQLDatabase implements IDatabase {
 		connect.close();
 	}
 
-	@Override public void connect() throws SQLException, ClassNotFoundException {
+	@Override public void connect(String url, String user, String password) throws SQLException, ClassNotFoundException {
 		Class.forName("com.mysql.jdbc.Driver");
-		connect = DriverManager.getConnection("jdbc:mysql://localhost/DATABASE?useSSL=false", "root", "vfr4");
+		connect = DriverManager.getConnection(url, user, password);
 		connect.setAutoCommit(true);
 	}
 

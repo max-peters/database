@@ -16,7 +16,8 @@ import database.services.database.SQLStatements;
 public class AppointmentDatabaseConnector implements IDatabaseConnector<Appointment> {
 	@Override public Appointment create(ResultSet resultSet) throws SQLException {
 		return new Appointment(resultSet.getString("name"), resultSet.getDate("beginDate").toLocalDate(), resultSet.getTime("beginTime").toLocalTime(),
-			resultSet.getDate("endDate").toLocalDate(), resultSet.getTime("endTime").toLocalTime(), resultSet.getInt("daysTilRepeat"));
+			resultSet.getDate("endDate").toLocalDate(), resultSet.getTime("endTime").toLocalTime(), resultSet.getInt("daysTilRepeat"),
+			resultSet.getString("spezification"));
 	}
 
 	@Override public String getQuery(QueryType type) throws SQLException {
@@ -40,6 +41,7 @@ public class AppointmentDatabaseConnector implements IDatabaseConnector<Appointm
 		preparedStatement.setDate(4, Date.valueOf(appointment.getEndDate()));
 		preparedStatement.setTime(5, Time.valueOf(appointment.getEndTime()));
 		preparedStatement.setInt(6, appointment.getDaysTilRepeat());
+		preparedStatement.setString(7, appointment.getSpezification());
 		return preparedStatement;
 	}
 }

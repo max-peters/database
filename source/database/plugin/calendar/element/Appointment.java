@@ -16,14 +16,20 @@ public class Appointment extends CalendarElement {
 	private LocalDate	endDate;
 	private LocalTime	endTime;
 	private String		name;
+	private String		spezification;
 
-	public Appointment(String name, LocalDate beginDate, LocalTime beginTime, LocalDate endDate, LocalTime endTime, int daysTilRepeat) {
+	public Appointment(String name, LocalDate beginDate, LocalTime beginTime, LocalDate endDate, LocalTime endTime, int daysTilRepeat, String spezification) {
 		this.name = name;
 		this.beginDate = beginDate;
 		this.beginTime = beginTime;
 		this.endDate = endDate;
 		this.endTime = endTime;
 		this.daysTilRepeat = daysTilRepeat;
+		this.spezification = spezification;
+	}
+
+	public String getSpezification() {
+		return spezification;
 	}
 
 	@Override public String getAdditionToOutput() {
@@ -93,7 +99,7 @@ public class Appointment extends CalendarElement {
 	}
 
 	public Appointment repeat() {
-		return new Appointment(name, beginDate.plusDays(daysTilRepeat), beginTime, endDate.plusDays(daysTilRepeat), endTime, daysTilRepeat);
+		return new Appointment(name, beginDate.plusDays(daysTilRepeat), beginTime, endDate.plusDays(daysTilRepeat), endTime, daysTilRepeat, spezification);
 	}
 
 	@Override public LocalDate updateYear() {

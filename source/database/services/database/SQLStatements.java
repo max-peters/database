@@ -1,8 +1,8 @@
 package database.services.database;
 
 public class SQLStatements {
-	public static final String	APPOINTMENT_DELETE						= "DELETE FROM appointment WHERE name=? AND beginDate=? AND beginTime=? AND endDate=? AND endTime=? AND daysTilRepeat=?;";
-	public static final String	APPOINTMENT_INSERT						= "INSERT INTO appointment VALUES (?,?,?,?,?,?);";
+	public static final String	APPOINTMENT_DELETE						= "DELETE FROM appointment WHERE name=? AND beginDate=? AND beginTime=? AND endDate=? AND endTime=? AND daysTilRepeat=? AND spezification=?;";
+	public static final String	APPOINTMENT_INSERT						= "INSERT INTO appointment VALUES (?,?,?,?,?,?,?);";
 	public static final String	APPOINTMENT_SELECT						= "SELECT * FROM appointment;";
 	public static final String	BIRTHDAY_SELECT							= "SELECT * FROM event where type='birthday';";
 	public static final String	DAY_SELECT								= "SELECT * FROM event where type='day';";

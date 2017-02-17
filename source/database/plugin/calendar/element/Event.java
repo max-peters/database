@@ -35,4 +35,8 @@ public abstract class Event extends CalendarElement {
 	@Override public LocalDateTime orderDate() {
 		return updateYear().atTime(LocalTime.MIN);
 	}
+
+	public String getSpezification() {
+		return "";
+	}
 }

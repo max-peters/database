@@ -25,6 +25,8 @@ public abstract class CalendarElement extends Instance implements Comparable<Cal
 
 	public abstract String getName();
 
+	public abstract String getSpezification();
+
 	public abstract int getPriority();
 
 	public boolean isNear(int days) {

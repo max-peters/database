@@ -55,7 +55,7 @@ public class CalendarPlugin extends Plugin {
 		list.addAll(appointmentConnector.getList());
 		list.removeIf(c -> !c.isNear(internalParameters.getEventDisplayRange()));
 		Collections.sort(list);
-		List<String> stringList = getOutputHandler().formatOutput(list).toStringList();
+		List<String> stringList = getOutputHandler().formatOutput(list, false).toStringList();
 		display = false;
 		terminal.update();
 		position = terminal.checkRequest(stringList, "choose event to cancel");
@@ -105,7 +105,7 @@ public class CalendarPlugin extends Plugin {
 		display = false;
 		terminal.update();
 		terminal.printLine(output, StringType.REQUEST, StringFormat.STANDARD);
-		for (String string : getOutputHandler().formatOutput(list).toStringList()) {
+		for (String string : getOutputHandler().formatOutput(list, false).toStringList()) {
 			terminal.printLine(" ->" + string, StringType.SOLUTION, StringFormat.STANDARD);
 		}
 		terminal.waitForInput();
@@ -133,6 +133,7 @@ public class CalendarPlugin extends Plugin {
 				LocalTime end = LocalTime.MIN;
 				LocalDate lastDay;
 				int daysTilRepetition;
+				String spezification;
 				temp = terminal.request("enter appointment name", RequestType.NAME, frequentStringComplement.get("appointment"));
 				name = frequentStringComplement.get("appointment").getCorrespondingString(temp);
 				temp = terminal.request("enter date", RequestType.DATE);
@@ -154,7 +155,8 @@ public class CalendarPlugin extends Plugin {
 					end = temp.isEmpty() ? LocalTime.MIN : LocalTime.parse(temp, timeFormatter);
 				}
 				daysTilRepetition = Integer.valueOf(terminal.request("enter days til repetition", RequestType.INTEGER, "0"));
-				element = new Appointment(name, date, begin, lastDay, end, daysTilRepetition);
+				spezification = terminal.request("enter spezification", RequestType.NAME_NUMBER);
+				element = new Appointment(name, date, begin, lastDay, end, daysTilRepetition, spezification);
 				frequentStringComplement.insert(name, "appointment");
 				break;
 			case "birthday":

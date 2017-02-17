@@ -25,7 +25,7 @@ import database.services.stringUtility.Builder;
 import database.services.stringUtility.StringUtility;
 
 public class CalendarOutputHandler implements IOutputHandler {
-	public Builder formatOutput(Iterable<? extends CalendarElement> iterable) {
+	public Builder formatOutput(Iterable<? extends CalendarElement> iterable, boolean printSpezification) {
 		StringUtility stringUtility = new StringUtility();
 		Builder builder = new Builder();
 		int longestNameLength = 0;
@@ -37,21 +37,25 @@ public class CalendarOutputHandler implements IOutputHandler {
 		}
 		for (CalendarElement element : iterable) {
 			if (element.updateYear().isEqual(LocalDate.now())) {
-				builder.append(" TODAY     ");
+				builder.append(" TODAY    ");
 			}
 			else {
-				builder.append(" " + element.updateYear().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
+				builder.append(element.updateYear().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 			}
 			builder.append(" - " + stringUtility.postIncrementTo(element.getName(), longestNameLength + gap, ' '));
 			builder.append(element.getAdditionToOutput());
 			builder.newLine();
+			if (printSpezification && !element.getSpezification().isEmpty()) {
+				builder.append("             " + element.getSpezification());
+				builder.newLine();
+			}
 		}
 		return builder;
 	}
 
 	@Override public String getInitialOutput() throws SQLException {
 		InternalParameters internalParameters = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
-		return formatOutput(getSortedIterable(internalParameters.getEventDisplayRange())).build();
+		return formatOutput(getSortedIterable(internalParameters.getEventDisplayRange()), true).build();
 	}
 
 	public Iterable<CalendarElement> getSortedIterable(int days) throws SQLException {
@@ -73,6 +77,6 @@ public class CalendarOutputHandler implements IOutputHandler {
 	}
 
 	@Command(tag = "all") public String outputAll() throws SQLException {
-		return formatOutput(getSortedIterable(365)).build();
+		return formatOutput(getSortedIterable(365), false).build();
 	}
 }
