@@ -155,7 +155,7 @@ public class CalendarPlugin extends Plugin {
 					end = temp.isEmpty() ? LocalTime.MIN : LocalTime.parse(temp, timeFormatter);
 				}
 				daysTilRepetition = Integer.valueOf(terminal.request("enter days til repetition", RequestType.INTEGER, "0"));
-				spezification = terminal.request("enter spezification", RequestType.NAME_NUMBER);
+				spezification = terminal.request("enter spezification", RequestType.NAME_NUMBER_EMPTY);
 				element = new Appointment(name, date, begin, lastDay, end, daysTilRepetition, spezification);
 				frequentStringComplement.insert(name, "appointment");
 				break;
