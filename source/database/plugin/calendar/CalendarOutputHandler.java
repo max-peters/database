@@ -37,16 +37,16 @@ public class CalendarOutputHandler implements IOutputHandler {
 		}
 		for (CalendarElement element : iterable) {
 			if (element.updateYear().isEqual(LocalDate.now())) {
-				builder.append(" TODAY    ");
+				builder.append(" TODAY     ");
 			}
 			else {
-				builder.append(element.updateYear().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
+				builder.append(" " + element.updateYear().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")));
 			}
 			builder.append(" - " + stringUtility.postIncrementTo(element.getName(), longestNameLength + gap, ' '));
 			builder.append(element.getAdditionToOutput());
 			builder.newLine();
 			if (printSpezification && !element.getSpezification().isEmpty()) {
-				builder.append("             " + element.getSpezification());
+				builder.append("              \u25e3 " + element.getSpezification() + " \u25e5 ");
 				builder.newLine();
 			}
 		}
