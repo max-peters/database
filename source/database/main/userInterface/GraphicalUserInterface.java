@@ -81,7 +81,7 @@ public class GraphicalUserInterface {
 		keyListener = new KeyListener() {
 			@Override public void keyPressed(KeyEvent e) {
 				pressedKey = e.getExtendedKeyCode();
-				if (e.getExtendedKeyCode() == 10) {
+				if (e.getExtendedKeyCode() == 10 || e.getExtendedKeyCode() == 27) {
 					synchronized (synchronizerKeyInput) {
 						synchronizerKeyInput.notify();
 					}

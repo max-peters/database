@@ -121,6 +121,9 @@ public class Terminal implements ITerminal {
 			graphicalUserInterface.setInputText(inputText);
 			graphicalUserInterface.selectInputText(0, inputText.length());
 		}
+		else {
+			graphicalUserInterface.setInputText("");
+		}
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
 			input = stringComplete != null ? completeString(stringComplete) : readLine();
@@ -175,7 +178,7 @@ public class Terminal implements ITerminal {
 		graphicalUserInterface.setInputColor(Color.WHITE);
 	}
 
-	private String completeString(IStringComplete stringComplete) throws InterruptedException, SQLException {
+	private String completeString(IStringComplete stringComplete) throws InterruptedException, SQLException, UserCancelException {
 		String inputString = "";
 		String selection;
 		int inputCaretPosition;
@@ -192,20 +195,27 @@ public class Terminal implements ITerminal {
 				}
 			}
 			graphicalUserInterface.waitForDocumentInput();
+			System.out.println(graphicalUserInterface.getLastKeyInput());
 			if (graphicalUserInterface.getLastKeyInput() == 10) {
 				inputString = graphicalUserInterface.getInputText();
 				break;
+			}
+			if (graphicalUserInterface.getLastKeyInput() == 27) {
+				throw new UserCancelException();
 			}
 		}
 		graphicalUserInterface.removeKeyListenerForAutocompletition();
 		return inputString;
 	}
 
-	private String readLine() throws InterruptedException {
+	private String readLine() throws InterruptedException, UserCancelException {
 		int lastKey = 0;
 		while (lastKey != 10) {
 			graphicalUserInterface.waitForKeyInput();
 			lastKey = graphicalUserInterface.getLastKeyInput();
+			if (lastKey == 27) {
+				throw new UserCancelException();
+			}
 		}
 		return graphicalUserInterface.getInputText();
 	}

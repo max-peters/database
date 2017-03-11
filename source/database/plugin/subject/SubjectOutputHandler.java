@@ -11,7 +11,7 @@ import database.services.stringUtility.Builder;
 import database.services.stringUtility.StringUtility;
 
 public class SubjectOutputHandler implements IOutputHandler {
-	@Command(tag = "average") public String getAverage() throws SQLException {
+	@Command(tag = "average") public String outputAverage() throws SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		StringUtility stringUtility = new StringUtility();
 		ResultSet resultSet;

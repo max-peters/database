@@ -17,7 +17,7 @@ public class SQLStatements {
 	public static final String	EXPENSE_SELECT_CATEGORY					= "SELECT * FROM expensecategories";
 	public static final String	EXPENSE_SELECT_CATEGORY_LENGTH			= "SELECT MAX(LENGTH(category)) AS categorylength, MAX(LENGTH(CAST(sum AS DECIMAL (18 , 2 )))) AS sumlength, MAX(LENGTH(CAST(percentage AS DECIMAL (18 , 2 )))) AS percentagelength FROM expensecategories;";
 	public static final String	EXPENSE_SELECT_CONTAINS					= "SELECT * FROM expense WHERE name=? AND category=? AND date=? AND value=?;";
-	public static final String	EXPENSE_SELECT_MONTH					= "SELECT DATE_FORMAT(date,'%d/%m') AS date, name, value FROM expense WHERE (MONTH(date) = MONTH('??')) AND (YEAR(date) = YEAR('??')) order by expense.date;";
+	public static final String	EXPENSE_SELECT_MONTH					= "SELECT DATE_FORMAT(date,'%d/%m') AS date, name, value FROM expense WHERE (MONTH(date) = MONTH(?)) AND (YEAR(date) = YEAR(?)) order by expense.date;";
 	public static final String	EXPENSE_SELECT_MONTHS					= "SELECT * FROM expensemonths;";
 	public static final String	EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY	= "SELECT category AS first, name AS second, COUNT(category) AS count FROM expense GROUP BY name, category;";
 	public static final String	EXPENSE_SELECT_STRINGCOMPLETE_NAME		= "SELECT name AS first, '' AS second, COUNT(name) AS count FROM expense GROUP BY name;";

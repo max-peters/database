@@ -1,5 +1,7 @@
 package database.plugin.expense;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -97,7 +99,7 @@ public class ExpenseOutputHandler implements IOutputHandler {
 		return builder.build();
 	}
 
-	@Command(tag = "months") public String outputMonth() throws SQLException {
+	@Command(tag = "months") public String outputMonths() throws SQLException {
 		StringUtility stringUtility = new StringUtility();
 		ResultSet resultSet;
 		String month = "";
@@ -125,7 +127,7 @@ public class ExpenseOutputHandler implements IOutputHandler {
 		return stringUtility.arrangeInCollums(returnList, 3);
 	}
 
-	@Command(tag = "all") public String printAll() throws SQLException {
+	@Command(tag = "all") public String outputAll() throws SQLException {
 		int maxNameLength = 0;
 		int maxSumLength = 0;
 		int gap = 5;
@@ -154,26 +156,30 @@ public class ExpenseOutputHandler implements IOutputHandler {
 		return builder.build();
 	}
 
-	@Command(tag = "month") public String printCurrent() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
+	@Command(tag = "month") public String outputMonth() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		StringUtility stringUtility = new StringUtility();
 		Builder builder = new Builder();
 		ResultSet resultSet;
-		String date = "";
+		PreparedStatement preparedStatement;
+		LocalDate date = null;
 		int gap = 73;
 		boolean retry = true;
 		while (retry) {
-			date = terminal.request("enter month and year", ".*");
-			date = stringUtility.parseDateString(date.isEmpty() ? LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) : "01." + date);
-			if (!stringUtility.testDateString(date)) {
+			String dateString = terminal.request("enter month and year", ".*");
+			dateString = stringUtility.parseDateString(dateString.isEmpty() ? LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.uuuu")) : "01." + dateString);
+			if (!stringUtility.testDateString(dateString)) {
 				terminal.errorMessage();
 			}
 			else {
+				date = LocalDate.parse(dateString, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 				retry = false;
 			}
 		}
-		date = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.uuuu")).format(DateTimeFormatter.ofPattern("uuuu-MM-dd"));
-		resultSet = database.execute(SQLStatements.EXPENSE_SELECT_MONTH.replace("??", date));
+		preparedStatement = database.prepareStatement(SQLStatements.EXPENSE_SELECT_MONTH);
+		preparedStatement.setDate(1, Date.valueOf(date));
+		preparedStatement.setDate(2, Date.valueOf(date));
+		resultSet = preparedStatement.executeQuery();
 		while (resultSet.next()) {
 			builder.append(" \u2022 " + resultSet.getString("date") + " - ");
 			builder.append(resultSet.getString("name"));
