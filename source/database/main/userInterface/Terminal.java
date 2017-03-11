@@ -195,7 +195,6 @@ public class Terminal implements ITerminal {
 				}
 			}
 			graphicalUserInterface.waitForDocumentInput();
-			System.out.println(graphicalUserInterface.getLastKeyInput());
 			if (graphicalUserInterface.getLastKeyInput() == 10) {
 				inputString = graphicalUserInterface.getInputText();
 				break;
