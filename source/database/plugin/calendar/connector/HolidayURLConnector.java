@@ -22,34 +22,34 @@ public class HolidayURLConnector {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		HolidayDatabaseConnector holidayConnector = (HolidayDatabaseConnector) ServiceRegistry.Instance().get(IConnectorRegistry.class).get(Holiday.class);
 		List<String> lines = connectAndSetList();
-		Iterable<Holiday> iterable;
+		Iterable<Holiday> iterable = holidayConnector.getList();
 		String temp;
 		String name;
-		LocalDate newDate;
+		LocalDate date;
 		for (int i = 0; i < lines.size(); i++) {
-			if (lines.get(i).matches(".*<a href=\"/Feiertage/feiertag_.*.html\" class=\"dash\">.*")) {
-				iterable = holidayConnector.getList();
-				temp = lines.get(i + 5).replace(" ", "");
-				newDate = LocalDate.parse(temp.substring(0, temp.lastIndexOf(",")), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-				temp = lines.get(i + 1).replace("&ouml;", "ö").replace(":", " ");
-				name = temp.substring(14, temp.length() - 1);
-				if (!iterable.iterator().hasNext() && !newDate.isBefore(LocalDate.now())) {
-					database.insert(new Holiday(name, newDate));
+			if (lines.get(i).trim().matches("<a href=\"/deutschland/feiertage/.*/\" class=\"dash\">")) {
+				name = lines.get(i + 1).trim().replace(":", "").replace("&ouml;", "ö");
+				temp = lines.get(i + 5).trim();
+				date = LocalDate.parse(temp.substring(0, temp.lastIndexOf(",")), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+				if (!iterable.iterator().hasNext() && !date.isBefore(LocalDate.now())) {
+					database.insert(new Holiday(name, date));
 				}
 				else {
 					boolean contains = false;
 					for (Holiday holiday : iterable) {
 						if (holiday.getName().equals(name)) {
 							contains = true;
-							if (holiday.getDate().isBefore(newDate) && holiday.getDate().isBefore(LocalDate.now())) {
-								database.insert(new Holiday(name, newDate));
+							if (holiday.getDate().isBefore(date) && holiday.getDate().isBefore(LocalDate.now())) {
+								database.insert(new Holiday(name, date));
 								database.remove(holiday);
+								iterable = holidayConnector.getList();
 								break;
 							}
 						}
 					}
-					if (!contains && !newDate.isBefore(LocalDate.now())) {
-						database.insert(new Holiday(name, newDate));
+					if (!contains && !date.isBefore(LocalDate.now())) {
+						database.insert(new Holiday(name, date));
+						iterable = holidayConnector.getList();
 					}
 				}
 			}
