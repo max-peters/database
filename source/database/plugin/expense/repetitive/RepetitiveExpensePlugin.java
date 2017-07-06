@@ -40,7 +40,7 @@ public class RepetitiveExpensePlugin extends Plugin {
 		for (Expense expense : newExpenses) {
 			database.insert(expense);
 			String printOut = " + "	+ expense.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.getName() + " (" + expense.getCategory() + ") "
-								+ expense.getValue() + "€";
+								+ expense.getValue() + "\u20AC";
 			terminal.collectLine(printOut, StringFormat.STANDARD, "expense");
 		}
 	}
@@ -60,7 +60,7 @@ public class RepetitiveExpensePlugin extends Plugin {
 		for (Expense expense : createExpense(repetitiveExpense)) {
 			command.addDependingInstances(expense);
 			String printOut = " + "	+ expense.getDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")) + " " + expense.getName() + " (" + expense.getCategory() + ") "
-								+ expense.getValue() + "€";
+								+ expense.getValue() + "\u20AC";
 			terminal.collectLine(printOut, StringFormat.STANDARD, "expense");
 		}
 		CommandHandler.Instance().executeCommand(command);

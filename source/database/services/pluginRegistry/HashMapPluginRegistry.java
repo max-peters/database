@@ -21,6 +21,7 @@ public class HashMapPluginRegistry implements IPluginRegistry {
 		map = new LinkedHashMap<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override public <T> T getPlugin(Class<T> type) {
 		return (T) map.get(type);
 	}

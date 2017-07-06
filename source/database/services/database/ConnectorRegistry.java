@@ -11,6 +11,7 @@ public class ConnectorRegistry implements IConnectorRegistry {
 		map = new HashMap<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override public <I> IDatabaseConnector<I> get(Class<I> type) throws SQLException {
 		return (IDatabaseConnector<I>) map.get(type);
 	}

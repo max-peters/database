@@ -51,12 +51,12 @@ public class ExpenseOutputHandler implements IOutputHandler {
 			double sum = resultSet.getDouble("sum");
 			double dayAverage = sum / dayCount;
 			double monthAverage = sum / monthCount;
-			String yearAverage = stringUtility.formatDouble((dayAverage * 365.25 + monthAverage * 12) / 2, 2) + "€";
+			String yearAverage = stringUtility.formatDouble((dayAverage * 365.25 + monthAverage * 12) / 2, 2) + "\u20AC";
 			builder.append(" average value per");
 			builder.newLine();
-			builder.append(" - day   : " + stringUtility.preIncrementTo(stringUtility.formatDouble(dayAverage, 2) + "€", yearAverage.length(), ' '));
+			builder.append(" - day   : " + stringUtility.preIncrementTo(stringUtility.formatDouble(dayAverage, 2) + "\u20AC", yearAverage.length(), ' '));
 			builder.newLine();
-			builder.append(" - month : " + stringUtility.preIncrementTo(stringUtility.formatDouble(monthAverage, 2) + "€", yearAverage.length(), ' '));
+			builder.append(" - month : " + stringUtility.preIncrementTo(stringUtility.formatDouble(monthAverage, 2) + "\u20AC", yearAverage.length(), ' '));
 			builder.newLine();
 			builder.append(" - year  : " + yearAverage);
 			builder.newLine();
@@ -82,7 +82,7 @@ public class ExpenseOutputHandler implements IOutputHandler {
 		resultSet = database.execute(SQLStatements.EXPENSE_SELECT_CATEGORY);
 		while (resultSet.next()) {
 			builder.append(" - " + stringUtility.postIncrementTo(resultSet.getString("category"), maxCategoryLength + gap, ' '));
-			builder.append(stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("sum"), 2) + "€", maxSumLength + gap, ' '));
+			builder.append(stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("sum"), 2) + "\u20AC", maxSumLength + gap, ' '));
 			builder.append(stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("percentage"), 2) + "%", maxPercentageLength + gap, ' '));
 			builder.newLine();
 		}
@@ -93,7 +93,7 @@ public class ExpenseOutputHandler implements IOutputHandler {
 		resultSet = database.execute(SQLStatements.EXPENSE_SELECT_TOTAL);
 		if (resultSet.next()) {
 			int length = 3 + maxCategoryLength + maxSumLength + 2 * gap;
-			builder.append(stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("total"), 2) + "€", length, ' '));
+			builder.append(stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("total"), 2) + "\u20AC", length, ' '));
 		}
 		resultSet.close();
 		return builder.build();
@@ -118,7 +118,7 @@ public class ExpenseOutputHandler implements IOutputHandler {
 				month = resultSet.getString("month");
 			}
 			list.add(" "	+ resultSet.getString("month") + " : "
-						+ stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("value"), 2), map.get(month), ' ') + "€");
+						+ stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("value"), 2), map.get(month), ' ') + "\u20AC");
 		}
 		while (returnList.get(0).size() < 12) {
 			returnList.get(0).add(0, "");
@@ -149,7 +149,7 @@ public class ExpenseOutputHandler implements IOutputHandler {
 			}
 			builder.append("  - " + stringUtility.postIncrementTo(resultSet.getString("name"), maxNameLength + gap, ' '));
 			builder.append(stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("sum"), 2), maxSumLength + gap, ' '));
-			builder.append("€");
+			builder.append("\u20AC");
 			builder.newLine();
 		}
 		resultSet.close();
@@ -184,7 +184,7 @@ public class ExpenseOutputHandler implements IOutputHandler {
 			builder.append(" \u2022 " + resultSet.getString("date") + " - ");
 			builder.append(resultSet.getString("name"));
 			builder.append(stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("value"), 2), gap - resultSet.getString("name").length(), ' '));
-			builder.append("€");
+			builder.append("\u20AC");
 			builder.newLine();
 		}
 		resultSet.close();

@@ -19,6 +19,7 @@ public class SettingsProvider implements ISettingsProvider {
 		return internalParameters;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override public void read(Node node) throws ParserConfigurationException, DOMException {
 		switch (node.getNodeName()) {
 			case "displayLogger":

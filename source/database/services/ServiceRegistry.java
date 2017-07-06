@@ -11,6 +11,7 @@ public class ServiceRegistry {
 		map = new HashMap<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	public <T> T get(Class<T> type) {
 		return (T) map.get(type);
 	}

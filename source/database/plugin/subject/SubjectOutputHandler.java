@@ -62,12 +62,12 @@ public class SubjectOutputHandler implements IOutputHandler {
 				builder.append("Blatt");
 			}
 			else {
-				builder.append("Blätter");
+				builder.append("Bl\u00E4tter");
 			}
 			builder.newLine();
 		}
 		if (builder.isEmpty()) {
-			builder.append("keine Blätter");
+			builder.append("keine Bl\u00E4tter");
 		}
 		return builder.build();
 	}

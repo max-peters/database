@@ -37,6 +37,7 @@ public class MySQLDatabase implements IDatabase {
 		executeQuery(instance, QueryType.DELETE);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void executeQuery(Instance instance, QueryType type) throws SQLException {
 		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
 		IDatabaseConnector<Instance> connector = registry.get((Class<Instance>) instance.getClass());
