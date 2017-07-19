@@ -1,5 +1,7 @@
 package database.main.userInterface;
 
 public enum StringType {
-	MAIN, REQUEST, SOLUTION;
+	MAIN,
+	REQUEST,
+	SOLUTION;
 }

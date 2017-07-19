@@ -4,13 +4,14 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
 import database.plugin.Instance;
 import database.services.ServiceRegistry;
 import database.services.database.IDatabase;
 
 public class DependingInsertCommand extends UndoableCommand {
-	private List<Instance>	dependingInstances;
-	private Instance		instance;
+	private List<Instance> dependingInstances;
+	private Instance instance;
 
 	public DependingInsertCommand(Instance i, Instance... instances) {
 		instance = i;
@@ -21,7 +22,8 @@ public class DependingInsertCommand extends UndoableCommand {
 		dependingInstances.add(i);
 	}
 
-	@Override public void execute() throws SQLException {
+	@Override
+	public void execute() throws SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		database.insert(instance);
 		for (Instance instance : dependingInstances) {
@@ -29,15 +31,18 @@ public class DependingInsertCommand extends UndoableCommand {
 		}
 	}
 
-	@Override public String executeLog() {
+	@Override
+	public String executeLog() {
 		String log = "inserted " + instance.toString();
 		for (Instance instance : dependingInstances) {
-			log += System.lineSeparator() + System.lineSeparator() + "inserted " + System.lineSeparator() + instance.toString();
+			log += System.lineSeparator() + System.lineSeparator() + "inserted " + System.lineSeparator()
+					+ instance.toString();
 		}
 		return log;
 	}
 
-	@Override public void revert() throws SQLException {
+	@Override
+	public void revert() throws SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		database.remove(instance);
 		for (Instance instance : dependingInstances) {
@@ -45,10 +50,12 @@ public class DependingInsertCommand extends UndoableCommand {
 		}
 	}
 
-	@Override public String revertLog() {
+	@Override
+	public String revertLog() {
 		String log = "deleted " + System.lineSeparator() + instance.toString();
 		for (Instance instance : dependingInstances) {
-			log += System.lineSeparator() + System.lineSeparator() + "deleted " + System.lineSeparator() + instance.toString();
+			log += System.lineSeparator() + System.lineSeparator() + "deleted " + System.lineSeparator()
+					+ instance.toString();
 		}
 		return log;
 	}

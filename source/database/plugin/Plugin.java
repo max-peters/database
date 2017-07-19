@@ -5,10 +5,13 @@ import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
+
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.RequestType;
@@ -20,9 +23,9 @@ import database.services.writerReader.IWriteRead;
 import database.services.writerReader.IWriterReader;
 
 public abstract class Plugin implements IWriteRead {
-	public boolean			display;
-	public String			identity;
-	private IOutputHandler	outputHandler;
+	public boolean display;
+	public String identity;
+	private IOutputHandler outputHandler;
 
 	public Plugin(String identity, IOutputHandler dataHandler) {
 		this.identity = identity;
@@ -30,7 +33,8 @@ public abstract class Plugin implements IWriteRead {
 		display = false;
 	}
 
-	public void conduct(String command) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	public void conduct(String command)
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		for (Method method : this.getClass().getMethods()) {
 			if (method.isAnnotationPresent(Command.class)) {
 				if (method.getAnnotation(Command.class).tag().equals(command)) {
@@ -41,7 +45,8 @@ public abstract class Plugin implements IWriteRead {
 		}
 	}
 
-	@Command(tag = "display") public void display() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
+	@Command(tag = "display")
+	public void display() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		HashMapStringComplete stringComplete = new HashMapStringComplete(RequestType.BOOLEAN);
 		display = Boolean.valueOf(terminal.request("display", RequestType.BOOLEAN, stringComplete));
@@ -76,14 +81,16 @@ public abstract class Plugin implements IWriteRead {
 		}
 	}
 
-	@Override public void read(Node node) throws ParserConfigurationException, DOMException {
+	@Override
+	public void read(Node node) throws ParserConfigurationException, DOMException {
 		if (node.getNodeName().equals("display")) {
 			display = Boolean.valueOf(node.getTextContent());
 		}
 	}
 
-	@Command(tag = "show") public void show()	throws InterruptedException, BadLocationException, IllegalAccessException, IllegalArgumentException,
-												InvocationTargetException, UserCancelException, SQLException {
+	@Command(tag = "show")
+	public void show() throws InterruptedException, BadLocationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String regex = getCommandTags(outputHandler.getClass());
 		String command = "";
@@ -91,7 +98,8 @@ public abstract class Plugin implements IWriteRead {
 			command = terminal.request("show", regex, new HashMapStringComplete(regex));
 		}
 		for (Method method : outputHandler.getClass().getMethods()) {
-			if (method.isAnnotationPresent(Command.class) && (command.isEmpty() || method.getAnnotation(Command.class).tag().equals(command))) {
+			if (method.isAnnotationPresent(Command.class)
+					&& (command.isEmpty() || method.getAnnotation(Command.class).tag().equals(command))) {
 				Object output = method.invoke(outputHandler);
 				terminal.printLine(output, StringType.REQUEST, StringFormat.STANDARD);
 				terminal.waitForInput();
@@ -100,7 +108,8 @@ public abstract class Plugin implements IWriteRead {
 		}
 	}
 
-	@Override public void write() {
+	@Override
+	public void write() {
 		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
 		writerReader.add(identity, "display", String.valueOf(display));
 	}

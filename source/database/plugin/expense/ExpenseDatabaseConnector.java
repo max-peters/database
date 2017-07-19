@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import database.services.ServiceRegistry;
 import database.services.database.IDatabase;
 import database.services.database.IDatabaseConnector;
@@ -14,8 +15,8 @@ import database.services.stringComplete.IStringComplete;
 import database.services.stringComplete.ResultSetStringComplete;
 
 public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
-	public IStringComplete	categoryStringComplete;
-	public IStringComplete	nameStringComplete;
+	public IStringComplete categoryStringComplete;
+	public IStringComplete nameStringComplete;
 
 	public boolean contains(Expense expense) throws SQLException {
 		PreparedStatement preparedStatement = prepareStatement(expense, getQuery(QueryType.CONTAINS));
@@ -26,11 +27,14 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 		return isContained;
 	}
 
-	@Override public Expense create(ResultSet resultSet) throws SQLException {
-		return new Expense(resultSet.getString("name"), resultSet.getString("category"), resultSet.getDouble("value"), resultSet.getDate("date").toLocalDate());
+	@Override
+	public Expense create(ResultSet resultSet) throws SQLException {
+		return new Expense(resultSet.getString("name"), resultSet.getString("category"), resultSet.getDouble("value"),
+				resultSet.getDate("date").toLocalDate());
 	}
 
-	@Override public String getQuery(QueryType type) throws SQLException {
+	@Override
+	public String getQuery(QueryType type) throws SQLException {
 		switch (type) {
 			case DELETE:
 				return SQLStatements.EXPENSE_DELETE;
@@ -45,7 +49,8 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 		}
 	}
 
-	@Override public PreparedStatement prepareStatement(Expense expense, String query) throws SQLException {
+	@Override
+	public PreparedStatement prepareStatement(Expense expense, String query) throws SQLException {
 		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
 		preparedStatement.setString(1, expense.getName());
 		preparedStatement.setString(2, expense.getCategory());
@@ -57,12 +62,16 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 	public void refreshStringComplete() throws SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		if (nameStringComplete != null && categoryStringComplete != null) {
-			((ResultSetStringComplete) nameStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
-			((ResultSetStringComplete) categoryStringComplete).refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
+			((ResultSetStringComplete) nameStringComplete)
+					.refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
+			((ResultSetStringComplete) categoryStringComplete)
+					.refresh(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
 		}
 		else {
-			nameStringComplete = new ResultSetStringComplete(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
-			categoryStringComplete = new ResultSetStringComplete(database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
+			nameStringComplete = new ResultSetStringComplete(
+					database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_NAME));
+			categoryStringComplete = new ResultSetStringComplete(
+					database.execute(SQLStatements.EXPENSE_SELECT_STRINGCOMPLETE_CATEGORY));
 		}
 	}
 }

@@ -1,7 +1,9 @@
 package database.services.pluginRegistry;
 
 import java.sql.SQLException;
+
 import javax.swing.text.BadLocationException;
+
 import database.plugin.Plugin;
 
 public interface IPluginRegistry {

@@ -10,7 +10,8 @@ public class ResultSetStringComplete implements IStringComplete {
 		this.resultSet = resultSet;
 	}
 
-	@Override public String getCorrespondingString(String s) throws SQLException {
+	@Override
+	public String getCorrespondingString(String s) throws SQLException {
 		int i = resultSet.getRow();
 		resultSet.beforeFirst();
 		while (resultSet.next()) {
@@ -22,13 +23,15 @@ public class ResultSetStringComplete implements IStringComplete {
 		return s;
 	}
 
-	@Override public String getMostUsedString(String prefix, String second) throws SQLException {
+	@Override
+	public String getMostUsedString(String prefix, String second) throws SQLException {
 		String string = "";
 		int count = 0;
 		resultSet.beforeFirst();
 		while (resultSet.next()) {
 			if (second.isEmpty() || containsPair(resultSet.getString("first"), second)) {
-				if (resultSet.getString("first").toLowerCase().startsWith(prefix.toLowerCase()) && resultSet.getInt("count") > count) {
+				if (resultSet.getString("first").toLowerCase().startsWith(prefix.toLowerCase())
+						&& resultSet.getInt("count") > count) {
 					string = resultSet.getString("first");
 					count = resultSet.getInt("count");
 				}

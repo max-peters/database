@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.text.BadLocationException;
+
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.RequestType;
@@ -22,7 +24,8 @@ public class TaskPlugin extends Plugin {
 		super("task", new TaskOutputHandler());
 	}
 
-	@Command(tag = "edit") public void changeRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
+	@Command(tag = "edit")
+	public void changeRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		Task task = getTaskByCheckRequest();
 		if (task != null) {
@@ -31,14 +34,16 @@ public class TaskPlugin extends Plugin {
 		}
 	}
 
-	@Command(tag = "check") public void checkRequest() throws InterruptedException, BadLocationException, IOException, SQLException {
+	@Command(tag = "check")
+	public void checkRequest() throws InterruptedException, BadLocationException, IOException, SQLException {
 		Task task = getTaskByCheckRequest();
 		if (task != null) {
 			CommandHandler.Instance().executeCommand(new DeleteCommand(task));
 		}
 	}
 
-	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException, UserCancelException, SQLException {
+	@Command(tag = "new")
+	public void createRequest() throws BadLocationException, InterruptedException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String name = terminal.request("enter new task", RequestType.NAME_NUMBER);
 		Task task = new Task(name);

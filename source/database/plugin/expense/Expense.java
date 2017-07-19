@@ -1,13 +1,14 @@
 package database.plugin.expense;
 
 import java.time.LocalDate;
+
 import database.plugin.Instance;
 
 public class Expense extends Instance {
-	private String		category;
-	private LocalDate	date;
-	private String		name;
-	private Double		value;
+	private String category;
+	private LocalDate date;
+	private String name;
+	private Double value;
 
 	public Expense(String name, String category, Double value, LocalDate date) {
 		this.name = name;
@@ -16,10 +17,12 @@ public class Expense extends Instance {
 		setDate(date);
 	}
 
-	@Override public boolean equals(Object object) {
+	@Override
+	public boolean equals(Object object) {
 		if (object != null && object instanceof Expense) {
 			Expense expense = (Expense) object;
-			if (name.equals(expense.name) && category.equals(expense.category) && getDate().isEqual(expense.getDate()) && value == expense.value) {
+			if (name.equals(expense.name) && category.equals(expense.category) && getDate().isEqual(expense.getDate())
+					&& value == expense.value) {
 				return true;
 			}
 		}

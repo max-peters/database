@@ -1,13 +1,14 @@
 package database.plugin.refilling;
 
 import java.time.LocalDate;
+
 import database.plugin.Instance;
 
 public class Refilling extends Instance {
-	private Double		cost;
-	private LocalDate	date;
-	private Double		distance;
-	private Double		refuelAmount;
+	private Double cost;
+	private LocalDate date;
+	private Double distance;
+	private Double refuelAmount;
 
 	public Refilling(Double distance, Double refuelAmount, Double cost, LocalDate date) {
 		this.distance = distance;

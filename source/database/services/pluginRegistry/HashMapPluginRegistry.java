@@ -7,7 +7,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import javax.swing.text.BadLocationException;
+
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringType;
 import database.plugin.Command;
@@ -22,11 +24,13 @@ public class HashMapPluginRegistry implements IPluginRegistry {
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override public <T> T getPlugin(Class<T> type) {
+	@Override
+	public <T> T getPlugin(Class<T> type) {
 		return (T) map.get(type);
 	}
 
-	@Override public Plugin getPlugin(String identity) {
+	@Override
+	public Plugin getPlugin(String identity) {
 		for (Plugin plugin : map.values()) {
 			if (plugin.identity.equals(identity)) {
 				return plugin;
@@ -35,7 +39,8 @@ public class HashMapPluginRegistry implements IPluginRegistry {
 		return null;
 	}
 
-	@Override public String getPluginNameTagsAsRegex(String... args) {
+	@Override
+	public String getPluginNameTagsAsRegex(String... args) {
 		String regex = "(";
 		ArrayList<String> list = new ArrayList<>();
 		for (Plugin plugin : map.values()) {
@@ -57,7 +62,8 @@ public class HashMapPluginRegistry implements IPluginRegistry {
 		return regex.endsWith("|") ? regex.substring(0, regex.lastIndexOf("|")) + ")" : "()";
 	}
 
-	@Override public void initialOutput() throws BadLocationException, SQLException {
+	@Override
+	public void initialOutput() throws BadLocationException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		for (Plugin plugin : map.values()) {
 			if (plugin.display) {
@@ -67,7 +73,8 @@ public class HashMapPluginRegistry implements IPluginRegistry {
 		terminal.getLineOfCharacters('-', StringType.MAIN);
 	}
 
-	@Override public void register(Plugin plugin) {
+	@Override
+	public void register(Plugin plugin) {
 		map.put(plugin.getClass(), plugin);
 	}
 }

@@ -9,7 +9,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.text.BadLocationException;
+
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.RequestType;
@@ -42,11 +44,14 @@ public class CalendarPlugin extends Plugin {
 		super("event", new CalendarOutputHandler());
 	}
 
-	@Command(tag = "cancel") public void cancel() throws BadLocationException, InterruptedException, SQLException {
+	@Command(tag = "cancel")
+	public void cancel() throws BadLocationException, InterruptedException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		InternalParameters internalParameters = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
+		InternalParameters internalParameters = ServiceRegistry.Instance().get(ISettingsProvider.class)
+				.getInternalParameters();
 		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
-		AppointmentDatabaseConnector appointmentConnector = (AppointmentDatabaseConnector) registry.get(Appointment.class);
+		AppointmentDatabaseConnector appointmentConnector = (AppointmentDatabaseConnector) registry
+				.get(Appointment.class);
 		boolean displayTemp = display;
 		int position;
 		Appointment appointment = null;
@@ -62,7 +67,8 @@ public class CalendarPlugin extends Plugin {
 		if (position >= 0) {
 			appointment = (Appointment) list.get(position);
 			if (appointment.isRepeatable()) {
-				position = terminal.checkRequest(Arrays.asList("this appointment", "this and all following appointments"), "cancel");
+				position = terminal.checkRequest(
+						Arrays.asList("this appointment", "this and all following appointments"), "cancel");
 				switch (position) {
 					case 0:
 						command = new ChangeCommand(appointment, appointment.repeat());
@@ -81,11 +87,13 @@ public class CalendarPlugin extends Plugin {
 		CommandHandler.Instance().executeCommand(command);
 	}
 
-	@Command(tag = "check") public void check() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
+	@Command(tag = "check")
+	public void check() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		boolean displayTemp = display;
 		String temp = terminal.request("enter date", RequestType.DATE);
-		LocalDate date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+		LocalDate date = temp.isEmpty() ? LocalDate.now()
+				: LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		List<CalendarElement> list = new LinkedList<>();
 		String output = null;
 		for (CalendarElement element : getOutputHandler().getSortedIterable(-1)) {
@@ -113,7 +121,8 @@ public class CalendarPlugin extends Plugin {
 		terminal.update();
 	}
 
-	@Command(tag = "new") public void createRequest() throws BadLocationException, InterruptedException, UserCancelException, SQLException {
+	@Command(tag = "new")
+	public void createRequest() throws BadLocationException, InterruptedException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.uuuu");
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
@@ -128,13 +137,15 @@ public class CalendarPlugin extends Plugin {
 		}
 		switch (types.get(position)) {
 			case "appointment":
-				IFrequentStringComplete frequentStringComplement = ServiceRegistry.Instance().get(IFrequentStringComplete.class);
+				IFrequentStringComplete frequentStringComplement = ServiceRegistry.Instance()
+						.get(IFrequentStringComplete.class);
 				LocalTime begin;
 				LocalTime end = LocalTime.MIN;
 				LocalDate lastDay;
 				int daysTilRepetition;
 				String spezification;
-				temp = terminal.request("enter appointment name", RequestType.NAME, frequentStringComplement.get("appointment"));
+				temp = terminal.request("enter appointment name", RequestType.NAME,
+						frequentStringComplement.get("appointment"));
 				name = frequentStringComplement.get("appointment").getCorrespondingString(temp);
 				temp = terminal.request("enter date", RequestType.DATE);
 				date = temp.isEmpty() ? LocalDate.now() : LocalDate.parse(temp, dateFormatter);
@@ -154,7 +165,8 @@ public class CalendarPlugin extends Plugin {
 					temp = terminal.request("enter end time", RequestType.TIME);
 					end = temp.isEmpty() ? LocalTime.MIN : LocalTime.parse(temp, timeFormatter);
 				}
-				daysTilRepetition = Integer.valueOf(terminal.request("enter days til repetition", RequestType.INTEGER, "0"));
+				daysTilRepetition = Integer
+						.valueOf(terminal.request("enter days til repetition", RequestType.INTEGER, "0"));
 				spezification = terminal.request("enter spezification", RequestType.NAME_NUMBER_EMPTY);
 				element = new Appointment(name, date, begin, lastDay, end, daysTilRepetition, spezification);
 				frequentStringComplement.insert(name, "appointment");
@@ -175,12 +187,15 @@ public class CalendarPlugin extends Plugin {
 		CommandHandler.Instance().executeCommand(new InsertCommand(element));
 	}
 
-	@Override public CalendarOutputHandler getOutputHandler() {
+	@Override
+	public CalendarOutputHandler getOutputHandler() {
 		return (CalendarOutputHandler) super.getOutputHandler();
 	}
 
-	@Override @Command(tag = "show") public void show()	throws SQLException, BadLocationException, InterruptedException, IllegalAccessException, IllegalArgumentException,
-														InvocationTargetException, UserCancelException {
+	@Override
+	@Command(tag = "show")
+	public void show() throws SQLException, BadLocationException, InterruptedException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, UserCancelException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		boolean displayTemp = display;
 		display = false;
@@ -192,7 +207,8 @@ public class CalendarPlugin extends Plugin {
 
 	public void updateCalendar() throws SQLException, BadLocationException, InterruptedException {
 		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
-		AppointmentDatabaseConnector appointmentConnector = (AppointmentDatabaseConnector) registry.get(Appointment.class);
+		AppointmentDatabaseConnector appointmentConnector = (AppointmentDatabaseConnector) registry
+				.get(Appointment.class);
 		HolidayDatabaseConnector holidayConnector = (HolidayDatabaseConnector) registry.get(Holiday.class);
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		HolidayURLConnector connector = new HolidayURLConnector();

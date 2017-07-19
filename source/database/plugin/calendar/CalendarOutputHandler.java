@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import database.plugin.Command;
 import database.plugin.IOutputHandler;
 import database.plugin.calendar.connector.AppointmentDatabaseConnector;
@@ -53,14 +54,17 @@ public class CalendarOutputHandler implements IOutputHandler {
 		return builder;
 	}
 
-	@Override public String getInitialOutput() throws SQLException {
-		InternalParameters internalParameters = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
+	@Override
+	public String getInitialOutput() throws SQLException {
+		InternalParameters internalParameters = ServiceRegistry.Instance().get(ISettingsProvider.class)
+				.getInternalParameters();
 		return formatOutput(getSortedIterable(internalParameters.getEventDisplayRange()), true).build();
 	}
 
 	public Iterable<CalendarElement> getSortedIterable(int days) throws SQLException {
 		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
-		AppointmentDatabaseConnector appointmentConnector = (AppointmentDatabaseConnector) registry.get(Appointment.class);
+		AppointmentDatabaseConnector appointmentConnector = (AppointmentDatabaseConnector) registry
+				.get(Appointment.class);
 		BirthdayDatabaseConnector birthdayConnector = (BirthdayDatabaseConnector) registry.get(Birthday.class);
 		DayDatabaseConnector dayConnector = (DayDatabaseConnector) registry.get(Day.class);
 		HolidayDatabaseConnector holidayConnector = (HolidayDatabaseConnector) registry.get(Holiday.class);
@@ -76,7 +80,8 @@ public class CalendarOutputHandler implements IOutputHandler {
 		return list;
 	}
 
-	@Command(tag = "all") public String outputAll() throws SQLException {
+	@Command(tag = "all")
+	public String outputAll() throws SQLException {
 		return formatOutput(getSortedIterable(365), false).build();
 	}
 }

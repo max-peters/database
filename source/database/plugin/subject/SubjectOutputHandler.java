@@ -2,6 +2,7 @@ package database.plugin.subject;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import database.plugin.Command;
 import database.plugin.IOutputHandler;
 import database.services.ServiceRegistry;
@@ -11,23 +12,13 @@ import database.services.stringUtility.Builder;
 import database.services.stringUtility.StringUtility;
 
 public class SubjectOutputHandler implements IOutputHandler {
-	@Command(tag = "average") public String outputAverage() throws SQLException {
-		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
-		StringUtility stringUtility = new StringUtility();
-		ResultSet resultSet;
-		double average = 0;
-		resultSet = database.execute(SQLStatements.SUBJECT_SELECT_AVERAGE);
-		if (resultSet.next()) {
-			average = resultSet.getDouble("percent");
-		}
-		return "average percentage : " + stringUtility.formatDouble(average, 2) + "%";
-	}
-
-	@Override public String getInitialOutput() throws SQLException {
+	@Override
+	public String getInitialOutput() throws SQLException {
 		return outputAll();
 	}
 
-	@Command(tag = "all") public String outputAll() throws SQLException {
+	@Command(tag = "all")
+	public String outputAll() throws SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		StringUtility stringUtility = new StringUtility();
 		Builder builder = new Builder();
@@ -54,10 +45,15 @@ public class SubjectOutputHandler implements IOutputHandler {
 		resultSet.beforeFirst();
 		while (resultSet.next()) {
 			builder.append(" " + stringUtility.postIncrementTo(resultSet.getString("name"), nameLength + gab, ' '));
-			builder.append("[" + stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("score"), 1), scoreLength, ' ') + "/");
-			builder.append(stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("maxPoints"), 1), maxPointsLength, ' ') + " - ");
-			builder.append(stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("percent"), 2), percentLength, ' ') + "%] in [");
-			builder.append(stringUtility.preIncrementTo(Integer.toString(resultSet.getInt("counter")), counterLength, ' ').replace(' ', '0') + "] ");
+			builder.append("[" + stringUtility.preIncrementTo(
+					stringUtility.formatDouble(resultSet.getDouble("score"), 1), scoreLength, ' ') + "/");
+			builder.append(stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("maxPoints"), 1),
+					maxPointsLength, ' ') + " - ");
+			builder.append(stringUtility.preIncrementTo(stringUtility.formatDouble(resultSet.getDouble("percent"), 2),
+					percentLength, ' ') + "%] in [");
+			builder.append(
+					stringUtility.preIncrementTo(Integer.toString(resultSet.getInt("counter")), counterLength, ' ')
+							.replace(' ', '0') + "] ");
 			if (resultSet.getInt("counter") == 1) {
 				builder.append("Blatt");
 			}
@@ -70,5 +66,18 @@ public class SubjectOutputHandler implements IOutputHandler {
 			builder.append("keine Bl\u00E4tter");
 		}
 		return builder.build();
+	}
+
+	@Command(tag = "average")
+	public String outputAverage() throws SQLException {
+		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
+		StringUtility stringUtility = new StringUtility();
+		ResultSet resultSet;
+		double average = 0;
+		resultSet = database.execute(SQLStatements.SUBJECT_SELECT_AVERAGE);
+		if (resultSet.next()) {
+			average = resultSet.getDouble("percent");
+		}
+		return "average percentage : " + stringUtility.formatDouble(average, 2) + "%";
 	}
 }

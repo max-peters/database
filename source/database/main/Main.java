@@ -1,7 +1,9 @@
 package database.main;
 
 import java.lang.reflect.InvocationTargetException;
+
 import javax.swing.JOptionPane;
+
 import database.main.userInterface.GraphicalUserInterface;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.Terminal;
@@ -75,7 +77,8 @@ public class Main {
 			});
 			guiThread.start();
 			logger.log("threads started");
-			IWriterReader writerReader = new XmlWriterReader(System.getProperty("user.home") + "/Documents/storage.xml");
+			IWriterReader writerReader = new XmlWriterReader(
+					System.getProperty("user.home") + "/Documents/storage.xml");
 			ISettingsProvider settingsProvider = new SettingsProvider();
 			IConnectorRegistry connectorRegistry = new ConnectorRegistry();
 			ITerminal terminal = new Terminal(graphicalUserInterface);
@@ -121,7 +124,8 @@ public class Main {
 			writerReader.read();
 			logger.log("internal parameters loaded");
 			databaseThread.join();
-			((ExpenseDatabaseConnector) ServiceRegistry.Instance().get(IConnectorRegistry.class).get(Expense.class)).refreshStringComplete();
+			((ExpenseDatabaseConnector) ServiceRegistry.Instance().get(IConnectorRegistry.class).get(Expense.class))
+					.refreshStringComplete();
 			ServiceRegistry.Instance().get(IFrequentStringComplete.class).create("appointment");
 			calendarPlugin.updateCalendar();
 			repetitiveExpensePlugin.createExpense();

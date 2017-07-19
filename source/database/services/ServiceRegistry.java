@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ServiceRegistry {
-	private Map<Class<?>, Object>	map;
-	private static ServiceRegistry	instance;
+	private Map<Class<?>, Object> map;
+	private static ServiceRegistry instance;
 
 	private ServiceRegistry() {
 		map = new HashMap<>();

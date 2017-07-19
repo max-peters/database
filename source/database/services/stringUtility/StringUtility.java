@@ -9,17 +9,11 @@ import java.util.List;
 
 public class StringUtility {
 	public String arrangeInCollums(List<List<String>> list, int gapSize) {
-		int lenght = 0;
 		int size = 0;
 		StringBuilder sb = new StringBuilder();
 		for (List<String> innerList : list) {
 			if (innerList.size() > size) {
 				size = innerList.size();
-			}
-			for (String string : innerList) {
-				if (string.length() > lenght) {
-					lenght = string.length();
-				}
 			}
 		}
 		for (List<String> innerList : list) {
@@ -29,6 +23,12 @@ public class StringUtility {
 		}
 		for (int j = 0; j < size; j++) {
 			for (List<String> innerList : list) {
+				int lenght = 0;
+				for (String string : innerList) {
+					if (string.length() > lenght) {
+						lenght = string.length();
+					}
+				}
 				String temp = innerList.get(j);
 				while (temp.length() < lenght + gapSize) {
 					temp += " ";
@@ -89,10 +89,12 @@ public class StringUtility {
 			String[] splitResult = date.split("\\.");
 			formattedDate = fill(splitResult[0], 2) + ".";
 			if (splitResult.length == 1) {
-				formattedDate = formattedDate + fill(String.valueOf(LocalDate.now().getMonthValue()), 2) + "." + fill(String.valueOf(LocalDate.now().getYear()), 4);
+				formattedDate = formattedDate + fill(String.valueOf(LocalDate.now().getMonthValue()), 2) + "."
+						+ fill(String.valueOf(LocalDate.now().getYear()), 4);
 			}
 			else if (splitResult.length == 2) {
-				formattedDate = formattedDate + fill(splitResult[1], 2) + "." + fill(String.valueOf(LocalDate.now().getYear()), 4);
+				formattedDate = formattedDate + fill(splitResult[1], 2) + "."
+						+ fill(String.valueOf(LocalDate.now().getYear()), 4);
 			}
 			else if (splitResult.length == 3) {
 				formattedDate = formattedDate + fill(splitResult[1], 2) + "." + fill(splitResult[2], 4);

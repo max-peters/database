@@ -1,9 +1,9 @@
 package database.main.userInterface;
 
 public class OutputInformation {
-	private Object			output;
-	private StringFormat	stringFormat;
-	private StringType		stringType;
+	private Object output;
+	private StringFormat stringFormat;
+	private StringType stringType;
 
 	public OutputInformation(Object output, StringType stringType, StringFormat stringFormat) {
 		this.output = output;
@@ -11,11 +11,13 @@ public class OutputInformation {
 		this.stringType = stringType;
 	}
 
-	@Override public boolean equals(Object object) {
+	@Override
+	public boolean equals(Object object) {
 		OutputInformation information;
 		if (object != null && object instanceof OutputInformation) {
 			information = (OutputInformation) object;
-			if (output.equals(information.getOutput()) && stringFormat.equals(information.getStringFormat()) && stringType.equals(information.getStringType())) {
+			if (output.equals(information.getOutput()) && stringFormat.equals(information.getStringFormat())
+					&& stringType.equals(information.getStringType())) {
 				return true;
 			}
 		}

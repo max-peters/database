@@ -1,6 +1,7 @@
 package database.services.undoRedo;
 
 import java.util.LinkedList;
+
 import database.services.ServiceRegistry;
 import database.services.settings.ISettingsProvider;
 

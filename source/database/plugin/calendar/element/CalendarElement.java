@@ -3,10 +3,12 @@ package database.plugin.calendar.element;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+
 import database.plugin.Instance;
 
 public abstract class CalendarElement extends Instance implements Comparable<CalendarElement> {
-	@Override public int compareTo(CalendarElement element) {
+	@Override
+	public int compareTo(CalendarElement element) {
 		int x = orderDate().compareTo(element.orderDate());
 		if (x < 0) {
 			return -1;
@@ -25,9 +27,9 @@ public abstract class CalendarElement extends Instance implements Comparable<Cal
 
 	public abstract String getName();
 
-	public abstract String getSpezification();
-
 	public abstract int getPriority();
+
+	public abstract String getSpezification();
 
 	public boolean isNear(int days) {
 		if (ChronoUnit.DAYS.between(LocalDate.now(), updateYear()) <= days) {

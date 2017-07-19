@@ -4,21 +4,23 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+
 import database.plugin.calendar.CalendarElements;
 import database.services.ServiceRegistry;
 import database.services.settings.ISettingsProvider;
 import database.services.stringUtility.Builder;
 
 public class Appointment extends CalendarElement {
-	private LocalDate	beginDate;
-	private LocalTime	beginTime;
-	private int			daysTilRepeat;
-	private LocalDate	endDate;
-	private LocalTime	endTime;
-	private String		name;
-	private String		spezification;
+	private LocalDate beginDate;
+	private LocalTime beginTime;
+	private int daysTilRepeat;
+	private LocalDate endDate;
+	private LocalTime endTime;
+	private String name;
+	private String spezification;
 
-	public Appointment(String name, LocalDate beginDate, LocalTime beginTime, LocalDate endDate, LocalTime endTime, int daysTilRepeat, String spezification) {
+	public Appointment(String name, LocalDate beginDate, LocalTime beginTime, LocalDate endDate, LocalTime endTime,
+			int daysTilRepeat, String spezification) {
 		this.name = name;
 		this.beginDate = beginDate;
 		this.beginTime = beginTime;
@@ -28,11 +30,8 @@ public class Appointment extends CalendarElement {
 		this.spezification = spezification;
 	}
 
-	public String getSpezification() {
-		return spezification;
-	}
-
-	@Override public String getAdditionToOutput() {
+	@Override
+	public String getAdditionToOutput() {
 		Builder builder = new Builder();
 		builder.append("[");
 		if (!beginTime.equals(LocalTime.MIN)) {
@@ -45,14 +44,16 @@ public class Appointment extends CalendarElement {
 			builder.append("to" + endTime + "UHR");
 		}
 		builder.append("]");
-		return builder.build().replace("[]", "").replaceAll("(?<=[A-Z])(?=[a-z])|(?<=[A-Za-z])(?=[0-9])|(?<=[0-9])(?=[A-Za-z])", " ");
+		return builder.build().replace("[]", "")
+				.replaceAll("(?<=[A-Z])(?=[a-z])|(?<=[A-Za-z])(?=[0-9])|(?<=[0-9])(?=[A-Za-z])", " ");
 	}
 
 	public LocalTime getBeginTime() {
 		return beginTime;
 	}
 
-	@Override public LocalDate getDate() {
+	@Override
+	public LocalDate getDate() {
 		return beginDate;
 	}
 
@@ -68,15 +69,24 @@ public class Appointment extends CalendarElement {
 		return endTime;
 	}
 
-	@Override public String getName() {
+	@Override
+	public String getName() {
 		return name;
 	}
 
-	@Override public int getPriority() {
-		return ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters().getCalendarElementPriority(CalendarElements.APPOINTMENT);
+	@Override
+	public int getPriority() {
+		return ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters()
+				.getCalendarElementPriority(CalendarElements.APPOINTMENT);
 	}
 
-	@Override public boolean isPast() {
+	@Override
+	public String getSpezification() {
+		return spezification;
+	}
+
+	@Override
+	public boolean isPast() {
 		if (endTime.equals(LocalTime.MIN)) {
 			if (beginTime.equals(LocalTime.MIN) || !beginDate.isEqual(endDate)) {
 				return LocalDate.now().isAfter(endDate);
@@ -94,15 +104,18 @@ public class Appointment extends CalendarElement {
 		return daysTilRepeat != 0;
 	}
 
-	@Override public LocalDateTime orderDate() {
+	@Override
+	public LocalDateTime orderDate() {
 		return beginDate.atTime(beginTime);
 	}
 
 	public Appointment repeat() {
-		return new Appointment(name, beginDate.plusDays(daysTilRepeat), beginTime, endDate.plusDays(daysTilRepeat), endTime, daysTilRepeat, spezification);
+		return new Appointment(name, beginDate.plusDays(daysTilRepeat), beginTime, endDate.plusDays(daysTilRepeat),
+				endTime, daysTilRepeat, spezification);
 	}
 
-	@Override public LocalDate updateYear() {
+	@Override
+	public LocalDate updateYear() {
 		return beginDate;
 	}
 }

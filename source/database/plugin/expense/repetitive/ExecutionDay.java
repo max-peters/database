@@ -1,8 +1,11 @@
 package database.plugin.expense.repetitive;
 
 public enum ExecutionDay {
-	FIRST, LAST, MID;
-	@Override public String toString() {
+	FIRST,
+	LAST,
+	MID;
+	@Override
+	public String toString() {
 		String day = null;
 		switch (this) {
 			case FIRST:

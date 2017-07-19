@@ -2,6 +2,7 @@ package database.main;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.services.ServiceRegistry;
@@ -11,9 +12,9 @@ import database.services.stringComplete.Tupel;
 import database.services.stringUtility.StringUtility;
 
 public class Logger {
-	private long						beginTime;
-	private List<Tupel<Long, String>>	list;
-	private static Logger				instance;
+	private long beginTime;
+	private List<Tupel<Long, String>> list;
+	private static Logger instance;
 
 	private Logger() {
 		list = new LinkedList<>();
@@ -28,7 +29,8 @@ public class Logger {
 
 	public void print() {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		InternalParameters internalParameters = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
+		InternalParameters internalParameters = ServiceRegistry.Instance().get(ISettingsProvider.class)
+				.getInternalParameters();
 		int timeLength = 0;
 		StringUtility stringUtility = new StringUtility();
 		if (!list.isEmpty()) {
@@ -36,7 +38,8 @@ public class Logger {
 		}
 		if (internalParameters.getDisplayLogger()) {
 			for (Tupel<Long, String> tupel : list) {
-				terminal.collectLine(" " + stringUtility.preIncrementTo(tupel.first.toString(), timeLength, ' ') + ": " + tupel.second, StringFormat.STANDARD, "logger");
+				terminal.collectLine(" " + stringUtility.preIncrementTo(tupel.first.toString(), timeLength, ' ') + ": "
+						+ tupel.second, StringFormat.STANDARD, "logger");
 			}
 		}
 	}

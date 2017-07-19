@@ -3,6 +3,7 @@ package database.services.database;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import database.plugin.Instance;
 
 public interface IDatabase {

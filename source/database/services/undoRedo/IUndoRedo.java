@@ -1,7 +1,9 @@
 package database.services.undoRedo;
 
 import java.sql.SQLException;
+
 import javax.swing.text.BadLocationException;
+
 import database.services.undoRedo.command.UndoableCommand;
 
 public interface IUndoRedo {

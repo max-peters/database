@@ -1,7 +1,9 @@
 package database.plugin.subject;
 
 import java.sql.SQLException;
+
 import javax.swing.text.BadLocationException;
+
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.RequestType;
@@ -19,17 +21,20 @@ public class SubjectPlugin extends Plugin {
 		super("subject", new SubjectOutputHandler());
 	}
 
-	@Command(tag = "add") public void addRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
+	@Command(tag = "add")
+	public void addRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String regex = getSubjectsAsRegex();
 		Subject toChange = getSubject(terminal.request("enter subject", regex, new HashMapStringComplete(regex)));
 		Double newScore = Double.parseDouble(terminal.request("enter score", RequestType.DOUBLE));
 		Double newMaxPoint = Double.parseDouble(terminal.request("enter maximum points", RequestType.DOUBLE));
-		Subject changed = new Subject(toChange.getName(), toChange.getScore() + newScore, toChange.getMaxPoints() + newMaxPoint, toChange.getCounter() + 1);
+		Subject changed = new Subject(toChange.getName(), toChange.getScore() + newScore,
+				toChange.getMaxPoints() + newMaxPoint, toChange.getCounter() + 1);
 		CommandHandler.Instance().executeCommand(new ChangeCommand(toChange, changed));
 	}
 
-	@Command(tag = "new") public void createRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
+	@Command(tag = "new")
+	public void createRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		Subject subject = new Subject(terminal.request("enter subject name", RequestType.NAME), 0.0, 0.0, 0);
 		CommandHandler.Instance().executeCommand(new InsertCommand(subject));

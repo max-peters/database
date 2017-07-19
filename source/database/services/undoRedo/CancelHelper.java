@@ -1,7 +1,9 @@
 package database.services.undoRedo;
 
 import java.sql.SQLException;
+
 import javax.swing.text.BadLocationException;
+
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;

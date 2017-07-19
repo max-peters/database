@@ -1,7 +1,9 @@
 package database.services.undoRedo;
 
 import java.sql.SQLException;
+
 import javax.swing.text.BadLocationException;
+
 import database.main.userInterface.ITerminal;
 import database.services.ServiceRegistry;
 import database.services.undoRedo.command.UndoableCommand;
@@ -11,7 +13,8 @@ public class CommandHandler {
 
 	private CommandHandler() {}
 
-	public void executeCommand(UndoableCommand command) throws SQLException, BadLocationException, InterruptedException {
+	public void executeCommand(UndoableCommand command)
+			throws SQLException, BadLocationException, InterruptedException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		IUndoRedo undoRedoService = ServiceRegistry.Instance().get(IUndoRedo.class);
 		if (command != null) {

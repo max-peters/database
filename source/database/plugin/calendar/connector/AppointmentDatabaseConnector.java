@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
+
 import database.plugin.calendar.element.Appointment;
 import database.services.ServiceRegistry;
 import database.services.database.IDatabase;
@@ -14,13 +15,16 @@ import database.services.database.QueryType;
 import database.services.database.SQLStatements;
 
 public class AppointmentDatabaseConnector implements IDatabaseConnector<Appointment> {
-	@Override public Appointment create(ResultSet resultSet) throws SQLException {
-		return new Appointment(resultSet.getString("name"), resultSet.getDate("beginDate").toLocalDate(), resultSet.getTime("beginTime").toLocalTime(),
-			resultSet.getDate("endDate").toLocalDate(), resultSet.getTime("endTime").toLocalTime(), resultSet.getInt("daysTilRepeat"),
-			resultSet.getString("spezification"));
+	@Override
+	public Appointment create(ResultSet resultSet) throws SQLException {
+		return new Appointment(resultSet.getString("name"), resultSet.getDate("beginDate").toLocalDate(),
+				resultSet.getTime("beginTime").toLocalTime(), resultSet.getDate("endDate").toLocalDate(),
+				resultSet.getTime("endTime").toLocalTime(), resultSet.getInt("daysTilRepeat"),
+				resultSet.getString("spezification"));
 	}
 
-	@Override public String getQuery(QueryType type) throws SQLException {
+	@Override
+	public String getQuery(QueryType type) throws SQLException {
 		switch (type) {
 			case DELETE:
 				return SQLStatements.APPOINTMENT_DELETE;
@@ -33,7 +37,8 @@ public class AppointmentDatabaseConnector implements IDatabaseConnector<Appointm
 		}
 	}
 
-	@Override public PreparedStatement prepareStatement(Appointment appointment, String query) throws SQLException {
+	@Override
+	public PreparedStatement prepareStatement(Appointment appointment, String query) throws SQLException {
 		PreparedStatement preparedStatement = ServiceRegistry.Instance().get(IDatabase.class).prepareStatement(query);
 		preparedStatement.setString(1, appointment.getName());
 		preparedStatement.setDate(2, Date.valueOf(appointment.getDate()));

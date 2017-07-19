@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -13,19 +14,21 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class XmlWriterReader implements IWriterReader {
-	private Element					appendTo;
-	private Document				document;
-	private DocumentBuilder			documentBuilder;
-	private File					localStorage;
-	private Map<String, IWriteRead>	register;
+	private Element appendTo;
+	private Document document;
+	private DocumentBuilder documentBuilder;
+	private File localStorage;
+	private Map<String, IWriteRead> register;
 
-	public XmlWriterReader(String fileDirectory) throws ParserConfigurationException, IOException, TransformerException {
+	public XmlWriterReader(String fileDirectory)
+			throws ParserConfigurationException, IOException, TransformerException {
 		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 		documentBuilder = documentBuilderFactory.newDocumentBuilder();
 		localStorage = new File(fileDirectory);
@@ -33,7 +36,8 @@ public class XmlWriterReader implements IWriterReader {
 		setUp();
 	}
 
-	@Override public void add(String nodeName, String leaveName, String content) {
+	@Override
+	public void add(String nodeName, String leaveName, String content) {
 		Element node = (Element) document.getElementsByTagName(nodeName).item(0);
 		if (node == null) {
 			node = document.createElement(nodeName);
@@ -44,7 +48,8 @@ public class XmlWriterReader implements IWriterReader {
 		node.appendChild(leave);
 	}
 
-	@Override public void read() throws ParserConfigurationException, SAXException, IOException, TransformerException {
+	@Override
+	public void read() throws ParserConfigurationException, SAXException, IOException, TransformerException {
 		if (!localStorage.exists()) {
 			write();
 		}
@@ -61,11 +66,13 @@ public class XmlWriterReader implements IWriterReader {
 		}
 	}
 
-	@Override public void register(String identifier, IWriteRead writeRead) {
+	@Override
+	public void register(String identifier, IWriteRead writeRead) {
 		register.put(identifier, writeRead);
 	}
 
-	@Override public void write() throws ParserConfigurationException, TransformerException {
+	@Override
+	public void write() throws ParserConfigurationException, TransformerException {
 		for (IWriteRead writeRead : register.values()) {
 			writeRead.write();
 		}

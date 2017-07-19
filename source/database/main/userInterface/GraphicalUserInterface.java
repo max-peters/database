@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -29,26 +30,26 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
 public class GraphicalUserInterface {
-	private int					currentLineNumber;
-	private DocumentListener	documentListener;
-	private Font				font;
-	private JFrame				frame;
-	private int					frameHeight;
-	private int					frameWidht;
-	private Image				icon;
-	private JTextField			input;
-	private KeyListener			keyListener;
-	private KeyListener			keyListenerAutocompletition;
-	private JTextPane			output;
-	private JPanel				panel;
-	private int					pressedKey;
-	private JScrollPane			scrollPane;
-	private StyledDocument		styledDocument;
-	private Object				synchronizerKeyInput;
-	private Object				synchronizerKeyPressed;
-	private JTextField			time;
-	private Timer				timer;
-	private TimerTask			timerTask;
+	private int currentLineNumber;
+	private DocumentListener documentListener;
+	private Font font;
+	private JFrame frame;
+	private int frameHeight;
+	private int frameWidht;
+	private Image icon;
+	private JTextField input;
+	private KeyListener keyListener;
+	private KeyListener keyListenerAutocompletition;
+	private JTextPane output;
+	private JPanel panel;
+	private int pressedKey;
+	private JScrollPane scrollPane;
+	private StyledDocument styledDocument;
+	private Object synchronizerKeyInput;
+	private Object synchronizerKeyPressed;
+	private JTextField time;
+	private Timer timer;
+	private TimerTask timerTask;
 
 	public void addKeyListenerForAutocompletition() {
 		input.addKeyListener(keyListenerAutocompletition);
@@ -68,18 +69,22 @@ public class GraphicalUserInterface {
 		time = new JTextField();
 		timer = new Timer();
 		documentListener = new DocumentListener() {
-			@Override public void changedUpdate(DocumentEvent e) {}
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
 
-			@Override public void insertUpdate(DocumentEvent e) {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
 				synchronized (synchronizerKeyInput) {
 					synchronizerKeyInput.notify();
 				}
 			}
 
-			@Override public void removeUpdate(DocumentEvent e) {}
+			@Override
+			public void removeUpdate(DocumentEvent e) {}
 		};
 		keyListener = new KeyListener() {
-			@Override public void keyPressed(KeyEvent e) {
+			@Override
+			public void keyPressed(KeyEvent e) {
 				pressedKey = e.getExtendedKeyCode();
 				if (e.getExtendedKeyCode() == 10 || e.getExtendedKeyCode() == 27) {
 					synchronized (synchronizerKeyInput) {
@@ -91,26 +96,33 @@ public class GraphicalUserInterface {
 				}
 			}
 
-			@Override public void keyReleased(KeyEvent e) {}
+			@Override
+			public void keyReleased(KeyEvent e) {}
 
-			@Override public void keyTyped(KeyEvent e) {}
+			@Override
+			public void keyTyped(KeyEvent e) {}
 		};
 		keyListenerAutocompletition = new KeyListener() {
-			@Override public void keyPressed(KeyEvent e) {
+			@Override
+			public void keyPressed(KeyEvent e) {
 				if (e.getExtendedKeyCode() == 8) {
 					input.replaceSelection("");
 				}
 			}
 
-			@Override public void keyReleased(KeyEvent e) {}
+			@Override
+			public void keyReleased(KeyEvent e) {}
 
-			@Override public void keyTyped(KeyEvent e) {}
+			@Override
+			public void keyTyped(KeyEvent e) {}
 		};
 		timerTask = new TimerTask() {
-			@Override public void run() {
+			@Override
+			public void run() {
 				SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 				SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-				time.setText(dateFormat.format(Calendar.getInstance().getTime()) + " " + timeFormat.format(Calendar.getInstance().getTime()));
+				time.setText(dateFormat.format(Calendar.getInstance().getTime()) + " "
+						+ timeFormat.format(Calendar.getInstance().getTime()));
 			}
 		};
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -215,7 +227,8 @@ public class GraphicalUserInterface {
 		return input.getY() > frameHeight - 10;
 	}
 
-	protected void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
+	protected void printLine(Object object, StringType stringType, StringFormat stringFormat)
+			throws BadLocationException {
 		String outputString;
 		if (object == null) {
 			return;
@@ -227,11 +240,14 @@ public class GraphicalUserInterface {
 		if (!stringType.equals(StringType.SOLUTION)) {
 			styledDocument.remove(currentLineNumber, styledDocument.getLength() - currentLineNumber);
 		}
-		styledDocument.insertString(styledDocument.getLength(), outputString, styledDocument.getStyle(stringFormat.toString()));
+		styledDocument.insertString(styledDocument.getLength(), outputString,
+				styledDocument.getStyle(stringFormat.toString()));
 		if (stringType.equals(StringType.MAIN)) {
 			currentLineNumber = currentLineNumber + outputString.length();
 		}
-		moveTextField(output.getText().contains(System.getProperty("line.separator")) ? output.getText().split(System.getProperty("line.separator")).length : 0);
+		moveTextField(output.getText().contains(System.getProperty("line.separator"))
+				? output.getText().split(System.getProperty("line.separator")).length
+				: 0);
 	}
 
 	protected void releaseInput() {

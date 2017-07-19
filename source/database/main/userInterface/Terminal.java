@@ -8,7 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.swing.text.BadLocationException;
+
 import database.main.UserCancelException;
 import database.services.ServiceRegistry;
 import database.services.pluginRegistry.IPluginRegistry;
@@ -16,9 +18,9 @@ import database.services.stringComplete.IStringComplete;
 import database.services.stringUtility.StringUtility;
 
 public class Terminal implements ITerminal {
-	private Map<OutputInformation, String>	collectedLines;
-	private GraphicalUserInterface			graphicalUserInterface;
-	private StringUtility					stringUtility;
+	private Map<OutputInformation, String> collectedLines;
+	private GraphicalUserInterface graphicalUserInterface;
+	private StringUtility stringUtility;
 
 	public Terminal(GraphicalUserInterface graphicalUserInterface) {
 		this.graphicalUserInterface = graphicalUserInterface;
@@ -26,11 +28,14 @@ public class Terminal implements ITerminal {
 		stringUtility = new StringUtility();
 	}
 
-	@Override public void blockInput() {
+	@Override
+	public void blockInput() {
 		graphicalUserInterface.blockInput();
 	}
 
-	@Override public int checkRequest(Collection<String> collection, String request) throws InterruptedException, BadLocationException {
+	@Override
+	public int checkRequest(Collection<String> collection, String request)
+			throws InterruptedException, BadLocationException {
 		StringUtility su = new StringUtility();
 		int position = -1;
 		int current = 0;
@@ -69,16 +74,19 @@ public class Terminal implements ITerminal {
 		return position;
 	}
 
-	@Override public void collectLine(Object output, StringFormat stringFormat, String headline) {
+	@Override
+	public void collectLine(Object output, StringFormat stringFormat, String headline) {
 		collectedLines.put(new OutputInformation(output, StringType.SOLUTION, stringFormat), headline);
 	}
 
-	@Override public void errorMessage() throws BadLocationException, InterruptedException {
+	@Override
+	public void errorMessage() throws BadLocationException, InterruptedException {
 		graphicalUserInterface.printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
 		waitForInput();
 	}
 
-	@Override public void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
+	@Override
+	public void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < graphicalUserInterface.getNumberOfCharsPerLine(character); i++) {
 			builder.append(character);
@@ -86,7 +94,8 @@ public class Terminal implements ITerminal {
 		printLine(builder.toString(), stringType, StringFormat.STANDARD);
 	}
 
-	@Override public void printCollectedLines() throws InterruptedException, BadLocationException {
+	@Override
+	public void printCollectedLines() throws InterruptedException, BadLocationException {
 		if (!collectedLines.isEmpty()) {
 			List<String> list = new ArrayList<>();
 			for (String string : collectedLines.values()) {
@@ -98,7 +107,8 @@ public class Terminal implements ITerminal {
 				graphicalUserInterface.printLine(string, StringType.SOLUTION, StringFormat.BOLD);
 				for (Entry<OutputInformation, String> entry : collectedLines.entrySet()) {
 					if (entry.getValue().equals(string)) {
-						graphicalUserInterface.printLine(entry.getKey().getOutput(), entry.getKey().getStringType(), entry.getKey().getStringFormat());
+						graphicalUserInterface.printLine(entry.getKey().getOutput(), entry.getKey().getStringType(),
+								entry.getKey().getStringFormat());
 					}
 				}
 			}
@@ -107,12 +117,15 @@ public class Terminal implements ITerminal {
 		}
 	}
 
-	@Override public void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
+	@Override
+	public void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 
-	@Override public String request(String printOut, String regex, String inputText, IStringComplete stringComplete,
-									int levenshteinDistance) throws InterruptedException, BadLocationException, UserCancelException, SQLException {
+	@Override
+	public String request(String printOut, String regex, String inputText, IStringComplete stringComplete,
+			int levenshteinDistance)
+			throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		boolean request = true;
 		String result = null;
 		String input = null;
@@ -139,11 +152,13 @@ public class Terminal implements ITerminal {
 				result = input;
 				request = false;
 			}
-			else if ("DATE".equals(regex) && (stringUtility.testDateString(stringUtility.parseDateString(input)) || input.isEmpty())) {
+			else if ("DATE".equals(regex)
+					&& (stringUtility.testDateString(stringUtility.parseDateString(input)) || input.isEmpty())) {
 				result = stringUtility.parseDateString(input);
 				request = false;
 			}
-			else if ("TIME".equals(regex) && (stringUtility.testTimeString(stringUtility.parseTimeString(input)) || input.isEmpty())) {
+			else if ("TIME".equals(regex)
+					&& (stringUtility.testTimeString(stringUtility.parseTimeString(input)) || input.isEmpty())) {
 				result = stringUtility.parseTimeString(input);
 				request = false;
 			}
@@ -160,7 +175,8 @@ public class Terminal implements ITerminal {
 		return result;
 	}
 
-	@Override public void update() throws BadLocationException, InterruptedException, SQLException {
+	@Override
+	public void update() throws BadLocationException, InterruptedException, SQLException {
 		graphicalUserInterface.clearOutput();
 		graphicalUserInterface.blockInput();
 		ServiceRegistry.Instance().get(IPluginRegistry.class).initialOutput();
@@ -168,17 +184,20 @@ public class Terminal implements ITerminal {
 		printCollectedLines();
 	}
 
-	@Override public void waitForInput() throws InterruptedException {
+	@Override
+	public void waitForInput() throws InterruptedException {
 		graphicalUserInterface.releaseInput();
 		graphicalUserInterface.setInputColor(Color.BLACK);
 		do {
 			graphicalUserInterface.waitForKeyInput();
 		}
-		while ((graphicalUserInterface.getLastKeyInput() == 38 || graphicalUserInterface.getLastKeyInput() == 40) && graphicalUserInterface.isScrollable());
+		while ((graphicalUserInterface.getLastKeyInput() == 38 || graphicalUserInterface.getLastKeyInput() == 40)
+				&& graphicalUserInterface.isScrollable());
 		graphicalUserInterface.setInputColor(Color.WHITE);
 	}
 
-	private String completeString(IStringComplete stringComplete) throws InterruptedException, SQLException, UserCancelException {
+	private String completeString(IStringComplete stringComplete)
+			throws InterruptedException, SQLException, UserCancelException {
 		String inputString = "";
 		String selection;
 		int inputCaretPosition;
@@ -187,7 +206,8 @@ public class Terminal implements ITerminal {
 			inputString = graphicalUserInterface.getInputText();
 			inputCaretPosition = graphicalUserInterface.getInputCaretPosition();
 			selection = stringComplete.getMostUsedString(inputString, "");
-			if (inputString.isEmpty() || !graphicalUserInterface.getSelectedText().equals(inputString) || !selection.isEmpty()) {
+			if (inputString.isEmpty() || !graphicalUserInterface.getSelectedText().equals(inputString)
+					|| !selection.isEmpty()) {
 				graphicalUserInterface.setInputText(inputString + selection);
 				graphicalUserInterface.selectInputText(inputString.length(), (inputString + selection).length());
 				if (selection.isEmpty() && graphicalUserInterface.getInputText().length() > inputCaretPosition + 1) {

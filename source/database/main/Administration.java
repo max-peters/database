@@ -1,9 +1,11 @@
 package database.main;
 
 import java.lang.reflect.InvocationTargetException;
+
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.main.userInterface.StringType;
@@ -53,8 +55,9 @@ public class Administration {
 				}
 			}
 			catch (InvocationTargetException | UserCancelException e) {
-				if (e.getClass().equals(UserCancelException.class)	|| e.getCause().getClass().equals(UserCancelException.class)
-					|| e.getCause().getCause() != null && e.getCause().getCause().getClass().equals(UserCancelException.class)) {
+				if (e.getClass().equals(UserCancelException.class)
+						|| e.getCause().getClass().equals(UserCancelException.class) || e.getCause().getCause() != null
+								&& e.getCause().getCause().getClass().equals(UserCancelException.class)) {
 					continue;
 				}
 				else {

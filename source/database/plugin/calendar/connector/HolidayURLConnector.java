@@ -9,7 +9,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.swing.text.BadLocationException;
+
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
 import database.plugin.calendar.element.Holiday;
@@ -20,7 +22,8 @@ import database.services.database.IDatabase;
 public class HolidayURLConnector {
 	public void getHolidays() throws BadLocationException, InterruptedException, SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
-		HolidayDatabaseConnector holidayConnector = (HolidayDatabaseConnector) ServiceRegistry.Instance().get(IConnectorRegistry.class).get(Holiday.class);
+		HolidayDatabaseConnector holidayConnector = (HolidayDatabaseConnector) ServiceRegistry.Instance()
+				.get(IConnectorRegistry.class).get(Holiday.class);
 		List<String> lines = connectAndSetList();
 		Iterable<Holiday> iterable = holidayConnector.getList();
 		String temp;
@@ -30,7 +33,8 @@ public class HolidayURLConnector {
 			if (lines.get(i).trim().matches("<a href=\"/deutschland/feiertage/.*/\" class=\"dash\">")) {
 				name = lines.get(i + 1).trim().replace(":", "").replace("&ouml;", "ö");
 				temp = lines.get(i + 5).trim();
-				date = LocalDate.parse(temp.substring(0, temp.lastIndexOf(",")), DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+				date = LocalDate.parse(temp.substring(0, temp.lastIndexOf(",")),
+						DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 				if (!iterable.iterator().hasNext() && !date.isBefore(LocalDate.now())) {
 					database.insert(new Holiday(name, date));
 				}
@@ -62,7 +66,9 @@ public class HolidayURLConnector {
 		InputStreamReader isr;
 		List<String> lines = new ArrayList<>();
 		try {
-			isr = new InputStreamReader(new URL("http://www.schulferien.org/Feiertage/Feiertage_Baden_Wuerttemberg.html").openConnection().getInputStream());
+			isr = new InputStreamReader(
+					new URL("http://www.schulferien.org/Feiertage/Feiertage_Baden_Wuerttemberg.html").openConnection()
+							.getInputStream());
 			BufferedReader in = new BufferedReader(isr);
 			while ((line = in.readLine()) != null) {
 				lines.add(line);
