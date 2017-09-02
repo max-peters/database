@@ -119,6 +119,7 @@ public class Main {
 			writerReader.register(subjectPlugin.identity, subjectPlugin);
 			writerReader.register(refillingPlugin.identity, refillingPlugin);
 			writerReader.register(taskPlugin.identity, taskPlugin);
+			writerReader.register(expensePlugin.identity, expensePlugin);
 			writerReader.register("settings", settingsProvider);
 			logger.log("plugins registered");
 			writerReader.read();

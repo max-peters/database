@@ -29,8 +29,11 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 
 	@Override
 	public Expense create(ResultSet resultSet) throws SQLException {
-		return new Expense(resultSet.getString("name"), resultSet.getString("category"), resultSet.getDouble("value"),
-				resultSet.getDate("date").toLocalDate());
+		Expense expense = new Expense(resultSet.getString("name"), resultSet.getString("category"),
+				resultSet.getDouble("value"), resultSet.getDate("date").toLocalDate());
+		expense.setCurrency(Currency.valueOf(resultSet.getString("currency")));
+		expense.setExchangeRate(resultSet.getDouble("exchangerate"));
+		return expense;
 	}
 
 	@Override
@@ -56,6 +59,8 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 		preparedStatement.setString(2, expense.getCategory());
 		preparedStatement.setDate(3, Date.valueOf(expense.getDate()));
 		preparedStatement.setDouble(4, expense.getValue());
+		preparedStatement.setString(5, expense.getCurrency().toString());
+		preparedStatement.setDouble(6, expense.getExchangeRate());
 		return preparedStatement;
 	}
 
