@@ -26,7 +26,7 @@ import database.services.undoRedo.command.InsertCommand;
 import database.services.writerReader.IWriterReader;
 
 public class ExpensePlugin extends Plugin {
-	private int exchangedEUR;
+	private double exchangedEUR;
 
 	public ExpensePlugin() throws SQLException {
 		super("expense", new ExpenseOutputHandler());
@@ -37,7 +37,7 @@ public class ExpensePlugin extends Plugin {
 			UserCancelException, SQLException, ParserConfigurationException, TransformerException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
-		exchangedEUR += Integer.valueOf(terminal.request("enter amount to add:", RequestType.INTEGER));
+		exchangedEUR += Integer.valueOf(terminal.request("enter amount to add", RequestType.INTEGER));
 		writerReader.write();
 	}
 
@@ -47,7 +47,7 @@ public class ExpensePlugin extends Plugin {
 		InternalParameters settings = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
 		LinkedList<String> currencies = new LinkedList<String>(settings.getDefaultExchangeRates().keySet());
 		settings.setCurrentCurrency(Currency.valueOf(currencies.get(terminal.checkRequest(currencies,
-				currencies.indexOf(settings.getCurrentCurrency().toString()), "choose default currency:"))));
+				currencies.indexOf(settings.getCurrentCurrency().toString()), "choose default currency"))));
 	}
 
 	@Command(tag = "new")
@@ -86,7 +86,7 @@ public class ExpensePlugin extends Plugin {
 	@Override
 	public void read(Node node) throws ParserConfigurationException, DOMException {
 		if (node.getNodeName().equals("exchangedEUR")) {
-			exchangedEUR = Integer.valueOf(node.getTextContent());
+			exchangedEUR = Double.valueOf(node.getTextContent());
 		}
 	}
 
