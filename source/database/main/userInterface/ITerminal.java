@@ -11,8 +11,13 @@ import database.services.stringComplete.IStringComplete;
 public interface ITerminal {
 	public void blockInput();
 
-	public int checkRequest(Collection<String> collection, String request)
+	public int checkRequest(Collection<String> collection, int initialPosition, String request)
 			throws InterruptedException, BadLocationException;
+
+	public default int checkRequest(Collection<String> collection, String request)
+			throws InterruptedException, BadLocationException {
+		return checkRequest(collection, -1, request);
+	}
 
 	public void collectLine(Object output, StringFormat stringFormat, String headline);
 

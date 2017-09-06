@@ -34,11 +34,11 @@ public class Terminal implements ITerminal {
 	}
 
 	@Override
-	public int checkRequest(Collection<String> collection, String request)
+	public int checkRequest(Collection<String> collection, int initialPosition, String request)
 			throws InterruptedException, BadLocationException {
 		StringUtility su = new StringUtility();
 		int position = -1;
-		int current = 0;
+		int current = initialPosition;
 		int lastKey = 0;
 		if (collection.isEmpty()) {
 			printLine(request, StringType.REQUEST, StringFormat.ITALIC);
@@ -53,12 +53,12 @@ public class Terminal implements ITerminal {
 			graphicalUserInterface.waitForKeyInput();
 			lastKey = graphicalUserInterface.getLastKeyInput();
 			if (lastKey == 40) {
-				if (!(current == collection.size())) {
+				if (!(current == collection.size() - 1)) {
 					current++;
 				}
 			}
 			else if (lastKey == 38) {
-				if (!(current == 0)) {
+				if (!(current == -1)) {
 					current--;
 				}
 			}
@@ -67,8 +67,8 @@ public class Terminal implements ITerminal {
 				current = temp == current ? su.findString(0, (char) lastKey, collection) : temp;
 			}
 		}
-		if (current != 0) {
-			position = current - 1;
+		if (current != -1) {
+			position = current;
 		}
 		graphicalUserInterface.releaseInput();
 		return position;

@@ -6,11 +6,11 @@ import database.plugin.Instance;
 
 public class Expense extends Instance {
 	private String category;
+	private Currency currency = Currency.EUR;
 	private LocalDate date;
+	private double exchangeRate = 1;
 	private String name;
 	private Double value;
-	private Currency currency = Currency.EUR;
-	private double exchangeRate = 1;
 
 	public Expense(String name, String category, Double value, LocalDate date) {
 		this.name = name;
@@ -32,28 +32,20 @@ public class Expense extends Instance {
 		return false;
 	}
 
-	public Currency getCurrency() {
-		return currency;
-	}
-
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
-	}
-
-	public double getExchangeRate() {
-		return exchangeRate;
-	}
-
-	public void setExchangeRate(double exchangeRate) {
-		this.exchangeRate = exchangeRate;
-	}
-
 	public String getCategory() {
 		return category;
 	}
 
+	public Currency getCurrency() {
+		return currency;
+	}
+
 	public LocalDate getDate() {
 		return date;
+	}
+
+	public double getExchangeRate() {
+		return exchangeRate;
 	}
 
 	public String getName() {
@@ -64,7 +56,15 @@ public class Expense extends Instance {
 		return value;
 	}
 
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
+
 	public void setDate(LocalDate date) {
 		this.date = date;
+	}
+
+	public void setExchangeRate(double exchangeRate) {
+		this.exchangeRate = exchangeRate;
 	}
 }

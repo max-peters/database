@@ -41,7 +41,7 @@ public class StringUtility {
 	}
 
 	public int findString(int index, char firstLetter, Collection<String> collection) {
-		int i = 1;
+		int i = 0;
 		for (String string : collection) {
 			if (i > index && Character.toUpperCase(string.charAt(0)) == Character.toUpperCase(firstLetter)) {
 				return i;
@@ -53,7 +53,7 @@ public class StringUtility {
 
 	public String formatCheckLine(Collection<String> collection, int currentLine) {
 		String output = "";
-		int counter = 1;
+		int counter = 0;
 		for (String string : collection) {
 			if (counter == currentLine) {
 				output += " \u2611 ";

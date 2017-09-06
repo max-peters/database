@@ -3,12 +3,11 @@ package database.plugin.expense;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.LinkedList;
 
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
@@ -20,21 +19,35 @@ import database.plugin.Command;
 import database.plugin.Plugin;
 import database.services.ServiceRegistry;
 import database.services.database.IConnectorRegistry;
+import database.services.settings.ISettingsProvider;
+import database.services.settings.InternalParameters;
 import database.services.undoRedo.CommandHandler;
 import database.services.undoRedo.command.InsertCommand;
 import database.services.writerReader.IWriterReader;
 
 public class ExpensePlugin extends Plugin {
-	private Currency currency;
-	private Map<String, Double> defaultExchangeRates;
+	private int exchangedEUR;
 
 	public ExpensePlugin() throws SQLException {
 		super("expense", new ExpenseOutputHandler());
-		defaultExchangeRates = new HashMap<String, Double>();
-		for (Currency currency : Currency.values()) {
-			defaultExchangeRates.put(currency.toString(), 1.0);
-		}
-		currency = Currency.EUR;
+	}
+
+	@Command(tag = "add")
+	public void addRequest() throws NumberFormatException, InterruptedException, BadLocationException,
+			UserCancelException, SQLException, ParserConfigurationException, TransformerException {
+		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
+		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
+		exchangedEUR += Integer.valueOf(terminal.request("enter amount to add:", RequestType.INTEGER));
+		writerReader.write();
+	}
+
+	@Command(tag = "currency")
+	public void changeCurrencyRequest() throws InterruptedException, BadLocationException {
+		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
+		InternalParameters settings = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
+		LinkedList<String> currencies = new LinkedList<String>(settings.getDefaultExchangeRates().keySet());
+		settings.setCurrentCurrency(Currency.valueOf(currencies.get(terminal.checkRequest(currencies,
+				currencies.indexOf(settings.getCurrentCurrency().toString()), "choose default currency:"))));
 	}
 
 	@Command(tag = "new")
@@ -42,6 +55,7 @@ public class ExpensePlugin extends Plugin {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
 		ExpenseDatabaseConnector connector = (ExpenseDatabaseConnector) registry.get(Expense.class);
+		InternalParameters settings = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
 		String requestResult;
 		String name;
 		String category;
@@ -58,8 +72,8 @@ public class ExpensePlugin extends Plugin {
 		date = requestResult.isEmpty() ? LocalDate.now()
 				: LocalDate.parse(requestResult, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		Expense expense = new Expense(name, category, value, date);
-		expense.setCurrency(currency);
-		expense.setExchangeRate(defaultExchangeRates.get(currency.toString()));
+		expense.setCurrency(settings.getCurrentCurrency());
+		expense.setExchangeRate(settings.getDefaultExchangeRates().get(settings.getCurrentCurrency().toString()));
 		CommandHandler.Instance().executeCommand(new InsertCommand(expense));
 		connector.refreshStringComplete();
 	}
@@ -70,21 +84,15 @@ public class ExpensePlugin extends Plugin {
 	}
 
 	@Override
-	public void write() {
-		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
-		writerReader.add(identity, "currency", currency.toString());
-		for (Entry<String, Double> entry : defaultExchangeRates.entrySet()) {
-			writerReader.add(identity, entry.getKey(), String.valueOf(entry.getValue()));
+	public void read(Node node) throws ParserConfigurationException, DOMException {
+		if (node.getNodeName().equals("exchangedEUR")) {
+			exchangedEUR = Integer.valueOf(node.getTextContent());
 		}
 	}
 
 	@Override
-	public void read(Node node) throws ParserConfigurationException, DOMException {
-		if (node.getNodeName().equals("currency")) {
-			currency = Currency.valueOf(node.getTextContent());
-		}
-		if (defaultExchangeRates.containsKey(node.getNodeName())) {
-			defaultExchangeRates.put(node.getNodeName(), Double.valueOf(node.getTextContent()));
-		}
+	public void write() {
+		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
+		writerReader.add(identity, "exchangedEUR", String.valueOf(exchangedEUR));
 	}
 }
