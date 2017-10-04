@@ -63,19 +63,19 @@ public class HolidayURLConnector {
 	private List<String> connectAndSetList() {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String line;
-		InputStreamReader isr;
 		List<String> lines = new ArrayList<>();
 		try {
-			isr = new InputStreamReader(
-					new URL("http://www.schulferien.org/Feiertage/Feiertage_Baden_Wuerttemberg.html").openConnection()
-							.getInputStream());
-			BufferedReader in = new BufferedReader(isr);
+			BufferedReader in = new BufferedReader(new InputStreamReader(
+					new URL("https://www.schulferien.org/Feiertage/Feiertage_Baden_Wuerttemberg.html").openStream()));
 			while ((line = in.readLine()) != null) {
 				lines.add(line);
 			}
 			in.close();
 		}
 		catch (IOException e) {
+			terminal.collectLine(" error 404: page not found", StringFormat.STANDARD, "holiday");
+		}
+		if (lines.isEmpty()) {
 			terminal.collectLine(" error 404: page not found", StringFormat.STANDARD, "holiday");
 		}
 		return lines;
