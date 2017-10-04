@@ -37,7 +37,7 @@ public class ExpensePlugin extends Plugin {
 			UserCancelException, SQLException, ParserConfigurationException, TransformerException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
-		exchangedEUR += Integer.valueOf(terminal.request("enter amount to add", RequestType.INTEGER));
+		exchangedEUR += Double.valueOf(terminal.request("enter amount to add", RequestType.DOUBLE));
 		writerReader.write();
 	}
 
