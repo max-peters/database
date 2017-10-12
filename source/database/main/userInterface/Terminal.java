@@ -37,41 +37,43 @@ public class Terminal implements ITerminal {
 	public int checkRequest(Collection<String> collection, int initialPosition, String request)
 			throws InterruptedException, BadLocationException {
 		StringUtility su = new StringUtility();
-		int position = -1;
-		int current = initialPosition;
+		int nextSelection = initialPosition;
 		int lastKey = 0;
 		if (collection.isEmpty()) {
 			printLine(request, StringType.REQUEST, StringFormat.ITALIC);
 			printLine("no entries", StringType.SOLUTION, StringFormat.STANDARD);
 			waitForInput();
-			return position;
+			return -1;
 		}
 		blockInput();
 		while (lastKey != 10) {
 			printLine(request, StringType.REQUEST, StringFormat.ITALIC);
-			printLine(su.formatCheckLine(collection, current), StringType.SOLUTION, StringFormat.STANDARD);
+			printLine(su.formatCheckLine(collection, nextSelection), StringType.SOLUTION, StringFormat.STANDARD);
 			graphicalUserInterface.waitForKeyInput();
 			lastKey = graphicalUserInterface.getLastKeyInput();
 			if (lastKey == 40) {
-				if (!(current == collection.size() - 1)) {
-					current++;
+				if (!(nextSelection == collection.size() - 1)) {
+					nextSelection++;
 				}
 			}
 			else if (lastKey == 38) {
-				if (!(current == -1)) {
-					current--;
+				if (!(nextSelection == -1)) {
+					nextSelection--;
 				}
 			}
 			else if (lastKey != 10) {
-				int temp = su.findString(current, (char) lastKey, collection);
-				current = temp == current ? su.findString(0, (char) lastKey, collection) : temp;
+				if (su.findString(-1, (char) lastKey, collection) == -1) {
+					nextSelection = -1;
+				}
+				else {
+					int indexOfNextString = su.findString(nextSelection, (char) lastKey, collection);
+					nextSelection = indexOfNextString == nextSelection ? su.findString(0, (char) lastKey, collection)
+							: indexOfNextString;
+				}
 			}
 		}
-		if (current != -1) {
-			position = current;
-		}
 		graphicalUserInterface.releaseInput();
-		return position;
+		return nextSelection >= -1 ? nextSelection : -1;
 	}
 
 	@Override

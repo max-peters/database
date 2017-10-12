@@ -7,6 +7,8 @@ import javax.swing.text.BadLocationException;
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.RequestType;
+import database.main.userInterface.StringFormat;
+import database.main.userInterface.StringType;
 import database.plugin.Command;
 import database.plugin.Plugin;
 import database.services.ServiceRegistry;
@@ -24,6 +26,13 @@ public class SubjectPlugin extends Plugin {
 	@Command(tag = "add")
 	public void addRequest() throws InterruptedException, BadLocationException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
+		SubjectDatabaseConnector subjectConnector = (SubjectDatabaseConnector) registry.get(Subject.class);
+		if (subjectConnector.getList().isEmpty()) {
+			terminal.printLine("no subjects in database", StringType.REQUEST, StringFormat.STANDARD);
+			terminal.waitForInput();
+			return;
+		}
 		String regex = getSubjectsAsRegex();
 		Subject toChange = getSubject(terminal.request("enter subject", regex, new HashMapStringComplete(regex)));
 		Double newScore = Double.parseDouble(terminal.request("enter score", RequestType.DOUBLE));
