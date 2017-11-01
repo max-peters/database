@@ -11,6 +11,8 @@ import java.util.Map.Entry;
 
 import javax.swing.text.BadLocationException;
 
+import com.sun.glass.events.KeyEvent;
+
 import database.main.UserCancelException;
 import database.services.ServiceRegistry;
 import database.services.pluginRegistry.IPluginRegistry;
@@ -46,22 +48,22 @@ public class Terminal implements ITerminal {
 			return -1;
 		}
 		blockInput();
-		while (lastKey != 10) {
+		while (lastKey != KeyEvent.VK_ENTER) {
 			printLine(request, StringType.REQUEST, StringFormat.ITALIC);
 			printLine(su.formatCheckLine(collection, nextSelection), StringType.SOLUTION, StringFormat.STANDARD);
 			graphicalUserInterface.waitForKeyInput();
 			lastKey = graphicalUserInterface.getLastKeyInput();
-			if (lastKey == 40) {
+			if (lastKey == KeyEvent.VK_DOWN) {
 				if (!(nextSelection == collection.size() - 1)) {
 					nextSelection++;
 				}
 			}
-			else if (lastKey == 38) {
+			else if (lastKey == KeyEvent.VK_UP) {
 				if (!(nextSelection == -1)) {
 					nextSelection--;
 				}
 			}
-			else if (lastKey != 10) {
+			else if (lastKey != KeyEvent.VK_ENTER) {
 				if (su.findString(-1, (char) lastKey, collection) == -1) {
 					nextSelection = -1;
 				}
@@ -72,7 +74,6 @@ public class Terminal implements ITerminal {
 				}
 			}
 		}
-		graphicalUserInterface.releaseInput();
 		return nextSelection >= -1 ? nextSelection : -1;
 	}
 
@@ -141,7 +142,13 @@ public class Terminal implements ITerminal {
 		}
 		while (request) {
 			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
-			input = stringComplete != null ? completeString(stringComplete) : readLine();
+			if (stringComplete != null) {
+				completeString(stringComplete);
+			}
+			else {
+				while (!isNextKeyEnterOrEscape());
+			}
+			input = graphicalUserInterface.getInputText();
 			graphicalUserInterface.setInputText("");
 			if (input.equalsIgnoreCase("back")) {
 				throw new UserCancelException();
@@ -198,13 +205,14 @@ public class Terminal implements ITerminal {
 		graphicalUserInterface.setInputColor(Color.WHITE);
 	}
 
-	private String completeString(IStringComplete stringComplete)
+	private void completeString(IStringComplete stringComplete)
 			throws InterruptedException, SQLException, UserCancelException {
 		String inputString = "";
 		String selection;
 		int inputCaretPosition;
-		graphicalUserInterface.addKeyListenerForAutocompletition();
-		while (true) {
+		graphicalUserInterface.setRemoveSelectionAndLastKey(true);
+		do {
+			graphicalUserInterface.blockInput();
 			inputString = graphicalUserInterface.getInputText();
 			inputCaretPosition = graphicalUserInterface.getInputCaretPosition();
 			selection = stringComplete.getMostUsedString(inputString, "");
@@ -216,28 +224,22 @@ public class Terminal implements ITerminal {
 					graphicalUserInterface.setInputCaretPosition(inputCaretPosition + 1);
 				}
 			}
-			graphicalUserInterface.waitForDocumentInput();
-			if (graphicalUserInterface.getLastKeyInput() == 10) {
-				inputString = graphicalUserInterface.getInputText();
-				break;
-			}
-			if (graphicalUserInterface.getLastKeyInput() == 27) {
-				throw new UserCancelException();
-			}
+			graphicalUserInterface.releaseInput();
 		}
-		graphicalUserInterface.removeKeyListenerForAutocompletition();
-		return inputString;
+		while (!isNextKeyEnterOrEscape());
+		graphicalUserInterface.setRemoveSelectionAndLastKey(false);
 	}
 
-	private String readLine() throws InterruptedException, UserCancelException {
-		int lastKey = 0;
-		while (lastKey != 10) {
-			graphicalUserInterface.waitForKeyInput();
-			lastKey = graphicalUserInterface.getLastKeyInput();
-			if (lastKey == 27) {
-				throw new UserCancelException();
-			}
+	private boolean isNextKeyEnterOrEscape() throws InterruptedException, UserCancelException {
+		graphicalUserInterface.waitForDocumentInput();
+		if (graphicalUserInterface.getLastKeyInput() == KeyEvent.VK_ESCAPE) {
+			throw new UserCancelException();
 		}
-		return graphicalUserInterface.getInputText();
+		else if (graphicalUserInterface.getLastKeyInput() == KeyEvent.VK_ENTER) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }

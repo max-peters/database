@@ -31,7 +31,7 @@ public class HolidayURLConnector {
 		LocalDate date;
 		for (int i = 0; i < lines.size(); i++) {
 			if (lines.get(i).trim().matches("<a href=\"/deutschland/feiertage/.*/\" class=\"dash\">")) {
-				name = lines.get(i + 1).trim().replace(":", "").replace("&ouml;", "ö");
+				name = lines.get(i + 1).trim().replace(":", "").replace("&ouml;", "\u00F6");
 				temp = lines.get(i + 5).trim();
 				date = LocalDate.parse(temp.substring(0, temp.lastIndexOf(",")),
 						DateTimeFormatter.ofPattern("dd.MM.uuuu"));
@@ -72,9 +72,7 @@ public class HolidayURLConnector {
 			}
 			in.close();
 		}
-		catch (IOException e) {
-			terminal.collectLine(" error 404: page not found", StringFormat.STANDARD, "holiday");
-		}
+		catch (IOException e) {}
 		if (lines.isEmpty()) {
 			terminal.collectLine(" error 404: page not found", StringFormat.STANDARD, "holiday");
 		}

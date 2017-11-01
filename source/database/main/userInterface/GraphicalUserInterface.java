@@ -37,9 +37,9 @@ public class GraphicalUserInterface {
 	private int frameHeight;
 	private int frameWidht;
 	private Image icon;
-	private JTextField input;
+	public JTextField input;
 	private KeyListener keyListener;
-	private KeyListener keyListenerAutocompletition;
+	private boolean removeSelectionAndLastKey;
 	private JTextPane output;
 	private JPanel panel;
 	private int pressedKey;
@@ -50,10 +50,6 @@ public class GraphicalUserInterface {
 	private JTextField time;
 	private Timer timer;
 	private TimerTask timerTask;
-
-	public void addKeyListenerForAutocompletition() {
-		input.addKeyListener(keyListenerAutocompletition);
-	}
 
 	public void initialise() throws FontFormatException, IOException {
 		frameHeight = 530;
@@ -86,28 +82,21 @@ public class GraphicalUserInterface {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				pressedKey = e.getExtendedKeyCode();
-				if (e.getExtendedKeyCode() == 10 || e.getExtendedKeyCode() == 27) {
+				if (e.getExtendedKeyCode() == KeyEvent.VK_BACK_SPACE) {
+					input.setText(input.getText().substring(0, input.getText().length() - 1));
+				}
+				if (e.getExtendedKeyCode() == KeyEvent.VK_ENTER || e.getExtendedKeyCode() == KeyEvent.VK_ESCAPE) {
 					synchronized (synchronizerKeyInput) {
 						synchronizerKeyInput.notify();
 					}
 				}
+				else if (removeSelectionAndLastKey && e.getExtendedKeyCode() == KeyEvent.VK_BACK_SPACE) {
+					input.replaceSelection("");
+				}
 				synchronized (synchronizerKeyPressed) {
 					synchronizerKeyPressed.notify();
 				}
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {}
-
-			@Override
-			public void keyTyped(KeyEvent e) {}
-		};
-		keyListenerAutocompletition = new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getExtendedKeyCode() == 8) {
-					input.replaceSelection("");
-				}
+				e.consume();
 			}
 
 			@Override
@@ -179,8 +168,8 @@ public class GraphicalUserInterface {
 		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 	}
 
-	public void removeKeyListenerForAutocompletition() {
-		input.removeKeyListener(keyListenerAutocompletition);
+	protected void setRemoveSelectionAndLastKey(boolean removeSelectionAndLastKey) {
+		this.removeSelectionAndLastKey = removeSelectionAndLastKey;
 	}
 
 	public void setVisible(boolean visible) {
