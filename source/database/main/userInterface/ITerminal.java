@@ -19,7 +19,7 @@ public interface ITerminal {
 		return checkRequest(collection, -1, request);
 	}
 
-	public default void newLine(StringType stringType) throws BadLocationException {
+	public default void newLine(OutputType stringType) throws BadLocationException {
 		printLine(System.getProperty("line.separator"), stringType, StringFormat.STANDARD);
 	}
 
@@ -27,11 +27,11 @@ public interface ITerminal {
 
 	public void errorMessage() throws BadLocationException, InterruptedException;
 
-	public void getLineOfCharacters(char character, StringType stringType) throws BadLocationException;
+	public void getLineOfCharacters(char character, OutputType stringType) throws BadLocationException;
 
 	public void printCollectedLines() throws InterruptedException, BadLocationException;
 
-	public void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException;
+	public void printLine(Object object, OutputType stringType, StringFormat stringFormat) throws BadLocationException;
 
 	public default String request(String printOut, String regex)
 			throws InterruptedException, BadLocationException, UserCancelException, SQLException {

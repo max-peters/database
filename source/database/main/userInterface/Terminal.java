@@ -42,17 +42,17 @@ public class Terminal implements ITerminal {
 		int nextSelection = initialPosition;
 		int lastKey = 0;
 		if (collection.isEmpty()) {
-			printLine(request, StringType.REQUEST, StringFormat.ITALIC);
-			newLine(StringType.SOLUTION);
-			printLine("no entries", StringType.SOLUTION, StringFormat.STANDARD);
+			printLine(request, OutputType.CLEAR, StringFormat.ITALIC);
+			newLine(OutputType.ADD);
+			printLine("no entries", OutputType.ADD, StringFormat.STANDARD);
 			waitForInput();
 			return -1;
 		}
 		blockInput();
 		while (lastKey != KeyEvent.VK_ENTER) {
-			printLine(request, StringType.REQUEST, StringFormat.ITALIC);
-			newLine(StringType.SOLUTION);
-			printLine(su.formatCheckLine(collection, nextSelection), StringType.SOLUTION, StringFormat.STANDARD);
+			printLine(request, OutputType.CLEAR, StringFormat.ITALIC);
+			newLine(OutputType.ADD);
+			printLine(su.formatCheckLine(collection, nextSelection), OutputType.ADD, StringFormat.STANDARD);
 			graphicalUserInterface.waitForKeyInput();
 			lastKey = graphicalUserInterface.getLastKeyInput();
 			if (lastKey == KeyEvent.VK_DOWN) {
@@ -81,17 +81,17 @@ public class Terminal implements ITerminal {
 
 	@Override
 	public void collectLine(Object output, StringFormat stringFormat, String headline) {
-		collectedLines.put(new OutputInformation(output, StringType.SOLUTION, stringFormat), headline);
+		collectedLines.put(new OutputInformation(output, OutputType.ADD, stringFormat), headline);
 	}
 
 	@Override
 	public void errorMessage() throws BadLocationException, InterruptedException {
-		graphicalUserInterface.printLine("invalid input", StringType.REQUEST, StringFormat.ITALIC);
+		graphicalUserInterface.printLine("invalid input", OutputType.CLEAR, StringFormat.ITALIC);
 		waitForInput();
 	}
 
 	@Override
-	public void getLineOfCharacters(char character, StringType stringType) throws BadLocationException {
+	public void getLineOfCharacters(char character, OutputType stringType) throws BadLocationException {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < graphicalUserInterface.getNumberOfCharsPerLine(character); i++) {
 			builder.append(character);
@@ -109,7 +109,7 @@ public class Terminal implements ITerminal {
 				}
 			}
 			for (String string : list) {
-				graphicalUserInterface.printLine(string, StringType.SOLUTION, StringFormat.BOLD);
+				graphicalUserInterface.printLine(string, OutputType.ADD, StringFormat.BOLD);
 				for (Entry<OutputInformation, String> entry : collectedLines.entrySet()) {
 					if (entry.getValue().equals(string)) {
 						graphicalUserInterface.printLine(entry.getKey().getOutput(), entry.getKey().getStringType(),
@@ -123,7 +123,7 @@ public class Terminal implements ITerminal {
 	}
 
 	@Override
-	public void printLine(Object object, StringType stringType, StringFormat stringFormat) throws BadLocationException {
+	public void printLine(Object object, OutputType stringType, StringFormat stringFormat) throws BadLocationException {
 		graphicalUserInterface.printLine(object, stringType, stringFormat);
 	}
 
@@ -143,7 +143,7 @@ public class Terminal implements ITerminal {
 			graphicalUserInterface.setInputText("");
 		}
 		while (request) {
-			printLine(printOut + ":", StringType.REQUEST, StringFormat.ITALIC);
+			printLine(printOut + ":", OutputType.CLEAR, StringFormat.ITALIC);
 			if (stringComplete != null) {
 				completeString(stringComplete);
 			}
@@ -156,7 +156,8 @@ public class Terminal implements ITerminal {
 				throw new UserCancelException();
 			}
 			else if (input.equalsIgnoreCase("help")) {
-				printLine(regex, StringType.SOLUTION, StringFormat.STANDARD);
+				newLine(OutputType.ADD);
+				printLine(regex, OutputType.ADD, StringFormat.STANDARD);
 				waitForInput();
 			}
 			else if (input.matches(regex)) {

@@ -6,7 +6,7 @@ import javax.swing.text.BadLocationException;
 
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
-import database.main.userInterface.StringType;
+import database.main.userInterface.OutputType;
 import database.services.ServiceRegistry;
 
 public class CancelHelper {
@@ -27,7 +27,7 @@ public class CancelHelper {
 			lastUndo = true;
 		}
 		else {
-			terminal.printLine("no command to cancel", StringType.REQUEST, StringFormat.ITALIC);
+			terminal.printLine("no command to cancel", OutputType.CLEAR, StringFormat.ITALIC);
 			terminal.waitForInput();
 		}
 	}

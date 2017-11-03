@@ -1,7 +1,7 @@
 package database.main.userInterface;
 
-public enum StringType {
+public enum OutputType {
 	MAIN,
-	REQUEST,
-	SOLUTION;
+	CLEAR,
+	ADD;
 }

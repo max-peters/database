@@ -11,7 +11,7 @@ import java.util.Map;
 import javax.swing.text.BadLocationException;
 
 import database.main.userInterface.ITerminal;
-import database.main.userInterface.StringType;
+import database.main.userInterface.OutputType;
 import database.plugin.Command;
 import database.plugin.Plugin;
 import database.services.ServiceRegistry;
@@ -70,8 +70,8 @@ public class HashMapPluginRegistry implements IPluginRegistry {
 				plugin.initialOutput();
 			}
 		}
-		terminal.getLineOfCharacters('-', StringType.MAIN);
-		terminal.newLine(StringType.MAIN);
+		terminal.getLineOfCharacters('-', OutputType.MAIN);
+		terminal.newLine(OutputType.MAIN);
 	}
 
 	@Override

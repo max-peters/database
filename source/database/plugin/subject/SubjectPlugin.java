@@ -8,7 +8,7 @@ import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.RequestType;
 import database.main.userInterface.StringFormat;
-import database.main.userInterface.StringType;
+import database.main.userInterface.OutputType;
 import database.plugin.Command;
 import database.plugin.Plugin;
 import database.services.ServiceRegistry;
@@ -29,7 +29,7 @@ public class SubjectPlugin extends Plugin {
 		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
 		SubjectDatabaseConnector subjectConnector = (SubjectDatabaseConnector) registry.get(Subject.class);
 		if (subjectConnector.getList().isEmpty()) {
-			terminal.printLine("no subjects in database", StringType.REQUEST, StringFormat.STANDARD);
+			terminal.printLine("no subjects in database", OutputType.CLEAR, StringFormat.STANDARD);
 			terminal.waitForInput();
 			return;
 		}

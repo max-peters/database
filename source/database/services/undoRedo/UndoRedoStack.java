@@ -6,7 +6,7 @@ import javax.swing.text.BadLocationException;
 
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
-import database.main.userInterface.StringType;
+import database.main.userInterface.OutputType;
 import database.services.ServiceRegistry;
 import database.services.undoRedo.command.UndoableCommand;
 
@@ -41,7 +41,7 @@ public class UndoRedoStack implements IUndoRedo {
 		UndoableCommand command = redoStack.pop();
 		command.execute();
 		terminal.update();
-		terminal.printLine(command.executeLog(), StringType.REQUEST, StringFormat.ITALIC);
+		terminal.printLine(command.executeLog(), OutputType.CLEAR, StringFormat.ITALIC);
 		terminal.waitForInput();
 		undoStack.push(command);
 	}
@@ -52,7 +52,7 @@ public class UndoRedoStack implements IUndoRedo {
 		UndoableCommand command = undoStack.pop();
 		command.revert();
 		terminal.update();
-		terminal.printLine(command.revertLog(), StringType.REQUEST, StringFormat.ITALIC);
+		terminal.printLine(command.revertLog(), OutputType.CLEAR, StringFormat.ITALIC);
 		terminal.waitForInput();
 		redoStack.push(command);
 	}

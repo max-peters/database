@@ -16,7 +16,7 @@ import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.RequestType;
 import database.main.userInterface.StringFormat;
-import database.main.userInterface.StringType;
+import database.main.userInterface.OutputType;
 import database.plugin.Command;
 import database.plugin.Plugin;
 import database.plugin.calendar.connector.AppointmentDatabaseConnector;
@@ -112,9 +112,9 @@ public class CalendarPlugin extends Plugin {
 		}
 		display = false;
 		terminal.update();
-		terminal.printLine(output, StringType.REQUEST, StringFormat.STANDARD);
+		terminal.printLine(output, OutputType.CLEAR, StringFormat.STANDARD);
 		for (String string : getOutputHandler().formatOutput(list, false).toStringList()) {
-			terminal.printLine(" ->" + string, StringType.SOLUTION, StringFormat.STANDARD);
+			terminal.printLine(" ->" + string, OutputType.ADD, StringFormat.STANDARD);
 		}
 		terminal.waitForInput();
 		display = displayTemp;

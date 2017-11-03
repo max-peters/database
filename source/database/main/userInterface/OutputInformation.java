@@ -3,9 +3,9 @@ package database.main.userInterface;
 public class OutputInformation {
 	private Object output;
 	private StringFormat stringFormat;
-	private StringType stringType;
+	private OutputType stringType;
 
-	public OutputInformation(Object output, StringType stringType, StringFormat stringFormat) {
+	public OutputInformation(Object output, OutputType stringType, StringFormat stringFormat) {
 		this.output = output;
 		this.stringFormat = stringFormat;
 		this.stringType = stringType;
@@ -32,7 +32,7 @@ public class OutputInformation {
 		return stringFormat;
 	}
 
-	public StringType getStringType() {
+	public OutputType getStringType() {
 		return stringType;
 	}
 }

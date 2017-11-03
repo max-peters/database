@@ -16,7 +16,7 @@ import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.RequestType;
 import database.main.userInterface.StringFormat;
-import database.main.userInterface.StringType;
+import database.main.userInterface.OutputType;
 import database.services.ServiceRegistry;
 import database.services.stringComplete.HashMapStringComplete;
 import database.services.writerReader.IWriteRead;
@@ -76,8 +76,8 @@ public abstract class Plugin implements IWriteRead {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String initialOutput = outputHandler.getInitialOutput();
 		if (!initialOutput.isEmpty()) {
-			terminal.printLine(identity, StringType.MAIN, StringFormat.BOLD);
-			terminal.printLine(initialOutput, StringType.MAIN, StringFormat.STANDARD);
+			terminal.printLine(identity, OutputType.MAIN, StringFormat.BOLD);
+			terminal.printLine(initialOutput, OutputType.MAIN, StringFormat.STANDARD);
 		}
 	}
 
@@ -101,7 +101,7 @@ public abstract class Plugin implements IWriteRead {
 			if (method.isAnnotationPresent(Command.class)
 					&& (command.isEmpty() || method.getAnnotation(Command.class).tag().equals(command))) {
 				Object output = method.invoke(outputHandler);
-				terminal.printLine(output, StringType.REQUEST, StringFormat.STANDARD);
+				terminal.printLine(output, OutputType.CLEAR, StringFormat.STANDARD);
 				terminal.waitForInput();
 				break;
 			}

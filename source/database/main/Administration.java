@@ -8,7 +8,7 @@ import javax.xml.transform.TransformerException;
 
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.StringFormat;
-import database.main.userInterface.StringType;
+import database.main.userInterface.OutputType;
 import database.plugin.Plugin;
 import database.services.ServiceRegistry;
 import database.services.database.IDatabase;
@@ -71,8 +71,8 @@ public class Administration {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
 		terminal.blockInput();
-		terminal.printLine("saving", StringType.REQUEST, StringFormat.ITALIC);
+		terminal.printLine("saving", OutputType.CLEAR, StringFormat.ITALIC);
 		writerReader.write();
-		terminal.printLine("saved", StringType.REQUEST, StringFormat.ITALIC);
+		terminal.printLine("saved", OutputType.CLEAR, StringFormat.ITALIC);
 	}
 }
