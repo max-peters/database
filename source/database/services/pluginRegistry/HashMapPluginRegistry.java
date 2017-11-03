@@ -71,6 +71,7 @@ public class HashMapPluginRegistry implements IPluginRegistry {
 			}
 		}
 		terminal.getLineOfCharacters('-', StringType.MAIN);
+		terminal.newLine(StringType.MAIN);
 	}
 
 	@Override

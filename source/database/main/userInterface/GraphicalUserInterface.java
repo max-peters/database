@@ -1,6 +1,5 @@
 package database.main.userInterface;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -17,6 +16,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -37,11 +37,12 @@ public class GraphicalUserInterface {
 	private int frameHeight;
 	private int frameWidht;
 	private Image icon;
-	public JTextField input;
+	private JTextField input;
 	private KeyListener keyListener;
 	private boolean removeSelectionAndLastKey;
 	private JTextPane output;
 	private JPanel panel;
+	private JPanel placeholder;
 	private int pressedKey;
 	private JScrollPane scrollPane;
 	private StyledDocument styledDocument;
@@ -58,7 +59,7 @@ public class GraphicalUserInterface {
 		input = new JTextField();
 		output = new JTextPane();
 		panel = new JPanel();
-		scrollPane = new JScrollPane(panel);
+		placeholder = new JPanel();
 		styledDocument = output.getStyledDocument();
 		synchronizerKeyInput = new Object();
 		synchronizerKeyPressed = new Object();
@@ -82,21 +83,26 @@ public class GraphicalUserInterface {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				pressedKey = e.getExtendedKeyCode();
+				if (removeSelectionAndLastKey && e.getExtendedKeyCode() == KeyEvent.VK_BACK_SPACE) {
+					input.replaceSelection("");
+				}
 				if (e.getExtendedKeyCode() == KeyEvent.VK_BACK_SPACE) {
-					input.setText(input.getText().substring(0, input.getText().length() - 1));
+					String inputString = input.getText();
+					if (!inputString.isEmpty()) {
+						input.setText(inputString.substring(0, inputString.length() - 1));
+					}
 				}
 				if (e.getExtendedKeyCode() == KeyEvent.VK_ENTER || e.getExtendedKeyCode() == KeyEvent.VK_ESCAPE) {
 					synchronized (synchronizerKeyInput) {
 						synchronizerKeyInput.notify();
 					}
 				}
-				else if (removeSelectionAndLastKey && e.getExtendedKeyCode() == KeyEvent.VK_BACK_SPACE) {
-					input.replaceSelection("");
-				}
 				synchronized (synchronizerKeyPressed) {
 					synchronizerKeyPressed.notify();
 				}
-				e.consume();
+				if (e.getExtendedKeyCode() != KeyEvent.VK_UP && e.getExtendedKeyCode() != KeyEvent.VK_DOWN) {
+					e.consume();
+				}
 			}
 
 			@Override
@@ -121,24 +127,21 @@ public class GraphicalUserInterface {
 		font = font.deriveFont(Font.PLAIN, 15);
 		inputStream.close();
 		icon = new ImageIcon(classLoader.getResource("icon.png")).getImage();
-		panel.setLayout(new BorderLayout(0, 0));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setIconImage(icon);
-		frame.setResizable(false);
 		time.setEditable(false);
 		time.setEnabled(false);
 		time.setFont(font);
 		time.setBorder(BorderFactory.createEmptyBorder());
 		time.setBackground(Color.BLACK);
 		time.setDisabledTextColor(Color.WHITE);
-		panel.add(time, BorderLayout.NORTH);
+		time.setMaximumSize(new Dimension(frameWidht, input.getFontMetrics(font).getHeight()));
 		output.setEditable(false);
 		output.setEnabled(false);
 		output.setFont(font);
 		output.setBorder(BorderFactory.createEmptyBorder());
 		output.setBackground(Color.BLACK);
 		output.setDisabledTextColor(Color.WHITE);
-		panel.add(output, BorderLayout.CENTER);
+		output.setMinimumSize(new Dimension(frameWidht, 1));
+		output.setMaximumSize(new Dimension(frameWidht, 1));
 		input.setBorder(BorderFactory.createEmptyBorder());
 		input.setFont(font.deriveFont(Font.ITALIC));
 		input.setCaretColor(Color.WHITE);
@@ -149,8 +152,18 @@ public class GraphicalUserInterface {
 		input.addKeyListener(keyListener);
 		input.getDocument().addDocumentListener(documentListener);
 		input.setFocusable(false);
-		output.add(input, BorderLayout.AFTER_LAST_LINE);
+		input.setMaximumSize(new Dimension(frameWidht, input.getFontMetrics(font).getHeight()));
+		placeholder.setBackground(Color.BLACK);
 		timer.scheduleAtFixedRate(timerTask, 0, 500);
+		for (StringFormat format : StringFormat.values()) {
+			format.initialise(styledDocument);
+		}
+		panel.setLayout(new BoxLayout(panel, 1));
+		panel.add(time);
+		panel.add(output);
+		panel.add(input);
+		panel.add(placeholder);
+		scrollPane = new JScrollPane(panel);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		JScrollBar verticalScrollBar = scrollPane.getVerticalScrollBar();
 		verticalScrollBar.setPreferredSize(new Dimension(0, 0));
@@ -158,14 +171,12 @@ public class GraphicalUserInterface {
 		JScrollBar horizontalScrollBar = scrollPane.getHorizontalScrollBar();
 		horizontalScrollBar.setPreferredSize(new Dimension(0, 0));
 		horizontalScrollBar.setUnitIncrement(10);
-		frame.setContentPane(scrollPane);
-		panel.add(output);
-		for (StringFormat format : StringFormat.values()) {
-			format.initialise(styledDocument);
-		}
 		frame.setSize(frameWidht, frameHeight);
-		input.setSize(frameWidht - 30, input.getFontMetrics(font).getHeight());
 		frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
+		frame.setContentPane(scrollPane);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setIconImage(icon);
+		frame.setResizable(false);
 	}
 
 	protected void setRemoveSelectionAndLastKey(boolean removeSelectionAndLastKey) {
@@ -213,7 +224,7 @@ public class GraphicalUserInterface {
 	}
 
 	protected boolean isScrollable() {
-		return input.getY() > frameHeight - 10;
+		return output.getSize().getHeight() > frameHeight;
 	}
 
 	protected void printLine(Object object, StringType stringType, StringFormat stringFormat)
@@ -223,9 +234,6 @@ public class GraphicalUserInterface {
 			return;
 		}
 		outputString = object.toString();
-		if (!outputString.endsWith(System.getProperty("line.separator"))) {
-			outputString += System.getProperty("line.separator");
-		}
 		if (!stringType.equals(StringType.SOLUTION)) {
 			styledDocument.remove(currentLineNumber, styledDocument.getLength() - currentLineNumber);
 		}
@@ -234,9 +242,6 @@ public class GraphicalUserInterface {
 		if (stringType.equals(StringType.MAIN)) {
 			currentLineNumber = currentLineNumber + outputString.length();
 		}
-		moveTextField(output.getText().contains(System.getProperty("line.separator"))
-				? output.getText().split(System.getProperty("line.separator")).length
-				: 0);
 	}
 
 	protected void releaseInput() {
@@ -273,9 +278,5 @@ public class GraphicalUserInterface {
 		synchronized (synchronizerKeyPressed) {
 			synchronizerKeyPressed.wait();
 		}
-	}
-
-	private void moveTextField(int steps) {
-		input.setLocation(0, steps * input.getFontMetrics(font).getHeight());
 	}
 }

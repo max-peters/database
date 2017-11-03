@@ -43,6 +43,7 @@ public class Terminal implements ITerminal {
 		int lastKey = 0;
 		if (collection.isEmpty()) {
 			printLine(request, StringType.REQUEST, StringFormat.ITALIC);
+			newLine(StringType.SOLUTION);
 			printLine("no entries", StringType.SOLUTION, StringFormat.STANDARD);
 			waitForInput();
 			return -1;
@@ -50,6 +51,7 @@ public class Terminal implements ITerminal {
 		blockInput();
 		while (lastKey != KeyEvent.VK_ENTER) {
 			printLine(request, StringType.REQUEST, StringFormat.ITALIC);
+			newLine(StringType.SOLUTION);
 			printLine(su.formatCheckLine(collection, nextSelection), StringType.SOLUTION, StringFormat.STANDARD);
 			graphicalUserInterface.waitForKeyInput();
 			lastKey = graphicalUserInterface.getLastKeyInput();
@@ -200,7 +202,8 @@ public class Terminal implements ITerminal {
 		do {
 			graphicalUserInterface.waitForKeyInput();
 		}
-		while ((graphicalUserInterface.getLastKeyInput() == 38 || graphicalUserInterface.getLastKeyInput() == 40)
+		while ((graphicalUserInterface.getLastKeyInput() == KeyEvent.VK_DOWN
+				|| graphicalUserInterface.getLastKeyInput() == KeyEvent.VK_UP)
 				&& graphicalUserInterface.isScrollable());
 		graphicalUserInterface.setInputColor(Color.WHITE);
 	}

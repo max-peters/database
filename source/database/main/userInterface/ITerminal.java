@@ -19,6 +19,10 @@ public interface ITerminal {
 		return checkRequest(collection, -1, request);
 	}
 
+	public default void newLine(StringType stringType) throws BadLocationException {
+		printLine(System.getProperty("line.separator"), stringType, StringFormat.STANDARD);
+	}
+
 	public void collectLine(Object output, StringFormat stringFormat, String headline);
 
 	public void errorMessage() throws BadLocationException, InterruptedException;
