@@ -7,8 +7,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import database.main.userInterface.ITerminal;
-import database.main.userInterface.StringFormat;
 import database.main.userInterface.OutputType;
+import database.main.userInterface.StringFormat;
 import database.plugin.Plugin;
 import database.services.ServiceRegistry;
 import database.services.database.IDatabase;

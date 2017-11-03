@@ -19,15 +19,15 @@ public interface ITerminal {
 		return checkRequest(collection, -1, request);
 	}
 
-	public default void newLine(OutputType stringType) throws BadLocationException {
-		printLine(System.getProperty("line.separator"), stringType, StringFormat.STANDARD);
-	}
-
 	public void collectLine(Object output, StringFormat stringFormat, String headline);
 
 	public void errorMessage() throws BadLocationException, InterruptedException;
 
 	public void getLineOfCharacters(char character, OutputType stringType) throws BadLocationException;
+
+	public default void newLine(OutputType stringType) throws BadLocationException {
+		printLine(System.getProperty("line.separator"), stringType, StringFormat.STANDARD);
+	}
 
 	public void printCollectedLines() throws InterruptedException, BadLocationException;
 

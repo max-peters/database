@@ -39,11 +39,11 @@ public class GraphicalUserInterface {
 	private Image icon;
 	private JTextField input;
 	private KeyListener keyListener;
-	private boolean removeSelectionAndLastKey;
 	private JTextPane output;
 	private JPanel panel;
 	private JPanel placeholder;
 	private int pressedKey;
+	private boolean removeSelectionAndLastKey;
 	private JScrollPane scrollPane;
 	private StyledDocument styledDocument;
 	private Object synchronizerKeyInput;
@@ -179,10 +179,6 @@ public class GraphicalUserInterface {
 		frame.setResizable(false);
 	}
 
-	protected void setRemoveSelectionAndLastKey(boolean removeSelectionAndLastKey) {
-		this.removeSelectionAndLastKey = removeSelectionAndLastKey;
-	}
-
 	public void setVisible(boolean visible) {
 		frame.setVisible(visible);
 	}
@@ -266,6 +262,10 @@ public class GraphicalUserInterface {
 
 	protected void setInputText(String inputText) {
 		input.setText(inputText);
+	}
+
+	protected void setRemoveSelectionAndLastKey(boolean removeSelectionAndLastKey) {
+		this.removeSelectionAndLastKey = removeSelectionAndLastKey;
 	}
 
 	protected void waitForDocumentInput() throws InterruptedException {

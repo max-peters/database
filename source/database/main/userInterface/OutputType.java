@@ -1,7 +1,7 @@
 package database.main.userInterface;
 
 public enum OutputType {
-	MAIN,
+	ADD,
 	CLEAR,
-	ADD;
+	MAIN;
 }

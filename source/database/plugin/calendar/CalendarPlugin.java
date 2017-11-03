@@ -14,9 +14,9 @@ import javax.swing.text.BadLocationException;
 
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
+import database.main.userInterface.OutputType;
 import database.main.userInterface.RequestType;
 import database.main.userInterface.StringFormat;
-import database.main.userInterface.OutputType;
 import database.plugin.Command;
 import database.plugin.Plugin;
 import database.plugin.calendar.connector.AppointmentDatabaseConnector;

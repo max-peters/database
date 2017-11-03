@@ -14,9 +14,9 @@ import org.w3c.dom.Node;
 
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
+import database.main.userInterface.OutputType;
 import database.main.userInterface.RequestType;
 import database.main.userInterface.StringFormat;
-import database.main.userInterface.OutputType;
 import database.services.ServiceRegistry;
 import database.services.stringComplete.HashMapStringComplete;
 import database.services.writerReader.IWriteRead;
