@@ -223,19 +223,19 @@ public class GraphicalUserInterface {
 		return output.getSize().getHeight() > frameHeight;
 	}
 
-	protected void printLine(Object object, OutputType stringType, StringFormat stringFormat)
+	protected void printLine(Object object, OutputType outputType, StringFormat stringFormat)
 			throws BadLocationException {
 		String outputString;
 		if (object == null) {
 			return;
 		}
 		outputString = object.toString();
-		if (!stringType.equals(OutputType.ADD)) {
+		if (!outputType.equals(OutputType.ADD)) {
 			styledDocument.remove(currentLineNumber, styledDocument.getLength() - currentLineNumber);
 		}
 		styledDocument.insertString(styledDocument.getLength(), outputString,
 				styledDocument.getStyle(stringFormat.toString()));
-		if (stringType.equals(OutputType.MAIN)) {
+		if (outputType.equals(OutputType.MAIN)) {
 			currentLineNumber = currentLineNumber + outputString.length();
 		}
 	}

@@ -23,15 +23,15 @@ public interface ITerminal {
 
 	public void errorMessage() throws BadLocationException, InterruptedException;
 
-	public void getLineOfCharacters(char character, OutputType stringType) throws BadLocationException;
+	public void getLineOfCharacters(char character, OutputType outputType) throws BadLocationException;
 
-	public default void newLine(OutputType stringType) throws BadLocationException {
-		printLine(System.getProperty("line.separator"), stringType, StringFormat.STANDARD);
+	public default void newLine(OutputType outputType) throws BadLocationException {
+		printLine(System.getProperty("line.separator"), outputType, StringFormat.STANDARD);
 	}
 
 	public void printCollectedLines() throws InterruptedException, BadLocationException;
 
-	public void printLine(Object object, OutputType stringType, StringFormat stringFormat) throws BadLocationException;
+	public void printLine(Object object, OutputType outputType, StringFormat stringFormat) throws BadLocationException;
 
 	public default String request(String printOut, String regex)
 			throws InterruptedException, BadLocationException, UserCancelException, SQLException {

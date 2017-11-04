@@ -91,12 +91,12 @@ public class Terminal implements ITerminal {
 	}
 
 	@Override
-	public void getLineOfCharacters(char character, OutputType stringType) throws BadLocationException {
+	public void getLineOfCharacters(char character, OutputType outputType) throws BadLocationException {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < graphicalUserInterface.getNumberOfCharsPerLine(character); i++) {
 			builder.append(character);
 		}
-		printLine(builder.toString(), stringType, StringFormat.STANDARD);
+		printLine(builder.toString(), outputType, StringFormat.STANDARD);
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class Terminal implements ITerminal {
 				graphicalUserInterface.printLine(string, OutputType.ADD, StringFormat.BOLD);
 				for (Entry<OutputInformation, String> entry : collectedLines.entrySet()) {
 					if (entry.getValue().equals(string)) {
-						graphicalUserInterface.printLine(entry.getKey().getOutput(), entry.getKey().getStringType(),
+						graphicalUserInterface.printLine(entry.getKey().getOutput(), entry.getKey().getOutputType(),
 								entry.getKey().getStringFormat());
 					}
 				}
@@ -123,8 +123,8 @@ public class Terminal implements ITerminal {
 	}
 
 	@Override
-	public void printLine(Object object, OutputType stringType, StringFormat stringFormat) throws BadLocationException {
-		graphicalUserInterface.printLine(object, stringType, stringFormat);
+	public void printLine(Object object, OutputType outputType, StringFormat stringFormat) throws BadLocationException {
+		graphicalUserInterface.printLine(object, outputType, stringFormat);
 	}
 
 	@Override
@@ -166,12 +166,12 @@ public class Terminal implements ITerminal {
 				result = input;
 				request = false;
 			}
-			else if ("DATE".equals(regex)
+			else if (regex.equals(RequestType.DATE)
 					&& (stringUtility.testDateString(stringUtility.parseDateString(input)) || input.isEmpty())) {
 				result = stringUtility.parseDateString(input);
 				request = false;
 			}
-			else if ("TIME".equals(regex)
+			else if (regex.equals(RequestType.TIME)
 					&& (stringUtility.testTimeString(stringUtility.parseTimeString(input)) || input.isEmpty())) {
 				result = stringUtility.parseTimeString(input);
 				request = false;

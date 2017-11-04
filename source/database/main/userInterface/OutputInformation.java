@@ -3,12 +3,12 @@ package database.main.userInterface;
 public class OutputInformation {
 	private Object output;
 	private StringFormat stringFormat;
-	private OutputType stringType;
+	private OutputType outputType;
 
-	public OutputInformation(Object output, OutputType stringType, StringFormat stringFormat) {
+	public OutputInformation(Object output, OutputType outputType, StringFormat stringFormat) {
 		this.output = output;
 		this.stringFormat = stringFormat;
-		this.stringType = stringType;
+		this.outputType = outputType;
 	}
 
 	@Override
@@ -17,7 +17,7 @@ public class OutputInformation {
 		if (object != null && object instanceof OutputInformation) {
 			information = (OutputInformation) object;
 			if (output.equals(information.getOutput()) && stringFormat.equals(information.getStringFormat())
-					&& stringType.equals(information.getStringType())) {
+					&& outputType.equals(information.getOutputType())) {
 				return true;
 			}
 		}
@@ -32,7 +32,7 @@ public class OutputInformation {
 		return stringFormat;
 	}
 
-	public OutputType getStringType() {
-		return stringType;
+	public OutputType getOutputType() {
+		return outputType;
 	}
 }

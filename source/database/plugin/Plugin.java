@@ -77,7 +77,9 @@ public abstract class Plugin implements IWriteRead {
 		String initialOutput = outputHandler.getInitialOutput();
 		if (!initialOutput.isEmpty()) {
 			terminal.printLine(identity, OutputType.MAIN, StringFormat.BOLD);
+			terminal.newLine(OutputType.MAIN);
 			terminal.printLine(initialOutput, OutputType.MAIN, StringFormat.STANDARD);
+			terminal.newLine(OutputType.MAIN);
 		}
 	}
 
