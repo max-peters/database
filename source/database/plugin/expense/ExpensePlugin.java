@@ -3,7 +3,6 @@ package database.plugin.expense;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.LinkedList;
 
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,12 +40,8 @@ public class ExpensePlugin extends Plugin {
 	public void changeCurrencyRequest() throws InterruptedException, BadLocationException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		InternalParameters settings = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
-		LinkedList<String> currencies = new LinkedList<String>();
-		for (Currency currency : Currency.values()) {
-			currencies.add(currency.toString());
-		}
-		settings.setCurrentCurrency(Currency.valueOf(currencies.get(terminal.checkRequest(currencies,
-				currencies.indexOf(settings.getCurrentCurrency().toString()), "choose default currency"))));
+		settings.setCurrentCurrency(settings.getCurrencies().get(terminal.checkRequest(settings.getCurrencies(),
+				settings.getCurrencies().indexOf(settings.getCurrentCurrency()), "choose default currency")));
 	}
 
 	@Command(tag = "new")

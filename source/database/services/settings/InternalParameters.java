@@ -4,11 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import database.plugin.calendar.CalendarElements;
-import database.plugin.expense.Currency;
 
 public class InternalParameters {
 	protected List<CalendarElements> calendarElementPriorityList;
-	protected Currency currentCurrency;
+	protected List<String> currencies;
+	protected String currentCurrency;
 	protected boolean displayLogger;
 	protected int eventDisplayRange;
 	protected int revertStackSize;
@@ -19,14 +19,19 @@ public class InternalParameters {
 		revertStackSize = 1;
 		calendarElementPriorityList = Arrays.asList(new CalendarElements[] { CalendarElements.HOLIDAY,
 				CalendarElements.DAY, CalendarElements.BIRTHDAY, CalendarElements.APPOINTMENT });
-		currentCurrency = Currency.EUR;
+		currencies = Arrays.asList(new String[] { "EUR" });
+		currentCurrency = "EUR";
 	}
 
 	public int getCalendarElementPriority(CalendarElements type) {
 		return calendarElementPriorityList.indexOf(type);
 	}
 
-	public Currency getCurrentCurrency() {
+	public List<String> getCurrencies() {
+		return currencies;
+	}
+
+	public String getCurrentCurrency() {
 		return currentCurrency;
 	}
 
@@ -42,7 +47,7 @@ public class InternalParameters {
 		return revertStackSize;
 	}
 
-	public void setCurrentCurrency(Currency currentCurrency) {
+	public void setCurrentCurrency(String currentCurrency) {
 		this.currentCurrency = currentCurrency;
 	}
 }

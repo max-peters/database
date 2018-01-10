@@ -1,6 +1,5 @@
 package database.plugin.expense;
 
-public enum Currency {
-	EUR,
-	HUF;
+public class Currency {
+	public static final String EUR = "EUR";
 }

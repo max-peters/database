@@ -6,12 +6,12 @@ import database.plugin.Instance;
 
 public class Expense extends Instance {
 	private String category;
-	private Currency currency = Currency.EUR;
+	private String currency = Currency.EUR;
 	private LocalDate date;
 	private String name;
 	private Double value;
 
-	public Expense(String name, String category, Double value, LocalDate date, Currency currency) {
+	public Expense(String name, String category, Double value, LocalDate date, String currency) {
 		this.name = name;
 		this.category = category;
 		this.value = value;
@@ -35,7 +35,7 @@ public class Expense extends Instance {
 		return category;
 	}
 
-	public Currency getCurrency() {
+	public String getCurrency() {
 		return currency;
 	}
 
@@ -51,7 +51,7 @@ public class Expense extends Instance {
 		return value;
 	}
 
-	public void setCurrency(Currency currency) {
+	public void setCurrency(String currency) {
 		this.currency = currency;
 	}
 

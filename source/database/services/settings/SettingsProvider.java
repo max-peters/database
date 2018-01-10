@@ -9,7 +9,6 @@ import org.w3c.dom.Node;
 
 import com.google.gson.Gson;
 
-import database.plugin.expense.Currency;
 import database.services.ServiceRegistry;
 import database.services.writerReader.IWriterReader;
 
@@ -42,8 +41,12 @@ public class SettingsProvider implements ISettingsProvider {
 				internalParameters.calendarElementPriorityList = new Gson().fromJson(node.getTextContent(),
 						new LinkedList<>().getClass());
 				break;
+			case "currencies":
+				internalParameters.currencies = new Gson().fromJson(node.getTextContent(),
+						new LinkedList<>().getClass());
+				break;
 			case "currentCurrency":
-				internalParameters.currentCurrency = Currency.valueOf(node.getTextContent());
+				internalParameters.currentCurrency = node.getTextContent();
 				break;
 		}
 	}
@@ -56,6 +59,7 @@ public class SettingsProvider implements ISettingsProvider {
 		writerReader.add("settings", "revertStackSize", String.valueOf(internalParameters.revertStackSize));
 		writerReader.add("settings", "calendarElementPriority",
 				new Gson().toJson(internalParameters.calendarElementPriorityList));
+		writerReader.add("settings", "currencies", new Gson().toJson(internalParameters.currencies));
 		writerReader.add("settings", "currentCurrency", internalParameters.currentCurrency.toString());
 	}
 }

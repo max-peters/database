@@ -18,10 +18,10 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 	public IStringComplete categoryStringComplete;
 	public IStringComplete nameStringComplete;
 
-	public void addConvertedAmount(Currency currency, double amount) throws SQLException {
+	public void addConvertedAmount(String currency, double amount) throws SQLException {
 		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
 		PreparedStatement preparedStatement = database.prepareStatement(SQLStatements.EXPENSE_INSERT_TOTALSPENDINGS);
-		preparedStatement.setString(1, currency.toString());
+		preparedStatement.setString(1, currency);
 		preparedStatement.setDouble(2, amount);
 		preparedStatement.execute();
 	}
@@ -38,8 +38,7 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 	@Override
 	public Expense create(ResultSet resultSet) throws SQLException {
 		Expense expense = new Expense(resultSet.getString("name"), resultSet.getString("category"),
-				resultSet.getDouble("value"), resultSet.getDate("date").toLocalDate(),
-				Currency.valueOf(resultSet.getString("currency")));
+				resultSet.getDouble("value"), resultSet.getDate("date").toLocalDate(), resultSet.getString("currency"));
 		return expense;
 	}
 
