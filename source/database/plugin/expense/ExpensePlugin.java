@@ -9,9 +9,6 @@ import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Node;
-
 import database.main.UserCancelException;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.RequestType;
@@ -23,11 +20,8 @@ import database.services.settings.ISettingsProvider;
 import database.services.settings.InternalParameters;
 import database.services.undoRedo.CommandHandler;
 import database.services.undoRedo.command.InsertCommand;
-import database.services.writerReader.IWriterReader;
 
 public class ExpensePlugin extends Plugin {
-	private double exchangedEUR;
-
 	public ExpensePlugin() throws SQLException {
 		super("expense", new ExpenseOutputHandler());
 	}
@@ -36,16 +30,21 @@ public class ExpensePlugin extends Plugin {
 	public void addRequest() throws NumberFormatException, InterruptedException, BadLocationException,
 			UserCancelException, SQLException, ParserConfigurationException, TransformerException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
-		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
-		exchangedEUR += Double.valueOf(terminal.request("enter amount to add", RequestType.DOUBLE));
-		writerReader.write();
+		IConnectorRegistry registry = ServiceRegistry.Instance().get(IConnectorRegistry.class);
+		InternalParameters settings = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
+		ExpenseDatabaseConnector connector = (ExpenseDatabaseConnector) registry.get(Expense.class);
+		connector.addConvertedAmount(settings.getCurrentCurrency(),
+				Double.valueOf(terminal.request("enter amount to add", RequestType.DOUBLE)));
 	}
 
 	@Command(tag = "currency")
 	public void changeCurrencyRequest() throws InterruptedException, BadLocationException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		InternalParameters settings = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
-		LinkedList<String> currencies = new LinkedList<String>(settings.getDefaultExchangeRates().keySet());
+		LinkedList<String> currencies = new LinkedList<String>();
+		for (Currency currency : Currency.values()) {
+			currencies.add(currency.toString());
+		}
 		settings.setCurrentCurrency(Currency.valueOf(currencies.get(terminal.checkRequest(currencies,
 				currencies.indexOf(settings.getCurrentCurrency().toString()), "choose default currency"))));
 	}
@@ -71,28 +70,13 @@ public class ExpensePlugin extends Plugin {
 				LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
 		date = requestResult.isEmpty() ? LocalDate.now()
 				: LocalDate.parse(requestResult, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		Expense expense = new Expense(name, category, value, date);
-		expense.setCurrency(settings.getCurrentCurrency());
-		expense.setExchangeRate(settings.getDefaultExchangeRates().get(settings.getCurrentCurrency().toString()));
-		CommandHandler.Instance().executeCommand(new InsertCommand(expense));
+		CommandHandler.Instance().executeCommand(
+				new InsertCommand(new Expense(name, category, value, date, settings.getCurrentCurrency())));
 		connector.refreshStringComplete();
 	}
 
 	@Override
 	public ExpenseOutputHandler getOutputHandler() {
 		return (ExpenseOutputHandler) super.getOutputHandler();
-	}
-
-	@Override
-	public void read(Node node) throws ParserConfigurationException, DOMException {
-		if (node.getNodeName().equals("exchangedEUR")) {
-			exchangedEUR = Double.valueOf(node.getTextContent());
-		}
-	}
-
-	@Override
-	public void write() {
-		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
-		writerReader.add(identity, "exchangedEUR", String.valueOf(exchangedEUR));
 	}
 }

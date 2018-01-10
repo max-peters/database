@@ -1,9 +1,7 @@
 package database.services.settings;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import database.plugin.calendar.CalendarElements;
 import database.plugin.expense.Currency;
@@ -11,7 +9,6 @@ import database.plugin.expense.Currency;
 public class InternalParameters {
 	protected List<CalendarElements> calendarElementPriorityList;
 	protected Currency currentCurrency;
-	protected Map<String, Double> defaultExchangeRates;
 	protected boolean displayLogger;
 	protected int eventDisplayRange;
 	protected int revertStackSize;
@@ -22,10 +19,6 @@ public class InternalParameters {
 		revertStackSize = 1;
 		calendarElementPriorityList = Arrays.asList(new CalendarElements[] { CalendarElements.HOLIDAY,
 				CalendarElements.DAY, CalendarElements.BIRTHDAY, CalendarElements.APPOINTMENT });
-		defaultExchangeRates = new HashMap<String, Double>();
-		for (Currency currency : Currency.values()) {
-			defaultExchangeRates.put(currency.toString(), 1.0);
-		}
 		currentCurrency = Currency.EUR;
 	}
 
@@ -35,10 +28,6 @@ public class InternalParameters {
 
 	public Currency getCurrentCurrency() {
 		return currentCurrency;
-	}
-
-	public Map<String, Double> getDefaultExchangeRates() {
-		return defaultExchangeRates;
 	}
 
 	public boolean getDisplayLogger() {

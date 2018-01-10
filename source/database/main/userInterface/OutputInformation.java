@@ -2,8 +2,8 @@ package database.main.userInterface;
 
 public class OutputInformation {
 	private Object output;
-	private StringFormat stringFormat;
 	private OutputType outputType;
+	private StringFormat stringFormat;
 
 	public OutputInformation(Object output, OutputType outputType, StringFormat stringFormat) {
 		this.output = output;
@@ -28,11 +28,11 @@ public class OutputInformation {
 		return output;
 	}
 
-	public StringFormat getStringFormat() {
-		return stringFormat;
-	}
-
 	public OutputType getOutputType() {
 		return outputType;
+	}
+
+	public StringFormat getStringFormat() {
+		return stringFormat;
 	}
 }

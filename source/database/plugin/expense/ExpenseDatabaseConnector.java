@@ -18,6 +18,14 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 	public IStringComplete categoryStringComplete;
 	public IStringComplete nameStringComplete;
 
+	public void addConvertedAmount(Currency currency, double amount) throws SQLException {
+		IDatabase database = ServiceRegistry.Instance().get(IDatabase.class);
+		PreparedStatement preparedStatement = database.prepareStatement(SQLStatements.EXPENSE_INSERT_TOTALSPENDINGS);
+		preparedStatement.setString(1, currency.toString());
+		preparedStatement.setDouble(2, amount);
+		preparedStatement.execute();
+	}
+
 	public boolean contains(Expense expense) throws SQLException {
 		PreparedStatement preparedStatement = prepareStatement(expense, getQuery(QueryType.CONTAINS));
 		ResultSet resultSet = preparedStatement.executeQuery();
@@ -30,9 +38,8 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 	@Override
 	public Expense create(ResultSet resultSet) throws SQLException {
 		Expense expense = new Expense(resultSet.getString("name"), resultSet.getString("category"),
-				resultSet.getDouble("value"), resultSet.getDate("date").toLocalDate());
-		expense.setCurrency(Currency.valueOf(resultSet.getString("currency")));
-		expense.setExchangeRate(resultSet.getDouble("exchangerate"));
+				resultSet.getDouble("value"), resultSet.getDate("date").toLocalDate(),
+				Currency.valueOf(resultSet.getString("currency")));
 		return expense;
 	}
 
@@ -60,7 +67,6 @@ public class ExpenseDatabaseConnector implements IDatabaseConnector<Expense> {
 		preparedStatement.setDate(3, Date.valueOf(expense.getDate()));
 		preparedStatement.setDouble(4, expense.getValue());
 		preparedStatement.setString(5, expense.getCurrency().toString());
-		preparedStatement.setDouble(6, expense.getExchangeRate());
 		return preparedStatement;
 	}
 

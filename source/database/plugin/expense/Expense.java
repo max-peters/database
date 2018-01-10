@@ -8,15 +8,15 @@ public class Expense extends Instance {
 	private String category;
 	private Currency currency = Currency.EUR;
 	private LocalDate date;
-	private double exchangeRate = 1;
 	private String name;
 	private Double value;
 
-	public Expense(String name, String category, Double value, LocalDate date) {
+	public Expense(String name, String category, Double value, LocalDate date, Currency currency) {
 		this.name = name;
 		this.category = category;
 		this.value = value;
-		setDate(date);
+		this.currency = currency;
+		this.date = date;
 	}
 
 	@Override
@@ -24,8 +24,7 @@ public class Expense extends Instance {
 		if (object != null && object instanceof Expense) {
 			Expense expense = (Expense) object;
 			if (name.equals(expense.name) && category.equals(expense.category) && getDate().isEqual(expense.getDate())
-					&& value == expense.value && currency.equals(expense.currency)
-					&& exchangeRate == expense.exchangeRate) {
+					&& value == expense.value && currency.equals(expense.currency)) {
 				return true;
 			}
 		}
@@ -44,10 +43,6 @@ public class Expense extends Instance {
 		return date;
 	}
 
-	public double getExchangeRate() {
-		return exchangeRate;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -62,9 +57,5 @@ public class Expense extends Instance {
 
 	public void setDate(LocalDate date) {
 		this.date = date;
-	}
-
-	public void setExchangeRate(double exchangeRate) {
-		this.exchangeRate = exchangeRate;
 	}
 }

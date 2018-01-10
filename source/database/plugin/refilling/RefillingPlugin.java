@@ -11,6 +11,7 @@ import database.main.userInterface.ITerminal;
 import database.main.userInterface.RequestType;
 import database.plugin.Command;
 import database.plugin.Plugin;
+import database.plugin.expense.Currency;
 import database.plugin.expense.Expense;
 import database.services.ServiceRegistry;
 import database.services.undoRedo.CommandHandler;
@@ -33,7 +34,7 @@ public class RefillingPlugin extends Plugin {
 		LocalDate date = temp.isEmpty() ? LocalDate.now()
 				: LocalDate.parse(temp, DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		Refilling refilling = new Refilling(distance, refuelAmount, cost, date);
-		Expense expense = new Expense("Tankstelle", "Fahrtkosten", cost, date);
+		Expense expense = new Expense("Tankstelle", "Fahrtkosten", cost, date, Currency.EUR);
 		CommandHandler.Instance().executeCommand(new DependingInsertCommand(refilling, expense));
 	}
 }

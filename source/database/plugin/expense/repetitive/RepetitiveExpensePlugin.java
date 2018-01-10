@@ -16,6 +16,7 @@ import database.main.userInterface.RequestType;
 import database.main.userInterface.StringFormat;
 import database.plugin.Command;
 import database.plugin.Plugin;
+import database.plugin.expense.Currency;
 import database.plugin.expense.Expense;
 import database.plugin.expense.ExpenseDatabaseConnector;
 import database.services.ServiceRegistry;
@@ -112,14 +113,15 @@ public class RepetitiveExpensePlugin extends Plugin {
 		ExpenseDatabaseConnector connector = (ExpenseDatabaseConnector) registry.get(Expense.class);
 		List<Expense> list = new LinkedList<>();
 		Expense expense = new Expense(repetitiveExpense.getName(), repetitiveExpense.getCategory(),
-				repetitiveExpense.getValue(), repetitiveExpense.getDate());
+				repetitiveExpense.getValue(), repetitiveExpense.getDate(), Currency.EUR);
 		expense.setDate(adjustDate(expense.getDate().getMonthValue(), expense.getDate().getYear(),
 				repetitiveExpense.getExecutionDay()));
 		while (expense.getDate().isBefore(LocalDate.now()) || expense.getDate().isEqual(LocalDate.now())) {
 			if (!connector.contains(expense) && !list.contains(expense)
 					&& Math.floorMod(ChronoUnit.MONTHS.between(repetitiveExpense.getDate(), expense.getDate()),
 							repetitiveExpense.getInterval()) == 0) {
-				list.add(new Expense(expense.getName(), expense.getCategory(), expense.getValue(), expense.getDate()));
+				list.add(new Expense(expense.getName(), expense.getCategory(), expense.getValue(), expense.getDate(),
+						Currency.EUR));
 			}
 			if (expense.getDate().getMonthValue() == 12) {
 				expense.setDate(adjustDate(1, expense.getDate().getYear() + 1, repetitiveExpense.getExecutionDay()));
