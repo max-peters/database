@@ -40,8 +40,11 @@ public class ExpensePlugin extends Plugin {
 	public void changeCurrencyRequest() throws InterruptedException, BadLocationException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		InternalParameters settings = ServiceRegistry.Instance().get(ISettingsProvider.class).getInternalParameters();
-		settings.setCurrentCurrency(settings.getCurrencies().get(terminal.checkRequest(settings.getCurrencies(),
-				settings.getCurrencies().indexOf(settings.getCurrentCurrency()), "choose default currency")));
+		int selected = terminal.checkRequest(settings.getCurrencies(),
+				settings.getCurrencies().indexOf(settings.getCurrentCurrency()), "choose default currency");
+		if (selected >= 0) {
+			settings.setCurrentCurrency(settings.getCurrencies().get(selected));
+		}
 	}
 
 	@Command(tag = "new")

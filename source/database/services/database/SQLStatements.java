@@ -10,7 +10,7 @@ public class SQLStatements {
 	public static final String EVENT_INSERT = "INSERT INTO event VALUES (?,?,?);";
 	public static final String EXPENSE_DELETE = "DELETE FROM expense WHERE name=? AND category=? AND date=? AND value=? AND currency=?;";
 	public static final String EXPENSE_INSERT = "INSERT INTO expense VALUES (?,?,?,?,?);";
-	public static final String EXPENSE_INSERT_TOTALSPENDINGS = "INSERT INTO totalspendings (currency,total) VALUES (?,?) ON DUPLICATE KEY UPDATE total = total + 1;";
+	public static final String EXPENSE_INSERT_TOTALSPENDINGS = "INSERT INTO totalspendings (currency,total) VALUES (?,?) ON DUPLICATE KEY UPDATE total = total + VALUES(total);";
 	public static final String EXPENSE_SELECT = "SELECT * FROM expense ORDER BY date;";
 	public static final String EXPENSE_SELECT_ALL = "SELECT * FROM expenseall";
 	public static final String EXPENSE_SELECT_ALL_LENGTH = "SELECT MAX(LENGTH(name)) AS namelength, MAX(LENGTH(CAST(sum AS DECIMAL (18 , 2 )))) AS sumlength FROM expenseall;";
