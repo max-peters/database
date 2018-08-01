@@ -148,9 +148,7 @@ public class Terminal implements ITerminal {
 				completeString(stringComplete);
 			}
 			else {
-				while (!isNextKeyEnterOrEscape()) {
-					;
-				}
+				while (!isNextKeyEnterOrEscape()) {}
 			}
 			input = graphicalUserInterface.getInputText();
 			graphicalUserInterface.setInputText("");
