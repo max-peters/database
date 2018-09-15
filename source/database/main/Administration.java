@@ -29,40 +29,16 @@ public class Administration {
 		CancelHelper helper = new CancelHelper();
 		stringComplete.add("expense");
 		String command = null;
-		while (true) {
-			try {
-				command = terminal.request("command", commands, stringComplete, 2);
-				switch (command) {
-					case "save":
-						save();
-						terminal.waitForInput();
-						break;
-					case "exit":
-						database.close();
-						System.exit(0);
-						break;
-					case "cancel":
-						helper.cancel(undoRedo);
-						break;
-					default:
-						Plugin plugin = pluginRegistry.getPlugin(command);
-						String regex = plugin.getCommandTags(plugin.getClass());
-						if (plugin.getCommandTags(plugin.getOutputHandler().getClass()).equals("()")) {
-							regex = regex.replace("show", "").replace("||", "|");
-						}
-						command = terminal.request(command, regex, new HashMapStringComplete(regex));
-						plugin.conduct(command);
-				}
-			}
-			catch (InvocationTargetException | UserCancelException e) {
-				if (e.getClass().equals(UserCancelException.class)
-						|| e.getCause().getClass().equals(UserCancelException.class) || e.getCause().getCause() != null
-								&& e.getCause().getCause().getClass().equals(UserCancelException.class)) {
-					continue;
-				}
-				else {
-					throw e;
-				}
+		try {
+			Plugin plugin = pluginRegistry.getPlugin("abrechnung");
+			plugin.conduct("start");
+		}
+		catch (InvocationTargetException e) {
+			if (e.getClass().equals(UserCancelException.class)
+					|| e.getCause().getClass().equals(UserCancelException.class) || e.getCause().getCause() != null
+							&& e.getCause().getCause().getClass().equals(UserCancelException.class)) {}
+			else {
+				throw e;
 			}
 		}
 	}

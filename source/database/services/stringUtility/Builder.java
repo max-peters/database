@@ -8,6 +8,7 @@ public class Builder {
 
 	public Builder() {
 		list = new LinkedList<>();
+		list.add("");
 	}
 
 	public void append(String s) {
@@ -50,9 +51,6 @@ public class Builder {
 	}
 
 	public void newLine() {
-		if (isEmpty()) {
-			list.add("");
-		}
 		list.add("");
 	}
 
