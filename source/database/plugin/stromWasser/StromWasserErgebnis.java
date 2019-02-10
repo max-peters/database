@@ -3,7 +3,7 @@ package database.plugin.stromWasser;
 import database.services.stringUtility.Builder;
 import database.services.stringUtility.StringUtility;
 
-public class StromWasserErgebnis {
+public class StromWasserErgebnis extends Ergebnis {
 	String verbraucher1;
 	String verbraucher2;
 	int jahr;
@@ -145,9 +145,14 @@ public class StromWasserErgebnis {
 		builder.newLine();
 		builder.newLine();
 		builder.newLine();
-		builder.append("Abrechnung Verbraucher Haus " + verbraucher1);
+		builder.append("Abrechnung");
 		builder.newLine();
-		builder.append("----------------------------" + su.postIncrementTo("", verbraucher1.length(), '-'));
+		builder.append("----------");
+		builder.newLine();
+		builder.newLine();
+		builder.append("Verbraucher: Haus " + verbraucher1);
+		builder.newLine();
+		builder.append("------------------" + su.postIncrementTo("", verbraucher1.length(), '-'));
 		builder.newLine();
 		builder.append(
 				"bezahlte Abschläge:" + su.preIncrementTo(su.formatDouble(abschläge_verbraucher1, 2) + " €", 57, ' '));
@@ -164,9 +169,9 @@ public class StromWasserErgebnis {
 		builder.append(su.preIncrementTo("", 76, '='));
 		builder.newLine();
 		builder.newLine();
-		builder.append("Abrechnung Verbraucher Haus " + verbraucher2);
+		builder.append("Verbraucher: Haus " + verbraucher2);
 		builder.newLine();
-		builder.append("----------------------------" + su.postIncrementTo("", verbraucher2.length(), '-'));
+		builder.append("------------------" + su.postIncrementTo("", verbraucher2.length(), '-'));
 		builder.newLine();
 		builder.append("Abrechnung der Stadtwerke (Strom, Wasser, Abwasser):"
 				+ su.preIncrementTo(su.formatDouble(gesamtkosten_stadtwerke, 2) + " €", 24, ' '));
@@ -182,6 +187,6 @@ public class StromWasserErgebnis {
 		builder.newLine();
 		builder.append("Guthaben / Schulden:" + su.preIncrementTo(
 				su.formatDouble(gesamtkosten_stadtwerke - abschläge_verbraucher1 - kosten2, 2) + " €", 56, ' '));
-		System.out.println(builder.build());
+		print = builder.list;
 	}
 }

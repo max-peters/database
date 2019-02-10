@@ -14,7 +14,7 @@ public class InternalParameters {
 	protected int revertStackSize;
 
 	public InternalParameters() {
-		displayLogger = true;
+		displayLogger = false;
 		eventDisplayRange = 7;
 		revertStackSize = 1;
 		calendarElementPriorityList = Arrays.asList(new CalendarElements[] { CalendarElements.HOLIDAY,

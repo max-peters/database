@@ -1,7 +1,5 @@
 package database.main;
 
-import java.lang.reflect.InvocationTargetException;
-
 import javax.swing.text.BadLocationException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -10,6 +8,7 @@ import database.main.userInterface.ITerminal;
 import database.main.userInterface.OutputType;
 import database.main.userInterface.StringFormat;
 import database.plugin.Plugin;
+import database.plugin.stromWasser.StromWasserAbrechnungPlugin;
 import database.services.ServiceRegistry;
 import database.services.database.IDatabase;
 import database.services.pluginRegistry.IPluginRegistry;
@@ -29,16 +28,15 @@ public class Administration {
 		CancelHelper helper = new CancelHelper();
 		stringComplete.add("expense");
 		String command = null;
-		try {
-			Plugin plugin = pluginRegistry.getPlugin("abrechnung");
-			plugin.conduct("start");
-		}
-		catch (InvocationTargetException e) {
-			if (e.getClass().equals(UserCancelException.class)
-					|| e.getCause().getClass().equals(UserCancelException.class) || e.getCause().getCause() != null
-							&& e.getCause().getCause().getClass().equals(UserCancelException.class)) {}
-			else {
-				throw e;
+		Plugin plugin = pluginRegistry.getPlugin("abrechnung");
+		while (true) {
+			try {
+				terminal.printLine("Drücke beliebige Taste um zu beginnen...", OutputType.CLEAR, StringFormat.STANDARD);
+				terminal.waitForInput();
+				((StromWasserAbrechnungPlugin) plugin).start();
+			}
+			catch (UserCancelException e) {
+				continue;
 			}
 		}
 	}

@@ -243,8 +243,8 @@ public class GraphicalUserInterface {
 	protected void releaseInput() {
 		input.setEditable(true);
 		input.setFocusable(true);
-		input.grabFocus();
 		input.setCaretColor(Color.WHITE);
+		input.grabFocus();
 	}
 
 	protected void selectInputText(int first, int last) {

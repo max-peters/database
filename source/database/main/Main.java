@@ -44,7 +44,7 @@ public class Main {
 			guiThread.start();
 			logger.log("threads started");
 			IWriterReader writerReader = new XmlWriterReader(
-					System.getProperty("user.home") + "/Documents/storage.xml");
+					System.getProperty("user.home") + "/Documents/DatenbankHeizkostenabrechnung.xml");
 			ISettingsProvider settingsProvider = new SettingsProvider();
 			IConnectorRegistry connectorRegistry = new ConnectorRegistry();
 			ITerminal terminal = new Terminal(graphicalUserInterface);

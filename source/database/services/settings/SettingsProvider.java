@@ -55,11 +55,15 @@ public class SettingsProvider implements ISettingsProvider {
 	public void write() {
 		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
 		writerReader.add("settings", "displayLogger", String.valueOf(internalParameters.displayLogger));
-		writerReader.add("settings", "eventDisplayRange", String.valueOf(internalParameters.eventDisplayRange));
-		writerReader.add("settings", "revertStackSize", String.valueOf(internalParameters.revertStackSize));
-		writerReader.add("settings", "calendarElementPriority",
-				new Gson().toJson(internalParameters.calendarElementPriorityList));
-		writerReader.add("settings", "currencies", new Gson().toJson(internalParameters.currencies));
-		writerReader.add("settings", "currentCurrency", internalParameters.currentCurrency.toString());
+		// writerReader.add("settings", "eventDisplayRange",
+		// String.valueOf(internalParameters.eventDisplayRange));
+		// writerReader.add("settings", "revertStackSize",
+		// String.valueOf(internalParameters.revertStackSize));
+		// writerReader.add("settings", "calendarElementPriority",
+		// new Gson().toJson(internalParameters.calendarElementPriorityList));
+		// writerReader.add("settings", "currencies", new
+		// Gson().toJson(internalParameters.currencies));
+		// writerReader.add("settings", "currentCurrency",
+		// internalParameters.currentCurrency.toString());
 	}
 }

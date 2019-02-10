@@ -76,6 +76,7 @@ public class Terminal implements ITerminal {
 				}
 			}
 		}
+		graphicalUserInterface.releaseInput();
 		return nextSelection >= -1 ? nextSelection : -1;
 	}
 
@@ -165,7 +166,7 @@ public class Terminal implements ITerminal {
 				request = false;
 			}
 			else if (regex.equals(RequestType.DATE)
-					&& (stringUtility.testDateString(stringUtility.parseDateString(input)) || input.isEmpty())) {
+					&& (stringUtility.testDateString(stringUtility.parseDateString(input)))) {
 				result = stringUtility.parseDateString(input);
 				request = false;
 			}

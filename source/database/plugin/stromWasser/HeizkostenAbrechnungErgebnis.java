@@ -7,7 +7,7 @@ import java.util.List;
 import database.services.stringUtility.Builder;
 import database.services.stringUtility.StringUtility;
 
-public class HeizkostenAbrechnungErgebnis {
+public class HeizkostenAbrechnungErgebnis extends Ergebnis {
 	String verbraucher1;
 	String verbraucher2;
 	LocalDate abrechnungszeitraum_beginn;
@@ -107,7 +107,7 @@ public class HeizkostenAbrechnungErgebnis {
 			}
 		}
 		double preis_restbestand = (nachfüllungen.get(q).menge + tmp) * nachfüllungen.get(q).literpreis;
-		printNachfüllung(builder, new Nachfüllung(nachfüllungen.get(q).datum, nachfüllungen.get(q).menge,
+		printNachfüllung(builder, new Nachfüllung(nachfüllungen.get(q).datum, (nachfüllungen.get(q).menge + tmp),
 				nachfüllungen.get(q).literpreis), "Kauf");
 		for (int i = q + 1; i < nachfüllungen.size(); i++) {
 			preis_restbestand += nachfüllungen.get(i).menge * nachfüllungen.get(i).literpreis;
@@ -115,7 +115,7 @@ public class HeizkostenAbrechnungErgebnis {
 		double brennstoffkosten = bestand_preis - preis_restbestand;
 		builder.append("|------------------|-------------|-------------|-------------|-------------|");
 		builder.newLine();
-		builder.append(su.postIncrementTo("  Gesamt", 35, ' '));
+		builder.append(su.postIncrementTo("  Brennstoffverbrauch", 35, ' '));
 		builder.append(su.postIncrementTo(su.formatDouble(bestand_menge - restbestand_menge, 2) + " l", 28, ' '));
 		builder.append(su.formatDouble(brennstoffkosten, 2) + " €");
 		builder.newLine();
@@ -350,7 +350,7 @@ public class HeizkostenAbrechnungErgebnis {
 		builder.newLine();
 		builder.append("Ausgleich (1/2 Gesamtkosten - eigene Kosten):" + su.preIncrementTo(
 				su.formatDouble((nebenkosten + brennstoffkosten) / 2 - kosten_verbraucher2, 2) + " €", 31, ' '));
-		System.out.println(builder.build());
+		print = builder.list;
 	}
 
 	public void printNachfüllung(Builder builder, Nachfüllung nachfüllung, String name) {

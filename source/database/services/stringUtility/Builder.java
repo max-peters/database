@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Builder {
-	private LinkedList<String> list;
+	public LinkedList<String> list;
 
 	public Builder() {
 		list = new LinkedList<>();
