@@ -162,8 +162,8 @@ public class StromWasserErgebnis extends Ergebnis {
 		builder.newLine();
 		builder.append(su.preIncrementTo("", 76, '-'));
 		builder.newLine();
-		builder.append("Guthaben / Schulden:"
-				+ su.preIncrementTo(su.formatDouble(abschläge_verbraucher1 - kosten1, 2) + " €", 56, ' '));
+		builder.append(
+				"Ausgleich:" + su.preIncrementTo(su.formatDouble(abschläge_verbraucher1 - kosten1, 2) + " €", 66, ' '));
 		builder.newLine();
 		builder.newLine();
 		builder.append(su.preIncrementTo("", 76, '='));
@@ -176,8 +176,8 @@ public class StromWasserErgebnis extends Ergebnis {
 		builder.append("Abrechnung der Stadtwerke (Strom, Wasser, Abwasser):"
 				+ su.preIncrementTo(su.formatDouble(gesamtkosten_stadtwerke, 2) + " €", 24, ' '));
 		builder.newLine();
-		builder.append("abzüglich gezahlte Abschläge von Verbraucher " + verbraucher1 + ":               - "
-				+ su.preIncrementTo(su.formatDouble(abschläge_verbraucher1, 2) + " €", 9, ' '));
+		builder.append(su.postIncrementTo("abzüglich gezahlte Abschläge von Verbraucher " + verbraucher1 + ":", 64, ' ')
+				+ " - " + su.preIncrementTo(su.formatDouble(abschläge_verbraucher1, 2) + " €", 9, ' '));
 		builder.newLine();
 		builder.append("abzüglich eigener Verbrauch:                                     - "
 				+ su.preIncrementTo(su.formatDouble(kosten2, 2) + " €", 9, ' '));
@@ -185,8 +185,8 @@ public class StromWasserErgebnis extends Ergebnis {
 		builder.newLine();
 		builder.append(su.preIncrementTo("", 76, '-'));
 		builder.newLine();
-		builder.append("Guthaben / Schulden:" + su.preIncrementTo(
-				su.formatDouble(gesamtkosten_stadtwerke - abschläge_verbraucher1 - kosten2, 2) + " €", 56, ' '));
+		builder.append("Ausgleich:" + su.preIncrementTo(
+				su.formatDouble(gesamtkosten_stadtwerke - abschläge_verbraucher1 - kosten2, 2) + " €", 66, ' '));
 		print = builder.list;
 	}
 }
