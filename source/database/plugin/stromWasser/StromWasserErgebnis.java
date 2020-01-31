@@ -15,12 +15,14 @@ public class StromWasserErgebnis extends Ergebnis {
 	double niederschlagswasser_preisProQuadratmeter;
 	double strom_gesamtpreis;
 	double abschläge_verbraucher1;
-	double gesamtkosten_stadtwerke;
+	double strom_wasser_stadtwerke;
+	double abwasser_stadtwerke;
 
 	public StromWasserErgebnis(String verbraucher1, String verbraucher2, int jahr, double wasser_gesamtverbrauch1,
 			double wasser_gesamtverbrauch2, double wasser_zähleranteil, double wasser_preisProKubikmeter,
 			double abwasser_preisProKubikmeter, double niederschlagswasser_preisProQuadratmeter,
-			double strom_gesamtpreis, double abschläge_verbraucher1, double gesamtkosten_stadtwerke) {
+			double strom_gesamtpreis, double abschläge_verbraucher1, double strom_wasser_stadtwerke,
+			double abwasser_stadtwerke) {
 		this.verbraucher1 = verbraucher1;
 		this.verbraucher2 = verbraucher2;
 		this.jahr = jahr;
@@ -32,7 +34,8 @@ public class StromWasserErgebnis extends Ergebnis {
 		this.niederschlagswasser_preisProQuadratmeter = niederschlagswasser_preisProQuadratmeter;
 		this.strom_gesamtpreis = strom_gesamtpreis;
 		this.abschläge_verbraucher1 = abschläge_verbraucher1;
-		this.gesamtkosten_stadtwerke = gesamtkosten_stadtwerke;
+		this.strom_wasser_stadtwerke = strom_wasser_stadtwerke;
+		this.abwasser_stadtwerke = abwasser_stadtwerke;
 	}
 
 	public void print() {
@@ -162,8 +165,15 @@ public class StromWasserErgebnis extends Ergebnis {
 		builder.newLine();
 		builder.append(su.preIncrementTo("", 76, '-'));
 		builder.newLine();
-		builder.append(
-				"Ausgleich:" + su.preIncrementTo(su.formatDouble(abschläge_verbraucher1 - kosten1, 2) + " €", 66, ' '));
+		double ausgleich = abschläge_verbraucher1 - kosten1;
+
+		builder.newLine();
+		if (ausgleich >= 0) {
+			builder.append("Ausgleich: (Guthaben)" + su.preIncrementTo(su.formatDouble(ausgleich, 2) + " €", 55, ' '));
+		}
+		else {
+			builder.append("Ausgleich: (Schulden)" + su.preIncrementTo(su.formatDouble(ausgleich, 2) + " €", 55, ' '));
+		}
 		builder.newLine();
 		builder.newLine();
 		builder.append(su.preIncrementTo("", 76, '='));
@@ -173,20 +183,31 @@ public class StromWasserErgebnis extends Ergebnis {
 		builder.newLine();
 		builder.append("------------------" + su.postIncrementTo("", verbraucher2.length(), '-'));
 		builder.newLine();
-		builder.append("Abrechnung der Stadtwerke (Strom, Wasser, Abwasser):"
-				+ su.preIncrementTo(su.formatDouble(gesamtkosten_stadtwerke, 2) + " €", 24, ' '));
+		builder.append("Abrechnung der Stadtwerke - Strom und Wasser:"
+				+ su.preIncrementTo(su.formatDouble(strom_wasser_stadtwerke, 2) + " €", 31, ' '));
 		builder.newLine();
-		builder.append(su.postIncrementTo("abzüglich gezahlte Abschläge von Verbraucher " + verbraucher1 + ":", 64, ' ')
-				+ " - " + su.preIncrementTo(su.formatDouble(abschläge_verbraucher1, 2) + " €", 9, ' '));
+		builder.append("Abrechnung der Stadtwerke - Abwasser:"
+				+ su.preIncrementTo(su.formatDouble(abwasser_stadtwerke, 2) + " €", 39, ' '));
 		builder.newLine();
-		builder.append("abzüglich eigener Verbrauch:                                     - "
-				+ su.preIncrementTo(su.formatDouble(kosten2, 2) + " €", 9, ' '));
+		builder.append(su.postIncrementTo("abzüglich gezahlte Abschläge von Verbraucher " + verbraucher1 + ":", 63, ' ')
+				+ " - " + su.preIncrementTo(su.formatDouble(abschläge_verbraucher1, 2) + " €", 10, ' '));
+		builder.newLine();
+		builder.append("abzüglich eigener Verbrauch:                                    - "
+				+ su.preIncrementTo(su.formatDouble(kosten2, 2) + " €", 10, ' '));
 		builder.newLine();
 		builder.newLine();
 		builder.append(su.preIncrementTo("", 76, '-'));
 		builder.newLine();
-		builder.append("Ausgleich:" + su.preIncrementTo(
-				su.formatDouble(gesamtkosten_stadtwerke - abschläge_verbraucher1 - kosten2, 2) + " €", 66, ' '));
+		double ausgleich2 = strom_wasser_stadtwerke + abwasser_stadtwerke - abschläge_verbraucher1 - kosten2;
+
+		builder.newLine();
+		if (ausgleich2 >= 0) {
+			builder.append("Ausgleich: (Guthaben)" + su.preIncrementTo(su.formatDouble(ausgleich2, 2) + " €", 55, ' '));
+		}
+		else {
+			builder.append("Ausgleich: (Schulden)" + su.preIncrementTo(su.formatDouble(ausgleich2, 2) + " €", 55, ' '));
+		}
+
 		print = builder.list;
 	}
 }

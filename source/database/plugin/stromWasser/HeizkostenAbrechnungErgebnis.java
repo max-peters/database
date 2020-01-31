@@ -55,7 +55,7 @@ public class HeizkostenAbrechnungErgebnis extends Ergebnis {
 		this.heizung_verbrauch2 = heizung_verbrauch2;
 	}
 
-	public void print(List<Nachfüllung> nachfüllungen) {
+	public Nachfüllung print(List<Nachfüllung> nachfüllungen) {
 		Builder builder = new Builder();
 		StringUtility su = new StringUtility();
 		DateTimeFormatter df = DateTimeFormatter.ofPattern("dd.MM.uuuu");
@@ -91,12 +91,7 @@ public class HeizkostenAbrechnungErgebnis extends Ergebnis {
 		}
 		builder.append("|------------------|-------------|-------------|-------------|-------------|");
 		builder.newLine();
-		builder.append(su.postIncrementTo("| Restbestand", 19, ' ') + "| ");
-		builder.append(su.postIncrementTo(restbestand_datum.format(df), 12, ' ') + "| ");
-		builder.append(su.postIncrementTo(su.formatDouble(restbestand_menge, 2) + " l", 12, ' ') + "| ");
-		builder.newLine();
-		builder.append("|------------------|-------------|-------------|-------------|-------------|");
-		builder.newLine();
+
 		double tmp = restbestand_menge;
 		int q = nachfüllungen.size() - 1;
 		while (tmp > 0) {
@@ -106,16 +101,22 @@ public class HeizkostenAbrechnungErgebnis extends Ergebnis {
 				q--;
 			}
 		}
+
 		double preis_restbestand = (nachfüllungen.get(q).menge + tmp) * nachfüllungen.get(q).literpreis;
-		printNachfüllung(builder, new Nachfüllung(nachfüllungen.get(q).datum, (nachfüllungen.get(q).menge + tmp),
-				nachfüllungen.get(q).literpreis), "Kauf");
 		for (int i = q + 1; i < nachfüllungen.size(); i++) {
 			preis_restbestand += nachfüllungen.get(i).menge * nachfüllungen.get(i).literpreis;
 		}
+		printNachfüllung(builder, new Nachfüllung(nachfüllungen.get(q).datum, (nachfüllungen.get(q).menge + tmp),
+				nachfüllungen.get(q).literpreis), "Kauf");
+		builder.append("|------------------|-------------|-------------|-------------|-------------|");
+		builder.newLine();
+		printNachfüllung(builder, new Nachfüllung(preis_restbestand, restbestand_datum, restbestand_menge),
+				"- Restbestand");
+
 		double brennstoffkosten = bestand_preis - preis_restbestand;
 		builder.append("|------------------|-------------|-------------|-------------|-------------|");
 		builder.newLine();
-		builder.append(su.postIncrementTo("  Brennstoffverbrauch", 35, ' '));
+		builder.append(su.postIncrementTo("Brennstoffverbrauch", 35, ' '));
 		builder.append(su.postIncrementTo(su.formatDouble(bestand_menge - restbestand_menge, 2) + " l", 28, ' '));
 		builder.append(su.formatDouble(brennstoffkosten, 2) + " €");
 		builder.newLine();
@@ -293,11 +294,22 @@ public class HeizkostenAbrechnungErgebnis extends Ergebnis {
 		builder.newLine();
 		double kosten_verbraucher1 = verbrauchskosten_warmwasser + verbrauchskosten_zentralheizung
 				+ grundkosten_warmwasser + grundkostenkosten_zentralheizung;
-		builder.append(su.postIncrementTo("Kosten:", 67, ' ') + su.formatDouble(kosten_verbraucher1, 2) + " €");
+		builder.append("Kosten:" + su.preIncrementTo(su.formatDouble(kosten_verbraucher1, 2) + " €", 69, ' '));
 		builder.newLine();
 		builder.newLine();
-		builder.append("Ausgleich (1/2 Gesamtkosten - eigene Kosten):" + su.preIncrementTo(
-				su.formatDouble((nebenkosten + brennstoffkosten) / 2 - kosten_verbraucher1, 2) + " €", 31, ' '));
+
+		double ausgleich = (nebenkosten + brennstoffkosten) / 2 - kosten_verbraucher1;
+
+		builder.newLine();
+		if (ausgleich >= 0) {
+			builder.append("Ausgleich (1/2 Gesamtkosten - eigene Kosten): (Guthaben)"
+					+ su.preIncrementTo(su.formatDouble(ausgleich, 2) + " €", 20, ' '));
+		}
+		else {
+			builder.append("Ausgleich (1/2 Gesamtkosten - eigene Kosten): (Schulden)"
+					+ su.preIncrementTo(su.formatDouble(ausgleich, 2) + " €", 20, ' '));
+		}
+
 		builder.newLine();
 		builder.newLine();
 		builder.newLine();
@@ -335,22 +347,32 @@ public class HeizkostenAbrechnungErgebnis extends Ergebnis {
 		builder.append("tatsächliche Warmwasserkosten:"
 				+ su.preIncrementTo(su.formatDouble(warmwasser_tatsächlichekosten, 2), 44, ' ') + " €");
 		builder.newLine();
-		builder.append(su.postIncrementTo("abzüglich Warmwasserkosten Haus " + verbraucher1 + ":", 10, ' ')
-				+ su.preIncrementTo("- " + su.formatDouble(grundkosten_warmwasser + verbrauchskosten_warmwasser, 2), 36,
-						' ')
-				+ " €");
+		builder.append("abzüglich Warmwasserkosten Haus " + verbraucher1 + ":" + su.preIncrementTo(
+				"- " + su.formatDouble(grundkosten_warmwasser + verbrauchskosten_warmwasser, 2), 37, ' ') + " €");
 		builder.newLine();
 		builder.newLine();
 		builder.append(su.preIncrementTo("", 76, '-'));
 		builder.newLine();
 		double kosten_verbraucher2 = grundkostenkosten_zentralheizung2 + verbrauchskosten_zentralheizung2
 				+ warmwasser_tatsächlichekosten - grundkosten_warmwasser - verbrauchskosten_warmwasser;
-		builder.append(su.postIncrementTo("Kosten:", 68, ' ') + su.formatDouble(kosten_verbraucher2, 2) + " €");
+		builder.append("Kosten:" + su.preIncrementTo(su.formatDouble(kosten_verbraucher2, 2) + " €", 69, ' '));
 		builder.newLine();
 		builder.newLine();
-		builder.append("Ausgleich (1/2 Gesamtkosten - eigene Kosten):" + su.preIncrementTo(
-				su.formatDouble((nebenkosten + brennstoffkosten) / 2 - kosten_verbraucher2, 2) + " €", 31, ' '));
+
+		double ausgleich2 = (nebenkosten + brennstoffkosten) / 2 - kosten_verbraucher2;
+
+		builder.newLine();
+		if (ausgleich2 >= 0) {
+			builder.append("Ausgleich (1/2 Gesamtkosten - eigene Kosten): (Guthaben)"
+					+ su.preIncrementTo(su.formatDouble(ausgleich2, 2) + " €", 20, ' '));
+		}
+		else {
+			builder.append("Ausgleich (1/2 Gesamtkosten - eigene Kosten): (Schulden)"
+					+ su.preIncrementTo(su.formatDouble(ausgleich2, 2) + " €", 20, ' '));
+		}
+
 		print = builder.list;
+		return new Nachfüllung(preis_restbestand, restbestand_datum, restbestand_menge);
 	}
 
 	public void printNachfüllung(Builder builder, Nachfüllung nachfüllung, String name) {

@@ -32,12 +32,14 @@ import database.services.writerReader.IWriterReader;
 
 public class StromWasserAbrechnungPlugin extends Plugin {
 	List<Nachfüllung> nachfüllungen;
+	Nachfüllung restbestand;
 	StromWasserErgebnis erg;
 	HeizkostenAbrechnungErgebnis ergebnisHeiz;
 
 	public StromWasserAbrechnungPlugin() {
 		super("abrechnung", new StromWasserOutputHandler());
 		nachfüllungen = new LinkedList<>();
+		restbestand = new Nachfüllung(LocalDate.MIN, 1, 1);
 	}
 
 	@Command(tag = "start")
@@ -85,16 +87,27 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 		String verbraucher2 = "Pfrommer";
 		int jahr = Integer.valueOf(terminal.request("Abrechnungsjahr", RequestType.INTEGER));
 		String verbraucher1 = String.valueOf(terminal.request("Name - Verbraucher im Nebenhaus", RequestType.NAME));
-		int verbrauch_eg = Integer
-				.valueOf(terminal.request(verbraucher1 + " - Wasser - Verbrauch - EG", RequestType.INTEGER));
-		int verbrauch_dg = Integer
-				.valueOf(terminal.request(verbraucher1 + " - Wasser - Verbrauch - DG", RequestType.INTEGER));
+		int verbrauch_eg_kw = Integer
+				.valueOf(terminal.request(verbraucher1 + " - Kaltwasser - Verbrauch - EG", RequestType.INTEGER));
+		int verbrauch_eg_ww = Integer
+				.valueOf(terminal.request(verbraucher1 + " - Warmwasser - Verbrauch - EG", RequestType.INTEGER));
+		int verbrauch_eg = verbrauch_eg_kw + verbrauch_eg_ww;
+
+		int verbrauch_dg_kw = Integer
+				.valueOf(terminal.request(verbraucher1 + " - Kaltwasser - Verbrauch - DG", RequestType.INTEGER));
+		int verbrauch_dg_ww = Integer
+				.valueOf(terminal.request(verbraucher1 + " - Warmwasser - Verbrauch - DG", RequestType.INTEGER));
+		int verbrauch_dg = verbrauch_dg_kw + verbrauch_dg_ww;
 		int verbrauch_keller = Integer
-				.valueOf(terminal.request(verbraucher1 + " - Wasser - Verbrauch - Keller", RequestType.INTEGER));
-		int gesamtverbrauch2 = Integer
-				.valueOf(terminal.request(verbraucher2 + " - Wasser - Gesamtverbrauch", RequestType.INTEGER));
-		double zähleranteil = Double
-				.valueOf(terminal.request("Wasser - Halber Zähleranteil", RequestType.DOUBLE).replaceAll(",", "\\."));
+				.valueOf(terminal.request(verbraucher1 + " - Kaltasser - Verbrauch - Keller", RequestType.INTEGER));
+		int gesamtverbrauch2_kw = Integer
+				.valueOf(terminal.request(verbraucher2 + " - Kaltwasser - Verbrauch", RequestType.INTEGER));
+		int gesamtverbrauch2_ww = Integer
+				.valueOf(terminal.request(verbraucher2 + " - Warmwasser - Verbrauch", RequestType.INTEGER));
+		int gesamtverbrauch2 = gesamtverbrauch2_kw + gesamtverbrauch2_ww;
+		double zähleranteil = Double.valueOf(
+				terminal.request("Wasser - Zählermiete (Verrechnungspreis)", RequestType.DOUBLE).replaceAll(",", "\\."))
+				/ 2;
 		double wasser_preisProKubikmeter = Double
 				.valueOf(terminal.request("Wasser - Preis pro Kubikmeter", RequestType.DOUBLE).replaceAll(",", "\\."));
 		double strom_gesamtpreis = Double.valueOf(
@@ -105,12 +118,15 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 				.request("Niederschlagswasser - Preis pro Quadratmeter", RequestType.DOUBLE).replaceAll(",", "\\."));
 		double abschläge = Double.valueOf(
 				terminal.request("Abschläge - Verbraucher " + verbraucher1, RequestType.DOUBLE).replaceAll(",", "\\."));
-		double gesamtkosten_stadtwerke = Double.valueOf(terminal
-				.request("Gesamtkosten laut Abrechnung der Stadtwerke", RequestType.DOUBLE).replaceAll(",", "\\."));
+		double strom_wasser_stadtwerke = Double
+				.valueOf(terminal.request("Abrechnung der Stadtwerke - Strom und Wasser (€)", RequestType.DOUBLE)
+						.replaceAll(",", "\\."));
+		double abwasser_stadtwerke = Double.valueOf(terminal
+				.request("Abrechnung der Stadtwerke - Abwasser (€)", RequestType.DOUBLE).replaceAll(",", "\\."));
 		StromWasserErgebnis ergebnis = new StromWasserErgebnis(verbraucher1, verbraucher2, jahr,
 				verbrauch_eg + verbrauch_dg + verbrauch_keller, gesamtverbrauch2, zähleranteil,
 				wasser_preisProKubikmeter, abwasser_preisProKubikmeter, niederschlagswasser_preisProQuadratmeter,
-				strom_gesamtpreis, abschläge, gesamtkosten_stadtwerke);
+				strom_gesamtpreis, abschläge, strom_wasser_stadtwerke, abwasser_stadtwerke);
 		ergebnis.print();
 		return ergebnis;
 	}
@@ -125,15 +141,15 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 				DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		LocalDate ende = LocalDate.parse(terminal.request("Abrechnungszeitraum - Ende", RequestType.DATE),
 				DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		LocalDate vorjahresbestand_datum = LocalDate.parse(
-				terminal.request("Vorjahresbestand - Datum", RequestType.DATE),
-				DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		double vorjahresbestand_menge = Double
-				.valueOf(terminal.request("Vorjahresbestand - Menge", RequestType.DOUBLE).replaceAll(",", "\\."));
-		double vorjahresbestand_preis = Double
-				.valueOf(terminal.request("Vorjahresbestand - Preis", RequestType.DOUBLE).replaceAll(",", "\\."));
-		Nachfüllung vorjahresbestand = new Nachfüllung(vorjahresbestand_preis, vorjahresbestand_datum,
-				vorjahresbestand_menge);
+//		LocalDate vorjahresbestand_datum = LocalDate.parse(
+//				terminal.request("Vorjahresbestand - Datum", RequestType.DATE),
+//				DateTimeFormatter.ofPattern("dd.MM.uuuu"));
+//		double vorjahresbestand_menge = Double
+//				.valueOf(terminal.request("Vorjahresbestand - Menge", RequestType.DOUBLE).replaceAll(",", "\\."));
+//		double vorjahresbestand_preis = Double
+//				.valueOf(terminal.request("Vorjahresbestand - Preis", RequestType.DOUBLE).replaceAll(",", "\\."));
+//		Nachfüllung vorjahresbestand = new Nachfüllung(vorjahresbestand_preis, vorjahresbestand_datum,
+//				vorjahresbestand_menge);
 		int anzahl_nachfüllungen = Integer.valueOf(terminal.request("Anzahl Nachfüllungen", RequestType.INTEGER));
 		for (int i = 0; i < anzahl_nachfüllungen; i++) {
 			LocalDate nachfüllung_datum = LocalDate.parse(
@@ -149,6 +165,7 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 				DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		double restbestand_menge = Double
 				.valueOf(terminal.request("Restbestand - Menge", RequestType.DOUBLE).replaceAll(",", "\\."));
+
 		double betriebsstrom_kosten = Double.valueOf(
 				terminal.request("Nebenkosten - Betriebsstrom - Kosten", RequestType.DOUBLE).replaceAll(",", "\\."));
 		LocalDate brennerwartung_datum = LocalDate.parse(
@@ -167,24 +184,33 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 		double immissionsmessung_kosten = Double.valueOf(terminal
 				.request("Nebenkosten - Immissionsmessung - Kosten", RequestType.DOUBLE).replaceAll(",", "\\."));
 		double warmwasserverbrauch_kubikmeter = Double.valueOf(
-				terminal.request("Warmwasser - Verbrauch - Kubikmeter", RequestType.DOUBLE).replaceAll(",", "\\."));
+				terminal.request("Warmwasser - Verbrauch (Kubikmeter)", RequestType.DOUBLE).replaceAll(",", "\\."));
 		double solarmenge = Double.valueOf(
-				terminal.request("Solarmenge - Erzeugung - Kilowattstunde", RequestType.DOUBLE).replaceAll(",", "\\."));
-		double heizung_verbrauch1 = Double
-				.valueOf(terminal.request(verbraucher1 + " - Heizung - Verbrauch - Kilowattstunde", RequestType.DOUBLE)
+				terminal.request("Solarmenge - Erzeugung (Kilowattstunde)", RequestType.DOUBLE).replaceAll(",", "\\."));
+		double heizung_verbrauch1_eg = Double.valueOf(
+				terminal.request(verbraucher1 + " - Heizung EG - Verbrauch (Kilowattstunde)", RequestType.DOUBLE)
 						.replaceAll(",", "\\."));
-		double warmwasser_verbrauch1 = Double
-				.valueOf(terminal.request(verbraucher1 + " - Warmwasser - Verbrauch - Kubikmeter", RequestType.DOUBLE)
+		double heizung_verbrauch1_dg = Double.valueOf(
+				terminal.request(verbraucher1 + " - Heizung DG - Verbrauch (Kilowattstunde)", RequestType.DOUBLE)
 						.replaceAll(",", "\\."));
+		double heizung_verbrauch1 = heizung_verbrauch1_eg + heizung_verbrauch1_dg;
+		double warmwasser_verbrauch1_eg = Double.valueOf(
+				terminal.request(verbraucher1 + " - Warmwasser EG - Verbrauch (Kubikmeter)", RequestType.DOUBLE)
+						.replaceAll(",", "\\."));
+		double warmwasser_verbrauch1_dg = Double.valueOf(
+				terminal.request(verbraucher1 + " - Warmwasser DG - Verbrauch (Kubikmeter)", RequestType.DOUBLE)
+						.replaceAll(",", "\\."));
+		double warmwasser_verbrauch1 = warmwasser_verbrauch1_eg + warmwasser_verbrauch1_dg;
 		double heizung_verbrauch2 = Double
-				.valueOf(terminal.request(verbraucher2 + " - Heizung - Verbrauch - Kilowattstunde", RequestType.DOUBLE)
+				.valueOf(terminal.request(verbraucher2 + " - Heizung - Verbrauch (Kilowattstunde)", RequestType.DOUBLE)
 						.replaceAll(",", "\\."));
 		HeizkostenAbrechnungErgebnis ergebnis = new HeizkostenAbrechnungErgebnis(verbraucher1, verbraucher2, beginn,
-				ende, vorjahresbestand, restbestand_datum, restbestand_menge, betriebsstrom_kosten,
-				brennerwartung_datum, brennerwartung_kosten, kaminreinigung_datum, kaminreinigung_kosten,
-				immissionsmessung_datum, immissionsmessung_kosten, warmwasserverbrauch_kubikmeter, solarmenge,
-				heizung_verbrauch1, warmwasser_verbrauch1, heizung_verbrauch2);
-		ergebnis.print(nachfüllungen);
+				ende, restbestand, restbestand_datum, restbestand_menge, betriebsstrom_kosten, brennerwartung_datum,
+				brennerwartung_kosten, kaminreinigung_datum, kaminreinigung_kosten, immissionsmessung_datum,
+				immissionsmessung_kosten, warmwasserverbrauch_kubikmeter, solarmenge, heizung_verbrauch1,
+				warmwasser_verbrauch1, heizung_verbrauch2);
+		restbestand = ergebnis.print(nachfüllungen);
+
 		return ergebnis;
 	}
 
@@ -196,6 +222,7 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 		for (Nachfüllung nachfüllung : nachfüllungen) {
 			writerReader.add(identity, "nachfüllung", gson.toJson(nachfüllung));
 		}
+		writerReader.add(identity, "vorjahresbestand", gson.toJson(restbestand));
 	}
 
 	@Override
@@ -207,6 +234,9 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 		else if (node.getNodeName().equals("nachfüllung")) {
 			nachfüllungen.add(gson.fromJson(node.getTextContent(), Nachfüllung.class));
 		}
+		else if (node.getNodeName().equals("vorjahresbestand")) {
+			restbestand = gson.fromJson(node.getTextContent(), Nachfüllung.class);
+		}
 		else if (node.getNodeName().equals("ergebnisHeiz")) {
 			HeizkostenAbrechnungErgebnis ergebnis = gson.fromJson(node.getTextContent(),
 					HeizkostenAbrechnungErgebnis.class);
@@ -216,7 +246,6 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 				Files.write(file, ergebnis.print, Charset.forName("UTF-8"));
 			}
 			catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
