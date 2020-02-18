@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 import database.main.userInterface.GraphicalUserInterface;
 import database.main.userInterface.ITerminal;
 import database.main.userInterface.Terminal;
-import database.plugin.stromWasser.StromWasserAbrechnungPlugin;
+import database.plugin.accounting.AccountingPlugin;
 import database.services.ServiceRegistry;
 import database.services.database.ConnectorRegistry;
 import database.services.database.IConnectorRegistry;
@@ -51,7 +51,7 @@ public class Main {
 			IPluginRegistry pluginRegistry = new HashMapPluginRegistry();
 			IUndoRedo undoRedoService = new UndoRedoStack();
 			IFrequentStringComplete frequentStringComplement = new ResultSetFrequentStringComplete();
-			StromWasserAbrechnungPlugin stromwasser = new StromWasserAbrechnungPlugin();
+			AccountingPlugin stromwasser = new AccountingPlugin();
 			ServiceRegistry.Instance().register(ISettingsProvider.class, settingsProvider);
 			ServiceRegistry.Instance().register(ITerminal.class, terminal);
 			ServiceRegistry.Instance().register(IWriterReader.class, writerReader);

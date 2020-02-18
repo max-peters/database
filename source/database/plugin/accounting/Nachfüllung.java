@@ -1,4 +1,4 @@
-package database.plugin.stromWasser;
+package database.plugin.accounting;
 
 import java.time.LocalDate;
 

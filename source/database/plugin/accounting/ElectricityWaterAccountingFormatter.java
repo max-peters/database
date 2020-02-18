@@ -1,46 +1,19 @@
-package database.plugin.stromWasser;
+package database.plugin.accounting;
+
+import java.util.LinkedList;
 
 import database.services.stringUtility.Builder;
 import database.services.stringUtility.StringUtility;
 
-public class StromWasserErgebnis extends Ergebnis {
-	String verbraucher1;
-	String verbraucher2;
-	int jahr;
-	double wasser_gesamtverbrauch1;
-	double wasser_gesamtverbrauch2;
-	double wasser_zähleranteil;
-	double wasser_preisProKubikmeter;
-	double abwasser_preisProKubikmeter;
-	double niederschlagswasser_preisProQuadratmeter;
-	double strom_gesamtpreis;
-	double abschläge_verbraucher1;
-	double strom_wasser_stadtwerke;
-	double abwasser_stadtwerke;
-
-	public StromWasserErgebnis(String verbraucher1, String verbraucher2, int jahr, double wasser_gesamtverbrauch1,
+public class ElectricityWaterAccountingFormatter {
+	public LinkedList<String> format(String verbraucher1, String verbraucher2, int jahr, double wasser_gesamtverbrauch1,
 			double wasser_gesamtverbrauch2, double wasser_zähleranteil, double wasser_preisProKubikmeter,
 			double abwasser_preisProKubikmeter, double niederschlagswasser_preisProQuadratmeter,
 			double strom_gesamtpreis, double abschläge_verbraucher1, double strom_wasser_stadtwerke,
 			double abwasser_stadtwerke) {
-		this.verbraucher1 = verbraucher1;
-		this.verbraucher2 = verbraucher2;
-		this.jahr = jahr;
-		this.wasser_gesamtverbrauch1 = wasser_gesamtverbrauch1;
-		this.wasser_gesamtverbrauch2 = wasser_gesamtverbrauch2;
-		this.wasser_zähleranteil = wasser_zähleranteil;
-		this.wasser_preisProKubikmeter = wasser_preisProKubikmeter;
-		this.abwasser_preisProKubikmeter = abwasser_preisProKubikmeter;
-		this.niederschlagswasser_preisProQuadratmeter = niederschlagswasser_preisProQuadratmeter;
-		this.strom_gesamtpreis = strom_gesamtpreis;
-		this.abschläge_verbraucher1 = abschläge_verbraucher1;
-		this.strom_wasser_stadtwerke = strom_wasser_stadtwerke;
-		this.abwasser_stadtwerke = abwasser_stadtwerke;
-	}
-
-	public void print() {
 		Builder builder = new Builder();
 		StringUtility su = new StringUtility();
+
 		double wasser_kosten1 = wasser_gesamtverbrauch1 * wasser_preisProKubikmeter;
 		double niederschlagswasser_kosten1 = 120 * niederschlagswasser_preisProQuadratmeter;
 		double abwasser_kosten1 = wasser_gesamtverbrauch1 * abwasser_preisProKubikmeter;
@@ -51,6 +24,9 @@ public class StromWasserErgebnis extends Ergebnis {
 		double abwasser_kosten2 = wasser_gesamtverbrauch2 * abwasser_preisProKubikmeter;
 		double wasser_gesamtkosten2 = (wasser_kosten2 + wasser_zähleranteil) * 1.07;
 		double kosten2 = niederschlagswasser_kosten2 + wasser_gesamtkosten2 + abwasser_kosten2 + strom_gesamtpreis / 2;
+		double ausgleich = abschläge_verbraucher1 - kosten1;
+		double ausgleich2 = strom_wasser_stadtwerke + abwasser_stadtwerke - abschläge_verbraucher1 - kosten2;
+
 		builder.append("Strom- und Wasserabrechnung für das Jahr " + jahr);
 		builder.newLine();
 		builder.append("---------------------------------------------");
@@ -165,8 +141,6 @@ public class StromWasserErgebnis extends Ergebnis {
 		builder.newLine();
 		builder.append(su.preIncrementTo("", 76, '-'));
 		builder.newLine();
-		double ausgleich = abschläge_verbraucher1 - kosten1;
-
 		builder.newLine();
 		if (ausgleich >= 0) {
 			builder.append("Ausgleich: (Guthaben)" + su.preIncrementTo(su.formatDouble(ausgleich, 2) + " €", 55, ' '));
@@ -198,8 +172,6 @@ public class StromWasserErgebnis extends Ergebnis {
 		builder.newLine();
 		builder.append(su.preIncrementTo("", 76, '-'));
 		builder.newLine();
-		double ausgleich2 = strom_wasser_stadtwerke + abwasser_stadtwerke - abschläge_verbraucher1 - kosten2;
-
 		builder.newLine();
 		if (ausgleich2 >= 0) {
 			builder.append("Ausgleich: (Guthaben)" + su.preIncrementTo(su.formatDouble(ausgleich2, 2) + " €", 55, ' '));
@@ -207,7 +179,6 @@ public class StromWasserErgebnis extends Ergebnis {
 		else {
 			builder.append("Ausgleich: (Schulden)" + su.preIncrementTo(su.formatDouble(ausgleich2, 2) + " €", 55, ' '));
 		}
-
-		print = builder.list;
+		return builder.list;
 	}
 }

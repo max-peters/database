@@ -1,4 +1,4 @@
-package database.plugin.stromWasser;
+package database.plugin.accounting;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -30,16 +30,14 @@ import database.plugin.Plugin;
 import database.services.ServiceRegistry;
 import database.services.writerReader.IWriterReader;
 
-public class StromWasserAbrechnungPlugin extends Plugin {
+public class AccountingPlugin extends Plugin {
 	List<Nachfüllung> nachfüllungen;
-	Nachfüllung restbestand;
-	StromWasserErgebnis erg;
-	HeizkostenAbrechnungErgebnis ergebnisHeiz;
+	Nachfüllung vorjahresbestand;
 
-	public StromWasserAbrechnungPlugin() {
-		super("abrechnung", new StromWasserOutputHandler());
+	public AccountingPlugin() {
+		super("accounting", new StromWasserOutputHandler());
 		nachfüllungen = new LinkedList<>();
-		restbestand = new Nachfüllung(LocalDate.MIN, 1, 1);
+		vorjahresbestand = new Nachfüllung(LocalDate.MIN, 1, 1);
 	}
 
 	@Command(tag = "start")
@@ -49,21 +47,21 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 		List<String> list = new LinkedList<>();
 		list.add("Strom- und Wasserabrechnung");
 		list.add("Heizkostenabrechnung");
-		Ergebnis ergebnis = null;
+		LinkedList<String> result = null;
 		Path file;
 		switch (terminal.checkRequest(list, "Abrechnung")) {
 		case 0:
-			ergebnis = stromwasserRequest();
+			result = electricityWaterAccountingRequest();
 			file = Paths.get(System.getProperty("user.home") + "/Desktop" + "/Strom- und Wasserabrechnung.txt");
 			break;
 		case 1:
-			ergebnis = heizkostenRequest();
+			result = heatingCostAccountingRequest();
 			file = Paths.get(System.getProperty("user.home") + "/Desktop" + "/Heizkostenabrechnung.txt");
 			break;
 		default:
 			return;
 		}
-		Files.write(file, ergebnis.print, Charset.forName("UTF-8"));
+		Files.write(file, result, Charset.forName("UTF-8"));
 		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
 		try {
 			writerReader.write();
@@ -80,9 +78,9 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 		System.exit(0);
 	}
 
-	@Command(tag = "strom- und wasserabrechnung")
-	public Ergebnis stromwasserRequest() throws InterruptedException, BadLocationException, NumberFormatException,
-			UserCancelException, SQLException {
+	@Command(tag = "Strom- und Wasserabrechnung")
+	public LinkedList<String> electricityWaterAccountingRequest() throws InterruptedException, BadLocationException,
+			NumberFormatException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String verbraucher2 = "Pfrommer";
 		int jahr = Integer.valueOf(terminal.request("Abrechnungsjahr", RequestType.INTEGER));
@@ -92,7 +90,6 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 		int verbrauch_eg_ww = Integer
 				.valueOf(terminal.request(verbraucher1 + " - Warmwasser - Verbrauch - EG", RequestType.INTEGER));
 		int verbrauch_eg = verbrauch_eg_kw + verbrauch_eg_ww;
-
 		int verbrauch_dg_kw = Integer
 				.valueOf(terminal.request(verbraucher1 + " - Kaltwasser - Verbrauch - DG", RequestType.INTEGER));
 		int verbrauch_dg_ww = Integer
@@ -123,23 +120,25 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 						.replaceAll(",", "\\."));
 		double abwasser_stadtwerke = Double.valueOf(terminal
 				.request("Abrechnung der Stadtwerke - Abwasser (€)", RequestType.DOUBLE).replaceAll(",", "\\."));
-		StromWasserErgebnis ergebnis = new StromWasserErgebnis(verbraucher1, verbraucher2, jahr,
-				verbrauch_eg + verbrauch_dg + verbrauch_keller, gesamtverbrauch2, zähleranteil,
-				wasser_preisProKubikmeter, abwasser_preisProKubikmeter, niederschlagswasser_preisProQuadratmeter,
-				strom_gesamtpreis, abschläge, strom_wasser_stadtwerke, abwasser_stadtwerke);
-		ergebnis.print();
-		return ergebnis;
+
+		ElectricityWaterAccountingFormatter formatter = new ElectricityWaterAccountingFormatter();
+		return formatter.format(verbraucher1, verbraucher2, jahr, verbrauch_eg + verbrauch_dg + verbrauch_keller,
+				gesamtverbrauch2, zähleranteil, wasser_preisProKubikmeter, abwasser_preisProKubikmeter,
+				niederschlagswasser_preisProQuadratmeter, strom_gesamtpreis, abschläge, strom_wasser_stadtwerke,
+				abwasser_stadtwerke);
 	}
 
-	@Command(tag = "heizkostenabrechnung")
-	public Ergebnis heizkostenRequest() throws InterruptedException, BadLocationException, NumberFormatException,
-			UserCancelException, SQLException {
+	@Command(tag = "Heizkostenabrechnung")
+	public LinkedList<String> heatingCostAccountingRequest() throws InterruptedException, BadLocationException,
+			NumberFormatException, UserCancelException, SQLException {
 		ITerminal terminal = ServiceRegistry.Instance().get(ITerminal.class);
 		String verbraucher1 = String.valueOf(terminal.request("Name - Verbraucher im Nebenhaus", RequestType.NAME));
 		String verbraucher2 = "Pfrommer";
-		LocalDate beginn = LocalDate.parse(terminal.request("Abrechnungszeitraum - Beginn", RequestType.DATE),
+		LocalDate abrechnungszeitraum_beginn = LocalDate.parse(
+				terminal.request("Abrechnungszeitraum - Beginn", RequestType.DATE),
 				DateTimeFormatter.ofPattern("dd.MM.uuuu"));
-		LocalDate ende = LocalDate.parse(terminal.request("Abrechnungszeitraum - Ende", RequestType.DATE),
+		LocalDate abrechnungszeitraum_ende = LocalDate.parse(
+				terminal.request("Abrechnungszeitraum - Ende", RequestType.DATE),
 				DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 //		LocalDate vorjahresbestand_datum = LocalDate.parse(
 //				terminal.request("Vorjahresbestand - Datum", RequestType.DATE),
@@ -165,7 +164,6 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 				DateTimeFormatter.ofPattern("dd.MM.uuuu"));
 		double restbestand_menge = Double
 				.valueOf(terminal.request("Restbestand - Menge", RequestType.DOUBLE).replaceAll(",", "\\."));
-
 		double betriebsstrom_kosten = Double.valueOf(
 				terminal.request("Nebenkosten - Betriebsstrom - Kosten", RequestType.DOUBLE).replaceAll(",", "\\."));
 		LocalDate brennerwartung_datum = LocalDate.parse(
@@ -204,50 +202,55 @@ public class StromWasserAbrechnungPlugin extends Plugin {
 		double heizung_verbrauch2 = Double
 				.valueOf(terminal.request(verbraucher2 + " - Heizung - Verbrauch (Kilowattstunde)", RequestType.DOUBLE)
 						.replaceAll(",", "\\."));
-		HeizkostenAbrechnungErgebnis ergebnis = new HeizkostenAbrechnungErgebnis(verbraucher1, verbraucher2, beginn,
-				ende, restbestand, restbestand_datum, restbestand_menge, betriebsstrom_kosten, brennerwartung_datum,
-				brennerwartung_kosten, kaminreinigung_datum, kaminreinigung_kosten, immissionsmessung_datum,
-				immissionsmessung_kosten, warmwasserverbrauch_kubikmeter, solarmenge, heizung_verbrauch1,
-				warmwasser_verbrauch1, heizung_verbrauch2);
-		restbestand = ergebnis.print(nachfüllungen);
 
-		return ergebnis;
+		List<Nachfüllung> printRefillings = new LinkedList<Nachfüllung>();
+		double tmp = restbestand_menge;
+		int q = nachfüllungen.size() - 1;
+		while (tmp > 0) {
+			tmp -= nachfüllungen.get(q).menge;
+			if (tmp > 0) {
+				printRefillings.add(nachfüllungen.get(q));
+				q--;
+			}
+		}
+		double preis_restbestand = (nachfüllungen.get(q).menge + tmp) * nachfüllungen.get(q).literpreis;
+		for (int i = q + 1; i < nachfüllungen.size(); i++) {
+			preis_restbestand += nachfüllungen.get(i).menge * nachfüllungen.get(i).literpreis;
+		}
+		printRefillings.add(new Nachfüllung(nachfüllungen.get(q).datum, (nachfüllungen.get(q).menge + tmp),
+				nachfüllungen.get(q).literpreis));
+		Nachfüllung restbestand = new Nachfüllung(preis_restbestand, restbestand_datum, restbestand_menge);
+
+		HeatingCostAccountingFormatter formatter = new HeatingCostAccountingFormatter();
+		LinkedList<String> result = formatter.format(verbraucher1, verbraucher2, abrechnungszeitraum_beginn,
+				abrechnungszeitraum_ende, vorjahresbestand, restbestand, printRefillings, nachfüllungen,
+				betriebsstrom_kosten, brennerwartung_datum, brennerwartung_kosten, kaminreinigung_datum,
+				kaminreinigung_kosten, immissionsmessung_datum, immissionsmessung_kosten,
+				warmwasserverbrauch_kubikmeter, solarmenge, heizung_verbrauch1, warmwasser_verbrauch1,
+				heizung_verbrauch2);
+
+		vorjahresbestand = restbestand;
+		return result;
 	}
 
 	@Override
 	public void write() {
 		IWriterReader writerReader = ServiceRegistry.Instance().get(IWriterReader.class);
 		Gson gson = new Gson();
-		writerReader.add(identity, "display", String.valueOf(display));
 		for (Nachfüllung nachfüllung : nachfüllungen) {
 			writerReader.add(identity, "nachfüllung", gson.toJson(nachfüllung));
 		}
-		writerReader.add(identity, "vorjahresbestand", gson.toJson(restbestand));
+		writerReader.add(identity, "vorjahresbestand", gson.toJson(vorjahresbestand));
 	}
 
 	@Override
 	public void read(Node node) throws ParserConfigurationException, DOMException {
 		Gson gson = new Gson();
-		if (node.getNodeName().equals("display")) {
-			display = Boolean.valueOf(node.getTextContent());
-		}
-		else if (node.getNodeName().equals("nachfüllung")) {
+		if (node.getNodeName().equals("nachfüllung")) {
 			nachfüllungen.add(gson.fromJson(node.getTextContent(), Nachfüllung.class));
 		}
 		else if (node.getNodeName().equals("vorjahresbestand")) {
-			restbestand = gson.fromJson(node.getTextContent(), Nachfüllung.class);
-		}
-		else if (node.getNodeName().equals("ergebnisHeiz")) {
-			HeizkostenAbrechnungErgebnis ergebnis = gson.fromJson(node.getTextContent(),
-					HeizkostenAbrechnungErgebnis.class);
-			ergebnis.print(nachfüllungen);
-			Path file = Paths.get(System.getProperty("user.home") + "/Desktop" + "/Heizkostenabrechnung.txt");
-			try {
-				Files.write(file, ergebnis.print, Charset.forName("UTF-8"));
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
+			vorjahresbestand = gson.fromJson(node.getTextContent(), Nachfüllung.class);
 		}
 	}
 }
