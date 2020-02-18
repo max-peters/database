@@ -58,7 +58,7 @@ public class Main {
 			Administration administration = new Administration();
 			databaseThread = new Thread(() -> {
 				try {
-					database.connect("jdbc:mysql://localhost/DATABASE?useSSL=false", "root", "***REMOVED***");
+					database.connect("jdbc:mysql://localhost/DATABASE?useSSL=false", "root", "root");
 					logger.log("database connected");
 				}
 				catch (Exception e) {
